@@ -26,9 +26,9 @@ private enum ActiveMap {
     var foregroundImageName: String? {
         switch self {
         case .main:
-            return "Background"
-        case .redHood:
             return nil
+        case .redHood:
+            return "Background"
         }
     }
 }
