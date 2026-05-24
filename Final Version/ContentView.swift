@@ -22,6 +22,15 @@ private enum ActiveMap {
             return 1535.0 / 1024.0
         }
     }
+
+    var foregroundImageName: String? {
+        switch self {
+        case .main:
+            return "Background"
+        case .redHood:
+            return nil
+        }
+    }
 }
 
 struct ContentView: View {
@@ -62,6 +71,14 @@ struct ContentView: View {
                         x: avatarPosition.x * mapSize.width,
                         y: avatarPosition.y * mapSize.height
                     )
+
+                    if let fgName = activeMap.foregroundImageName {
+                        Image(fgName)
+                            .resizable()
+                            .interpolation(.high)
+                            .frame(width: mapSize.width, height: mapSize.height)
+                            .allowsHitTesting(false)
+                    }
 
                     if activeMap == .main, !isWalking, let region = MapGraph.storyRegion(for: currentBaseID) {
                         StoryRegionPlaque(
