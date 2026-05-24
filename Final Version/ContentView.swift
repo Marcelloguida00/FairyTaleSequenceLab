@@ -1,7 +1,31 @@
 import SwiftUI
 import Combine
 
+private enum ActiveMap {
+    case main
+    case redHood
+
+    var imageName: String {
+        switch self {
+        case .main:
+            return "mappa"
+        case .redHood:
+            return "redhood_map"
+        }
+    }
+
+    var aspectRatio: CGFloat {
+        switch self {
+        case .main:
+            return 1448.0 / 1086.0
+        case .redHood:
+            return 1535.0 / 1024.0
+        }
+    }
+}
+
 struct ContentView: View {
+    @State private var activeMap = ActiveMap.main
     @State private var avatarPosition = MapGraph.initialWaypoint.point
     @State private var currentBaseID = MapGraph.initialWaypoint.id
     @State private var avatarDirection = WalkDirection.down
@@ -9,8 +33,9 @@ struct ContentView: View {
     @State private var isWalking = false
     @State private var markerIsRaised = false
     @State private var didPlayOpeningWalk = false
+    @State private var isMapTransitioning = false
+    @State private var cloudCoverProgress: CGFloat = 0
 
-    private let mapAspectRatio: CGFloat = 1448.0 / 1086.0
     private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -22,7 +47,7 @@ struct ContentView: View {
                     .ignoresSafeArea()
 
                 ZStack(alignment: .topLeading) {
-                    Image("mappa")
+                    Image(activeMap.imageName)
                         .resizable()
                         .interpolation(.high)
                         .frame(width: mapSize.width, height: mapSize.height)
@@ -38,7 +63,7 @@ struct ContentView: View {
                         y: avatarPosition.y * mapSize.height
                     )
 
-                    if !isWalking, let region = MapGraph.storyRegion(for: currentBaseID) {
+                    if activeMap == .main, !isWalking, let region = MapGraph.storyRegion(for: currentBaseID) {
                         StoryRegionPlaque(
                             title: region.title,
                             width: titleWidth(for: mapSize),
@@ -46,6 +71,17 @@ struct ContentView: View {
                         )
                         .position(region.titlePoint.scaled(to: mapSize))
                         .transition(.scale(scale: 0.92).combined(with: .opacity))
+                    }
+
+                    if shouldShowRedHoodPlayButton {
+                        RedHoodPlayButton {
+                            Task {
+                                await openRedHoodSubMap()
+                            }
+                        }
+                        .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
+                        .position(MapGraph.redRidingHoodPlayPoint.scaled(to: mapSize))
+                        .transition(.scale(scale: 0.82).combined(with: .opacity))
                     }
                 }
                 .frame(width: mapSize.width, height: mapSize.height)
@@ -57,6 +93,12 @@ struct ContentView: View {
                             handleMapTap(value.location, mapSize: mapSize)
                         }
                 )
+
+                if isMapTransitioning || cloudCoverProgress > 0.01 {
+                    CloudTransitionOverlay(progress: cloudCoverProgress)
+                        .ignoresSafeArea()
+                        .allowsHitTesting(true)
+                }
             }
         }
         .onReceive(spriteTimer) { _ in
@@ -78,6 +120,7 @@ struct ContentView: View {
 
     private func fittedMapSize(in container: CGSize) -> CGSize {
         let containerAspectRatio = container.width / container.height
+        let mapAspectRatio = activeMap.aspectRatio
 
         if containerAspectRatio > mapAspectRatio {
             let height = container.height
@@ -100,14 +143,34 @@ struct ContentView: View {
         min(26, max(17, mapSize.width * 0.022))
     }
 
+    private func playButtonSize(for mapSize: CGSize) -> CGFloat {
+        min(82, max(54, mapSize.width * 0.07))
+    }
+
+    private var shouldShowRedHoodPlayButton: Bool {
+        activeMap == .main &&
+            currentBaseID == MapGraph.redRidingHoodBaseID &&
+            !isWalking &&
+            !isMapTransitioning
+    }
+
     private func handleMapTap(_ location: CGPoint, mapSize: CGSize) {
-        guard !isWalking else { return }
+        guard !isWalking, !isMapTransitioning else { return }
 
         let normalizedTap = CGPoint(
             x: min(max(location.x / mapSize.width, 0), 1),
             y: min(max(location.y / mapSize.height, 0), 1)
         )
 
+        switch activeMap {
+        case .main:
+            handleMainMapTap(normalizedTap)
+        case .redHood:
+            handleRedHoodMapTap(normalizedTap)
+        }
+    }
+
+    private func handleMainMapTap(_ normalizedTap: CGPoint) {
         guard let start = MapGraph.waypoint(id: currentBaseID) else {
             return
         }
@@ -121,6 +184,28 @@ struct ContentView: View {
         }
 
         guard let route = MapGraph.shortestPath(from: start.id, to: target.id) else {
+            return
+        }
+
+        Task {
+            await walk(route)
+        }
+    }
+
+    private func handleRedHoodMapTap(_ normalizedTap: CGPoint) {
+        guard let start = RedHoodMapGraph.waypoint(id: currentBaseID) else {
+            return
+        }
+
+        guard let target = RedHoodMapGraph.waypointHit(by: normalizedTap) else {
+            return
+        }
+
+        if target.id == start.id {
+            return
+        }
+
+        guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else {
             return
         }
 
@@ -147,6 +232,35 @@ struct ContentView: View {
     }
 
     @MainActor
+    private func openRedHoodSubMap() async {
+        guard !isWalking, !isMapTransitioning else { return }
+
+        isMapTransitioning = true
+
+        withAnimation(.easeInOut(duration: 0.75)) {
+            cloudCoverProgress = 1
+        }
+
+        try? await Task.sleep(nanoseconds: 780_000_000)
+
+        activeMap = .redHood
+        avatarPosition = RedHoodMapGraph.initialWaypoint.point
+        currentBaseID = RedHoodMapGraph.initialWaypoint.id
+        avatarDirection = .up
+        currentFrame = 0
+
+        try? await Task.sleep(nanoseconds: 180_000_000)
+
+        withAnimation(.easeInOut(duration: 0.75)) {
+            cloudCoverProgress = 0
+        }
+
+        try? await Task.sleep(nanoseconds: 760_000_000)
+
+        isMapTransitioning = false
+    }
+
+    @MainActor
     private func walk(_ route: [MapWaypoint]) async {
         isWalking = true
 
@@ -164,7 +278,7 @@ struct ContentView: View {
             try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
         }
 
-        if let finalWaypoint = route.last, MapGraph.baseIDs.contains(finalWaypoint.id) {
+        if let finalWaypoint = route.last, activeMap == .redHood || MapGraph.baseIDs.contains(finalWaypoint.id) {
             withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) {
                 currentBaseID = finalWaypoint.id
             }
@@ -262,6 +376,119 @@ private struct StoryRegionPlaque: View {
     }
 }
 
+private struct RedHoodPlayButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.98, green: 0.20, blue: 0.18),
+                                Color(red: 0.72, green: 0.04, blue: 0.08)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(.white, lineWidth: 4)
+                    )
+                    .shadow(color: .black.opacity(0.28), radius: 7, x: 0, y: 5)
+
+                Image(systemName: "play.fill")
+                    .font(.system(size: 28, weight: .black))
+                    .foregroundStyle(.white)
+                    .offset(x: 2)
+            }
+            .accessibilityLabel("Play Little Red Riding Hood")
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct CloudTransitionOverlay: View {
+    let progress: CGFloat
+
+    var body: some View {
+        GeometryReader { proxy in
+            let clampedProgress = min(max(progress, 0), 1)
+            let bankWidth = proxy.size.width * 0.82
+            let bankHeight = proxy.size.height * 1.22
+            let travel = proxy.size.width * 0.72
+
+            ZStack {
+                Color.white.opacity(clampedProgress * 0.18)
+
+                CloudBank()
+                    .frame(width: bankWidth, height: bankHeight)
+                    .position(
+                        x: proxy.size.width * 0.25 - travel * (1 - clampedProgress),
+                        y: proxy.size.height * 0.5
+                    )
+
+                CloudBank()
+                    .scaleEffect(x: -1, y: 1)
+                    .frame(width: bankWidth, height: bankHeight)
+                    .position(
+                        x: proxy.size.width * 0.75 + travel * (1 - clampedProgress),
+                        y: proxy.size.height * 0.5
+                    )
+            }
+            .opacity(clampedProgress > 0 ? 1 : 0)
+        }
+    }
+}
+
+private struct CloudBank: View {
+    private let puffs: [CloudPuff] = [
+        CloudPuff(x: 0.20, y: 0.16, size: 0.33),
+        CloudPuff(x: 0.47, y: 0.12, size: 0.40),
+        CloudPuff(x: 0.78, y: 0.18, size: 0.36),
+        CloudPuff(x: 0.14, y: 0.38, size: 0.42),
+        CloudPuff(x: 0.50, y: 0.42, size: 0.52),
+        CloudPuff(x: 0.86, y: 0.42, size: 0.44),
+        CloudPuff(x: 0.24, y: 0.68, size: 0.38),
+        CloudPuff(x: 0.58, y: 0.72, size: 0.46),
+        CloudPuff(x: 0.88, y: 0.74, size: 0.34)
+    ]
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                RoundedRectangle(cornerRadius: proxy.size.height * 0.24, style: .continuous)
+                    .fill(.white)
+                    .frame(width: proxy.size.width * 0.9, height: proxy.size.height * 0.82)
+                    .position(x: proxy.size.width * 0.46, y: proxy.size.height * 0.5)
+
+                ForEach(puffs) { puff in
+                    Circle()
+                        .fill(.white)
+                        .frame(
+                            width: proxy.size.width * puff.size,
+                            height: proxy.size.width * puff.size
+                        )
+                        .position(
+                            x: proxy.size.width * puff.x,
+                            y: proxy.size.height * puff.y
+                        )
+                }
+            }
+            .shadow(color: .black.opacity(0.10), radius: 22, x: 0, y: 8)
+        }
+    }
+}
+
+private struct CloudPuff: Identifiable {
+    let id = UUID()
+    let x: CGFloat
+    let y: CGFloat
+    let size: CGFloat
+}
+
 private enum WalkDirection {
     case up
     case down
@@ -303,6 +530,7 @@ private struct MapWaypoint: Identifiable {
 private enum MapGraph {
     static let openingStartID = 23
     static let redRidingHoodBaseID = 0
+    static let redRidingHoodPlayPoint = CGPoint(x: 0.210, y: 0.420)
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let baseIDs: Set<Int> = [0, 7, 14, 18, 22]
     static let baseTapRadius: CGFloat = 0.055
@@ -361,6 +589,80 @@ private enum MapGraph {
     static func baseHit(by point: CGPoint) -> MapWaypoint? {
         baseWaypoints
             .filter { $0.point.distance(to: point) <= baseTapRadius }
+            .min { first, second in
+                first.point.distance(to: point) < second.point.distance(to: point)
+            }
+    }
+
+    static func shortestPath(from startID: Int, to targetID: Int) -> [MapWaypoint]? {
+        var distances = Dictionary(uniqueKeysWithValues: waypoints.map { ($0.id, CGFloat.greatestFiniteMagnitude) })
+        var previous: [Int: Int] = [:]
+        var unvisited = Set(waypoints.map(\.id))
+
+        distances[startID] = 0
+
+        while let currentID = unvisited.min(by: { distances[$0, default: .greatestFiniteMagnitude] < distances[$1, default: .greatestFiniteMagnitude] }) {
+            if currentID == targetID { break }
+
+            unvisited.remove(currentID)
+
+            guard let current = waypoint(id: currentID) else { continue }
+
+            for neighborID in current.neighbors where unvisited.contains(neighborID) {
+                guard let neighbor = waypoint(id: neighborID) else { continue }
+
+                let distance = distances[currentID, default: .greatestFiniteMagnitude] + current.point.distance(to: neighbor.point)
+
+                if distance < distances[neighborID, default: .greatestFiniteMagnitude] {
+                    distances[neighborID] = distance
+                    previous[neighborID] = currentID
+                }
+            }
+        }
+
+        guard distances[targetID, default: .greatestFiniteMagnitude] < .greatestFiniteMagnitude else {
+            return nil
+        }
+
+        var routeIDs = [targetID]
+        var cursor = targetID
+
+        while cursor != startID {
+            guard let previousID = previous[cursor] else { return nil }
+
+            routeIDs.append(previousID)
+            cursor = previousID
+        }
+
+        return routeIDs.reversed().compactMap(waypoint)
+    }
+}
+
+private enum RedHoodMapGraph {
+    static let openingStartID = 0
+    static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
+    static let tapRadius: CGFloat = 0.09
+
+    static let waypoints: [MapWaypoint] = [
+        MapWaypoint(id: 0, name: "Village dock", point: CGPoint(x: 0.419, y: 0.829), neighbors: [1]),
+        MapWaypoint(id: 1, name: "Lower forest path", point: CGPoint(x: 0.400, y: 0.695), neighbors: [0, 2]),
+        MapWaypoint(id: 2, name: "Crossroads", point: CGPoint(x: 0.322, y: 0.604), neighbors: [1, 3, 4]),
+        MapWaypoint(id: 3, name: "Wolf clearing", point: CGPoint(x: 0.121, y: 0.608), neighbors: [2]),
+        MapWaypoint(id: 4, name: "Cottage bend", point: CGPoint(x: 0.326, y: 0.487), neighbors: [2, 5]),
+        MapWaypoint(id: 5, name: "Forest cottage", point: CGPoint(x: 0.532, y: 0.302), neighbors: [4, 6]),
+        MapWaypoint(id: 6, name: "Mill road", point: CGPoint(x: 0.587, y: 0.402), neighbors: [5, 7]),
+        MapWaypoint(id: 7, name: "Grandmother path", point: CGPoint(x: 0.535, y: 0.537), neighbors: [6, 8]),
+        MapWaypoint(id: 8, name: "Village entry", point: CGPoint(x: 0.606, y: 0.607), neighbors: [7, 9]),
+        MapWaypoint(id: 9, name: "Bridge lookout", point: CGPoint(x: 0.838, y: 0.510), neighbors: [8])
+    ]
+
+    static func waypoint(id: Int) -> MapWaypoint? {
+        waypoints.first { $0.id == id }
+    }
+
+    static func waypointHit(by point: CGPoint) -> MapWaypoint? {
+        waypoints
+            .filter { $0.point.distance(to: point) <= tapRadius }
             .min { first, second in
                 first.point.distance(to: point) < second.point.distance(to: point)
             }
