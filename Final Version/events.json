@@ -38,18 +38,18 @@
   {
     "id": 3,
     "bannerTitle": "Scene 3",
-    "introImageName": "Introduzione 3 evento",
+    "introImageName": "Introduzione_3",
     "introText": "The wolf has spotted Little Red Riding Hood in the forest. He watches her carefully, thinking of a clever plan. Little Red Riding Hood has no idea that the wolf is watching... Help order the story scenes correctly!",
     "cards": [
-      { "id": 0, "imageName": "Sequenza 3 evento 1", "description": "The wolf thinks of a plan to reach Grandmother's house", "correctPosition": 0 },
-      { "id": 1, "imageName": "Sequenza 3 evento 2", "description": "The wolf appears on the path where Little Red Riding Hood is walking", "correctPosition": 1 },
-      { "id": 2, "imageName": "Sequenza 3 evento 3", "description": "The wolf asks: 'Where are you going, little girl?'", "correctPosition": 2 },
-      { "id": 3, "imageName": "Sequenza 3 evento 4", "description": "Little Red Riding Hood tells the wolf: 'I'm going to Grandmother's house'", "correctPosition": 3 }
+      { "id": 0, "imageName": "3_1", "description": "The wolf thinks of a plan to reach Grandmother's house", "correctPosition": 0 },
+      { "id": 1, "imageName": "3.2", "description": "The wolf appears on the path where Little Red Riding Hood is walking", "correctPosition": 1 },
+      { "id": 2, "imageName": "3_3", "description": "The wolf asks: 'Where are you going, little girl?'", "correctPosition": 2 },
+      { "id": 3, "imageName": "3.4", "description": "Little Red Riding Hood tells the wolf: 'I'm going to Grandmother's house'", "correctPosition": 3 }
     ],
     "correctOrder": [0, 1, 2, 3],
     "shuffledStart": [2, 0, 3, 1],
     "learningOutcome": "You learned: CONSEQUENCES = ACTIONS HAVE RESULTS",
-    "rewardImageName": "Reward evento 3",
+    "rewardImageName": "Fine 3",
     "rewardText": "Now the wolf knows where to find Grandmother. What will happen next?",
     "isLastEvent": true
   }
