@@ -33,6 +33,24 @@
     "learningOutcome": "You learned: Distractions change where a story goes — the ORDER of choices matters!",
     "rewardImageName": "Reward evento 2",
     "rewardText": "Incredible! You got every scene in the right order! You followed Little Red Riding Hood's journey through the forest perfectly — step by step, all the way to where she strayed from the path. You are a true story hero and guardian of the forest! Watch out — there's a wolf watching her from behind the trees…",
+    "isLastEvent": false
+  },
+  {
+    "id": 3,
+    "bannerTitle": "Scene 3",
+    "introImageName": "Introduzione 3 evento",
+    "introText": "The wolf has spotted Little Red Riding Hood in the forest. He watches her carefully, thinking of a clever plan. Little Red Riding Hood has no idea that the wolf is watching... Help order the story scenes correctly!",
+    "cards": [
+      { "id": 0, "imageName": "Sequenza 3 evento 1", "description": "The wolf thinks of a plan to reach Grandmother's house", "correctPosition": 0 },
+      { "id": 1, "imageName": "Sequenza 3 evento 2", "description": "The wolf appears on the path where Little Red Riding Hood is walking", "correctPosition": 1 },
+      { "id": 2, "imageName": "Sequenza 3 evento 3", "description": "The wolf asks: 'Where are you going, little girl?'", "correctPosition": 2 },
+      { "id": 3, "imageName": "Sequenza 3 evento 4", "description": "Little Red Riding Hood tells the wolf: 'I'm going to Grandmother's house'", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "shuffledStart": [2, 0, 3, 1],
+    "learningOutcome": "You learned: CONSEQUENCES = ACTIONS HAVE RESULTS",
+    "rewardImageName": "Reward evento 3",
+    "rewardText": "Now the wolf knows where to find Grandmother. What will happen next?",
     "isLastEvent": true
   }
 ]
