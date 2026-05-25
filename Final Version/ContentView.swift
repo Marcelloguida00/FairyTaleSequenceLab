@@ -373,7 +373,9 @@ struct ContentView: View {
 
         if target.id == start.id {
             let next = completedRedHoodLevels.count
-            if target.id == next, next <= EventLoader.maxEventId {
+            let isPlayable = (target.id == next && next <= EventLoader.maxEventId)
+                || completedRedHoodLevels.contains(target.id)
+            if isPlayable {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
                 }
@@ -382,7 +384,9 @@ struct ContentView: View {
         }
 
         let nextUnlocked = completedRedHoodLevels.count
-        guard target.id == nextUnlocked, nextUnlocked <= EventLoader.maxEventId else { return }
+        let targetIsPlayable = (target.id == nextUnlocked && nextUnlocked <= EventLoader.maxEventId)
+            || completedRedHoodLevels.contains(target.id)
+        guard targetIsPlayable else { return }
 
         guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
 

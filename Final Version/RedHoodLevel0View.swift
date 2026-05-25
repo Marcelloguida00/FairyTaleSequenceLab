@@ -19,8 +19,8 @@ struct RedHoodLevel0View: View {
                         .padding(.horizontal, 40)
 
                     MascotGuideView(
-                        imageName: "Mascot Waving",
-                        animatedImageNames: ["Mascot Neutral", "Mascot Talking", "Mascot Waving", "Mascot Talking"],
+                        imageName: "Mascot Talking",
+                        animatedImageNames: ["Mascot Talking"],
                         message: "Oh no! A monster has destroyed all the fairy tales and scattered their scenes! Can you help me put the story of Little Red Riding Hood back together?",
                         imageHeight: min(geometry.size.height * 0.28, 220),
                         bubbleFont: .system(.title3, design: .rounded)
