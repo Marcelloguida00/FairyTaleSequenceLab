@@ -34,6 +34,9 @@ private enum ActiveMap {
 }
 
 struct ContentView: View {
+    let isGlobalTransitioning: Bool
+    let onReturnToMainMenu: () -> Void
+
     @State private var activeMap = ActiveMap.main
     @State private var avatarPosition = MapGraph.initialWaypoint.point
     @State private var currentBaseID = MapGraph.initialWaypoint.id
@@ -42,7 +45,8 @@ struct ContentView: View {
     @State private var isWalking = false
     @State private var markerIsRaised = false
     @State private var isMapTransitioning = false
-    @State private var cloudCoverProgress: CGFloat = 0
+    @State private var cloudEnterProgress: CGFloat = 0
+    @State private var cloudExitProgress: CGFloat = 0
     @State private var completedRedHoodLevels: Set<Int> = []
     @State private var activeRedHoodLevel: Int? = nil
     @State private var pendingRedHoodLevel: Int? = nil
@@ -138,10 +142,14 @@ struct ContentView: View {
                         }
                 )
 
-                if isMapTransitioning || cloudCoverProgress > 0.01 {
-                    CloudTransitionOverlay(progress: cloudCoverProgress)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(true)
+                if isMapTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01 {
+                    CloudTransitionOverlay(
+                        enterProgress: cloudEnterProgress,
+                        exitProgress: cloudExitProgress
+                    )
+                    .ignoresSafeArea()
+                    .allowsHitTesting(true)
+                    .zIndex(50)
                 }
 
                 if let level = activeRedHoodLevel {
@@ -175,6 +183,18 @@ struct ContentView: View {
                         .transition(.opacity)
                 }
 
+                if activeMap == .main {
+                    MainMenuButton {
+                        onReturnToMainMenu()
+                    }
+                    .disabled(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil)
+                    .opacity(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil ? 0.45 : 1)
+                    .padding(.top, 52)
+                    .padding(.trailing, 20)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .zIndex(30)
+                }
+
                 #if DEBUG
                 Button("Reset") { resetProgress() }
                     .font(.system(size: 13, weight: .semibold, design: .monospaced))
@@ -182,7 +202,7 @@ struct ContentView: View {
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
                     .background(Capsule().fill(Color.red.opacity(0.80)))
-                    .padding(.top, 52)
+                    .padding(.top, 112)
                     .padding(.trailing, 20)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .zIndex(35)
@@ -285,25 +305,20 @@ struct ContentView: View {
     private func closeRedHoodSubMap() async {
         guard !isWalking, !isMapTransitioning else { return }
 
-        isMapTransitioning = true
-
-        withAnimation(.easeInOut(duration: 0.75)) { cloudCoverProgress = 1 }
-        try? await Task.sleep(nanoseconds: 780_000_000)
-
-        activeMap = .main
-        pendingRedHoodLevel = nil
-        activeRedHoodLevel = nil
-        levelBannerLevel = nil
-        avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point ?? MapGraph.initialWaypoint.point
-        currentBaseID = MapGraph.redRidingHoodBaseID
-        avatarDirection = .down
-        currentFrame = 0
-
-        try? await Task.sleep(nanoseconds: 180_000_000)
-        withAnimation(.easeInOut(duration: 0.75)) { cloudCoverProgress = 0 }
-        try? await Task.sleep(nanoseconds: 760_000_000)
-
-        isMapTransitioning = false
+        await CloudTransitionAnimator.runSceneTransition(
+            isActive: $isMapTransitioning,
+            enterProgress: $cloudEnterProgress,
+            exitProgress: $cloudExitProgress
+        ) {
+            activeMap = .main
+            pendingRedHoodLevel = nil
+            activeRedHoodLevel = nil
+            levelBannerLevel = nil
+            avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point ?? MapGraph.initialWaypoint.point
+            currentBaseID = MapGraph.redRidingHoodBaseID
+            avatarDirection = .down
+            currentFrame = 0
+        }
     }
 
     private func levelBannerTitle(for level: Int) -> String {
@@ -417,29 +432,17 @@ struct ContentView: View {
     private func openRedHoodSubMap() async {
         guard !isWalking, !isMapTransitioning else { return }
 
-        isMapTransitioning = true
-
-        withAnimation(.easeInOut(duration: 0.75)) {
-            cloudCoverProgress = 1
+        await CloudTransitionAnimator.runSceneTransition(
+            isActive: $isMapTransitioning,
+            enterProgress: $cloudEnterProgress,
+            exitProgress: $cloudExitProgress
+        ) {
+            activeMap = .redHood
+            avatarPosition = RedHoodMapGraph.initialWaypoint.point
+            currentBaseID = RedHoodMapGraph.initialWaypoint.id
+            avatarDirection = .up
+            currentFrame = 0
         }
-
-        try? await Task.sleep(nanoseconds: 780_000_000)
-
-        activeMap = .redHood
-        avatarPosition = RedHoodMapGraph.initialWaypoint.point
-        currentBaseID = RedHoodMapGraph.initialWaypoint.id
-        avatarDirection = .up
-        currentFrame = 0
-
-        try? await Task.sleep(nanoseconds: 180_000_000)
-
-        withAnimation(.easeInOut(duration: 0.75)) {
-            cloudCoverProgress = 0
-        }
-
-        try? await Task.sleep(nanoseconds: 760_000_000)
-
-        isMapTransitioning = false
     }
 
     @MainActor
@@ -717,6 +720,35 @@ private struct BackButton: View {
     }
 }
 
+private struct MainMenuButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                Image(systemName: "house.fill")
+                    .font(.system(size: 15, weight: .bold))
+                Text("Menu")
+                    .font(.system(.subheadline, design: .rounded))
+                    .fontWeight(.bold)
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .frame(minWidth: 90, minHeight: 48)
+            .background(
+                Capsule()
+                    .fill(Color(red: 0.10, green: 0.06, blue: 0.02).opacity(0.82))
+                    .overlay(Capsule().stroke(Color.white.opacity(0.70), lineWidth: 2))
+            )
+            .shadow(color: .black.opacity(0.50), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Return to main menu")
+        .accessibilityHint("Leaves the world map and opens the title screen")
+    }
+}
+
 private struct LevelStartBanner: View {
     let title: String
     let onFinish: () -> Void
@@ -763,85 +795,6 @@ private struct LevelStartBanner: View {
             onFinish()
         }
     }
-}
-
-private struct CloudTransitionOverlay: View {
-    let progress: CGFloat
-
-    var body: some View {
-        GeometryReader { proxy in
-            let clampedProgress = min(max(progress, 0), 1)
-            let bankWidth = proxy.size.width * 0.82
-            let bankHeight = proxy.size.height * 1.22
-            let travel = proxy.size.width * 0.72
-
-            ZStack {
-                Color.white.opacity(clampedProgress * 0.18)
-
-                CloudBank()
-                    .frame(width: bankWidth, height: bankHeight)
-                    .position(
-                        x: proxy.size.width * 0.25 - travel * (1 - clampedProgress),
-                        y: proxy.size.height * 0.5
-                    )
-
-                CloudBank()
-                    .scaleEffect(x: -1, y: 1)
-                    .frame(width: bankWidth, height: bankHeight)
-                    .position(
-                        x: proxy.size.width * 0.75 + travel * (1 - clampedProgress),
-                        y: proxy.size.height * 0.5
-                    )
-            }
-            .opacity(clampedProgress > 0 ? 1 : 0)
-        }
-    }
-}
-
-private struct CloudBank: View {
-    private let puffs: [CloudPuff] = [
-        CloudPuff(x: 0.20, y: 0.16, size: 0.33),
-        CloudPuff(x: 0.47, y: 0.12, size: 0.40),
-        CloudPuff(x: 0.78, y: 0.18, size: 0.36),
-        CloudPuff(x: 0.14, y: 0.38, size: 0.42),
-        CloudPuff(x: 0.50, y: 0.42, size: 0.52),
-        CloudPuff(x: 0.86, y: 0.42, size: 0.44),
-        CloudPuff(x: 0.24, y: 0.68, size: 0.38),
-        CloudPuff(x: 0.58, y: 0.72, size: 0.46),
-        CloudPuff(x: 0.88, y: 0.74, size: 0.34)
-    ]
-
-    var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                RoundedRectangle(cornerRadius: proxy.size.height * 0.24, style: .continuous)
-                    .fill(.white)
-                    .frame(width: proxy.size.width * 0.9, height: proxy.size.height * 0.82)
-                    .position(x: proxy.size.width * 0.46, y: proxy.size.height * 0.5)
-
-                ForEach(puffs) { puff in
-                    Circle()
-                        .fill(.white)
-                        .frame(
-                            width: proxy.size.width * puff.size,
-                            height: proxy.size.width * puff.size
-                        )
-                        .position(
-                            x: proxy.size.width * puff.x,
-                            y: proxy.size.height * puff.y
-                        )
-                }
-            }
-            .shadow(color: .black.opacity(0.10), radius: 22, x: 0, y: 8)
-        }
-    }
-}
-
-private struct CloudPuff: Identifiable {
-    let id = UUID()
-    let x: CGFloat
-    let y: CGFloat
-    let size: CGFloat
 }
 
 private enum WalkDirection {
@@ -1080,6 +1033,6 @@ private extension CGPoint {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(isGlobalTransitioning: false, onReturnToMainMenu: {})
     }
 }
