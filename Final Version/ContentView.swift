@@ -332,8 +332,19 @@ struct ContentView: View {
 
     private func dotState(for waypointId: Int) -> WaypointDot.DotState {
         if completedRedHoodLevels.contains(waypointId) { return .completed }
-        let next = completedRedHoodLevels.count
-        return (waypointId == next && waypointId <= EventLoader.maxEventId) ? .next : .locked
+        return waypointId == nextRedHoodLevel ? .next : .locked
+    }
+
+    private var nextRedHoodLevel: Int? {
+        (0...EventLoader.maxEventId).first { !completedRedHoodLevels.contains($0) }
+    }
+
+    private func isRedHoodWaypointPlayable(_ waypointId: Int) -> Bool {
+        completedRedHoodLevels.contains(waypointId) || waypointId == nextRedHoodLevel
+    }
+
+    private func shouldOfferRedHoodLevelStart(for waypointId: Int) -> Bool {
+        completedRedHoodLevels.contains(waypointId) || waypointId == nextRedHoodLevel
     }
 
     private var shouldShowRedHoodPlayButton: Bool {
@@ -382,33 +393,46 @@ struct ContentView: View {
     }
 
     private func handleRedHoodMapTap(_ normalizedTap: CGPoint) {
-        guard activeRedHoodLevel == nil, pendingRedHoodLevel == nil else { return }
+        guard activeRedHoodLevel == nil else { return }
         guard let start = RedHoodMapGraph.waypoint(id: currentBaseID) else { return }
-        guard let target = RedHoodMapGraph.waypointHit(by: normalizedTap) else { return }
-
-        if target.id == start.id {
-            let next = completedRedHoodLevels.count
-            let isPlayable = (target.id == next && next <= EventLoader.maxEventId)
-                || completedRedHoodLevels.contains(target.id)
-            if isPlayable {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                    pendingRedHoodLevel = target.id
+        guard let target = RedHoodMapGraph.waypointHit(by: normalizedTap) else {
+            if pendingRedHoodLevel != nil {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    pendingRedHoodLevel = nil
                 }
             }
             return
         }
 
-        let nextUnlocked = completedRedHoodLevels.count
-        let targetIsPlayable = (target.id == nextUnlocked && nextUnlocked <= EventLoader.maxEventId)
-            || completedRedHoodLevels.contains(target.id)
-        guard targetIsPlayable else { return }
+        guard isRedHoodWaypointPlayable(target.id) else { return }
+
+        if target.id == start.id {
+            if shouldOfferRedHoodLevelStart(for: target.id) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
+            } else if pendingRedHoodLevel != nil {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    pendingRedHoodLevel = nil
+                }
+            }
+            return
+        }
 
         guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
 
+        if pendingRedHoodLevel != nil {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                pendingRedHoodLevel = nil
+            }
+        }
+
         Task {
             await walk(route)
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                pendingRedHoodLevel = target.id
+            if shouldOfferRedHoodLevelStart(for: target.id) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
             }
         }
     }

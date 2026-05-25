@@ -138,11 +138,164 @@ enum SequenceCheckResult: Equatable {
     case correct, incorrect
 }
 
+// MARK: - Empty target slot
+
+private struct EmptySequenceSlotView: View {
+    let description: String
+    let slot: Int
+    let cardW: CGFloat
+    let cardH: CGFloat
+    let hovered: Bool
+
+    private var fillColor: Color {
+        hovered ? Color.white.opacity(0.28) : Color.white.opacity(0.10)
+    }
+
+    private var borderColor: Color {
+        hovered ? Color.white : Color.white.opacity(0.45)
+    }
+
+    private var borderWidth: CGFloat {
+        hovered ? 3 : 2
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 22)
+                .fill(fillColor)
+
+            RoundedRectangle(cornerRadius: 22)
+                .strokeBorder(
+                    borderColor,
+                    style: StrokeStyle(lineWidth: borderWidth, dash: [10, 7])
+                )
+
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(Color.white.opacity(hovered ? 0.42 : 0.18), lineWidth: 1)
+                .padding(8)
+
+            descriptionText
+        }
+        .frame(width: cardW, height: cardH)
+        .animation(.easeInOut(duration: 0.15), value: hovered)
+        .accessibilityLabel("Empty slot \(slot + 1). Correct scene: \(description)")
+    }
+
+    private var descriptionText: some View {
+        Text(description)
+            .font(.system(.callout, design: .rounded))
+            .fontWeight(.heavy)
+            .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.06))
+            .multilineTextAlignment(.center)
+            .lineLimit(7)
+            .minimumScaleFactor(0.58)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color(red: 1.00, green: 0.91, blue: 0.66).opacity(0.54))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color(red: 0.50, green: 0.29, blue: 0.11).opacity(0.30), lineWidth: 1)
+            )
+            .padding(12)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+    }
+}
+
+// MARK: - Storybook chrome
+
+private struct StorybookPageShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let corner = min(rect.width, rect.height) * 0.085
+        let topY = rect.minY + corner * 0.38
+        let bottomY = rect.maxY - corner * 0.34
+        let centerDip = corner * 0.44
+        let fold = min(rect.width * 0.07, 54)
+
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX + corner, y: topY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX - fold, y: rect.minY + corner * 0.18),
+            control: CGPoint(x: rect.midX * 0.56, y: rect.minY - corner * 0.30)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX, y: rect.minY + centerDip),
+            control: CGPoint(x: rect.midX - fold * 0.42, y: rect.minY + corner * 0.12)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX + fold, y: rect.minY + corner * 0.18),
+            control: CGPoint(x: rect.midX + fold * 0.42, y: rect.minY + corner * 0.12)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - corner, y: topY),
+            control: CGPoint(x: rect.midX + (rect.width * 0.28), y: rect.minY - corner * 0.30)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - corner * 0.40, y: rect.minY + corner),
+            control: CGPoint(x: rect.maxX - corner * 0.12, y: rect.minY + corner * 0.18)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX - corner * 0.22, y: rect.maxY - corner))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - corner, y: bottomY),
+            control: CGPoint(x: rect.maxX - corner * 0.10, y: rect.maxY - corner * 0.20)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX + fold, y: rect.maxY - corner * 0.18),
+            control: CGPoint(x: rect.midX + (rect.width * 0.28), y: rect.maxY + corner * 0.28)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX, y: rect.maxY - centerDip * 0.86),
+            control: CGPoint(x: rect.midX + fold * 0.42, y: rect.maxY - corner * 0.08)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX - fold, y: rect.maxY - corner * 0.18),
+            control: CGPoint(x: rect.midX - fold * 0.42, y: rect.maxY - corner * 0.08)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + corner, y: bottomY),
+            control: CGPoint(x: rect.midX * 0.56, y: rect.maxY + corner * 0.28)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + corner * 0.40, y: rect.maxY - corner),
+            control: CGPoint(x: rect.minX + corner * 0.10, y: rect.maxY - corner * 0.20)
+        )
+        path.addLine(to: CGPoint(x: rect.minX + corner * 0.22, y: rect.minY + corner))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + corner, y: topY),
+            control: CGPoint(x: rect.minX + corner * 0.12, y: rect.minY + corner * 0.18)
+        )
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct VineColumn: View {
+    let flipped: Bool
+
+    var body: some View {
+        VStack(spacing: 9) {
+            ForEach(0..<5, id: \.self) { index in
+                Image(systemName: index.isMultiple(of: 2) ? "leaf.fill" : "sparkle")
+                    .font(.system(size: index.isMultiple(of: 2) ? 19 : 12, weight: .bold))
+                    .foregroundColor(index.isMultiple(of: 2)
+                                     ? Color(red: 0.23, green: 0.40, blue: 0.14)
+                                     : Color(red: 0.83, green: 0.58, blue: 0.18))
+                    .rotationEffect(.degrees(flipped ? Double(index * -18) : Double(index * 18)))
+                    .opacity(index == 4 ? 0.72 : 1)
+            }
+        }
+        .scaleEffect(x: flipped ? -1 : 1, y: 1)
+    }
+}
+
 // MARK: - Main view
 
 struct SequencingActivityView<Reward: View>: View {
     let event: EventData
     let makeReward: (Int, @escaping () -> Void) -> Reward
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // slot index (0–3) → card id placed there; nil = empty
     @State private var slotContents: [Int?]
@@ -172,12 +325,6 @@ struct SequencingActivityView<Reward: View>: View {
         self.makeReward = makeReward
         _slotContents  = State(initialValue: Array(repeating: nil, count: event.cards.count))
         _flippedStates = State(initialValue: Array(repeating: false, count: event.cards.count))
-    }
-
-    // Unplaced cards, preserved in their original shuffled order
-    private var sourceDeck: [Int] {
-        let placed = Set(slotContents.compactMap { $0 })
-        return event.shuffledStart.filter { !placed.contains($0) }
     }
 
     private var allSlotsFilled: Bool { slotContents.allSatisfy { $0 != nil } }
@@ -223,34 +370,42 @@ struct SequencingActivityView<Reward: View>: View {
                     .ignoresSafeArea()
 
                 // Subtle dark scrim so cards remain readable
-                Color.black.opacity(0.18).ignoresSafeArea()
+                Color.black.opacity(0.22).ignoresSafeArea()
 
-                VStack(spacing: 0) {
+                RadialGradient(
+                    colors: [
+                        Color.clear,
+                        Color.black.opacity(0.32)
+                    ],
+                    center: .center,
+                    startRadius: min(geo.size.width, geo.size.height) * 0.18,
+                    endRadius: max(geo.size.width, geo.size.height) * 0.70
+                )
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+                VStack(spacing: 10) {
                     topBar
                         .padding(.horizontal, hPad)
                         .padding(.top, 18)
-                        .padding(.bottom, 14)
 
-                    // ── Target slots ──────────────────────────────────
-                    slotsRow(cardW: cardW, cardH: cardH)
+                    storybookPanel(cardW: cardW, cardH: cardH)
                         .padding(.horizontal, hPad)
 
-                    Spacer(minLength: 10)
+                    Spacer(minLength: 0)
 
-                    // ── Source cards ──────────────────────────────────
-                    sourceRow(cardW: cardW, cardH: cardH)
+                    sourceTray(cardW: cardW, cardH: cardH)
                         .padding(.horizontal, hPad)
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 18)
                 }
 
                 // Floating drag ghost
                 if let cardId = draggingCardId {
                     SequenceCardView(
                         card: event.cards[cardId],
-                        isFlipped: .constant(flippedStates[cardId])
+                        isFlipped: flippedStates[cardId]
                     )
                     .frame(width: cardW, height: cardH)
-                    .scaleEffect(1.07)
                     .shadow(color: .black.opacity(0.45), radius: 20, y: 10)
                     .position(dragPosition)
                     .allowsHitTesting(false)
@@ -261,6 +416,7 @@ struct SequencingActivityView<Reward: View>: View {
                 if checkResult == .incorrect {
                     feedbackBanner
                         .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .allowsHitTesting(false)
                 }
 
                 if showCelebration {
@@ -297,8 +453,6 @@ struct SequencingActivityView<Reward: View>: View {
             .coordinateSpace(name: "gameBoard")
         }
         .ignoresSafeArea()
-        .animation(.spring(response: 0.4, dampingFraction: 0.75), value: checkResult)
-        .animation(.spring(response: 0.35, dampingFraction: 0.8),  value: slotContents.map { $0 ?? -1 })
     }
 
     // MARK: - Card sizing
@@ -306,16 +460,18 @@ struct SequencingActivityView<Reward: View>: View {
     private func computeCardWidth(_ geo: GeometryProxy) -> CGFloat {
         let n         = CGFloat(event.cards.count)
         let totalGaps = cardGap * (n - 1)
-        let maxByW    = (geo.size.width - hPad * 2 - totalGaps) / n
+        let framedHorizontalInset: CGFloat = 112
+        let maxByW    = (geo.size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
 
-        // Also constrain so two rows + top bar fit vertically
-        let topBarH: CGFloat = 60
-        let rowSpacing: CGFloat = 10
-        let vPad: CGFloat = 38
-        let availRowH = (geo.size.height - topBarH - rowSpacing - vPad) / 2
+        // Constrain for the storybook frame, bottom tray, and top controls.
+        let topBarH: CGFloat = 72
+        let storybookChrome: CGFloat = 78
+        let trayChrome: CGFloat = 40
+        let verticalBreathingRoom: CGFloat = 56
+        let availRowH = (geo.size.height - topBarH - storybookChrome - trayChrome - verticalBreathingRoom) / 2
         let maxByH    = availRowH * 9 / 16
 
-        return min(maxByW, maxByH)
+        return max(104, min(maxByW, maxByH))
     }
 
     // MARK: - Top bar
@@ -323,49 +479,221 @@ struct SequencingActivityView<Reward: View>: View {
     private var topBar: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
+                Text(event.bannerTitle)
+                    .font(.system(.caption, design: .rounded))
+                    .fontWeight(.black)
+                    .foregroundColor(Color(red: 1.00, green: 0.83, blue: 0.38))
+                    .textCase(.uppercase)
+                    .shadow(color: .black.opacity(0.45), radius: 3, y: 1)
+
                 Text("Put the story in order")
                     .font(.system(.title3, design: .rounded))
-                    .fontWeight(.bold)
+                    .fontWeight(.black)
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
-                Text("Tap a card to flip it and read the hint, then drag it to the right spot")
-                    .font(.system(.caption, design: .rounded))
-                    .foregroundColor(.white.opacity(0.80))
-                    .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
             }
 
             Spacer()
 
-            Button(action: checkOrder) {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                    Text("Check!")
-                        .fontWeight(.bold)
+            HStack(spacing: 10) {
+                Button(action: flipAllCards) {
+                    toolbarButtonLabel(
+                        title: "Flip All",
+                        systemImage: "arrow.triangle.2.circlepath",
+                        fill: Color(red: 0.42, green: 0.20, blue: 0.48)
+                    )
                 }
-                .font(.system(.headline, design: .rounded))
-                .foregroundColor(.white)
-                .padding(.horizontal, 26)
-                .padding(.vertical, 14)
-                .background(
-                    Capsule()
-                        .fill(allSlotsFilled
-                              ? Color(red: 0.12, green: 0.62, blue: 0.22)
-                              : Color.white.opacity(0.22))
-                        .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
-                )
+                .buttonStyle(.plain)
+                .frame(minWidth: 44, minHeight: 52)
+                .accessibilityLabel("Flip all cards")
+
+                Button(action: checkOrder) {
+                    toolbarButtonLabel(
+                        title: "Check!",
+                        systemImage: "checkmark.circle.fill",
+                        fill: allSlotsFilled
+                            ? Color(red: 0.14, green: 0.54, blue: 0.24)
+                            : Color(red: 0.45, green: 0.39, blue: 0.32).opacity(0.72)
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(!allSlotsFilled)
+                .frame(minWidth: 44, minHeight: 52)
+                .accessibilityLabel("Check your story order")
+                .modifier(ShakeModifier(amount: shakeAmount))
             }
-            .buttonStyle(.plain)
-            .disabled(!allSlotsFilled)
-            .frame(minWidth: 44, minHeight: 52)
-            .accessibilityLabel("Check your story order")
-            .modifier(ShakeModifier(amount: shakeAmount))
         }
+    }
+
+    private func toolbarButtonLabel(title: String, systemImage: String, fill: Color) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: systemImage)
+            Text(title)
+                .fontWeight(.bold)
+        }
+        .font(.system(.headline, design: .rounded))
+        .foregroundColor(.white)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(fill)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.white.opacity(0.36), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.30), radius: 7, y: 4)
+        )
+    }
+
+    // MARK: - Storybook frame
+
+    private func storybookPanel(cardW: CGFloat, cardH: CGFloat) -> some View {
+        ZStack {
+            StorybookPageShape()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 1.00, green: 0.88, blue: 0.55),
+                            Color(red: 0.95, green: 0.74, blue: 0.38),
+                            Color(red: 1.00, green: 0.90, blue: 0.62)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            StorybookPageShape()
+                .stroke(Color(red: 0.23, green: 0.10, blue: 0.06), lineWidth: 12)
+                .shadow(color: .black.opacity(0.42), radius: 16, y: 8)
+
+            StorybookPageShape()
+                .stroke(Color(red: 0.78, green: 0.48, blue: 0.14), lineWidth: 5)
+                .padding(9)
+
+            StorybookPageShape()
+                .stroke(Color.white.opacity(0.32), lineWidth: 2)
+                .padding(18)
+
+            parchmentTexture
+                .clipShape(StorybookPageShape())
+                .padding(18)
+
+            HStack {
+                VineColumn(flipped: false)
+                    .padding(.leading, 18)
+                Spacer()
+                VineColumn(flipped: true)
+                    .padding(.trailing, 18)
+            }
+            .padding(.vertical, 32)
+            .allowsHitTesting(false)
+
+            slotsRow(cardW: cardW, cardH: cardH)
+                .padding(.horizontal, 58)
+                .padding(.top, 42)
+                .padding(.bottom, 34)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: cardH + 82)
+        .accessibilityElement(children: .contain)
+    }
+
+    private var parchmentTexture: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.22),
+                    Color.clear,
+                    Color(red: 0.55, green: 0.31, blue: 0.12).opacity(0.13)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            Image(systemName: "sparkles")
+                .font(.system(size: 42, weight: .light))
+                .foregroundColor(Color(red: 0.70, green: 0.42, blue: 0.15).opacity(0.13))
+                .offset(x: -190, y: -70)
+
+            Image(systemName: "sparkles")
+                .font(.system(size: 34, weight: .light))
+                .foregroundColor(Color(red: 0.70, green: 0.42, blue: 0.15).opacity(0.12))
+                .offset(x: 210, y: 76)
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func sourceTray(cardW: CGFloat, cardH: CGFloat) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 28)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.94, green: 0.70, blue: 0.34),
+                            Color(red: 0.76, green: 0.42, blue: 0.16)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(Color(red: 0.25, green: 0.12, blue: 0.06), lineWidth: 5)
+                )
+                .shadow(color: .black.opacity(0.38), radius: 14, y: 7)
+
+            HStack(spacing: 0) {
+                scrollCap
+                sourceRow(cardW: cardW, cardH: cardH)
+                    .padding(.horizontal, 18)
+                scrollCap
+                    .scaleEffect(x: -1, y: 1)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 15)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: cardH + 42)
+        .accessibilityElement(children: .contain)
+    }
+
+    private var scrollCap: some View {
+        ZStack {
+            Capsule()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 1.00, green: 0.83, blue: 0.48),
+                            Color(red: 0.72, green: 0.38, blue: 0.12)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(width: 34)
+                .overlay(
+                    Capsule()
+                        .stroke(Color(red: 0.32, green: 0.14, blue: 0.07), lineWidth: 3)
+                )
+
+            Circle()
+                .fill(Color(red: 0.39, green: 0.17, blue: 0.08))
+                .frame(width: 14, height: 14)
+                .offset(y: -20)
+            Circle()
+                .fill(Color(red: 0.39, green: 0.17, blue: 0.08))
+                .frame(width: 14, height: 14)
+                .offset(y: 20)
+        }
+        .frame(width: 40)
+        .allowsHitTesting(false)
     }
 
     // MARK: - Slots row (top)
 
     private func slotsRow(cardW: CGFloat, cardH: CGFloat) -> some View {
-        HStack(spacing: cardGap) {
+        LazyHStack(spacing: cardGap) {
             ForEach(0..<event.cards.count, id: \.self) { slot in
                 targetSlot(slot: slot, cardW: cardW, cardH: cardH)
             }
@@ -381,8 +709,11 @@ struct SequencingActivityView<Reward: View>: View {
         ZStack {
             if isDraggingThis {
                 ghostCard(cardW: cardW, cardH: cardH)
-            } else if let id = placedId {
+            }
+
+            if let id = placedId {
                 placedCard(cardId: id, slot: slot, cardW: cardW, cardH: cardH)
+                    .opacity(isDraggingThis ? 0.001 : 1)
             } else {
                 emptySlot(slot: slot, cardW: cardW, cardH: cardH, hovered: isHovered)
             }
@@ -403,36 +734,33 @@ struct SequencingActivityView<Reward: View>: View {
         // Register frame for drop detection
         .background(
             GeometryReader { g in
-                Color.clear.onAppear {
-                    slotFrames[slot] = g.frame(in: .named("gameBoard"))
-                }
+                let frame = g.frame(in: .named("gameBoard"))
+                Color.clear
+                    .onAppear { updateSlotFrame(slot: slot, frame: frame) }
+                    .onChange(of: frame) { _, newFrame in
+                        updateSlotFrame(slot: slot, frame: newFrame)
+                    }
             }
         )
     }
 
-    // Card sitting in a slot: flip on tap, drag to move
+    // Card sitting in a slot: drag to move
     @ViewBuilder
     private func placedCard(cardId: Int, slot: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
-        SequenceCardView(card: event.cards[cardId], isFlipped: $flippedStates[cardId])
+        SequenceCardView(card: event.cards[cardId], isFlipped: flippedStates[cardId])
             .frame(width: cardW, height: cardH)
+            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    toggleCard(cardId)
+                }
+            )
             .overlay(borderOverlay(slot: slot, cardW: cardW, cardH: cardH), alignment: .center)
             .overlay(removeButton(slot: slot), alignment: .topTrailing)
-            .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.35)) {
-                    flippedStates[cardId].toggle()
-                }
-            }
             .gesture(
                 DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
                     .onChanged { val in
-                        if draggingCardId == nil {
-                            draggingCardId  = cardId
-                            dragOriginSlot  = slot
-                        }
-                        dragPosition = val.location
-                        hoveredSlot  = slotFrames.first {
-                            $0.key != slot && $0.value.contains(val.location)
-                        }?.key
+                        updateDrag(cardId: cardId, originSlot: slot, location: val.location)
                     }
                     .onEnded { val in
                         finalizeDrop(at: val.location, originSlot: slot)
@@ -445,12 +773,13 @@ struct SequencingActivityView<Reward: View>: View {
     private func borderOverlay(slot: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
         if checkResult == .incorrect {
             let isCorrectHere = slotContents[slot] == event.correctOrder[slot]
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     isCorrectHere ? Color(red: 0.15, green: 0.75, blue: 0.30) : Color.red,
                     lineWidth: 4
                 )
                 .frame(width: cardW, height: cardH)
+                .allowsHitTesting(false)
         }
     }
 
@@ -475,34 +804,23 @@ struct SequencingActivityView<Reward: View>: View {
 
     // Dashed empty slot
     private func emptySlot(slot: Int, cardW: CGFloat, cardH: CGFloat, hovered: Bool) -> some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(hovered ? Color.white.opacity(0.28) : Color.white.opacity(0.10))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        hovered ? Color.white : Color.white.opacity(0.45),
-                        style: StrokeStyle(lineWidth: hovered ? 3 : 2, dash: [9, 6])
-                    )
-            )
-            .frame(width: cardW, height: cardH)
-            .overlay(
-                VStack(spacing: 6) {
-                    Image(systemName: "arrow.down.to.line")
-                        .font(.system(size: 22))
-                        .foregroundColor(.white.opacity(hovered ? 1.0 : 0.50))
-                }
-            )
-            .animation(.easeInOut(duration: 0.15), value: hovered)
-            .accessibilityLabel("Empty slot \(slot + 1)")
+        let correctCard = event.cards[event.correctOrder[slot]]
+        return EmptySequenceSlotView(
+            description: correctCard.description,
+            slot: slot,
+            cardW: cardW,
+            cardH: cardH,
+            hovered: hovered
+        )
     }
 
     // Semi-transparent ghost while card is being dragged away
     private func ghostCard(cardW: CGFloat, cardH: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(Color.white.opacity(0.10))
+        RoundedRectangle(cornerRadius: 16)
+            .fill(Color.white.opacity(0.12))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(Color.white.opacity(0.25), lineWidth: 2)
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Color.white.opacity(0.30), style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
             )
             .frame(width: cardW, height: cardH)
     }
@@ -510,40 +828,45 @@ struct SequencingActivityView<Reward: View>: View {
     // MARK: - Source row (bottom)
 
     private func sourceRow(cardW: CGFloat, cardH: CGFloat) -> some View {
-        HStack(spacing: cardGap) {
+        let placedCardIds = Set(slotContents.compactMap { $0 })
+
+        return LazyHStack(spacing: cardGap) {
             ForEach(0..<event.cards.count, id: \.self) { position in
                 let cardId    = event.shuffledStart[position]
-                let isPlaced  = slotContents.compactMap { $0 }.contains(cardId)
+                let isPlaced  = placedCardIds.contains(cardId)
                 let isDragged = draggingCardId == cardId && dragOriginSlot == nil
 
-                if isPlaced || isDragged {
+                if isPlaced {
                     ghostCard(cardW: cardW, cardH: cardH)
                 } else {
-                    sourceCard(cardId: cardId, cardW: cardW, cardH: cardH)
+                    ZStack {
+                        if isDragged {
+                            ghostCard(cardW: cardW, cardH: cardH)
+                        }
+
+                        sourceCard(cardId: cardId, cardW: cardW, cardH: cardH)
+                            .opacity(isDragged ? 0.001 : 1)
+                    }
                 }
             }
         }
     }
 
-    // Card in the source deck: flip on tap, drag to place
+    // Card in the source deck: drag to place
     private func sourceCard(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
-        SequenceCardView(card: event.cards[cardId], isFlipped: $flippedStates[cardId])
+        SequenceCardView(card: event.cards[cardId], isFlipped: flippedStates[cardId])
             .frame(width: cardW, height: cardH)
             .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
-            .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.35)) {
-                    flippedStates[cardId].toggle()
+            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    toggleCard(cardId)
                 }
-            }
+            )
             .gesture(
                 DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
                     .onChanged { val in
-                        if draggingCardId == nil {
-                            draggingCardId = cardId
-                            dragOriginSlot = nil
-                        }
-                        dragPosition = val.location
-                        hoveredSlot  = slotFrames.first { $0.value.contains(val.location) }?.key
+                        updateDrag(cardId: cardId, originSlot: nil, location: val.location)
                     }
                     .onEnded { val in
                         finalizeDrop(at: val.location, originSlot: nil)
@@ -553,29 +876,100 @@ struct SequencingActivityView<Reward: View>: View {
 
     // MARK: - Drop logic
 
+    private func flipAllCards() {
+        withAnimation(flipAnimation) {
+            flippedStates = flippedStates.map { !$0 }
+        }
+    }
+
+    private func toggleCard(_ cardId: Int) {
+        guard flippedStates.indices.contains(cardId) else { return }
+        withAnimation(flipAnimation) {
+            flippedStates[cardId].toggle()
+        }
+    }
+
+    private var flipAnimation: Animation {
+        reduceMotion ? .linear(duration: 0.01) : .easeInOut(duration: 0.42)
+    }
+
+    private func updateDrag(cardId: Int, originSlot: Int?, location: CGPoint) {
+        let nextHoveredSlot = slot(at: location, excluding: originSlot)
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+
+        withTransaction(transaction) {
+            if draggingCardId == nil {
+                draggingCardId = cardId
+                dragOriginSlot = originSlot
+                checkResult = nil
+            }
+            dragPosition = location
+            if hoveredSlot != nextHoveredSlot {
+                hoveredSlot = nextHoveredSlot
+            }
+        }
+    }
+
+    private func slot(at location: CGPoint, excluding excludedSlot: Int? = nil) -> Int? {
+        event.cards.indices.first { slot in
+            slot != excludedSlot && slotFrames[slot]?.contains(location) == true
+        }
+    }
+
+    private func updateSlotFrame(slot: Int, frame: CGRect) {
+        guard slotFrames[slot] != frame else { return }
+        slotFrames[slot] = frame
+    }
+
     private func finalizeDrop(at location: CGPoint, originSlot: Int?) {
         defer { clearDragState() }
         guard let cardId = draggingCardId else { return }
 
-        guard let targetSlot = slotFrames.first(where: { $0.value.contains(location) })?.key else {
+        guard let targetSlot = slot(at: location) else {
             // Dropped outside any slot → card returns to its origin (no state change needed)
             return
         }
 
         withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
-            let displaced = slotContents[targetSlot]
+            var nextContents = slotContents
+            let displaced = nextContents[targetSlot]
 
-            slotContents[targetSlot] = cardId
+            nextContents[targetSlot] = cardId
 
             if let origin = originSlot {
                 // Moved from one slot to another: swap displaced card into origin
-                slotContents[origin] = displaced
+                nextContents[origin] = origin == targetSlot ? cardId : displaced
             }
             // If from source deck and target had a card, that card returns to source
-            // (removing it from slotContents is enough — sourceDeck is derived)
+            // (removing it from slotContents is enough because the source row is derived)
 
+            slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
             checkResult = nil
         }
+    }
+
+    private func normalizedSlotContents(_ contents: [Int?], keeping keptCardId: Int, in keptSlot: Int) -> [Int?] {
+        var normalized = contents
+        var seen: Set<Int> = []
+
+        if normalized.indices.contains(keptSlot) {
+            normalized[keptSlot] = keptCardId
+            seen.insert(keptCardId)
+        }
+
+        for index in normalized.indices where index != keptSlot {
+            guard let cardId = normalized[index],
+                  event.cards.indices.contains(cardId),
+                  !seen.contains(cardId) else {
+                normalized[index] = nil
+                continue
+            }
+
+            seen.insert(cardId)
+        }
+
+        return normalized
     }
 
     private func clearDragState() {
@@ -610,8 +1004,18 @@ struct SequencingActivityView<Reward: View>: View {
         } else {
             attemptCount += 1
             AppSettings.hapticError()
+            returnIncorrectCardsToSource()
             UIAccessibility.post(notification: .announcement, argument: feedbackBannerText)
             withAnimation(.linear(duration: 0.5)) { shakeAmount += 1 }
+        }
+    }
+
+    private func returnIncorrectCardsToSource() {
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
+            slotContents = slotContents.enumerated().map { slot, cardId in
+                cardId == event.correctOrder[slot] ? cardId : nil
+            }
+            clearDragState()
         }
     }
 
@@ -639,6 +1043,7 @@ struct SequencingActivityView<Reward: View>: View {
                 .padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity)
+        .allowsHitTesting(false)
         .accessibilityLabel(feedbackBannerText)
     }
 }

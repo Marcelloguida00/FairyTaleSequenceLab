@@ -52,6 +52,9 @@ struct RootView: View {
                 .zIndex(60)
             }
         }
+        .onAppear {
+            BackgroundMusicPlayer.shared.start()
+        }
     }
 
     /// Play: sipario già presente → si apre (0.8s) → gioco.
