@@ -22,7 +22,8 @@ final class BackgroundMusicPlayer {
     }
 
     private func preparePlayer() {
-        guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension) else {
+        guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension)
+                ?? Bundle.main.url(forResource: resourceName, withExtension: resourceExtension, subdirectory: "Resources/Audio") else {
             assertionFailure("Missing background music resource: \(resourceName).\(resourceExtension)")
             return
         }

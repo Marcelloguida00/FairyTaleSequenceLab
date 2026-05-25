@@ -23,7 +23,8 @@ struct EventData: Codable, Sendable {
 
 enum EventLoader {
     static let all: [EventData] = {
-        guard let url = Bundle.main.url(forResource: "events", withExtension: "json"),
+        guard let url = Bundle.main.url(forResource: "events", withExtension: "json")
+                ?? Bundle.main.url(forResource: "events", withExtension: "json", subdirectory: "Resources/Data"),
               let data = try? Data(contentsOf: url),
               let events = try? JSONDecoder().decode([EventData].self, from: data) else {
             return []
