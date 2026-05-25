@@ -76,6 +76,17 @@ struct ContentView: View {
                         }
                     }
 
+                    if activeMap == .main {
+                        ForEach(MapGraph.baseWaypoints, id: \.id) { wp in
+                            MainMapIslandDot(
+                                size: dotSize(for: mapSize),
+                                isPulsing: wp.id == MapGraph.redRidingHoodBaseID
+                            )
+                            .position(wp.point.scaled(to: mapSize))
+                            .allowsHitTesting(false)
+                        }
+                    }
+
                     AvatarWithMarker(
                         direction: avatarDirection,
                         frame: isWalking ? currentFrame : 0,
@@ -111,9 +122,22 @@ struct ContentView: View {
                         .transition(.scale(scale: 0.75).combined(with: .opacity))
                     }
 
-                    if activeMap == .main, !isWalking, let region = MapGraph.storyRegion(for: currentBaseID) {
+                    if activeMap == .main, !isWalking,
+                       let region = MapGraph.storyRegion(for: currentBaseID),
+                       !MapGraph.comingSoonBaseIDs.contains(currentBaseID) {
                         StoryRegionPlaque(
                             title: region.title,
+                            width: titleWidth(for: mapSize),
+                            fontSize: titleFontSize(for: mapSize)
+                        )
+                        .position(region.titlePoint.scaled(to: mapSize))
+                        .transition(.scale(scale: 0.92).combined(with: .opacity))
+                    }
+
+                    if activeMap == .main, !isWalking,
+                       MapGraph.comingSoonBaseIDs.contains(currentBaseID),
+                       let region = MapGraph.storyRegion(for: currentBaseID) {
+                        ComingSoonBadge(
                             width: titleWidth(for: mapSize),
                             fontSize: titleFontSize(for: mapSize)
                         )
@@ -270,7 +294,8 @@ struct ContentView: View {
     }
 
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
-        min(mapSize.width, mapSize.height) * 0.11
+        let multiplier: CGFloat = activeMap == .redHood ? 0.18 : 0.11
+        return min(mapSize.width, mapSize.height) * multiplier
     }
 
     private func titleWidth(for mapSize: CGSize) -> CGFloat {
@@ -589,6 +614,36 @@ private struct StoryRegionPlaque: View {
     }
 }
 
+private struct ComingSoonBadge: View {
+    let width: CGFloat
+    let fontSize: CGFloat
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: "clock.fill")
+                .font(.system(size: fontSize * 0.85))
+                .foregroundStyle(Color(red: 0.72, green: 0.38, blue: 0.04))
+            Text("Coming Soon")
+                .font(.system(size: fontSize, weight: .semibold, design: .serif))
+                .italic()
+                .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 9)
+        .frame(width: width)
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(red: 0.97, green: 0.86, blue: 0.58).opacity(0.94))
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color(red: 0.55, green: 0.31, blue: 0.09), lineWidth: 2)
+            }
+        }
+        .shadow(color: .black.opacity(0.22), radius: 7, x: 0, y: 4)
+    }
+}
+
 private struct RedHoodPlayButton: View {
     let action: () -> Void
 
@@ -692,6 +747,43 @@ private struct WaypointDot: View {
     }
 
     private var nextColor: Color { Color(red: 0.98, green: 0.58, blue: 0.08) }
+}
+
+private struct MainMapIslandDot: View {
+    let size: CGFloat
+    let isPulsing: Bool
+
+    @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private let dotColor = Color(red: 0.98, green: 0.58, blue: 0.08)
+    private let borderColor = Color(red: 0.82, green: 0.38, blue: 0.04)
+
+    var body: some View {
+        ZStack {
+            if isPulsing {
+                Circle()
+                    .fill(dotColor.opacity(0.30))
+                    .frame(width: size * (pulse ? 1.8 : 1.2), height: size * (pulse ? 1.8 : 1.2))
+            }
+
+            Circle()
+                .fill(dotColor)
+                .overlay(Circle().stroke(borderColor, lineWidth: max(1.5, size * 0.08)))
+                .shadow(color: .black.opacity(0.30), radius: 4, y: 2)
+                .frame(width: size, height: size)
+
+            Circle()
+                .fill(Color.white.opacity(0.75))
+                .frame(width: size * 0.32, height: size * 0.32)
+        }
+        .onAppear {
+            guard isPulsing, !reduceMotion else { return }
+            withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                pulse = true
+            }
+        }
+    }
 }
 
 private struct LevelStartButton: View {
@@ -869,6 +961,7 @@ private enum MapGraph {
     static let redRidingHoodPlayPoint = CGPoint(x: 0.210, y: 0.420)
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let baseIDs: Set<Int> = [0, 7, 14, 18, 22]
+    static let comingSoonBaseIDs: Set<Int> = [7, 14, 18, 22]
     static let baseTapRadius: CGFloat = 0.055
 
     static let storyRegions: [StoryRegion] = [
