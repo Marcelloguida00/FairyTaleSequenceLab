@@ -318,7 +318,7 @@ struct ContentView: View {
     private func dotState(for waypointId: Int) -> WaypointDot.DotState {
         if completedRedHoodLevels.contains(waypointId) { return .completed }
         let next = completedRedHoodLevels.count
-        return (waypointId == next && waypointId <= EventLoader.all.count) ? .next : .locked
+        return (waypointId == next && waypointId <= EventLoader.maxEventId) ? .next : .locked
     }
 
     private var shouldShowRedHoodPlayButton: Bool {
@@ -373,7 +373,7 @@ struct ContentView: View {
 
         if target.id == start.id {
             let next = completedRedHoodLevels.count
-            if target.id == next, next <= EventLoader.all.count {
+            if target.id == next, next <= EventLoader.maxEventId {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
                 }
@@ -382,7 +382,7 @@ struct ContentView: View {
         }
 
         let nextUnlocked = completedRedHoodLevels.count
-        guard target.id == nextUnlocked, nextUnlocked <= EventLoader.all.count else { return }
+        guard target.id == nextUnlocked, nextUnlocked <= EventLoader.maxEventId else { return }
 
         guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
 

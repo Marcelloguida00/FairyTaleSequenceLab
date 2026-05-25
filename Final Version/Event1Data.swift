@@ -34,4 +34,9 @@ enum EventLoader {
     static func event(id: Int) -> EventData? {
         all.first { $0.id == id }
     }
+
+    // Highest playable level id. Falls back to 2 when events.json is not in the bundle.
+    static var maxEventId: Int {
+        all.map(\.id).max() ?? 2
+    }
 }
