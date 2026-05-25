@@ -18,7 +18,7 @@ struct RewardView: View {
         switch attemptCount {
         case 0: return "Perfect! You got it on the first try!"
         case 1: return "Well done! You figured it out!"
-        default: return "You did it! Keep practicing to improve!"
+        default: return "You did it! Every try made you stronger!"
         }
     }
 

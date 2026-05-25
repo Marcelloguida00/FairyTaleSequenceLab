@@ -207,9 +207,9 @@ struct SequencingActivityView<Reward: View>: View {
     // ABA: mascot message escalates with each failed attempt (Least-to-Most prompting)
     private var mascotMessage: String {
         guard attemptCount > 0 else {
-            return "Drag the cards into the right order. Reveal the backs if you need clues, then tap Check!"
+            return "Let's put the story back together! Drag the cards into the right order, then tap Check!"
         }
-        return contextualHint(level: attemptCount)
+        return "Good try! \(contextualHint(level: attemptCount))"
     }
 
     var body: some View {
@@ -562,9 +562,9 @@ struct SequencingActivityView<Reward: View>: View {
 
     // MARK: - Feedback banner
 
-    // ABA: feedback banner uses the same dynamic hint as the mascot
+    // ABA: feedback banner softens the correction with a warm acknowledgment first
     private var feedbackBannerText: String {
-        contextualHint(level: attemptCount)
+        "Good try! \(contextualHint(level: attemptCount))"
     }
 
     @ViewBuilder
