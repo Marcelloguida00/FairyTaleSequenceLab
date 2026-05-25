@@ -260,6 +260,9 @@ struct CloudTransitionOverlay: View {
 // MARK: - Scene transition driver
 
 enum CloudTransitionAnimator {
+    /// Apertura sipario dal Main Menu (solo uscita nuvole).
+    static let playOpenDuration: TimeInterval = 0.8
+
     // Timeline (totale ~2.55s):
     // 0.0s        → overlay attivo
     // 0.0–1.05s   → nuvole entrano e coprono (più lento)
@@ -272,6 +275,45 @@ enum CloudTransitionAnimator {
     static let holdAfterSceneChange: TimeInterval = 0.35
     static let exitDuration: TimeInterval = 1.15
     static let totalDuration: TimeInterval = enterDuration + holdAfterSceneChange + exitDuration
+
+    /// Main Menu → gioco: nuvole già visibili, solo apertura + fade.
+    @MainActor
+    static func runCurtainOpen(
+        exitProgress: Binding<CGFloat>,
+        duration: TimeInterval = playOpenDuration,
+        whenOpen: () async -> Void
+    ) async {
+        exitProgress.wrappedValue = 0
+
+        withAnimation(.easeInOut(duration: duration)) {
+            exitProgress.wrappedValue = 1
+        }
+        try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+
+        await whenOpen()
+    }
+
+    /// Copre la scena con le nuvole e poi rimuove l’overlay senza animazione di uscita.
+    /// Usato per tornare al main menu (evita la doppia transizione entrata + uscita).
+    @MainActor
+    static func runCoverTransition(
+        isActive: Binding<Bool>,
+        enterProgress: Binding<CGFloat>,
+        whenCovered: () async -> Void
+    ) async {
+        isActive.wrappedValue = true
+        enterProgress.wrappedValue = 0
+
+        withAnimation(.easeInOut(duration: enterDuration)) {
+            enterProgress.wrappedValue = 1
+        }
+        try? await Task.sleep(nanoseconds: UInt64(enterDuration * 1_000_000_000))
+
+        await whenCovered()
+
+        enterProgress.wrappedValue = 0
+        isActive.wrappedValue = false
+    }
 
     @MainActor
     static func runSceneTransition(

@@ -1,135 +1,310 @@
 import SwiftUI
 
-struct MainMenuView: View {
-    let onPlay: () -> Void
+private let menuPanelAspectRatio: CGFloat = 681.0 / 1024.0
 
-    private static let imageAspectRatio: CGFloat = 1024.0 / 768.0
+// MARK: - Sfondo menu (mappa + sipario nuvole)
 
-    @State private var imageOpacity: Double = 0
-    @State private var showControls = false
-    @State private var isStarting = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+struct MainMenuSceneView: View {
+    @Binding var cloudEnterProgress: CGFloat
+    @Binding var cloudExitProgress: CGFloat
 
     var body: some View {
-        GeometryReader { proxy in
-            let imageSize = fittedImageSize(in: proxy.size)
+        ZStack {
+            WorldMapBackgroundView()
 
-            ZStack {
-                Color(red: 0.10, green: 0.55, blue: 0.78)
-                    .ignoresSafeArea()
-
-                Image("world_of_fable_menu")
-                    .resizable()
-                    .interpolation(.high)
-                    .scaledToFill()
-                    .frame(width: imageSize.width, height: imageSize.height)
-                    .clipped()
-                    .opacity(imageOpacity)
-                    .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
-                    .accessibilityHidden(true)
-
-                if showControls {
-                    VStack(spacing: 28) {
-                        Text("World of Fable")
-                            .font(.system(.largeTitle, design: .serif))
-                            .fontWeight(.bold)
-                            .italic()
-                            .foregroundStyle(.white)
-                            .multilineTextAlignment(.center)
-                            .shadow(color: .black.opacity(0.55), radius: 8, y: 3)
-                            .accessibilityAddTraits(.isHeader)
-
-                        Button(action: startGame) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "play.fill")
-                                    .font(.title2.weight(.bold))
-                                Text("Play")
-                                    .font(.system(.title2, design: .rounded))
-                                    .fontWeight(.bold)
-                            }
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 48)
-                            .padding(.vertical, 18)
-                            .frame(minWidth: 200, minHeight: 64)
-                            .background(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [
-                                                Color(red: 0.98, green: 0.20, blue: 0.18),
-                                                Color(red: 0.72, green: 0.04, blue: 0.08)
-                                            ],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
-                                    .shadow(color: .black.opacity(0.35), radius: 10, y: 5)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .stroke(.white.opacity(0.85), lineWidth: 3)
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(isStarting)
-                        .opacity(isStarting ? 0.6 : 1)
-                        .accessibilityLabel("Play World of Fable")
-                        .accessibilityHint("Starts the adventure and clears the clouds")
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
-                }
-            }
+            CloudTransitionOverlay(
+                enterProgress: cloudEnterProgress,
+                exitProgress: cloudExitProgress
+            )
+            .allowsHitTesting(false)
         }
         .ignoresSafeArea()
+    }
+}
+
+// MARK: - Pannello sopra le nuvole (dissolvenza + Play)
+
+struct MainMenuPanelLayer: View {
+    let isTransitioning: Bool
+    let resetID: Int
+    let onPlay: () -> Void
+
+    @State private var panelOpacity: Double = 0
+    @State private var panelScale: CGFloat = 1.04
+    @State private var isPanelDissolving = false
+    @State private var didRevealPanel = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private static let panelFadeDuration: TimeInterval = 0.30
+
+    var body: some View {
+        MenuPanelView(
+            isDisabled: isTransitioning || isPanelDissolving,
+            onPlay: startGame
+        )
+        .opacity(panelOpacity)
+        .scaleEffect(panelScale)
+        .allowsHitTesting(panelOpacity > 0.5 && !isTransitioning && !isPanelDissolving)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
+        .id(resetID)
         .onAppear {
-            revealMenu()
+            tryRevealPanel()
         }
     }
 
-    private func fittedImageSize(in container: CGSize) -> CGSize {
-        let containerAspectRatio = container.width / container.height
-
-        if containerAspectRatio > Self.imageAspectRatio {
-            let height = container.height
-            return CGSize(width: height * Self.imageAspectRatio, height: height)
-        }
-
-        let width = container.width
-        return CGSize(width: width, height: width / Self.imageAspectRatio)
+    private func tryRevealPanel() {
+        guard !didRevealPanel else { return }
+        didRevealPanel = true
+        revealPanel()
     }
 
-    private func revealMenu() {
+    private func revealPanel() {
+        isPanelDissolving = false
+
         if reduceMotion {
-            imageOpacity = 1
-            showControls = true
+            panelOpacity = 1
+            panelScale = 1
             return
         }
 
-        withAnimation(.easeOut(duration: 0.9)) {
-            imageOpacity = 1
-        }
+        panelOpacity = 0
+        panelScale = 1.04
 
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.85))
-            withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) {
-                showControls = true
-            }
+        withAnimation(.easeOut(duration: Self.panelFadeDuration)) {
+            panelOpacity = 1
+            panelScale = 1
         }
     }
 
     private func startGame() {
-        guard !isStarting else { return }
-        isStarting = true
+        guard !isTransitioning, !isPanelDissolving else { return }
+        isPanelDissolving = true
         AppSettings.hapticImpact(.medium)
 
-        withAnimation(.easeOut(duration: 0.25)) {
-            showControls = false
+        if reduceMotion {
+            panelOpacity = 0
+            panelScale = 1
+            onPlay()
+            return
+        }
+
+        withAnimation(.easeOut(duration: Self.panelFadeDuration)) {
+            panelOpacity = 0
+            panelScale = 1.04
         }
 
         Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(280))
+            try? await Task.sleep(nanoseconds: UInt64(Self.panelFadeDuration * 1_000_000_000))
             onPlay()
         }
+    }
+}
+
+// MARK: - Anteprima (sfondo + pannello)
+
+struct MainMenuView: View {
+    @Binding var cloudEnterProgress: CGFloat
+    @Binding var cloudExitProgress: CGFloat
+    let isTransitioning: Bool
+    let onPlay: () -> Void
+
+    var body: some View {
+        ZStack {
+            MainMenuSceneView(
+                cloudEnterProgress: $cloudEnterProgress,
+                cloudExitProgress: $cloudExitProgress
+            )
+
+            MainMenuPanelLayer(
+                isTransitioning: isTransitioning,
+                resetID: 0,
+                onPlay: onPlay
+            )
+        }
+    }
+}
+
+// MARK: - Pannello centrale (cornice + titolo + Play)
+
+private struct MenuPanelView: View {
+    let isDisabled: Bool
+    let onPlay: () -> Void
+
+    var body: some View {
+        GeometryReader { proxy in
+            let panelSize = fittedPanelSize(in: proxy.size)
+
+            ZStack {
+                Image("bordomenu")
+                    .renderingMode(.original)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
+                    .frame(width: panelSize.width, height: panelSize.height)
+                    .shadow(color: .black.opacity(0.35), radius: 16, y: 8)
+                    .accessibilityHidden(true)
+
+                VStack(spacing: panelSize.height * 0.04) {
+                    MenuTitleView(panelWidth: panelSize.width)
+
+                    Spacer(minLength: panelSize.height * 0.02)
+
+                    MenuPlayButton(
+                        width: panelSize.width * 0.52,
+                        isDisabled: isDisabled,
+                        action: onPlay
+                    )
+
+                    Spacer(minLength: panelSize.height * 0.06)
+                }
+                .padding(.horizontal, panelSize.width * 0.14)
+                .padding(.top, panelSize.height * 0.14)
+                .padding(.bottom, panelSize.height * 0.12)
+                .frame(width: panelSize.width, height: panelSize.height)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    private func fittedPanelSize(in container: CGSize) -> CGSize {
+        let maxHeight = container.height * 0.82
+        let maxWidth = container.width * 0.42
+        var height = maxHeight
+        var width = height * menuPanelAspectRatio
+
+        if width > maxWidth {
+            width = maxWidth
+            height = width / menuPanelAspectRatio
+        }
+
+        return CGSize(width: width, height: height)
+    }
+}
+
+// MARK: - Titolo “World of Fables”
+
+private struct MenuTitleView: View {
+    let panelWidth: CGFloat
+
+    private var titleGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 1.0, green: 0.92, blue: 0.35),
+                Color(red: 0.98, green: 0.62, blue: 0.12)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    var body: some View {
+        VStack(spacing: panelWidth * 0.012) {
+            titleLine("World", size: panelWidth * 0.13)
+            ofRow
+            titleLine("Fables", size: panelWidth * 0.13)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel("World of Fables")
+    }
+
+    private var ofRow: some View {
+        HStack(spacing: panelWidth * 0.03) {
+            goldFlourish
+            Text("of")
+                .font(.system(size: panelWidth * 0.055, weight: .bold, design: .serif))
+                .foregroundStyle(titleGradient)
+                .shadow(color: outlineColor, radius: 0, x: 1, y: 1)
+                .shadow(color: outlineColor, radius: 0, x: -1, y: -1)
+            goldFlourish
+        }
+    }
+
+    private var goldFlourish: some View {
+        Capsule()
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.75, green: 0.52, blue: 0.10),
+                        Color(red: 0.95, green: 0.78, blue: 0.28)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .frame(width: panelWidth * 0.10, height: max(2, panelWidth * 0.008))
+    }
+
+    private var outlineColor: Color {
+        Color(red: 0.35, green: 0.20, blue: 0.06)
+    }
+
+    @ViewBuilder
+    private func titleLine(_ text: String, size: CGFloat) -> some View {
+        ZStack {
+            Text(text)
+                .font(.system(size: size, weight: .black, design: .serif))
+                .foregroundStyle(outlineColor)
+                .offset(x: 1.5, y: 1.5)
+
+            Text(text)
+                .font(.system(size: size, weight: .black, design: .serif))
+                .foregroundStyle(titleGradient)
+        }
+    }
+}
+
+// MARK: - Bottone Play
+
+private struct MenuPlayButton: View {
+    let width: CGFloat
+    let isDisabled: Bool
+    let action: () -> Void
+
+    private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
+    private let green = Color(red: 0.18, green: 0.52, blue: 0.28)
+
+    var body: some View {
+        Button(action: action) {
+            Text("PLAY")
+                .font(.system(size: width * 0.14, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .tracking(1.2)
+                .frame(width: width, height: width * 0.36)
+                .background(
+                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.22, green: 0.58, blue: 0.32),
+                                    green
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 1.0, green: 0.88, blue: 0.45),
+                                    gold
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: max(4, width * 0.04)
+                        )
+                )
+                .shadow(color: .black.opacity(0.30), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.55 : 1)
+        .accessibilityLabel("Play")
+        .accessibilityHint("Opens the cloud curtain and starts the adventure")
     }
 }

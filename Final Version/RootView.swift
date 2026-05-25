@@ -2,11 +2,14 @@ import SwiftUI
 
 struct RootView: View {
     @State private var gameStarted = false
+    @State private var menuCloudEnterProgress: CGFloat = 1
+    @State private var menuCloudExitProgress: CGFloat = 0
     @State private var cloudEnterProgress: CGFloat = 0
     @State private var cloudExitProgress: CGFloat = 0
     @State private var isTransitioning = false
+    @State private var menuPanelResetID = 0
 
-    private var showsCloudOverlay: Bool {
+    private var showsGlobalCloudOverlay: Bool {
         isTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01
     }
 
@@ -22,46 +25,70 @@ struct RootView: View {
             }
 
             if !gameStarted {
-                MainMenuView {
-                    Task { await beginGame() }
-                }
+                MainMenuSceneView(
+                    cloudEnterProgress: $menuCloudEnterProgress,
+                    cloudExitProgress: $menuCloudExitProgress
+                )
             }
 
-            if showsCloudOverlay {
+            if showsGlobalCloudOverlay {
                 CloudTransitionOverlay(
                     enterProgress: cloudEnterProgress,
                     exitProgress: cloudExitProgress
                 )
                 .ignoresSafeArea()
                 .allowsHitTesting(isTransitioning)
-                .zIndex(100)
+                .zIndex(50)
+            }
+
+            if !gameStarted {
+                MainMenuPanelLayer(
+                    isTransitioning: isTransitioning,
+                    resetID: menuPanelResetID,
+                    onPlay: {
+                        Task { await beginGame() }
+                    }
+                )
+                .zIndex(60)
             }
         }
     }
 
+    /// Play: sipario già presente → si apre (0.8s) → gioco.
     @MainActor
     private func beginGame() async {
         guard !isTransitioning else { return }
+        isTransitioning = true
+        menuCloudEnterProgress = 1
+        menuCloudExitProgress = 0
 
-        await CloudTransitionAnimator.runSceneTransition(
-            isActive: $isTransitioning,
-            enterProgress: $cloudEnterProgress,
-            exitProgress: $cloudExitProgress
+        await CloudTransitionAnimator.runCurtainOpen(
+            exitProgress: $menuCloudExitProgress,
+            duration: CloudTransitionAnimator.playOpenDuration
         ) {
             gameStarted = true
         }
+
+        menuCloudExitProgress = 0
+        isTransitioning = false
     }
 
+    /// Menu: nuvole coprono il gioco → passaggio al menu (senza seconda ondata di uscita).
     @MainActor
     private func returnToMainMenu() async {
         guard !isTransitioning, gameStarted else { return }
 
-        await CloudTransitionAnimator.runSceneTransition(
+        isTransitioning = true
+        menuCloudExitProgress = 0
+
+        await CloudTransitionAnimator.runCoverTransition(
             isActive: $isTransitioning,
             enterProgress: $cloudEnterProgress,
-            exitProgress: $cloudExitProgress
-        ) {
-            gameStarted = false
-        }
+            whenCovered: {
+                menuCloudEnterProgress = 1
+                menuPanelResetID += 1
+                gameStarted = false
+            }
+        )
     }
 }
