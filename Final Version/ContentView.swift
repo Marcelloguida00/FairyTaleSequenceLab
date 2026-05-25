@@ -10,7 +10,7 @@ private enum ActiveMap {
         case .main:
             return "mappa"
         case .redHood:
-            return "redhood_map"
+            return "redhoodisle-2"
         }
     }
 
@@ -28,7 +28,7 @@ private enum ActiveMap {
         case .main:
             return nil
         case .redHood:
-            return "Background"
+            return "Finalmente"
         }
     }
 }
@@ -41,9 +41,12 @@ struct ContentView: View {
     @State private var currentFrame = 0
     @State private var isWalking = false
     @State private var markerIsRaised = false
-    @State private var didPlayOpeningWalk = false
     @State private var isMapTransitioning = false
     @State private var cloudCoverProgress: CGFloat = 0
+    @State private var completedRedHoodLevels: Set<Int> = []
+    @State private var activeRedHoodLevel: Int? = nil
+    @State private var pendingRedHoodLevel: Int? = nil
+    @State private var levelBannerLevel: Int? = nil
 
     private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
@@ -78,6 +81,30 @@ struct ContentView: View {
                             .interpolation(.high)
                             .frame(width: mapSize.width, height: mapSize.height)
                             .allowsHitTesting(false)
+                    }
+
+                    if activeMap == .redHood {
+                        ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
+                            WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
+                                .position(wp.point.scaled(to: mapSize))
+                                .allowsHitTesting(false)
+                        }
+
+                        if let level = pendingRedHoodLevel, let wp = RedHoodMapGraph.waypoint(id: level) {
+                            LevelStartButton {
+                                let l = level
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    pendingRedHoodLevel = nil
+                                    levelBannerLevel = l
+                                }
+                            }
+                            .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
+                            .position(CGPoint(
+                                x: wp.point.x * mapSize.width,
+                                y: wp.point.y * mapSize.height - dotSize(for: mapSize) * 2.8
+                            ))
+                            .transition(.scale(scale: 0.75).combined(with: .opacity))
+                        }
                     }
 
                     if activeMap == .main, !isWalking, let region = MapGraph.storyRegion(for: currentBaseID) {
@@ -116,6 +143,50 @@ struct ContentView: View {
                         .ignoresSafeArea()
                         .allowsHitTesting(true)
                 }
+
+                if let level = activeRedHoodLevel {
+                    levelView(for: level)
+                        .ignoresSafeArea()
+                        .zIndex(20)
+                        .transition(.asymmetric(
+                            insertion: .scale(scale: 0.94).combined(with: .opacity),
+                            removal: .scale(scale: 0.92).combined(with: .opacity)
+                        ))
+                }
+
+                if let bannerLevel = levelBannerLevel {
+                    LevelStartBanner(title: levelBannerTitle(for: bannerLevel)) {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                            levelBannerLevel = nil
+                            activeRedHoodLevel = bannerLevel
+                        }
+                    }
+                    .ignoresSafeArea()
+                    .zIndex(25)
+                    .transition(.opacity)
+                }
+
+                if activeMap == .redHood {
+                    BackButton { handleBackButton() }
+                        .padding(.top, 52)
+                        .padding(.leading, 20)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .zIndex(30)
+                        .transition(.opacity)
+                }
+
+                #if DEBUG
+                Button("Reset") { resetProgress() }
+                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.red.opacity(0.80)))
+                    .padding(.top, 52)
+                    .padding(.trailing, 20)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .zIndex(35)
+                #endif
             }
         }
         .onReceive(spriteTimer) { _ in
@@ -131,9 +202,39 @@ struct ContentView: View {
                 markerIsRaised = true
             }
 
-            playOpeningWalkIfNeeded()
+            completedRedHoodLevels = Set(
+                UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+            )
+
+            if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
+               MapGraph.baseIDs.contains(savedID),
+               let wp = MapGraph.waypoint(id: savedID) {
+                currentBaseID = savedID
+                avatarPosition = wp.point
+            }
+
+        }
+        .onChange(of: completedRedHoodLevels) {
+            UserDefaults.standard.set(Array(completedRedHoodLevels), forKey: "completedRedHoodLevels")
+        }
+        .onChange(of: currentBaseID) {
+            if MapGraph.baseIDs.contains(currentBaseID) {
+                UserDefaults.standard.set(currentBaseID, forKey: "currentBaseID")
+            }
         }
     }
+
+    #if DEBUG
+    private func resetProgress() {
+        completedRedHoodLevels = []
+        currentBaseID = MapGraph.openingStartID
+        avatarPosition = MapGraph.initialWaypoint.point
+        avatarDirection = .down
+        activeMap = .main
+        UserDefaults.standard.removeObject(forKey: "completedRedHoodLevels")
+        UserDefaults.standard.removeObject(forKey: "currentBaseID")
+    }
+    #endif
 
     private func fittedMapSize(in container: CGSize) -> CGSize {
         let containerAspectRatio = container.width / container.height
@@ -149,7 +250,7 @@ struct ContentView: View {
     }
 
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
-        min(mapSize.width, mapSize.height) * 0.085
+        min(mapSize.width, mapSize.height) * 0.11
     }
 
     private func titleWidth(for mapSize: CGSize) -> CGFloat {
@@ -162,6 +263,62 @@ struct ContentView: View {
 
     private func playButtonSize(for mapSize: CGSize) -> CGFloat {
         min(82, max(54, mapSize.width * 0.07))
+    }
+
+    private func handleBackButton() {
+        if activeRedHoodLevel != nil {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                activeRedHoodLevel = nil
+                levelBannerLevel = nil
+                pendingRedHoodLevel = nil
+            }
+        } else if pendingRedHoodLevel != nil {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                pendingRedHoodLevel = nil
+            }
+        } else if activeMap == .redHood {
+            Task { await closeRedHoodSubMap() }
+        }
+    }
+
+    @MainActor
+    private func closeRedHoodSubMap() async {
+        guard !isWalking, !isMapTransitioning else { return }
+
+        isMapTransitioning = true
+
+        withAnimation(.easeInOut(duration: 0.75)) { cloudCoverProgress = 1 }
+        try? await Task.sleep(nanoseconds: 780_000_000)
+
+        activeMap = .main
+        pendingRedHoodLevel = nil
+        activeRedHoodLevel = nil
+        levelBannerLevel = nil
+        avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point ?? MapGraph.initialWaypoint.point
+        currentBaseID = MapGraph.redRidingHoodBaseID
+        avatarDirection = .down
+        currentFrame = 0
+
+        try? await Task.sleep(nanoseconds: 180_000_000)
+        withAnimation(.easeInOut(duration: 0.75)) { cloudCoverProgress = 0 }
+        try? await Task.sleep(nanoseconds: 760_000_000)
+
+        isMapTransitioning = false
+    }
+
+    private func levelBannerTitle(for level: Int) -> String {
+        if level == 0 { return "Adventure Begins!" }
+        return EventLoader.event(id: level)?.bannerTitle ?? "New Scene"
+    }
+
+    private func dotSize(for mapSize: CGSize) -> CGFloat {
+        min(mapSize.width, mapSize.height) * 0.055
+    }
+
+    private func dotState(for waypointId: Int) -> WaypointDot.DotState {
+        if completedRedHoodLevels.contains(waypointId) { return .completed }
+        let next = completedRedHoodLevels.count
+        return (waypointId == next && waypointId <= EventLoader.all.count) ? .next : .locked
     }
 
     private var shouldShowRedHoodPlayButton: Bool {
@@ -210,41 +367,49 @@ struct ContentView: View {
     }
 
     private func handleRedHoodMapTap(_ normalizedTap: CGPoint) {
-        guard let start = RedHoodMapGraph.waypoint(id: currentBaseID) else {
-            return
-        }
-
-        guard let target = RedHoodMapGraph.waypointHit(by: normalizedTap) else {
-            return
-        }
+        guard activeRedHoodLevel == nil, pendingRedHoodLevel == nil else { return }
+        guard let start = RedHoodMapGraph.waypoint(id: currentBaseID) else { return }
+        guard let target = RedHoodMapGraph.waypointHit(by: normalizedTap) else { return }
 
         if target.id == start.id {
+            let next = completedRedHoodLevels.count
+            if target.id == next, next <= EventLoader.all.count {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
+            }
             return
         }
 
-        guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else {
-            return
-        }
+        let nextUnlocked = completedRedHoodLevels.count
+        guard target.id == nextUnlocked, nextUnlocked <= EventLoader.all.count else { return }
+
+        guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
 
         Task {
             await walk(route)
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                pendingRedHoodLevel = target.id
+            }
         }
     }
 
-    private func playOpeningWalkIfNeeded() {
-        guard !didPlayOpeningWalk else { return }
-
-        didPlayOpeningWalk = true
-
-        guard let route = MapGraph.shortestPath(
-            from: MapGraph.openingStartID,
-            to: MapGraph.redRidingHoodBaseID
-        ) else {
-            return
-        }
-
-        Task {
-            await walk(route)
+    @ViewBuilder
+    private func levelView(for level: Int) -> some View {
+        if level == 0 {
+            RedHoodLevel0View {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    completedRedHoodLevels.insert(0)
+                    activeRedHoodLevel = nil
+                }
+            }
+        } else if let eventData = EventLoader.event(id: level) {
+            EventFlowView(eventData: eventData) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    completedRedHoodLevels.insert(level)
+                    activeRedHoodLevel = nil
+                }
+            }
         }
     }
 
@@ -424,6 +589,179 @@ private struct RedHoodPlayButton: View {
             .accessibilityLabel("Play Little Red Riding Hood")
         }
         .buttonStyle(.plain)
+    }
+}
+
+private struct WaypointDot: View {
+    enum DotState { case completed, next, locked }
+
+    let state: DotState
+    let size: CGFloat
+
+    @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        ZStack {
+            if state == .next {
+                Circle()
+                    .fill(nextColor.opacity(0.30))
+                    .frame(width: size * (pulse ? 1.8 : 1.2), height: size * (pulse ? 1.8 : 1.2))
+            }
+
+            Circle()
+                .fill(fillColor)
+                .overlay(Circle().stroke(borderColor, lineWidth: max(1.5, size * 0.08)))
+                .shadow(color: .black.opacity(0.30), radius: 4, y: 2)
+                .frame(width: size, height: size)
+
+            icon
+                .frame(width: size, height: size)
+        }
+        .onAppear {
+            guard state == .next, !reduceMotion else { return }
+            withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                pulse = true
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var icon: some View {
+        switch state {
+        case .completed:
+            Image(systemName: "checkmark")
+                .font(.system(size: size * 0.46, weight: .bold))
+                .foregroundColor(.white)
+        case .next:
+            Circle()
+                .fill(Color.white.opacity(0.75))
+                .frame(width: size * 0.32, height: size * 0.32)
+        case .locked:
+            Image(systemName: "lock.fill")
+                .font(.system(size: size * 0.38))
+                .foregroundColor(.white.opacity(0.85))
+        }
+    }
+
+    private var fillColor: Color {
+        switch state {
+        case .completed: return Color(red: 0.18, green: 0.72, blue: 0.28)
+        case .next:      return nextColor
+        case .locked:    return Color(red: 0.48, green: 0.48, blue: 0.50)
+        }
+    }
+
+    private var borderColor: Color {
+        switch state {
+        case .completed: return Color(red: 0.08, green: 0.50, blue: 0.18)
+        case .next:      return Color(red: 0.82, green: 0.38, blue: 0.04)
+        case .locked:    return Color(red: 0.30, green: 0.30, blue: 0.32)
+        }
+    }
+
+    private var nextColor: Color { Color(red: 0.98, green: 0.58, blue: 0.08) }
+}
+
+private struct LevelStartButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [Color(red: 0.20, green: 0.82, blue: 0.36), Color(red: 0.06, green: 0.54, blue: 0.20)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .overlay(Circle().stroke(.white, lineWidth: 4))
+                    .shadow(color: .black.opacity(0.28), radius: 7, x: 0, y: 5)
+
+                Image(systemName: "play.fill")
+                    .font(.system(size: 26, weight: .black))
+                    .foregroundStyle(.white)
+                    .offset(x: 2)
+            }
+            .accessibilityLabel("Start event")
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct BackButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .bold))
+                Text("Back")
+                    .font(.system(.subheadline, design: .rounded))
+                    .fontWeight(.bold)
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .frame(minWidth: 90, minHeight: 48)
+            .background(
+                Capsule()
+                    .fill(Color(red: 0.10, green: 0.06, blue: 0.02).opacity(0.82))
+                    .overlay(Capsule().stroke(Color.white.opacity(0.70), lineWidth: 2))
+            )
+            .shadow(color: .black.opacity(0.50), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Go back")
+    }
+}
+
+private struct LevelStartBanner: View {
+    let title: String
+    let onFinish: () -> Void
+
+    @State private var isVisible = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.62)
+                .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 56))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(red: 1, green: 0.88, blue: 0.1), Color(red: 1, green: 0.50, blue: 0.05)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .shadow(color: .orange.opacity(0.6), radius: 12)
+
+                Text(title)
+                    .font(.system(.largeTitle, design: .rounded))
+                    .fontWeight(.black)
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.45), radius: 6)
+            }
+            .scaleEffect(isVisible ? 1.0 : (reduceMotion ? 1.0 : 0.4))
+            .opacity(isVisible ? 1.0 : 0.0)
+        }
+        .opacity(isVisible ? 1.0 : 0.0)
+        .task {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.62)) {
+                isVisible = true
+            }
+            try? await Task.sleep(nanoseconds: 1_050_000_000)
+            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.38)) {
+                isVisible = false
+            }
+            try? await Task.sleep(nanoseconds: 400_000_000)
+            onFinish()
+        }
     }
 }
 
@@ -656,12 +994,13 @@ private enum MapGraph {
 }
 
 private enum RedHoodMapGraph {
-    static let openingStartID = 0
+    static let openingStartID = 10
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let tapRadius: CGFloat = 0.09
 
     static let waypoints: [MapWaypoint] = [
-        MapWaypoint(id: 0, name: "Village dock", point: CGPoint(x: 0.419, y: 0.829), neighbors: [1]),
+        MapWaypoint(id: 10, name: "Bridge entry", point: CGPoint(x: 0.419, y: 0.940), neighbors: [0]),
+        MapWaypoint(id: 0, name: "Village dock", point: CGPoint(x: 0.419, y: 0.829), neighbors: [1, 10]),
         MapWaypoint(id: 1, name: "Lower forest path", point: CGPoint(x: 0.400, y: 0.695), neighbors: [0, 2]),
         MapWaypoint(id: 2, name: "Crossroads", point: CGPoint(x: 0.322, y: 0.604), neighbors: [1, 3, 4]),
         MapWaypoint(id: 3, name: "Wolf clearing", point: CGPoint(x: 0.121, y: 0.608), neighbors: [2]),

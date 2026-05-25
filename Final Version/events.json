@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "bannerTitle": "Scene 1",
+    "introImageName": "Introduzione 1 evento",
+    "introText": "Mother tells Little Red Riding Hood that Grandmother is sick. They must prepare a basket to bring to her. Help order the story scenes correctly!",
+    "cards": [
+      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Mother and Little Red Riding Hood prepare the basket together", "correctPosition": 0 },
+      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "Mother gives the basket to Little Red Riding Hood", "correctPosition": 1 },
+      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Little Red Riding Hood puts on her red cloak", "correctPosition": 2 },
+      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Little Red Riding Hood leaves the house", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "shuffledStart": [2, 0, 3, 1],
+    "learningOutcome": "You learned: Story events happen in ORDER — each action makes the next one possible!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Amazing! You sorted all the scenes in the right order! Now Little Red Riding Hood can pick up her basket, put on her red cloak, and skip through the forest to bring some tasty treats to Grandma. The story can go on — all thanks to YOU!",
+    "isLastEvent": false
+  },
+  {
+    "id": 2,
+    "bannerTitle": "Scene 2",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Little Red Riding Hood sets off alone into the deep forest. She walks peacefully along the path, surrounded by tall trees. Can you put the story scenes in the right order?",
+    "cards": [
+      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Little Red Riding Hood walks along the forest path, basket in hand", "correctPosition": 0 },
+      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "She spots beautiful colorful flowers growing beside the path", "correctPosition": 1 },
+      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "She picks the flowers and wanders off the path, distracted", "correctPosition": 2 },
+      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "She strays far from the path, lost in collecting flowers", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "shuffledStart": [2, 0, 3, 1],
+    "learningOutcome": "You learned: Distractions change where a story goes — the ORDER of choices matters!",
+    "rewardImageName": "Reward evento 2",
+    "rewardText": "Incredible! You got every scene in the right order! You followed Little Red Riding Hood's journey through the forest perfectly — step by step, all the way to where she strayed from the path. You are a true story hero and guardian of the forest! Watch out — there's a wolf watching her from behind the trees…",
+    "isLastEvent": true
+  }
+]
