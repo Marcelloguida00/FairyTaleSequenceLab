@@ -64,6 +64,14 @@ struct ContentView: View {
                         .interpolation(.high)
                         .frame(width: mapSize.width, height: mapSize.height)
 
+                    if activeMap == .redHood {
+                        ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
+                            WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
+                                .position(wp.point.scaled(to: mapSize))
+                                .allowsHitTesting(false)
+                        }
+                    }
+
                     AvatarWithMarker(
                         direction: avatarDirection,
                         frame: isWalking ? currentFrame : 0,
@@ -83,28 +91,20 @@ struct ContentView: View {
                             .allowsHitTesting(false)
                     }
 
-                    if activeMap == .redHood {
-                        ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
-                            WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
-                                .position(wp.point.scaled(to: mapSize))
-                                .allowsHitTesting(false)
-                        }
-
-                        if let level = pendingRedHoodLevel, let wp = RedHoodMapGraph.waypoint(id: level) {
-                            LevelStartButton {
-                                let l = level
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    pendingRedHoodLevel = nil
-                                    levelBannerLevel = l
-                                }
+                    if activeMap == .redHood, let level = pendingRedHoodLevel, let wp = RedHoodMapGraph.waypoint(id: level) {
+                        LevelStartButton {
+                            let l = level
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                pendingRedHoodLevel = nil
+                                levelBannerLevel = l
                             }
-                            .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
-                            .position(CGPoint(
-                                x: wp.point.x * mapSize.width,
-                                y: wp.point.y * mapSize.height - dotSize(for: mapSize) * 2.8
-                            ))
-                            .transition(.scale(scale: 0.75).combined(with: .opacity))
                         }
+                        .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
+                        .position(CGPoint(
+                            x: wp.point.x * mapSize.width,
+                            y: wp.point.y * mapSize.height - dotSize(for: mapSize) * 2.8
+                        ))
+                        .transition(.scale(scale: 0.75).combined(with: .opacity))
                     }
 
                     if activeMap == .main, !isWalking, let region = MapGraph.storyRegion(for: currentBaseID) {
