@@ -22,7 +22,7 @@ struct EventIntroductionView: View {
                     ParchmentView {
                         HStack(alignment: .center, spacing: 24) {
                             Text(event.introText)
-                                .font(.system(.body, design: .serif))
+                                .font(.system(.title2, design: .serif))
                                 .foregroundColor(Color.appPrimaryText)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)

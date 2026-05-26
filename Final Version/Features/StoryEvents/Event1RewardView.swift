@@ -44,18 +44,18 @@ struct RewardView: View {
                                     .font(.title3)
 
                                 Text(performanceNote)
-                                    .font(.system(.caption, design: .rounded))
+                                    .font(.system(.body, design: .rounded))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.appSecondaryText)
 
                                 Text(event.rewardText)
-                                    .font(.system(.body, design: .serif))
+                                    .font(.system(.title2, design: .serif))
                                     .foregroundColor(Color.appPrimaryText)
                                     .multilineTextAlignment(.leading)
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 Text(event.learningOutcome)
-                                    .font(.system(.caption, design: .rounded))
+                                    .font(.system(.body, design: .rounded))
                                     .italic()
                                     .foregroundColor(Color.appSecondaryText)
                                     .padding(.top, 4)
