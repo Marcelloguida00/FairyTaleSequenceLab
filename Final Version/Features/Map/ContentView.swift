@@ -17,9 +17,9 @@ private enum ActiveMap {
     var aspectRatio: CGFloat {
         switch self {
         case .main:
-            return 1448.0 / 1086.0
+            return MapLayout.worldMapAspectRatio
         case .redHood:
-            return 1535.0 / 1024.0
+            return MapLayout.redHoodMapAspectRatio
         }
     }
 
@@ -52,186 +52,88 @@ struct ContentView: View {
     @State private var activeRedHoodLevel: Int? = nil
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var levelBannerLevel: Int? = nil
+    @State private var currentFrame = 0
+
+    private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        GeometryReader { proxy in
-            let mapSize = fittedMapSize(in: proxy.size)
+        ZStack {
+            AdaptiveMapContainer(
+                aspectRatio: activeMap.aspectRatio,
+                contentMode: .fill
+            ) { mapSize in
+                mapContent(mapSize: mapSize)
+            }
 
-            ZStack {
-                Color(red: 0.10, green: 0.55, blue: 0.78)
-                    .ignoresSafeArea()
-
-                TimelineView(.periodic(from: .now, by: 0.12)) { timeline in
-                ZStack(alignment: .topLeading) {
-                    Image(activeMap.imageName)
-                        .resizable()
-                        .interpolation(.high)
-                        .frame(width: mapSize.width, height: mapSize.height)
-
-                    if activeMap == .redHood {
-                        ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
-                            WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
-                                .position(wp.point.scaled(to: mapSize))
-                                .allowsHitTesting(false)
-                        }
-                    }
-
-                    if activeMap == .main {
-                        ForEach(MapGraph.baseWaypoints, id: \.id) { wp in
-                            MainMapIslandDot(
-                                size: dotSize(for: mapSize),
-                                isPulsing: wp.id == MapGraph.redRidingHoodBaseID
-                            )
-                            .position(wp.point.scaled(to: mapSize))
-                            .allowsHitTesting(false)
-                        }
-                    }
-
-                    AvatarWithMarker(
-                        direction: avatarDirection,
-                        frame: isWalking ? Int(timeline.date.timeIntervalSinceReferenceDate / 0.12) % 4 : 0,
-                        size: avatarSize(for: mapSize),
-                        markerIsRaised: markerIsRaised
-                    )
-                    .position(
-                        x: avatarPosition.x * mapSize.width,
-                        y: avatarPosition.y * mapSize.height
-                    )
-
-                    if let fgName = activeMap.foregroundImageName {
-                        Image(fgName)
-                            .resizable()
-                            .interpolation(.high)
-                            .frame(width: mapSize.width, height: mapSize.height)
-                            .allowsHitTesting(false)
-                    }
-
-                    if activeMap == .redHood, let level = pendingRedHoodLevel, let wp = RedHoodMapGraph.waypoint(id: level) {
-                        LevelStartButton {
-                            let l = level
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                pendingRedHoodLevel = nil
-                                levelBannerLevel = l
-                            }
-                        }
-                        .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
-                        .position(CGPoint(
-                            x: wp.point.x * mapSize.width,
-                            y: wp.point.y * mapSize.height - dotSize(for: mapSize) * 2.8
-                        ))
-                        .transition(.scale(scale: 0.75).combined(with: .opacity))
-                    }
-
-                    if activeMap == .main, !isWalking,
-                       let region = MapGraph.storyRegion(for: currentBaseID),
-                       !MapGraph.comingSoonBaseIDs.contains(currentBaseID) {
-                        StoryRegionPlaque(
-                            title: lm.t(region.titleKey),
-                            width: titleWidth(for: mapSize),
-                            fontSize: titleFontSize(for: mapSize)
-                        )
-                        .position(region.titlePoint.scaled(to: mapSize))
-                        .transition(.scale(scale: 0.92).combined(with: .opacity))
-                    }
-
-                    if activeMap == .main, !isWalking,
-                       MapGraph.comingSoonBaseIDs.contains(currentBaseID),
-                       let region = MapGraph.storyRegion(for: currentBaseID) {
-                        ComingSoonBadge(
-                            width: titleWidth(for: mapSize),
-                            fontSize: titleFontSize(for: mapSize)
-                        )
-                        .position(region.titlePoint.scaled(to: mapSize))
-                        .transition(.scale(scale: 0.92).combined(with: .opacity))
-                    }
-
-                    if shouldShowRedHoodPlayButton {
-                        RedHoodPlayButton {
-                            Task {
-                                await openRedHoodSubMap()
-                            }
-                        }
-                        .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
-                        .position(MapGraph.redRidingHoodPlayPoint.scaled(to: mapSize))
-                        .transition(.scale(scale: 0.82).combined(with: .opacity))
-                    }
-                }
-                .frame(width: mapSize.width, height: mapSize.height)
-                .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
-                .contentShape(Rectangle())
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onEnded { value in
-                            handleMapTap(value.location, mapSize: mapSize)
-                        }
+            if isMapTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01 {
+                CloudTransitionOverlay(
+                    enterProgress: cloudEnterProgress,
+                    exitProgress: cloudExitProgress
                 )
-                } // TimelineView
+                .ignoresSafeArea()
+                .allowsHitTesting(true)
+                .zIndex(50)
+            }
 
-                if isMapTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01 {
-                    CloudTransitionOverlay(
-                        enterProgress: cloudEnterProgress,
-                        exitProgress: cloudExitProgress
-                    )
+            if let level = activeRedHoodLevel {
+                levelView(for: level)
                     .ignoresSafeArea()
-                    .allowsHitTesting(true)
-                    .zIndex(50)
-                }
+                    .zIndex(20)
+                    .transition(.asymmetric(
+                        insertion: .scale(scale: 0.94).combined(with: .opacity),
+                        removal: .scale(scale: 0.92).combined(with: .opacity)
+                    ))
+            }
 
-                if let level = activeRedHoodLevel {
-                    levelView(for: level)
-                        .ignoresSafeArea()
-                        .zIndex(20)
-                        .transition(.asymmetric(
-                            insertion: .scale(scale: 0.94).combined(with: .opacity),
-                            removal: .scale(scale: 0.92).combined(with: .opacity)
-                        ))
-                }
-
-                if let bannerLevel = levelBannerLevel {
-                    LevelStartBanner(title: levelBannerTitle(for: bannerLevel)) {
-                        withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
-                            levelBannerLevel = nil
-                            activeRedHoodLevel = bannerLevel
-                        }
+            if let bannerLevel = levelBannerLevel {
+                LevelStartBanner(title: levelBannerTitle(for: bannerLevel)) {
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                        levelBannerLevel = nil
+                        activeRedHoodLevel = bannerLevel
                     }
-                    .ignoresSafeArea()
-                    .zIndex(25)
-                    .transition(.opacity)
                 }
+                .ignoresSafeArea()
+                .zIndex(25)
+                .transition(.opacity)
+            }
 
-                if activeMap == .redHood {
-                    BackButton { handleBackButton() }
-                        .padding(.top, 52)
-                        .padding(.leading, 20)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .zIndex(30)
-                        .transition(.opacity)
-                }
-
-                if activeMap == .main {
-                    MainMenuButton {
-                        onReturnToMainMenu()
-                    }
-                    .disabled(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil)
-                    .opacity(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil ? 0.45 : 1)
+            if activeMap == .redHood {
+                BackButton { handleBackButton() }
                     .padding(.top, 52)
-                    .padding(.trailing, 20)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(.leading, 20)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .zIndex(30)
-                }
+                    .transition(.opacity)
+            }
 
-                #if DEBUG
-                Button("Reset") { resetProgress() }
-                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(Capsule().fill(Color.red.opacity(0.80)))
-                    .padding(.top, 112)
-                    .padding(.trailing, 20)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .zIndex(35)
-                #endif
+            if activeMap == .main {
+                MainMenuButton {
+                    onReturnToMainMenu()
+                }
+                .disabled(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil)
+                .opacity(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil ? 0.45 : 1)
+                .padding(.top, 52)
+                .padding(.trailing, 20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .zIndex(30)
+            }
+
+            #if DEBUG
+            Button("Reset") { resetProgress() }
+                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(Capsule().fill(Color.red.opacity(0.80)))
+                .padding(.top, 112)
+                .padding(.trailing, 20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .zIndex(35)
+            #endif
+        }
+        .onReceive(spriteTimer) { _ in
+            if isWalking {
+                currentFrame = (currentFrame + 1) % 4
             }
         }
         .onAppear {
@@ -261,6 +163,106 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder
+    private func mapContent(mapSize: CGSize) -> some View {
+        ZStack(alignment: .topLeading) {
+            MapBackgroundImage(name: activeMap.imageName, mapSize: mapSize)
+
+            if activeMap == .redHood {
+                ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
+                    WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
+                        .position(wp.point.scaled(to: mapSize))
+                        .allowsHitTesting(false)
+                }
+            }
+
+            if activeMap == .main {
+                ForEach(MapGraph.baseWaypoints, id: \.id) { wp in
+                    MainMapIslandDot(
+                        size: dotSize(for: mapSize),
+                        isPulsing: wp.id == MapGraph.redRidingHoodBaseID
+                    )
+                    .position(wp.point.scaled(to: mapSize))
+                    .allowsHitTesting(false)
+                }
+            }
+
+            AvatarWithMarker(
+                direction: avatarDirection,
+                frame: isWalking ? currentFrame : 0,
+                size: avatarSize(for: mapSize),
+                markerIsRaised: markerIsRaised
+            )
+            .position(
+                x: avatarPosition.x * mapSize.width,
+                y: avatarPosition.y * mapSize.height
+            )
+
+            if let fgName = activeMap.foregroundImageName {
+                MapBackgroundImage(name: fgName, mapSize: mapSize)
+                    .allowsHitTesting(false)
+            }
+
+            if activeMap == .redHood, let level = pendingRedHoodLevel, let wp = RedHoodMapGraph.waypoint(id: level) {
+                LevelStartButton {
+                    let l = level
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        pendingRedHoodLevel = nil
+                        levelBannerLevel = l
+                    }
+                }
+                .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
+                .position(CGPoint(
+                    x: wp.point.x * mapSize.width,
+                    y: wp.point.y * mapSize.height - dotSize(for: mapSize) * 2.8
+                ))
+                .transition(.scale(scale: 0.75).combined(with: .opacity))
+            }
+
+            if activeMap == .main, !isWalking,
+               let region = MapGraph.storyRegion(for: currentBaseID),
+               !MapGraph.comingSoonBaseIDs.contains(currentBaseID) {
+                StoryRegionPlaque(
+                    title: lm.t(region.titleKey),
+                    width: titleWidth(for: mapSize),
+                    fontSize: titleFontSize(for: mapSize)
+                )
+                .position(region.titlePoint.scaled(to: mapSize))
+                .transition(.scale(scale: 0.92).combined(with: .opacity))
+            }
+
+            if activeMap == .main, !isWalking,
+               MapGraph.comingSoonBaseIDs.contains(currentBaseID),
+               let region = MapGraph.storyRegion(for: currentBaseID) {
+                ComingSoonBadge(
+                    width: titleWidth(for: mapSize),
+                    fontSize: titleFontSize(for: mapSize)
+                )
+                .position(region.titlePoint.scaled(to: mapSize))
+                .transition(.scale(scale: 0.92).combined(with: .opacity))
+            }
+
+            if shouldShowRedHoodPlayButton {
+                RedHoodPlayButton {
+                    Task {
+                        await openRedHoodSubMap()
+                    }
+                }
+                .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
+                .position(MapGraph.redRidingHoodPlayPoint.scaled(to: mapSize))
+                .transition(.scale(scale: 0.82).combined(with: .opacity))
+            }
+        }
+        .frame(width: mapSize.width, height: mapSize.height)
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onEnded { value in
+                    handleMapTap(value.location, mapSize: mapSize)
+                }
+        )
+    }
+
     #if DEBUG
     private func resetProgress() {
         completedRedHoodLevels = []
@@ -272,19 +274,6 @@ struct ContentView: View {
         UserDefaults.standard.removeObject(forKey: "currentBaseID")
     }
     #endif
-
-    private func fittedMapSize(in container: CGSize) -> CGSize {
-        let containerAspectRatio = container.width / container.height
-        let mapAspectRatio = activeMap.aspectRatio
-
-        if containerAspectRatio > mapAspectRatio {
-            let height = container.height
-            return CGSize(width: height * mapAspectRatio, height: height)
-        }
-
-        let width = container.width
-        return CGSize(width: width, height: width / mapAspectRatio)
-    }
 
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
         let multiplier: CGFloat = activeMap == .redHood ? 0.18 : 0.11
