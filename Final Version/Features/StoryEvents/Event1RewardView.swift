@@ -6,6 +6,8 @@ struct RewardView: View {
     let onDismiss: () -> Void
     let onNext: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     private var stars: String {
         switch attemptCount {
         case 0: return "⭐⭐⭐"
@@ -16,9 +18,9 @@ struct RewardView: View {
 
     private var performanceNote: String {
         switch attemptCount {
-        case 0: return "Perfect! You got it on the first try!"
-        case 1: return "Well done! You figured it out!"
-        default: return "You did it! Every try made you stronger!"
+        case 0: return lm.t("reward.perfect")
+        case 1: return lm.t("reward.well_done")
+        default: return lm.t("reward.did_it")
         }
     }
 
@@ -42,18 +44,18 @@ struct RewardView: View {
                                     .font(.title3)
 
                                 Text(performanceNote)
-                                    .font(.system(.caption, design: .rounded))
+                                    .font(.system(.body, design: .rounded))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.appSecondaryText)
 
                                 Text(event.rewardText)
-                                    .font(.system(.body, design: .serif))
+                                    .font(.system(.title2, design: .serif))
                                     .foregroundColor(Color.appPrimaryText)
                                     .multilineTextAlignment(.leading)
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 Text(event.learningOutcome)
-                                    .font(.system(.caption, design: .rounded))
+                                    .font(.system(.body, design: .rounded))
                                     .italic()
                                     .foregroundColor(Color.appSecondaryText)
                                     .padding(.top, 4)
@@ -63,7 +65,7 @@ struct RewardView: View {
                             VStack(spacing: 10) {
                                 Button(action: onNext) {
                                     HStack(spacing: 8) {
-                                        Text(event.isLastEvent ? "Back to Map" : "Next Event")
+                                        Text(event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"))
                                             .font(.system(.subheadline, design: .rounded))
                                             .fontWeight(.semibold)
                                         Image(systemName: event.isLastEvent ? "map" : "arrow.right")
@@ -85,7 +87,7 @@ struct RewardView: View {
                                     HStack(spacing: 6) {
                                         Image(systemName: "arrow.clockwise")
                                             .font(.caption)
-                                        Text("Play again")
+                                        Text(lm.t("button.play_again"))
                                             .font(.system(.caption, design: .rounded))
                                             .fontWeight(.semibold)
                                     }

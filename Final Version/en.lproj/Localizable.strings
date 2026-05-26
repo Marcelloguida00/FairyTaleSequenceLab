@@ -1,0 +1,100 @@
+/* Buttons */
+"button.play"        = "PLAY";
+"button.back"        = "Back";
+"button.menu"        = "Menu";
+"button.continue"    = "Continue";
+"button.check"       = "Check!";
+"button.flip_all"    = "Flip All";
+"button.play_again"  = "Play again";
+"button.next_event"  = "Next Event";
+"button.back_to_map" = "Back to Map";
+"button.done"        = "Done";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Put the story in order";
+"celebration.title"      = "You did it!";
+"feedback.good_try"      = "Good try!";
+
+/* Position labels (used in contextual hints) */
+"pos.1st" = "1st";
+"pos.2nd" = "2nd";
+"pos.3rd" = "3rd";
+"pos.4th" = "4th";
+
+/* Contextual hints */
+"hint.tap_check"    = "Tap Check!";
+"hint.wrong_1"      = "Is '%@' really the %@ scene? Think about when it happens.";
+"hint.wrong_2"      = "The %@ scene shouldn't be '%@'. Look for another one.";
+"hint.wrong_3"      = "The %@ scene should be '%@'. Can you find it?";
+"hint.empty_1"      = "Position %d is still empty. Try placing a card there!";
+"hint.empty_2"      = "The %@ scene should be '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "Adventure Begins!";
+"level.new_scene"        = "New Scene";
+
+/* Map */
+"map.coming_soon"             = "Coming Soon";
+"map.region.red_riding_hood"  = "Little Red Riding Hood";
+"map.region.princess_frog"    = "The Princess and the Frog";
+"map.region.aladdin"          = "Aladdin";
+"map.region.beauty_beast"     = "Beauty and the Beast";
+
+/* Reward screen */
+"reward.perfect"   = "Perfect! You got it on the first try!";
+"reward.well_done" = "Well done! You figured it out!";
+"reward.did_it"    = "You did it! Every try made you stronger!";
+
+/* Settings */
+"settings.title"          = "Settings";
+"settings.language"       = "Language";
+"settings.music"          = "Music";
+"settings.music.mute"     = "Mute Music";
+"settings.music.unmute"   = "Unmute Music";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Little Red Riding Hood";
+"redhood.intro.mascot"  = "Oh no! A monster has destroyed all the fairy tales and scattered their scenes! Can you help me put the story of Little Red Riding Hood back together?";
+"redhood.intro.button"  = "Start the Adventure!";
+
+/* Onboarding */
+"onboarding.skip"           = "Skip";
+"onboarding.next"           = "Next";
+"onboarding.start"          = "Start the Adventure!";
+"onboarding.page1.title"    = "Welcome to World of Fables!";
+"onboarding.page1.body"     = "A wicked monster has scattered all the fairy tale scenes! Can you help put them back in the right order?";
+"onboarding.page2.title"    = "Explore the Map";
+"onboarding.page2.body"     = "Walk through the magical world and discover fairy tales waiting to be restored.";
+"onboarding.page3.title"    = "Order the Story";
+"onboarding.page3.body"     = "Drag the scene cards into the correct order to rebuild the fairy tale, one step at a time.";
+"onboarding.page4.title"    = "Flip & Check";
+"onboarding.page4.body"     = "Flip a card to read a hint about where it belongs. When all slots are filled, press Check!";
+
+/* Tutorial */
+"tutorial.skip"             = "Skip Tutorial";
+"tutorial.next"             = "Next";
+"tutorial.done"             = "Got it!";
+"tutorial.step1.title"      = "Welcome to the World Map!";
+"tutorial.step1.body"       = "All the fairy tale stories live here. Tap anywhere on the map to walk there!";
+"tutorial.step2.title"      = "Start a Story";
+"tutorial.step2.body"       = "When you reach a story island, a play button appears. Tap it to begin the adventure!";
+"tutorial.step3.title"      = "Order the Scenes";
+"tutorial.step3.body"       = "Drag the cards into the correct order. Each position matters — think about what happens first!";
+"tutorial.step4.title"      = "Flip for Hints";
+"tutorial.step4.body"       = "Stuck? Flip a card to read its description and figure out where it belongs.";
+"tutorial.step5.title"      = "Check Your Answer";
+"tutorial.step5.body"       = "When all slots are filled, press Check! to see if you got the story right. Good luck!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Play Little Red Riding Hood";
+"a11y.start_event"          = "Start event";
+"a11y.go_back"              = "Go back";
+"a11y.return_to_menu"       = "Return to main menu";
+"a11y.play_button"          = "Play";
+"a11y.settings_button"      = "Open settings";
+"a11y.menu_hint"            = "Leaves the world map and opens the title screen";
+"a11y.play_hint"            = "Opens the cloud curtain and starts the adventure";
+"a11y.celebration"          = "Congratulations! You did it!";
+"a11y.continue_sequencing"  = "Continue to the sequencing activity";
+"a11y.check_order"          = "Check your story order";
+"a11y.flip_all"             = "Flip all cards";

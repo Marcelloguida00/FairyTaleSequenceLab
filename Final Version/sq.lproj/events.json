@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "bannerTitle": "Skena 1",
+    "introImageName": "Introduzione 1 evento",
+    "introText": "Nëna i thotë Kapeles së Kuqe se gjyshja është e sëmurë. Duhet të përgatisin një shportë për t'ia çuar. Ndihmo të renditësh skenat e historisë saktë!",
+    "cards": [
+      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Nëna dhe Kapeleja e Kuqe përgatisin shportën së bashku", "correctPosition": 0 },
+      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "Nëna i jep shportën Kapeles së Kuqe", "correctPosition": 1 },
+      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Kapeleja e Kuqe vesh mantelin e saj të kuq", "correctPosition": 2 },
+      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Kapeleja e Kuqe largohet nga shtëpia", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Ngjarjet e një historie ndodhin në REND — çdo veprim e bën të mundur tjetrin!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Fantastike! I renditëve të gjitha skenat në rendin e duhur! Tani Kapeleja e Kuqe mund ta marrë shportën, të veshë mantelin e kuq dhe të vrapojë nëpër pyll për t'i çuar gjyshe ca ëmbëlsira. Historia mund të vazhdojë — falë TEJE!",
+    "isLastEvent": false
+  },
+  {
+    "id": 2,
+    "bannerTitle": "Skena 2",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Kapeleja e Kuqe niset vetëm në pyllin e thellë. Ecën qetësisht nëpër shteg, e rrethuar nga pemë të larta. A mund t'i renditësh skenat e historisë në rendin e duhur?",
+    "cards": [
+      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Kapeleja e Kuqe ecën nëpër shtegun e pyllit, me shportën në dorë", "correctPosition": 0 },
+      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "Ajo sheh lule të bukura me ngjyra që rriten pranë shtegun", "correctPosition": 1 },
+      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "Mbledh lulet dhe largohet nga shtegu, e shpërqendruar", "correctPosition": 2 },
+      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "Ajo largohet shumë nga shtegu, e humbur në mbledhjen e luleve", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Shpërqendrimet ndryshojnë drejtimin e një historie — RENDI i zgjedhjeve është i rëndësishëm!",
+    "rewardImageName": "Reward evento 2",
+    "rewardText": "Mahnitëse! I vure të gjitha skenat në rendin e duhur! E ndoqe udhëtimin e Kapeles së Kuqe nëpër pyll perfektisht — hap pas hapi, deri atje ku u largua nga shtegu. Je një hero i vërtetë i historisë dhe guardian i pyllit! Kujdes — ka një ujk që e vëzhgon nga pas pemëve…",
+    "isLastEvent": false
+  },
+  {
+    "id": 3,
+    "bannerTitle": "Skena 3",
+    "introImageName": "Introduzione_3",
+    "introText": "Ujku e ka vënë re Kapelen e Kuqe në pyll. E vëzhgon me kujdes, duke menduar një plan të zgjuar. Kapeleja e Kuqe nuk di fare që ujku po e shikon... Ndihmo të renditësh skenat e historisë saktë!",
+    "cards": [
+      { "id": 0, "imageName": "3_1", "description": "Ujku mendon një plan për të arritur në shtëpinë e gjyshes", "correctPosition": 0 },
+      { "id": 1, "imageName": "3.2", "description": "Ujku shfaqet në shteg ku ecën Kapeleja e Kuqe", "correctPosition": 1 },
+      { "id": 2, "imageName": "3_3", "description": "Ujku pyet: 'Ku po shkon, vajzë?'", "correctPosition": 2 },
+      { "id": 3, "imageName": "3.4", "description": "Kapeleja e Kuqe i thotë ujkut: 'Po shkoj tek gjyshja'", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: PASOJA = VEPRIMET KANË REZULTATE",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Tani ujku di ku të gjejë gjyshen. Çfarë do të ndodhë tjetër?",
+    "isLastEvent": true
+  }
+]

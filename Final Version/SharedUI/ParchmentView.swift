@@ -11,7 +11,7 @@ struct ParchmentView<Content: View>: View {
         ZStack(alignment: .top) {
             Color.appBackground
 
-            // Scroll-edge shadow at top
+            // Scroll-edge shadow at top (decorative only)
             LinearGradient(
                 colors: [
                     Color.appBorder.opacity(0.45),
@@ -21,6 +21,7 @@ struct ParchmentView<Content: View>: View {
                 endPoint: .bottom
             )
             .frame(height: 10)
+            .accessibilityHidden(true)
 
             content()
         }

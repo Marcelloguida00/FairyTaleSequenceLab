@@ -31,21 +31,50 @@ struct MainMenuPanelLayer: View {
     @State private var panelScale: CGFloat = 1.04
     @State private var isPanelDissolving = false
     @State private var didRevealPanel = false
+    @State private var showSettings = false
+    @EnvironmentObject var lm: LanguageManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let panelFadeDuration: TimeInterval = 0.30
 
     var body: some View {
-        MenuPanelView(
-            isDisabled: isTransitioning || isPanelDissolving,
-            onPlay: startGame
-        )
+        ZStack(alignment: .bottomLeading) {
+            MenuPanelView(
+                isDisabled: isTransitioning || isPanelDissolving,
+                onPlay: startGame
+            )
+
+            // Settings button — always fixed in the bottom-left corner
+            Button { showSettings = true } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 26, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(14)
+                    .background(
+                        Circle()
+                            .fill(Color(red: 0.10, green: 0.06, blue: 0.02).opacity(0.78))
+                            .overlay(Circle().stroke(Color.white.opacity(0.55), lineWidth: 1.5))
+                    )
+                    .shadow(color: .black.opacity(0.45), radius: 8, y: 4)
+            }
+            .buttonStyle(.plain)
+            .padding(.leading, 28)
+            .padding(.bottom, 28)
+            .disabled(isTransitioning || isPanelDissolving)
+            .accessibilityLabel(lm.t("a11y.settings_button"))
+        }
         .opacity(panelOpacity)
         .scaleEffect(panelScale)
         .allowsHitTesting(panelOpacity > 0.5 && !isTransitioning && !isPanelDissolving)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
         .id(resetID)
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+                .environmentObject(lm)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
         .onAppear {
             tryRevealPanel()
         }
@@ -119,6 +148,7 @@ struct MainMenuView: View {
                 resetID: 0,
                 onPlay: onPlay
             )
+            .environmentObject(LanguageManager())
         }
     }
 }
@@ -260,12 +290,14 @@ private struct MenuPlayButton: View {
     let isDisabled: Bool
     let action: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
     private let green = Color(red: 0.18, green: 0.52, blue: 0.28)
 
     var body: some View {
         Button(action: action) {
-            Text("PLAY")
+            Text(lm.t("button.play"))
                 .font(.system(size: width * 0.14, weight: .heavy, design: .rounded))
                 .foregroundStyle(.white)
                 .tracking(1.2)
@@ -302,7 +334,7 @@ private struct MenuPlayButton: View {
         .buttonStyle(.plain)
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
-        .accessibilityLabel("Play")
-        .accessibilityHint("Opens the cloud curtain and starts the adventure")
+        .accessibilityLabel(lm.t("a11y.play_button"))
+        .accessibilityHint(lm.t("a11y.play_hint"))
     }
 }

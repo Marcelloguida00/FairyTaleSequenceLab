@@ -4,6 +4,8 @@ struct EventIntroductionView: View {
     let event: EventData
     let onContinue: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -20,7 +22,7 @@ struct EventIntroductionView: View {
                     ParchmentView {
                         HStack(alignment: .center, spacing: 24) {
                             Text(event.introText)
-                                .font(.system(.body, design: .serif))
+                                .font(.system(.title2, design: .serif))
                                 .foregroundColor(Color.appPrimaryText)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -28,7 +30,7 @@ struct EventIntroductionView: View {
 
                             Button(action: onContinue) {
                                 HStack(spacing: 8) {
-                                    Text("Continue")
+                                    Text(lm.t("button.continue"))
                                         .font(.system(.headline, design: .rounded))
                                     Image(systemName: "arrow.right")
                                         .font(.headline)
@@ -44,7 +46,7 @@ struct EventIntroductionView: View {
                                 )
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("Continue to the sequencing activity")
+                            .accessibilityLabel(lm.t("a11y.continue_sequencing"))
                         }
                         .padding(.horizontal, 32)
                         .padding(.vertical, 20)

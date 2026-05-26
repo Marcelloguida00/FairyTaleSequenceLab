@@ -1,0 +1,100 @@
+/* Buttons */
+"button.play"        = "GIOCA";
+"button.back"        = "Indietro";
+"button.menu"        = "Menu";
+"button.continue"    = "Continua";
+"button.check"       = "Controlla!";
+"button.flip_all"    = "Gira tutte";
+"button.play_again"  = "Gioca ancora";
+"button.next_event"  = "Prossima scena";
+"button.back_to_map" = "Torna alla mappa";
+"button.done"        = "Fatto";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Metti la storia in ordine";
+"celebration.title"      = "Ce l'hai fatta!";
+"feedback.good_try"      = "Buon tentativo!";
+
+/* Position labels */
+"pos.1st" = "1a";
+"pos.2nd" = "2a";
+"pos.3rd" = "3a";
+"pos.4th" = "4a";
+
+/* Contextual hints */
+"hint.tap_check"    = "Premi Controlla!";
+"hint.wrong_1"      = "'%@' è davvero la %@ scena? Pensa a quando accade.";
+"hint.wrong_2"      = "La %@ scena non dovrebbe essere '%@'. Cercane un'altra.";
+"hint.wrong_3"      = "La %@ scena dovrebbe essere '%@'. Riesci a trovarla?";
+"hint.empty_1"      = "La posizione %d è ancora vuota. Prova a mettere una carta lì!";
+"hint.empty_2"      = "La %@ scena dovrebbe essere '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "L'avventura inizia!";
+"level.new_scene"        = "Nuova scena";
+
+/* Map */
+"map.coming_soon"             = "Prossimamente";
+"map.region.red_riding_hood"  = "Cappuccetto Rosso";
+"map.region.princess_frog"    = "La Principessa e il Ranocchio";
+"map.region.aladdin"          = "Aladino";
+"map.region.beauty_beast"     = "La Bella e la Bestia";
+
+/* Reward screen */
+"reward.perfect"   = "Perfetto! Ci sei riuscito al primo tentativo!";
+"reward.well_done" = "Bravo! Hai capito!";
+"reward.did_it"    = "Ce l'hai fatta! Ogni tentativo ti ha reso più forte!";
+
+/* Settings */
+"settings.title"          = "Impostazioni";
+"settings.language"       = "Lingua";
+"settings.music"          = "Musica";
+"settings.music.mute"     = "Silenzia Musica";
+"settings.music.unmute"   = "Riattiva Musica";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Cappuccetto Rosso";
+"redhood.intro.mascot"  = "Oh no! Un mostro ha distrutto tutte le fiabe e ha sparso le scene ovunque! Riesci ad aiutarmi a rimettere insieme la storia di Cappuccetto Rosso?";
+"redhood.intro.button"  = "Inizia l'avventura!";
+
+/* Onboarding */
+"onboarding.skip"           = "Salta";
+"onboarding.next"           = "Avanti";
+"onboarding.start"          = "Inizia l'avventura!";
+"onboarding.page1.title"    = "Benvenuto nel Mondo delle Favole!";
+"onboarding.page1.body"     = "Un mostro malvagio ha sparso tutte le scene delle fiabe! Riesci ad aiutarci a rimetterle nell'ordine giusto?";
+"onboarding.page2.title"    = "Esplora la Mappa";
+"onboarding.page2.body"     = "Cammina attraverso il mondo magico e scopri le fiabe che aspettano di essere ripristinate.";
+"onboarding.page3.title"    = "Metti in Ordine";
+"onboarding.page3.body"     = "Trascina le carte delle scene nell'ordine corretto per ricostruire la fiaba, passo dopo passo.";
+"onboarding.page4.title"    = "Gira e Controlla";
+"onboarding.page4.body"     = "Gira una carta per leggere un suggerimento su dove va. Quando tutti i posti sono occupati, premi Controlla!";
+
+/* Tutorial */
+"tutorial.skip"             = "Salta il tutorial";
+"tutorial.next"             = "Avanti";
+"tutorial.done"             = "Ho capito!";
+"tutorial.step1.title"      = "Benvenuto nella Mappa!";
+"tutorial.step1.body"       = "Qui vivono tutte le storie delle fiabe. Tocca un punto della mappa per camminare lì!";
+"tutorial.step2.title"      = "Inizia una Storia";
+"tutorial.step2.body"       = "Quando raggiungi l'isola di una storia, apparirà un pulsante play. Toccalo per iniziare l'avventura!";
+"tutorial.step3.title"      = "Metti in Ordine le Scene";
+"tutorial.step3.body"       = "Trascina le carte nell'ordine corretto. Ogni posizione è importante — pensa a cosa succede prima!";
+"tutorial.step4.title"      = "Gira per i Suggerimenti";
+"tutorial.step4.body"       = "Bloccato? Gira una carta per leggere la sua descrizione e capire dove va.";
+"tutorial.step5.title"      = "Controlla la Risposta";
+"tutorial.step5.body"       = "Quando tutti i posti sono occupati, premi Controlla! per vedere se hai ricostruito bene la storia. Buona fortuna!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Gioca a Cappuccetto Rosso";
+"a11y.start_event"          = "Inizia evento";
+"a11y.go_back"              = "Torna indietro";
+"a11y.return_to_menu"       = "Torna al menu principale";
+"a11y.play_button"          = "Gioca";
+"a11y.settings_button"      = "Apri impostazioni";
+"a11y.menu_hint"            = "Esce dalla mappa e apre la schermata iniziale";
+"a11y.play_hint"            = "Apre il sipario e inizia l'avventura";
+"a11y.celebration"          = "Complimenti! Ce l'hai fatta!";
+"a11y.continue_sequencing"  = "Continua all'attività di sequenza";
+"a11y.check_order"          = "Controlla l'ordine della storia";
+"a11y.flip_all"             = "Gira tutte le carte";

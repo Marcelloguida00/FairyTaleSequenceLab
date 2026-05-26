@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "bannerTitle": "صحنه ۱",
+    "introImageName": "Introduzione 1 evento",
+    "introText": "مادر به شنل قرمزی می‌گوید که مادربزرگ بیمار است. باید یک سبد برای او آماده کنند. کمک کن صحنه‌های داستان را به ترتیب درست بچینی!",
+    "cards": [
+      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "مادر و شنل قرمزی با هم سبد را آماده می‌کنند", "correctPosition": 0 },
+      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "مادر سبد را به شنل قرمزی می‌دهد", "correctPosition": 1 },
+      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "شنل قرمزی شنل قرمزش را می‌پوشد", "correctPosition": 2 },
+      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "شنل قرمزی از خانه خارج می‌شود", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتی: رویدادهای داستان به ترتیب اتفاق می‌افتند — هر کار، کار بعدی را ممکن می‌کند!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "عالی! همه صحنه‌ها را به ترتیب درست چیدی! حالا شنل قرمزی می‌تواند سبدش را بردارد، شنلش را بپوشد و از جنگل بگذرد تا چیزهای خوشمزه‌ای برای مادربزرگ ببرد. داستان می‌تواند ادامه پیدا کند — همه این‌ها به خاطر تو!",
+    "isLastEvent": false
+  },
+  {
+    "id": 2,
+    "bannerTitle": "صحنه ۲",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "شنل قرمزی تنها به داخل جنگل عمیق می‌رود. آرام در طول مسیر قدم می‌زند، احاطه شده توسط درختان بلند. می‌تونی صحنه‌های داستان را به ترتیب درست بچینی؟",
+    "cards": [
+      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "شنل قرمزی با سبد در دست در امتداد مسیر جنگل قدم می‌زند", "correctPosition": 0 },
+      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "گل‌های زیبای رنگارنگی کنار مسیر می‌بیند", "correctPosition": 1 },
+      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "گل‌ها را می‌چیند و حواس‌پرت از مسیر دور می‌شود", "correctPosition": 2 },
+      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "در حال چیدن گل‌ها خیلی دور از مسیر می‌رود", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتی: حواس‌پرتی‌ها جهت داستان را تغییر می‌دهند — ترتیب انتخاب‌ها مهم است!",
+    "rewardImageName": "Reward evento 2",
+    "rewardText": "باورنکردنی! هر صحنه را به ترتیب درست چیدی! سفر شنل قرمزی در جنگل را عالی دنبال کردی — قدم به قدم، تا جایی که از مسیر منحرف شد. تو یک قهرمان واقعی داستان و نگهبان جنگل هستی! مواظب باش — یه گرگ از پشت درختان او را تماشا می‌کند…",
+    "isLastEvent": false
+  },
+  {
+    "id": 3,
+    "bannerTitle": "صحنه ۳",
+    "introImageName": "Introduzione_3",
+    "introText": "گرگ شنل قرمزی را در جنگل دیده است. با دقت او را نگاه می‌کند و نقشه‌ای حیله‌گرانه می‌کشد. شنل قرمزی نمی‌داند که گرگ او را می‌پاید... کمک کن صحنه‌های داستان را به ترتیب درست بچینی!",
+    "cards": [
+      { "id": 0, "imageName": "3_1", "description": "گرگ نقشه‌ای برای رسیدن به خانه مادربزرگ می‌کشد", "correctPosition": 0 },
+      { "id": 1, "imageName": "3.2", "description": "گرگ بر سر مسیری که شنل قرمزی می‌رود ظاهر می‌شود", "correctPosition": 1 },
+      { "id": 2, "imageName": "3_3", "description": "گرگ می‌پرسد: «به کجا می‌روی، دختر کوچک؟»", "correctPosition": 2 },
+      { "id": 3, "imageName": "3.4", "description": "شنل قرمزی به گرگ می‌گوید: «دارم به خانه مادربزرگم می‌روم»", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتی: عواقب = اعمال نتیجه دارند",
+    "rewardImageName": "Fine 3",
+    "rewardText": "حالا گرگ می‌داند کجا می‌تواند مادربزرگ را پیدا کند. بعد چه اتفاقی می‌افتد؟",
+    "isLastEvent": true
+  }
+]

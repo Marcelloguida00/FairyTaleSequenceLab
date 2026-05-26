@@ -3,6 +3,8 @@ import SwiftUI
 struct RedHoodLevel0View: View {
     let onComplete: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -11,7 +13,7 @@ struct RedHoodLevel0View: View {
                 VStack(spacing: 36) {
                     Spacer()
 
-                    Text("Little Red Riding Hood")
+                    Text(lm.t("redhood.intro.title"))
                         .font(.system(.largeTitle, design: .rounded))
                         .fontWeight(.bold)
                         .foregroundColor(Color.appPrimaryText)
@@ -21,7 +23,7 @@ struct RedHoodLevel0View: View {
                     MascotGuideView(
                         imageName: "Mascot Talking",
                         animatedImageNames: ["Mascot Talking"],
-                        message: "Oh no! A monster has destroyed all the fairy tales and scattered their scenes! Can you help me put the story of Little Red Riding Hood back together?",
+                        message: lm.t("redhood.intro.mascot"),
                         imageHeight: min(geometry.size.height * 0.28, 220),
                         bubbleFont: .system(.title3, design: .rounded)
                     )
@@ -31,7 +33,7 @@ struct RedHoodLevel0View: View {
                         HStack(spacing: 10) {
                             Image(systemName: "star.fill")
                                 .font(.title3)
-                            Text("Start the Adventure!")
+                            Text(lm.t("redhood.intro.button"))
                                 .font(.system(.title3, design: .rounded))
                                 .fontWeight(.bold)
                             Image(systemName: "star.fill")
@@ -48,7 +50,7 @@ struct RedHoodLevel0View: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Start the adventure")
+                    .accessibilityLabel(lm.t("redhood.intro.button"))
 
                     Spacer()
                 }
