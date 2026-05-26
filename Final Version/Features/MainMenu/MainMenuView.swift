@@ -1,8 +1,6 @@
 import SwiftUI
 
-private let menuPanelAspectRatio: CGFloat = 681.0 / 1024.0
-
-// MARK: - Sfondo menu (mappa + sipario nuvole)
+private let menuPanelAspectRatio: CGFloat = 600.0 / 1072.0
 
 struct MainMenuSceneView: View {
     @Binding var cloudEnterProgress: CGFloat
