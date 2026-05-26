@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct Final_VersionApp: App {
+    @StateObject private var languageManager = LanguageManager()
+
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(languageManager)
         }
     }
 }

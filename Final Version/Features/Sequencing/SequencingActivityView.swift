@@ -29,6 +29,7 @@ struct ShakeModifier: ViewModifier, Animatable {
 // MARK: - Celebration overlay
 
 struct CelebrationView: View {
+    @EnvironmentObject private var lm: LanguageManager
 
     private struct Piece: Identifiable {
         let id: Int
@@ -76,14 +77,14 @@ struct CelebrationView: View {
         if reduceMotion {
             VStack(spacing: 12) {
                 Text("🎉").font(.system(size: 72))
-                Text("You did it!")
+                Text(lm.t("celebration.title"))
                     .font(.system(.largeTitle, design: .rounded))
                     .fontWeight(.black)
                     .foregroundColor(.appPrimaryText)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.appBackground.opacity(0.88))
-            .accessibilityLabel("Congratulations! You did it!")
+            .accessibilityLabel(lm.t("a11y.celebration"))
             .accessibilityAddTraits(.isStaticText)
         } else {
             GeometryReader { geo in
@@ -108,7 +109,7 @@ struct CelebrationView: View {
 
                     VStack(spacing: 10) {
                         Text("🎉").font(.system(size: 80))
-                        Text("You did it!")
+                        Text(lm.t("celebration.title"))
                             .font(.system(.largeTitle, design: .rounded))
                             .fontWeight(.black)
                             .foregroundColor(.white)
@@ -126,7 +127,7 @@ struct CelebrationView: View {
                     burstOpacity = 1.0
                 }
             }
-            .accessibilityLabel("Congratulations! You did it!")
+            .accessibilityLabel(lm.t("a11y.celebration"))
             .accessibilityAddTraits(.isStaticText)
         }
     }
@@ -296,7 +297,10 @@ struct SequencingActivityView<Reward: View>: View {
     let event: EventData
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @EnvironmentObject private var lm: LanguageManager
 
+    // card ids in source row order (randomized at activity start)
+    @State private var shuffledStart: [Int]
     // slot index (0–3) → card id placed there; nil = empty
     @State private var slotContents: [Int?]
     // indexed by card id
@@ -318,11 +322,14 @@ struct SequencingActivityView<Reward: View>: View {
 
     private let cardGap: CGFloat = 14
     private let hPad: CGFloat = 28
-    private let positionLabels = ["1st", "2nd", "3rd", "4th"]
+    private var positionLabels: [String] {
+        [lm.t("pos.1st"), lm.t("pos.2nd"), lm.t("pos.3rd"), lm.t("pos.4th")]
+    }
 
     init(event: EventData, @ViewBuilder makeReward: @escaping (Int, @escaping () -> Void) -> Reward) {
         self.event = event
         self.makeReward = makeReward
+        _shuffledStart = State(initialValue: event.makeShuffledStart())
         _slotContents  = State(initialValue: Array(repeating: nil, count: event.cards.count))
         _flippedStates = State(initialValue: Array(repeating: false, count: event.cards.count))
     }
@@ -335,22 +342,22 @@ struct SequencingActivityView<Reward: View>: View {
 
     // ABA contextual hint
     private func contextualHint(level: Int) -> String {
-        guard let wrongSlot = firstWrongSlot else { return "Tap Check!" }
+        guard let wrongSlot = firstWrongSlot else { return lm.t("hint.tap_check") }
         let correctCardId = event.correctOrder[wrongSlot]
         let correctCard   = event.cards[correctCardId]
-        let posLabel      = positionLabels[wrongSlot]
+        let posLabel      = positionLabels[min(wrongSlot, positionLabels.count - 1)]
 
         if let wrongCardId = slotContents[wrongSlot] {
             let wrongCard = event.cards[wrongCardId]
             switch level {
-            case 1:  return "Is '\(wrongCard.description)' really the \(posLabel) scene? Think about when it happens."
-            case 2:  return "The \(posLabel) scene shouldn't be '\(wrongCard.description)'. Look for another one."
-            default: return "The \(posLabel) scene should be '\(correctCard.description)'. Can you find it?"
+            case 1:  return String(format: lm.t("hint.wrong_1"), wrongCard.description, posLabel)
+            case 2:  return String(format: lm.t("hint.wrong_2"), posLabel, wrongCard.description)
+            default: return String(format: lm.t("hint.wrong_3"), posLabel, correctCard.description)
             }
         } else {
             switch level {
-            case 1:  return "Position \(wrongSlot + 1) is still empty. Try placing a card there!"
-            default: return "The \(posLabel) scene should be '\(correctCard.description)'."
+            case 1:  return String(format: lm.t("hint.empty_1"), wrongSlot + 1)
+            default: return String(format: lm.t("hint.empty_2"), posLabel, correctCard.description)
             }
         }
     }
@@ -439,6 +446,7 @@ struct SequencingActivityView<Reward: View>: View {
                             showCelebration = false
                             checkResult     = nil
                             attemptCount    = 0
+                            shuffledStart   = event.makeShuffledStart()
                             slotContents    = Array(repeating: nil, count: event.cards.count)
                             flippedStates   = Array(repeating: false, count: event.cards.count)
                         }
@@ -486,7 +494,7 @@ struct SequencingActivityView<Reward: View>: View {
                     .textCase(.uppercase)
                     .shadow(color: .black.opacity(0.45), radius: 3, y: 1)
 
-                Text("Put the story in order")
+                Text(lm.t("sequencing.instruction"))
                     .font(.system(.title3, design: .rounded))
                     .fontWeight(.black)
                     .foregroundColor(.white)
@@ -498,18 +506,18 @@ struct SequencingActivityView<Reward: View>: View {
             HStack(spacing: 10) {
                 Button(action: flipAllCards) {
                     toolbarButtonLabel(
-                        title: "Flip All",
+                        title: lm.t("button.flip_all"),
                         systemImage: "arrow.triangle.2.circlepath",
                         fill: Color(red: 0.42, green: 0.20, blue: 0.48)
                     )
                 }
                 .buttonStyle(.plain)
                 .frame(minWidth: 44, minHeight: 52)
-                .accessibilityLabel("Flip all cards")
+                .accessibilityLabel(lm.t("a11y.flip_all"))
 
                 Button(action: checkOrder) {
                     toolbarButtonLabel(
-                        title: "Check!",
+                        title: lm.t("button.check"),
                         systemImage: "checkmark.circle.fill",
                         fill: allSlotsFilled
                             ? Color(red: 0.14, green: 0.54, blue: 0.24)
@@ -519,7 +527,7 @@ struct SequencingActivityView<Reward: View>: View {
                 .buttonStyle(.plain)
                 .disabled(!allSlotsFilled)
                 .frame(minWidth: 44, minHeight: 52)
-                .accessibilityLabel("Check your story order")
+                .accessibilityLabel(lm.t("a11y.check_order"))
                 .modifier(ShakeModifier(amount: shakeAmount))
             }
         }
@@ -832,7 +840,7 @@ struct SequencingActivityView<Reward: View>: View {
 
         return LazyHStack(spacing: cardGap) {
             ForEach(0..<event.cards.count, id: \.self) { position in
-                let cardId    = event.shuffledStart[position]
+                let cardId    = shuffledStart[position]
                 let isPlaced  = placedCardIds.contains(cardId)
                 let isDragged = draggingCardId == cardId && dragOriginSlot == nil
 
@@ -1022,7 +1030,7 @@ struct SequencingActivityView<Reward: View>: View {
     // MARK: - Feedback banner
 
     private var feedbackBannerText: String {
-        "Good try! \(contextualHint(level: attemptCount))"
+        "\(lm.t("feedback.good_try")) \(contextualHint(level: attemptCount))"
     }
 
     private var feedbackBanner: some View {

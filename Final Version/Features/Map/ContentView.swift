@@ -37,6 +37,8 @@ struct ContentView: View {
     let isGlobalTransitioning: Bool
     let onReturnToMainMenu: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     @State private var activeMap = ActiveMap.main
     @State private var avatarPosition = MapGraph.initialWaypoint.point
     @State private var currentBaseID = MapGraph.initialWaypoint.id
@@ -126,7 +128,7 @@ struct ContentView: View {
                        let region = MapGraph.storyRegion(for: currentBaseID),
                        !MapGraph.comingSoonBaseIDs.contains(currentBaseID) {
                         StoryRegionPlaque(
-                            title: region.title,
+                            title: lm.t(region.titleKey),
                             width: titleWidth(for: mapSize),
                             fontSize: titleFontSize(for: mapSize)
                         )
@@ -347,8 +349,8 @@ struct ContentView: View {
     }
 
     private func levelBannerTitle(for level: Int) -> String {
-        if level == 0 { return "Adventure Begins!" }
-        return EventLoader.event(id: level)?.bannerTitle ?? "New Scene"
+        if level == 0 { return lm.t("level.adventure_begins") }
+        return EventLoader.event(id: level, from: lm.bundle)?.bannerTitle ?? lm.t("level.new_scene")
     }
 
     private func dotSize(for mapSize: CGSize) -> CGFloat {
@@ -361,7 +363,7 @@ struct ContentView: View {
     }
 
     private var nextRedHoodLevel: Int? {
-        (0...EventLoader.maxEventId).first { !completedRedHoodLevels.contains($0) }
+        (0...EventLoader.maxEventId(from: lm.bundle)).first { !completedRedHoodLevels.contains($0) }
     }
 
     private func isRedHoodWaypointPlayable(_ waypointId: Int) -> Bool {
@@ -471,7 +473,7 @@ struct ContentView: View {
                     activeRedHoodLevel = nil
                 }
             }
-        } else if let eventData = EventLoader.event(id: level) {
+        } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(eventData: eventData) {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     completedRedHoodLevels.insert(level)
@@ -581,7 +583,7 @@ private struct LocationTriangle: Shape {
 
 private struct StoryRegion {
     let baseID: Int
-    let title: String
+    let titleKey: String
     let titlePoint: CGPoint
 }
 
@@ -618,12 +620,14 @@ private struct ComingSoonBadge: View {
     let width: CGFloat
     let fontSize: CGFloat
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: "clock.fill")
                 .font(.system(size: fontSize * 0.85))
                 .foregroundStyle(Color(red: 0.72, green: 0.38, blue: 0.04))
-            Text("Coming Soon")
+            Text(lm.t("map.coming_soon"))
                 .font(.system(size: fontSize, weight: .semibold, design: .serif))
                 .italic()
                 .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
@@ -647,6 +651,8 @@ private struct ComingSoonBadge: View {
 private struct RedHoodPlayButton: View {
     let action: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         Button(action: action) {
             ZStack {
@@ -654,8 +660,7 @@ private struct RedHoodPlayButton: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.98, green: 0.20, blue: 0.18),
-                                Color(red: 0.72, green: 0.04, blue: 0.08)
+                                Color(.blue)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -672,7 +677,7 @@ private struct RedHoodPlayButton: View {
                     .foregroundStyle(.white)
                     .offset(x: 2)
             }
-            .accessibilityLabel("Play Little Red Riding Hood")
+            .accessibilityLabel(lm.t("a11y.play_red_hood"))
         }
         .buttonStyle(.plain)
     }
@@ -789,12 +794,14 @@ private struct MainMapIslandDot: View {
 private struct LevelStartButton: View {
     let action: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         Button(action: action) {
             ZStack {
                 Circle()
                     .fill(LinearGradient(
-                        colors: [Color(red: 0.20, green: 0.82, blue: 0.36), Color(red: 0.06, green: 0.54, blue: 0.20)],
+                        colors: [Color(.blue)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ))
@@ -806,7 +813,7 @@ private struct LevelStartButton: View {
                     .foregroundStyle(.white)
                     .offset(x: 2)
             }
-            .accessibilityLabel("Start event")
+            .accessibilityLabel(lm.t("a11y.start_event"))
         }
         .buttonStyle(.plain)
     }
@@ -815,12 +822,14 @@ private struct LevelStartButton: View {
 private struct BackButton: View {
     let action: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 7) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 16, weight: .bold))
-                Text("Back")
+                Text(lm.t("button.back"))
                     .font(.system(.subheadline, design: .rounded))
                     .fontWeight(.bold)
             }
@@ -836,19 +845,21 @@ private struct BackButton: View {
             .shadow(color: .black.opacity(0.50), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Go back")
+        .accessibilityLabel(lm.t("a11y.go_back"))
     }
 }
 
 private struct MainMenuButton: View {
     let action: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 7) {
                 Image(systemName: "house.fill")
                     .font(.system(size: 15, weight: .bold))
-                Text("Menu")
+                Text(lm.t("button.menu"))
                     .font(.system(.subheadline, design: .rounded))
                     .fontWeight(.bold)
             }
@@ -864,8 +875,8 @@ private struct MainMenuButton: View {
             .shadow(color: .black.opacity(0.50), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Return to main menu")
-        .accessibilityHint("Leaves the world map and opens the title screen")
+        .accessibilityLabel(lm.t("a11y.return_to_menu"))
+        .accessibilityHint(lm.t("a11y.menu_hint"))
     }
 }
 
@@ -965,11 +976,11 @@ private enum MapGraph {
     static let baseTapRadius: CGFloat = 0.055
 
     static let storyRegions: [StoryRegion] = [
-        StoryRegion(baseID: 0, title: "Little Red Riding Hood", titlePoint: CGPoint(x: 0.232, y: 0.226)),
-        StoryRegion(baseID: 22, title: "The Princess and the Frog", titlePoint: CGPoint(x: 0.270, y: 0.612)),
-        StoryRegion(baseID: 18, title: "Aladdin", titlePoint: CGPoint(x: 0.790, y: 0.704)),
-        StoryRegion(baseID: 14, title: "Beauty and the Beast", titlePoint: CGPoint(x: 0.548, y: 0.462)),
-        StoryRegion(baseID: 7, title: "Coming Soon", titlePoint: CGPoint(x: 0.620, y: 0.205))
+        StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: CGPoint(x: 0.232, y: 0.226)),
+        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: CGPoint(x: 0.270, y: 0.612)),
+        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: CGPoint(x: 0.790, y: 0.704)),
+        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: CGPoint(x: 0.548, y: 0.462)),
+        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: CGPoint(x: 0.620, y: 0.205))
     ]
 
     static let waypoints: [MapWaypoint] = [

@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "bannerTitle": "Scena 1",
+    "introImageName": "Introduzione 1 evento",
+    "introText": "La mamma dice a Cappuccetto Rosso che la nonna è malata. Devono preparare un cestino da portarle. Aiuta a mettere le scene della storia nell'ordine corretto!",
+    "cards": [
+      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "La mamma e Cappuccetto Rosso preparano il cestino insieme", "correctPosition": 0 },
+      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "La mamma dà il cestino a Cappuccetto Rosso", "correctPosition": 1 },
+      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Cappuccetto Rosso indossa il suo mantello rosso", "correctPosition": 2 },
+      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Cappuccetto Rosso lascia la casa", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: gli eventi di una storia avvengono in ORDINE — ogni azione rende possibile la successiva!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Bravissimo! Hai messo tutte le scene nell'ordine giusto! Ora Cappuccetto Rosso può prendere il cestino, indossare il mantello rosso e saltellare nel bosco per portare qualcosa di buono alla nonna. La storia può continuare — tutto grazie a TE!",
+    "isLastEvent": false
+  },
+  {
+    "id": 2,
+    "bannerTitle": "Scena 2",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Cappuccetto Rosso parte da sola nel bosco profondo. Cammina tranquillamente lungo il sentiero, circondata da alberi alti. Riesci a mettere le scene della storia nell'ordine giusto?",
+    "cards": [
+      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Cappuccetto Rosso cammina lungo il sentiero del bosco, con il cestino in mano", "correctPosition": 0 },
+      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "Scorge dei bellissimi fiori colorati che crescono vicino al sentiero", "correctPosition": 1 },
+      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "Raccoglie i fiori e si allontana dal sentiero, distratta", "correctPosition": 2 },
+      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "Si avventura lontano dal sentiero, persa nella raccolta dei fiori", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: Le distrazioni cambiano la direzione di una storia — l'ORDINE delle scelte è importante!",
+    "rewardImageName": "Reward evento 2",
+    "rewardText": "Incredibile! Hai messo ogni scena nell'ordine giusto! Hai seguito perfettamente il viaggio di Cappuccetto Rosso nel bosco — passo dopo passo, fino a dove si è allontanata dal sentiero. Sei un vero eroe della storia e guardiano del bosco! Attenzione — c'è un lupo che la spia da dietro gli alberi…",
+    "isLastEvent": false
+  },
+  {
+    "id": 3,
+    "bannerTitle": "Scena 3",
+    "introImageName": "Introduzione_3",
+    "introText": "Il lupo ha visto Cappuccetto Rosso nel bosco. La osserva attentamente, pensando a un piano astuto. Cappuccetto Rosso non sa che il lupo la sta guardando... Aiuta a mettere le scene della storia nell'ordine corretto!",
+    "cards": [
+      { "id": 0, "imageName": "3_1", "description": "Il lupo pensa a un piano per arrivare a casa della nonna", "correctPosition": 0 },
+      { "id": 1, "imageName": "3.2", "description": "Il lupo appare sul sentiero dove cammina Cappuccetto Rosso", "correctPosition": 1 },
+      { "id": 2, "imageName": "3_3", "description": "Il lupo chiede: 'Dove stai andando, bambina?'", "correctPosition": 2 },
+      { "id": 3, "imageName": "3.4", "description": "Cappuccetto Rosso dice al lupo: 'Vado a casa della nonna'", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: CONSEGUENZE = LE AZIONI HANNO RISULTATI",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Ora il lupo sa dove trovare la nonna. Cosa succederà dopo?",
+    "isLastEvent": true
+  }
+]

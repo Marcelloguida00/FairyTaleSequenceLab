@@ -1,0 +1,69 @@
+/* Buttons */
+"button.play"        = "بازی";
+"button.back"        = "بازگشت";
+"button.menu"        = "منو";
+"button.continue"    = "ادامه";
+"button.check"       = "بررسی!";
+"button.flip_all"    = "برگرداندن همه";
+"button.play_again"  = "دوباره بازی کن";
+"button.next_event"  = "صحنه بعدی";
+"button.back_to_map" = "بازگشت به نقشه";
+"button.done"        = "تمام";
+
+/* Sequencing activity */
+"sequencing.instruction" = "داستان را به ترتیب بچین";
+"celebration.title"      = "آفرین!";
+"feedback.good_try"      = "تلاش خوبی بود!";
+
+/* Position labels (used in contextual hints) */
+"pos.1st" = "اول";
+"pos.2nd" = "دوم";
+"pos.3rd" = "سوم";
+"pos.4th" = "چهارم";
+
+/* Contextual hints */
+"hint.tap_check"    = "روی بررسی! ضربه بزن";
+"hint.wrong_1"      = "آیا '%@' واقعاً صحنه %@ است؟ به زمان وقوعش فکر کن.";
+"hint.wrong_2"      = "صحنه %@ نباید '%@' باشد. دنبال یکی دیگه بگرد.";
+"hint.wrong_3"      = "صحنه %@ باید '%@' باشد. می‌تونی پیداش کنی؟";
+"hint.empty_1"      = "جایگاه %d هنوز خالی است. یه کارت اونجا بذار!";
+"hint.empty_2"      = "صحنه %@ باید '%@' باشد.";
+
+/* Level banners */
+"level.adventure_begins" = "ماجراجویی شروع شد!";
+"level.new_scene"        = "صحنه جدید";
+
+/* Map */
+"map.coming_soon"             = "به زودی";
+"map.region.red_riding_hood"  = "شنل قرمزی";
+"map.region.princess_frog"    = "شاهزاده خانم و قورباغه";
+"map.region.aladdin"          = "علاءالدین";
+"map.region.beauty_beast"     = "دیو و دلبر";
+
+/* Reward screen */
+"reward.perfect"   = "عالی! از اول درست بود!";
+"reward.well_done" = "آفرین! فهمیدی!";
+"reward.did_it"    = "موفق شدی! هر بار قوی‌تر شدی!";
+
+/* Settings */
+"settings.title"       = "تنظیمات";
+"settings.language"    = "زبان";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "شنل قرمزی";
+"redhood.intro.mascot"  = "آخ نه! یه هیولا همه قصه‌های پریان رو نابود کرده و صحنه‌هاشون رو پراکنده کرده! می‌تونی کمکم کنی داستان شنل قرمزی رو دوباره سر هم کنیم؟";
+"redhood.intro.button"  = "شروع ماجراجویی!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "بازی شنل قرمزی";
+"a11y.start_event"          = "شروع رویداد";
+"a11y.go_back"              = "برگشت";
+"a11y.return_to_menu"       = "بازگشت به منوی اصلی";
+"a11y.play_button"          = "بازی";
+"a11y.settings_button"      = "باز کردن تنظیمات";
+"a11y.menu_hint"            = "از نقشه جهانی خارج می‌شود و صفحه عنوان را باز می‌کند";
+"a11y.play_hint"            = "پرده ابری را باز می‌کند و ماجراجویی را شروع می‌کند";
+"a11y.celebration"          = "تبریک! موفق شدی!";
+"a11y.continue_sequencing"  = "ادامه به فعالیت ترتیب‌بندی";
+"a11y.check_order"          = "ترتیب داستان را بررسی کن";
+"a11y.flip_all"             = "همه کارت‌ها را برگردان";

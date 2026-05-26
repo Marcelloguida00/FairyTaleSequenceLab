@@ -1,0 +1,69 @@
+/* Buttons */
+"button.play"        = "GIOCA";
+"button.back"        = "Indietro";
+"button.menu"        = "Menu";
+"button.continue"    = "Continua";
+"button.check"       = "Controlla!";
+"button.flip_all"    = "Gira tutte";
+"button.play_again"  = "Gioca ancora";
+"button.next_event"  = "Prossima scena";
+"button.back_to_map" = "Torna alla mappa";
+"button.done"        = "Fatto";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Metti la storia in ordine";
+"celebration.title"      = "Ce l'hai fatta!";
+"feedback.good_try"      = "Buon tentativo!";
+
+/* Position labels */
+"pos.1st" = "1a";
+"pos.2nd" = "2a";
+"pos.3rd" = "3a";
+"pos.4th" = "4a";
+
+/* Contextual hints */
+"hint.tap_check"    = "Premi Controlla!";
+"hint.wrong_1"      = "'%@' è davvero la %@ scena? Pensa a quando accade.";
+"hint.wrong_2"      = "La %@ scena non dovrebbe essere '%@'. Cercane un'altra.";
+"hint.wrong_3"      = "La %@ scena dovrebbe essere '%@'. Riesci a trovarla?";
+"hint.empty_1"      = "La posizione %d è ancora vuota. Prova a mettere una carta lì!";
+"hint.empty_2"      = "La %@ scena dovrebbe essere '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "L'avventura inizia!";
+"level.new_scene"        = "Nuova scena";
+
+/* Map */
+"map.coming_soon"             = "Prossimamente";
+"map.region.red_riding_hood"  = "Cappuccetto Rosso";
+"map.region.princess_frog"    = "La Principessa e il Ranocchio";
+"map.region.aladdin"          = "Aladino";
+"map.region.beauty_beast"     = "La Bella e la Bestia";
+
+/* Reward screen */
+"reward.perfect"   = "Perfetto! Ci sei riuscito al primo tentativo!";
+"reward.well_done" = "Bravo! Hai capito!";
+"reward.did_it"    = "Ce l'hai fatta! Ogni tentativo ti ha reso più forte!";
+
+/* Settings */
+"settings.title"       = "Impostazioni";
+"settings.language"    = "Lingua";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Cappuccetto Rosso";
+"redhood.intro.mascot"  = "Oh no! Un mostro ha distrutto tutte le fiabe e ha sparso le scene ovunque! Riesci ad aiutarmi a rimettere insieme la storia di Cappuccetto Rosso?";
+"redhood.intro.button"  = "Inizia l'avventura!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Gioca a Cappuccetto Rosso";
+"a11y.start_event"          = "Inizia evento";
+"a11y.go_back"              = "Torna indietro";
+"a11y.return_to_menu"       = "Torna al menu principale";
+"a11y.play_button"          = "Gioca";
+"a11y.settings_button"      = "Apri impostazioni";
+"a11y.menu_hint"            = "Esce dalla mappa e apre la schermata iniziale";
+"a11y.play_hint"            = "Apre il sipario e inizia l'avventura";
+"a11y.celebration"          = "Complimenti! Ce l'hai fatta!";
+"a11y.continue_sequencing"  = "Continua all'attività di sequenza";
+"a11y.check_order"          = "Controlla l'ordine della storia";
+"a11y.flip_all"             = "Gira tutte le carte";

@@ -1,0 +1,69 @@
+/* Buttons */
+"button.play"        = "ИГРАТЬ";
+"button.back"        = "Назад";
+"button.menu"        = "Меню";
+"button.continue"    = "Далее";
+"button.check"       = "Проверить!";
+"button.flip_all"    = "Перевернуть";
+"button.play_again"  = "Играть снова";
+"button.next_event"  = "Следующая сцена";
+"button.back_to_map" = "На карту";
+"button.done"        = "Готово";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Расставь сцены по порядку";
+"celebration.title"      = "Ты справился!";
+"feedback.good_try"      = "Хорошая попытка!";
+
+/* Position labels */
+"pos.1st" = "1-я";
+"pos.2nd" = "2-я";
+"pos.3rd" = "3-я";
+"pos.4th" = "4-я";
+
+/* Contextual hints */
+"hint.tap_check"    = "Нажми Проверить!";
+"hint.wrong_1"      = "Действительно ли '%@' — это %@ сцена? Подумай, когда это происходит.";
+"hint.wrong_2"      = "%@ сцена не должна быть '%@'. Поищи другую.";
+"hint.wrong_3"      = "%@ сцена должна быть '%@'. Сможешь найти её?";
+"hint.empty_1"      = "Позиция %d ещё пустая. Попробуй поставить карточку туда!";
+"hint.empty_2"      = "%@ сцена должна быть '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "Приключение начинается!";
+"level.new_scene"        = "Новая сцена";
+
+/* Map */
+"map.coming_soon"             = "Скоро";
+"map.region.red_riding_hood"  = "Красная Шапочка";
+"map.region.princess_frog"    = "Принцесса и лягушка";
+"map.region.aladdin"          = "Аладдин";
+"map.region.beauty_beast"     = "Красавица и чудовище";
+
+/* Reward screen */
+"reward.perfect"   = "Отлично! Ты справился с первого раза!";
+"reward.well_done" = "Молодец! Ты разобрался!";
+"reward.did_it"    = "Ты справился! Каждая попытка делала тебя сильнее!";
+
+/* Settings */
+"settings.title"       = "Настройки";
+"settings.language"    = "Язык";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Красная Шапочка";
+"redhood.intro.mascot"  = "О нет! Монстр разрушил все сказки и разбросал их сцены! Можешь помочь мне собрать историю Красной Шапочки снова?";
+"redhood.intro.button"  = "Начать приключение!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Играть в Красную Шапочку";
+"a11y.start_event"          = "Начать событие";
+"a11y.go_back"              = "Назад";
+"a11y.return_to_menu"       = "Вернуться в главное меню";
+"a11y.play_button"          = "Играть";
+"a11y.settings_button"      = "Открыть настройки";
+"a11y.menu_hint"            = "Выходит с карты и открывает начальный экран";
+"a11y.play_hint"            = "Открывает занавес и начинает приключение";
+"a11y.celebration"          = "Поздравляем! Ты справился!";
+"a11y.continue_sequencing"  = "Перейти к заданию на последовательность";
+"a11y.check_order"          = "Проверить порядок истории";
+"a11y.flip_all"             = "Перевернуть все карточки";

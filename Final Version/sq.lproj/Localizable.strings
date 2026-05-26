@@ -1,0 +1,69 @@
+/* Buttons */
+"button.play"        = "LUAJ";
+"button.back"        = "Prapa";
+"button.menu"        = "Menu";
+"button.continue"    = "Vazhdo";
+"button.check"       = "Kontrollo!";
+"button.flip_all"    = "Kthej të gjitha";
+"button.play_again"  = "Luaj sërish";
+"button.next_event"  = "Skena tjetër";
+"button.back_to_map" = "Kthehu te Harta";
+"button.done"        = "U krye";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Rendit historinë në rend";
+"celebration.title"      = "E bëre!";
+"feedback.good_try"      = "Provë e mirë!";
+
+/* Position labels */
+"pos.1st" = "e 1-rë";
+"pos.2nd" = "e 2-të";
+"pos.3rd" = "e 3-të";
+"pos.4th" = "e 4-t";
+
+/* Contextual hints */
+"hint.tap_check"    = "Shtyp Kontrollo!";
+"hint.wrong_1"      = "A është vërtet '%@' skena %@? Mendoni kur ndodh.";
+"hint.wrong_2"      = "Skena %@ nuk duhet të jetë '%@'. Kërko një tjetër.";
+"hint.wrong_3"      = "Skena %@ duhet të jetë '%@'. A mund ta gjesh?";
+"hint.empty_1"      = "Pozicioni %d është ende bosh. Provo të vendosësh një kartë atje!";
+"hint.empty_2"      = "Skena %@ duhet të jetë '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "Aventura fillon!";
+"level.new_scene"        = "Skenë e re";
+
+/* Map */
+"map.coming_soon"             = "Së shpejti";
+"map.region.red_riding_hood"  = "Kapelja e Kuqe";
+"map.region.princess_frog"    = "Princesha dhe Bretkosa";
+"map.region.aladdin"          = "Aladini";
+"map.region.beauty_beast"     = "Bukuroshja dhe Bestja";
+
+/* Reward screen */
+"reward.perfect"   = "Perfekt! E more me herën e parë!";
+"reward.well_done" = "Shumë mirë! E zbulove!";
+"reward.did_it"    = "E bëre! Çdo provë të bëri më të fortë!";
+
+/* Settings */
+"settings.title"       = "Cilësimet";
+"settings.language"    = "Gjuha";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Kapeleja e Kuqe";
+"redhood.intro.mascot"  = "O jo! Një përbindësh ka shkatërruar të gjitha përrallat dhe ka shpërndarë skenat e tyre! A mund të më ndihmosh të ribashkoj historinë e Kapeles së Kuqe?";
+"redhood.intro.button"  = "Fillo aventurën!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Luaj Kapelen e Kuqe";
+"a11y.start_event"          = "Fillo ngjarjen";
+"a11y.go_back"              = "Shko prapa";
+"a11y.return_to_menu"       = "Kthehu te menuja kryesore";
+"a11y.play_button"          = "Luaj";
+"a11y.settings_button"      = "Hap cilësimet";
+"a11y.menu_hint"            = "Del nga harta dhe hap ekranin kryesor";
+"a11y.play_hint"            = "Hap siparin dhe fillon aventurën";
+"a11y.celebration"          = "Urime! E bëre!";
+"a11y.continue_sequencing"  = "Vazhdo te aktiviteti i renditjes";
+"a11y.check_order"          = "Kontrollo rendin e historisë";
+"a11y.flip_all"             = "Kthej të gjitha kartat";
