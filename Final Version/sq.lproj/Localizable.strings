@@ -9,6 +9,7 @@
 "button.next_event"  = "Skena tjetër";
 "button.back_to_map" = "Kthehu te Harta";
 "button.done"        = "U krye";
+"button.settings"    = "CILËSIMET";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Rendit historinë në rend";
@@ -60,30 +61,30 @@
 /* Onboarding */
 "onboarding.skip"           = "Kalo";
 "onboarding.next"           = "Tjetër";
-"onboarding.start"          = "Fillo aventurën!";
-"onboarding.page1.title"    = "Mirë se erdhët në Botën e Basmave!";
-"onboarding.page1.body"     = "Një përbindësh i keq i shpërndarë të gjitha skenat e basmave! A mund të ndihmosh t'i rikthesh në rendin e duhur?";
-"onboarding.page2.title"    = "Eksploro Hartën";
-"onboarding.page2.body"     = "Ec nëpër botën magjike dhe zbulo basme që presin të restaurohen.";
-"onboarding.page3.title"    = "Rendit Historinë";
-"onboarding.page3.body"     = "Tërhiq kartat e skenave në rendin e duhur për të rindërtuar basmën, hap pas hapi.";
-"onboarding.page4.title"    = "Ktheje dhe Kontrollo";
-"onboarding.page4.body"     = "Ktheje një kartë për të lexuar një këshillë. Kur të gjitha vendet janë të mbushura, shtyp Kontrollo!";
+"onboarding.start"          = "Shpëto Basmet!";
+"onboarding.page1.title"    = "Bota e Basmave";
+"onboarding.page1.body"     = "Unë jam udhëzuesi yt në këtë botë magjike! Dikur të gjitha basmet jetonin këtu në paqe dhe harmoni...";
+"onboarding.page2.title"    = "Lord Tempus Sulmon!";
+"onboarding.page2.body"     = "Por i keqi Lord Tempus, Shkatërrues i Kohës, përdori magjinë e tij të errët për të shpërbërë TË GJITHA basmet! Çdo histori është thyer!";
+"onboarding.page3.title"    = "Kaos Kudo...";
+"onboarding.page3.body"     = "Magji e tij ishte aq e fuqishme sa të gjitha skenat janë shpërndarë nëpër botën magjike. Të gjithë janë të humbur dhe shumë të trishtuar!";
+"onboarding.page4.title"    = "Ti je Heroi ynë!";
+"onboarding.page4.body"     = "Udhëto në Botën e Basmave, gjej çdo skenë të shpërndarë dhe vendosei në rend për të thyer magjinë e Lord Tempus!";
 
 /* Tutorial */
 "tutorial.skip"             = "Kalo tutorialin";
 "tutorial.next"             = "Tjetër";
-"tutorial.done"             = "Kuptova!";
-"tutorial.step1.title"      = "Mirë se erdhët në Hartë!";
-"tutorial.step1.body"       = "Këtu jetojnë të gjitha historitë e basmave. Trokit kudo në hartë për të ecur atje!";
-"tutorial.step2.title"      = "Fillo një Histori";
-"tutorial.step2.body"       = "Kur të arrish në ishullin e një historie, do të shfaqet butoni i play. Trokit për të filluar aventurën!";
-"tutorial.step3.title"      = "Rendit Skenat";
-"tutorial.step3.body"       = "Tërhiq kartat në rendin e duhur. Çdo pozicion ka rëndësi — mendoni çfarë ndodh fillimisht!";
-"tutorial.step4.title"      = "Ktheje për Këshilla";
-"tutorial.step4.body"       = "I ngecur? Ktheje një kartë për të lexuar përshkrimin e saj dhe zbulo ku i takon.";
-"tutorial.step5.title"      = "Kontrollo Përgjigjen";
-"tutorial.step5.body"       = "Kur të gjitha vendet janë të mbushura, shtyp Kontrollo! për të parë nëse e ke bërë historinë saktë. Suksese!";
+"tutorial.done"             = "Hajde!";
+"tutorial.step1.title"      = "Lord Tempus Godet!";
+"tutorial.step1.body"       = "Lord Tempus ka përmbysur gjithë Botën e Basmave! Por bashkë mund ta rregullojmë. Trokit kudo në hartë për të filluar ecjen!";
+"tutorial.step2.title"      = "Gjej një Ishull Historie";
+"tutorial.step2.body"       = "Ec drejt një ishulli ndriçues. Kur arrish, shfaqet butoni i play — trokit për të filluar restaurimin e asaj basme!";
+"tutorial.step3.title"      = "Rikthe Rendin";
+"tutorial.step3.body"       = "Tërhiq kartat e skenave në rendin e duhur për të rindërtuar basmën. Mendo çfarë ndodh fillimisht!";
+"tutorial.step4.title"      = "Ktheje për Indicie";
+"tutorial.step4.body"       = "Nuk di ku shkon një kartë? Ktheje për të lexuar një indicie se kur ndodh ajo skenë në histori!";
+"tutorial.step5.title"      = "Thyeje Magjinë!";
+"tutorial.step5.body"       = "Kur të gjitha vendet janë të mbushura, shtyp Kontrollo! Nëse e bën saktë, ke thyer magjinë e Lord Tempus mbi atë histori. Je hero!";
 
 /* Accessibility */
 "a11y.play_red_hood"        = "Luaj Kapelen e Kuqe";

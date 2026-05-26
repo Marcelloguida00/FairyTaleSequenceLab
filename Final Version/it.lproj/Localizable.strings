@@ -9,6 +9,7 @@
 "button.next_event"  = "Prossima scena";
 "button.back_to_map" = "Torna alla mappa";
 "button.done"        = "Fatto";
+"button.settings"    = "IMPOSTAZIONI";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Metti la storia in ordine";
@@ -60,30 +61,30 @@
 /* Onboarding */
 "onboarding.skip"           = "Salta";
 "onboarding.next"           = "Avanti";
-"onboarding.start"          = "Inizia l'avventura!";
-"onboarding.page1.title"    = "Benvenuto nel Mondo delle Favole!";
-"onboarding.page1.body"     = "Un mostro malvagio ha sparso tutte le scene delle fiabe! Riesci ad aiutarci a rimetterle nell'ordine giusto?";
-"onboarding.page2.title"    = "Esplora la Mappa";
-"onboarding.page2.body"     = "Cammina attraverso il mondo magico e scopri le fiabe che aspettano di essere ripristinate.";
-"onboarding.page3.title"    = "Metti in Ordine";
-"onboarding.page3.body"     = "Trascina le carte delle scene nell'ordine corretto per ricostruire la fiaba, passo dopo passo.";
-"onboarding.page4.title"    = "Gira e Controlla";
-"onboarding.page4.body"     = "Gira una carta per leggere un suggerimento su dove va. Quando tutti i posti sono occupati, premi Controlla!";
+"onboarding.start"          = "Salva le Fiabe!";
+"onboarding.page1.title"    = "Il Mondo delle Favole";
+"onboarding.page1.body"     = "Sono la tua guida in questo mondo magico! Un tempo tutte le fiabe vivevano qui in pace e armonia...";
+"onboarding.page2.title"    = "L'Attacco di Lord Tempus!";
+"onboarding.page2.body"     = "Ma il malvagio Lord Tempus, il Distruttore del Tempo, ha usato la sua magia oscura per mandare in frantumi TUTTE le fiabe! Ogni storia è distrutta!";
+"onboarding.page3.title"    = "Il Caos ovunque...";
+"onboarding.page3.body"     = "Il suo incantesimo era così potente che tutte le scene sono sparse per il mondo magico. Tutti sono persi e terribilmente tristi!";
+"onboarding.page4.title"    = "Tu sei il nostro Eroe!";
+"onboarding.page4.body"     = "Esplora il Mondo delle Favole, trova ogni scena dispersa e rimettila in ordine per spezzare l'incantesimo di Lord Tempus!";
 
 /* Tutorial */
 "tutorial.skip"             = "Salta il tutorial";
 "tutorial.next"             = "Avanti";
-"tutorial.done"             = "Ho capito!";
-"tutorial.step1.title"      = "Benvenuto nella Mappa!";
-"tutorial.step1.body"       = "Qui vivono tutte le storie delle fiabe. Tocca un punto della mappa per camminare lì!";
-"tutorial.step2.title"      = "Inizia una Storia";
-"tutorial.step2.body"       = "Quando raggiungi l'isola di una storia, apparirà un pulsante play. Toccalo per iniziare l'avventura!";
-"tutorial.step3.title"      = "Metti in Ordine le Scene";
-"tutorial.step3.body"       = "Trascina le carte nell'ordine corretto. Ogni posizione è importante — pensa a cosa succede prima!";
-"tutorial.step4.title"      = "Gira per i Suggerimenti";
-"tutorial.step4.body"       = "Bloccato? Gira una carta per leggere la sua descrizione e capire dove va.";
-"tutorial.step5.title"      = "Controlla la Risposta";
-"tutorial.step5.body"       = "Quando tutti i posti sono occupati, premi Controlla! per vedere se hai ricostruito bene la storia. Buona fortuna!";
+"tutorial.done"             = "Andiamo!";
+"tutorial.step1.title"      = "Lord Tempus Colpisce!";
+"tutorial.step1.body"       = "Lord Tempus ha messo sottosopra tutto il Mondo delle Favole! Ma insieme possiamo sistemarlo. Tocca la mappa per cominciare a camminare!";
+"tutorial.step2.title"      = "Trova un'Isola delle Storie";
+"tutorial.step2.body"       = "Cammina verso un'isola luminosa. Quando arrivi, appare un pulsante play — toccalo per iniziare a ripristinare quella fiaba!";
+"tutorial.step3.title"      = "Ripristina l'Ordine";
+"tutorial.step3.body"       = "Trascina le carte delle scene nell'ordine giusto per ricostruire la fiaba. Pensa a cosa succede per primo!";
+"tutorial.step4.title"      = "Gira per gli Indizi";
+"tutorial.step4.body"       = "Non sai dove va una carta? Girala per leggere un indizio su quando quella scena accade nella storia!";
+"tutorial.step5.title"      = "Spezza l'Incantesimo!";
+"tutorial.step5.body"       = "Quando tutti i posti sono occupati, premi Controlla! Se ci riesci, spezzi l'incantesimo di Lord Tempus su quella storia. Sei un eroe!";
 
 /* Accessibility */
 "a11y.play_red_hood"        = "Gioca a Cappuccetto Rosso";
