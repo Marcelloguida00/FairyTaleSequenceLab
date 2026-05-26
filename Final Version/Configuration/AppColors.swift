@@ -19,13 +19,6 @@ extension Color {
             : UIColor(red: 0.894, green: 0.945, blue: 0.984, alpha: 1)
     })
 
-    // dark: #122841  light: #D2E7F8
-    static let appGridBackground = Color(UIColor {
-        $0.userInterfaceStyle == .dark
-            ? UIColor(red: 0.071, green: 0.157, blue: 0.255, alpha: 1)
-            : UIColor(red: 0.824, green: 0.906, blue: 0.973, alpha: 1)
-    })
-
     // dark: #C8E4F8  light: #0E263E
     static let appPrimaryText = Color(UIColor {
         $0.userInterfaceStyle == .dark
@@ -52,13 +45,6 @@ extension Color {
         $0.userInterfaceStyle == .dark
             ? UIColor(red: 0.137, green: 0.314, blue: 0.471, alpha: 1)
             : UIColor(red: 0.392, green: 0.686, blue: 0.882, alpha: 1)
-    })
-
-    // dark: #0C1E32  light: #F2F8FD
-    static let appCardBack = Color(UIColor {
-        $0.userInterfaceStyle == .dark
-            ? UIColor(red: 0.047, green: 0.118, blue: 0.196, alpha: 1)
-            : UIColor(red: 0.949, green: 0.973, blue: 0.992, alpha: 1)
     })
 
     // dark: #122841  light: #F5FCFF

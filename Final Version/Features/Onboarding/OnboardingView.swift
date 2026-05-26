@@ -6,15 +6,14 @@ struct OnboardingView: View {
     @EnvironmentObject private var lm: LanguageManager
     @State private var currentPage = 0
 
-    // Sfondo sempre scuro come la mappa notturna
     private let skyTop    = Color(red: 0.05, green: 0.12, blue: 0.22)
     private let skyBottom = Color(red: 0.10, green: 0.32, blue: 0.52)
 
     private struct PageData {
         enum Visual {
-            case logo                          // world_of_fable_menu
-            case map                           // immagine mappa reale
-            case symbol(String, Color)
+            case logo
+            case villainImage(String)
+            case map
         }
         let visual: Visual
         let mascotFrames: [String]
@@ -23,36 +22,40 @@ struct OnboardingView: View {
     }
 
     private let pages: [PageData] = [
-        PageData(visual: .logo,
-                 mascotFrames: ["Mascot Waving", "Mascot Neutral", "Mascot Waving"],
-                 titleKey: "onboarding.page1.title",
-                 bodyKey:  "onboarding.page1.body"),
-        PageData(visual: .map,
-                 mascotFrames: ["Mascot Talking", "Mascot Neutral", "Mascot Talking"],
-                 titleKey: "onboarding.page2.title",
-                 bodyKey:  "onboarding.page2.body"),
-        PageData(visual: .symbol("rectangle.stack.fill",
-                                  Color(red: 0.10, green: 0.55, blue: 0.78)),
-                 mascotFrames: ["Mascot Neutral", "Mascot Talking"],
-                 titleKey: "onboarding.page3.title",
-                 bodyKey:  "onboarding.page3.body"),
-        PageData(visual: .symbol("checkmark.seal.fill",
-                                  Color(red: 0.28, green: 0.76, blue: 0.42)),
-                 mascotFrames: ["Mascot Cheer", "Mascot Waving", "Mascot Cheer"],
-                 titleKey: "onboarding.page4.title",
-                 bodyKey:  "onboarding.page4.body"),
+        PageData(
+            visual: .logo,
+            mascotFrames: ["Mascot Waving", "Mascot Neutral", "Mascot Waving"],
+            titleKey: "onboarding.page1.title",
+            bodyKey:  "onboarding.page1.body"
+        ),
+        PageData(
+            visual: .villainImage("villain_action"),
+            mascotFrames: ["Mascot Neutral", "Mascot Talking", "Mascot Neutral"],
+            titleKey: "onboarding.page2.title",
+            bodyKey:  "onboarding.page2.body"
+        ),
+        PageData(
+            visual: .villainImage("villain_rage"),
+            mascotFrames: ["Mascot Talking", "Mascot Neutral", "Mascot Talking"],
+            titleKey: "onboarding.page3.title",
+            bodyKey:  "onboarding.page3.body"
+        ),
+        PageData(
+            visual: .map,
+            mascotFrames: ["Mascot Cheer", "Mascot Waving", "Mascot Cheer"],
+            titleKey: "onboarding.page4.title",
+            bodyKey:  "onboarding.page4.body"
+        ),
     ]
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                // Sfondo a gradiente cielo/oceano
                 LinearGradient(colors: [skyTop, skyBottom],
                                startPoint: .topLeading,
                                endPoint: .bottomTrailing)
                     .ignoresSafeArea()
 
-                // Stelle decorative
                 starsOverlay
 
                 VStack(spacing: 0) {
@@ -74,7 +77,7 @@ struct OnboardingView: View {
         .ignoresSafeArea()
     }
 
-    // MARK: - Stella decorativa
+    // MARK: - Stelle decorative
 
     private var starsOverlay: some View {
         GeometryReader { geo in
@@ -100,11 +103,9 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             Spacer()
 
-            // Elemento visivo principale
             visualElement(page.visual, geo: geo)
-                .padding(.bottom, 28)
+                .padding(.bottom, 24)
 
-            // Mascot + speech bubble
             MascotGuideView(
                 imageName: page.mascotFrames[0],
                 animatedImageNames: page.mascotFrames,
@@ -114,14 +115,13 @@ struct OnboardingView: View {
             )
             .padding(.horizontal, 36)
 
-            // Titolo sotto
             Text(lm.t(page.titleKey))
                 .font(.system(.title2, design: .rounded))
                 .fontWeight(.black)
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 48)
-                .padding(.top, 20)
+                .padding(.top, 18)
                 .shadow(color: .black.opacity(0.35), radius: 4, y: 2)
 
             Spacer()
@@ -131,40 +131,49 @@ struct OnboardingView: View {
 
     @ViewBuilder
     private func visualElement(_ visual: PageData.Visual, geo: GeometryProxy) -> some View {
-        let maxH = min(geo.size.height * 0.26, 200)
+        let logoMaxH   = min(geo.size.height * 0.26, 200)
+        let villainMaxH = min(geo.size.height * 0.42, 340)
         switch visual {
         case .logo:
             Image("world_of_fable_menu")
                 .resizable()
                 .scaledToFit()
-                .frame(height: maxH)
+                .frame(height: logoMaxH)
                 .shadow(color: Color(red: 0.10, green: 0.55, blue: 0.78).opacity(0.6),
                         radius: 18, y: 6)
                 .accessibilityHidden(true)
+
+        case .villainImage(let name):
+            Image(name)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: geo.size.width * 0.92, maxHeight: villainMaxH)
+                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 22)
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color(red: 0.6, green: 0.1, blue: 0.1).opacity(0.8),
+                                         Color(red: 0.4, green: 0.0, blue: 0.5).opacity(0.8)],
+                                startPoint: .topLeading, endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 2.5
+                        )
+                )
+                .shadow(color: Color(red: 0.5, green: 0.0, blue: 0.5).opacity(0.55),
+                        radius: 20, y: 8)
+                .accessibilityHidden(true)
+
         case .map:
             Image("mappa")
                 .resizable()
                 .scaledToFill()
-                .frame(width: min(geo.size.width * 0.55, 380), height: maxH)
+                .frame(width: min(geo.size.width * 0.60, 400), height: logoMaxH)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay(RoundedRectangle(cornerRadius: 20)
                     .stroke(Color.white.opacity(0.30), lineWidth: 2))
                 .shadow(color: .black.opacity(0.40), radius: 14, y: 6)
                 .accessibilityHidden(true)
-        case .symbol(let name, let color):
-            ZStack {
-                Circle()
-                    .fill(color.opacity(0.18))
-                    .frame(width: maxH, height: maxH)
-                Circle()
-                    .stroke(color.opacity(0.35), lineWidth: 2)
-                    .frame(width: maxH, height: maxH)
-                Image(systemName: name)
-                    .font(.system(size: maxH * 0.42, weight: .bold))
-                    .foregroundStyle(color)
-            }
-            .shadow(color: color.opacity(0.40), radius: 16, y: 4)
-            .accessibilityHidden(true)
         }
     }
 
@@ -224,3 +233,7 @@ struct OnboardingView: View {
     }
 }
 
+#Preview("Onboarding") {
+    OnboardingView(onFinish: {})
+        .environmentObject(LanguageManager())
+}

@@ -38,30 +38,12 @@ struct MainMenuPanelLayer: View {
     private static let panelFadeDuration: TimeInterval = 0.30
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
+        ZStack {
             MenuPanelView(
                 isDisabled: isTransitioning || isPanelDissolving,
-                onPlay: startGame
+                onPlay: startGame,
+                onSettings: { showSettings = true }
             )
-
-            // Settings button — always fixed in the bottom-left corner
-            Button { showSettings = true } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 26, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .padding(14)
-                    .background(
-                        Circle()
-                            .fill(Color(red: 0.10, green: 0.06, blue: 0.02).opacity(0.78))
-                            .overlay(Circle().stroke(Color.white.opacity(0.55), lineWidth: 1.5))
-                    )
-                    .shadow(color: .black.opacity(0.45), radius: 8, y: 4)
-            }
-            .buttonStyle(.plain)
-            .padding(.leading, 28)
-            .padding(.bottom, 28)
-            .disabled(isTransitioning || isPanelDissolving)
-            .accessibilityLabel(lm.t("a11y.settings_button"))
         }
         .opacity(panelOpacity)
         .scaleEffect(panelScale)
@@ -128,36 +110,12 @@ struct MainMenuPanelLayer: View {
     }
 }
 
-// MARK: - Anteprima (sfondo + pannello)
-
-struct MainMenuView: View {
-    @Binding var cloudEnterProgress: CGFloat
-    @Binding var cloudExitProgress: CGFloat
-    let isTransitioning: Bool
-    let onPlay: () -> Void
-
-    var body: some View {
-        ZStack {
-            MainMenuSceneView(
-                cloudEnterProgress: $cloudEnterProgress,
-                cloudExitProgress: $cloudExitProgress
-            )
-
-            MainMenuPanelLayer(
-                isTransitioning: isTransitioning,
-                resetID: 0,
-                onPlay: onPlay
-            )
-            .environmentObject(LanguageManager())
-        }
-    }
-}
-
 // MARK: - Pannello centrale (cornice + titolo + Play)
 
 private struct MenuPanelView: View {
     let isDisabled: Bool
     let onPlay: () -> Void
+    let onSettings: () -> Void
 
     var body: some View {
         GeometryReader { proxy in
@@ -179,9 +137,15 @@ private struct MenuPanelView: View {
                     Spacer(minLength: panelSize.height * 0.02)
 
                     MenuPlayButton(
-                        width: panelSize.width * 0.52,
+                        width: panelSize.width * 0.62,
                         isDisabled: isDisabled,
                         action: onPlay
+                    )
+
+                    MenuSettingsButton(
+                        width: panelSize.width * 0.62,
+                        isDisabled: isDisabled,
+                        action: onSettings
                     )
 
                     Spacer(minLength: panelSize.height * 0.06)
@@ -210,7 +174,63 @@ private struct MenuPanelView: View {
     }
 }
 
-// MARK: - Titolo “World of Fables”
+// MARK: - Bottone Settings
+
+private struct MenuSettingsButton: View {
+    let width: CGFloat
+    let isDisabled: Bool
+    let action: () -> Void
+
+    @EnvironmentObject private var lm: LanguageManager
+
+    private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
+
+    var body: some View {
+        Button(action: action) {
+            Text(lm.t("button.settings"))
+                .font(.system(size: width * 0.14, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .padding(.horizontal, width * 0.07)
+                .frame(width: width, height: width * 0.38)
+                .background(
+                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.38, green: 0.24, blue: 0.08),
+                                    Color(red: 0.22, green: 0.13, blue: 0.04)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 1.0, green: 0.88, blue: 0.45),
+                                    gold
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: max(4, width * 0.04)
+                        )
+                )
+                .shadow(color: .black.opacity(0.30), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.55 : 1)
+        .accessibilityLabel(lm.t("a11y.settings_button"))
+    }
+}
+
+// MARK: - Titolo "World of Fables"
 
 private struct MenuTitleView: View {
     let panelWidth: CGFloat
@@ -301,7 +321,7 @@ private struct MenuPlayButton: View {
                 .font(.system(size: width * 0.14, weight: .heavy, design: .rounded))
                 .foregroundStyle(.white)
                 .tracking(1.2)
-                .frame(width: width, height: width * 0.36)
+                .frame(width: width, height: width * 0.38)
                 .background(
                     RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
                         .fill(

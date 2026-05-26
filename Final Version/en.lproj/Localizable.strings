@@ -9,6 +9,7 @@
 "button.next_event"  = "Next Event";
 "button.back_to_map" = "Back to Map";
 "button.done"        = "Done";
+"button.settings"    = "SETTINGS";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Put the story in order";
@@ -60,30 +61,30 @@
 /* Onboarding */
 "onboarding.skip"           = "Skip";
 "onboarding.next"           = "Next";
-"onboarding.start"          = "Start the Adventure!";
-"onboarding.page1.title"    = "Welcome to World of Fables!";
-"onboarding.page1.body"     = "A wicked monster has scattered all the fairy tale scenes! Can you help put them back in the right order?";
-"onboarding.page2.title"    = "Explore the Map";
-"onboarding.page2.body"     = "Walk through the magical world and discover fairy tales waiting to be restored.";
-"onboarding.page3.title"    = "Order the Story";
-"onboarding.page3.body"     = "Drag the scene cards into the correct order to rebuild the fairy tale, one step at a time.";
-"onboarding.page4.title"    = "Flip & Check";
-"onboarding.page4.body"     = "Flip a card to read a hint about where it belongs. When all slots are filled, press Check!";
+"onboarding.start"          = "Save the Fables!";
+"onboarding.page1.title"    = "World of Fables";
+"onboarding.page1.body"     = "I am your guide in this magical world! Once, all the fairy tales lived here in peace and harmony...";
+"onboarding.page2.title"    = "Lord Tempus Attacks!";
+"onboarding.page2.body"     = "But the evil Lord Tempus, the Time Wrecker, used his dark clock magic to shatter ALL the fairy tales! Every story is broken and out of order!";
+"onboarding.page3.title"    = "Chaos Everywhere...";
+"onboarding.page3.body"     = "His spell was so powerful that all the scenes are now scattered across the magical world. Everyone is lost and terribly sad!";
+"onboarding.page4.title"    = "You Are Our Hero!";
+"onboarding.page4.body"     = "Travel the World of Fables, find every scattered scene, and put them back in order to break Lord Tempus's spell!";
 
 /* Tutorial */
 "tutorial.skip"             = "Skip Tutorial";
 "tutorial.next"             = "Next";
-"tutorial.done"             = "Got it!";
-"tutorial.step1.title"      = "Welcome to the World Map!";
-"tutorial.step1.body"       = "All the fairy tale stories live here. Tap anywhere on the map to walk there!";
-"tutorial.step2.title"      = "Start a Story";
-"tutorial.step2.body"       = "When you reach a story island, a play button appears. Tap it to begin the adventure!";
-"tutorial.step3.title"      = "Order the Scenes";
-"tutorial.step3.body"       = "Drag the cards into the correct order. Each position matters — think about what happens first!";
-"tutorial.step4.title"      = "Flip for Hints";
-"tutorial.step4.body"       = "Stuck? Flip a card to read its description and figure out where it belongs.";
-"tutorial.step5.title"      = "Check Your Answer";
-"tutorial.step5.body"       = "When all slots are filled, press Check! to see if you got the story right. Good luck!";
+"tutorial.done"             = "Let's go!";
+"tutorial.step1.title"      = "Lord Tempus Strikes!";
+"tutorial.step1.body"       = "Lord Tempus has turned the whole World of Fables upside down! But together we can fix it. Tap anywhere on the map to start walking!";
+"tutorial.step2.title"      = "Find a Story Island";
+"tutorial.step2.body"       = "Walk to a glowing story island. When you arrive, a play button appears — tap it to begin restoring that fairy tale!";
+"tutorial.step3.title"      = "Restore the Order";
+"tutorial.step3.body"       = "Drag the scene cards into the right order to rebuild the fairy tale. Think about what happens first!";
+"tutorial.step4.title"      = "Flip for Clues";
+"tutorial.step4.body"       = "Not sure where a card goes? Flip it to read a clue about when that scene happens in the story!";
+"tutorial.step5.title"      = "Break the Spell!";
+"tutorial.step5.body"       = "When all slots are filled, press Check! Get it right and you break Lord Tempus's spell on that story. You're a hero!";
 
 /* Accessibility */
 "a11y.play_red_hood"        = "Play Little Red Riding Hood";
