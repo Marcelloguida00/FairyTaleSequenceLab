@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct RootView: View {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasSeenTutorial")   private var hasSeenTutorial   = false
+
     @State private var gameStarted = false
     @State private var menuCloudEnterProgress: CGFloat = 1
     @State private var menuCloudExitProgress: CGFloat = 0
@@ -50,6 +53,28 @@ struct RootView: View {
                     }
                 )
                 .zIndex(60)
+            }
+
+            // Tutorial: primo accesso al gioco
+            if gameStarted && !hasSeenTutorial {
+                TutorialOverlayView {
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        hasSeenTutorial = true
+                    }
+                }
+                .zIndex(70)
+                .transition(.opacity)
+            }
+
+            // Onboarding: primo avvio assoluto
+            if !hasSeenOnboarding {
+                OnboardingView {
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        hasSeenOnboarding = true
+                    }
+                }
+                .zIndex(100)
+                .transition(.opacity)
             }
         }
         .onAppear {

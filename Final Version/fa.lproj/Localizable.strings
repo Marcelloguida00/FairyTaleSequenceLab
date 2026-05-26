@@ -46,13 +46,44 @@
 "reward.did_it"    = "موفق شدی! هر بار قوی‌تر شدی!";
 
 /* Settings */
-"settings.title"       = "تنظیمات";
-"settings.language"    = "زبان";
+"settings.title"          = "تنظیمات";
+"settings.language"       = "زبان";
+"settings.music"          = "موسیقی";
+"settings.music.mute"     = "قطع موسیقی";
+"settings.music.unmute"   = "روشن کردن موسیقی";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "شنل قرمزی";
 "redhood.intro.mascot"  = "آخ نه! یه هیولا همه قصه‌های پریان رو نابود کرده و صحنه‌هاشون رو پراکنده کرده! می‌تونی کمکم کنی داستان شنل قرمزی رو دوباره سر هم کنیم؟";
 "redhood.intro.button"  = "شروع ماجراجویی!";
+
+/* Onboarding */
+"onboarding.skip"           = "رد شو";
+"onboarding.next"           = "بعدی";
+"onboarding.start"          = "شروع ماجراجویی!";
+"onboarding.page1.title"    = "به دنیای افسانه‌ها خوش آمدی!";
+"onboarding.page1.body"     = "یک هیولای بدجنس همه صحنه‌های قصه‌ها را پراکنده کرده! می‌توانی کمک کنی آن‌ها را به ترتیب درست برگردانیم؟";
+"onboarding.page2.title"    = "نقشه را کاوش کن";
+"onboarding.page2.body"     = "از دنیای جادویی بگذر و قصه‌هایی که منتظر بازگردانی هستند را کشف کن.";
+"onboarding.page3.title"    = "داستان را ترتیب بده";
+"onboarding.page3.body"     = "کارت‌های صحنه را به ترتیب درست بکش تا قصه را قدم به قدم بازسازی کنی.";
+"onboarding.page4.title"    = "برگردان و بررسی کن";
+"onboarding.page4.body"     = "یک کارت را برگردان تا راهنمایی بخوانی. وقتی همه جاها پر شد، بررسی! را فشار بده.";
+
+/* Tutorial */
+"tutorial.skip"             = "رد کردن آموزش";
+"tutorial.next"             = "بعدی";
+"tutorial.done"             = "فهمیدم!";
+"tutorial.step1.title"      = "به نقشه جهانی خوش آمدی!";
+"tutorial.step1.body"       = "اینجا همه داستان‌های قصه‌های پریان زندگی می‌کنند. هر جای نقشه را لمس کن تا به آنجا بروی!";
+"tutorial.step2.title"      = "یک داستان را شروع کن";
+"tutorial.step2.body"       = "وقتی به جزیره داستانی رسیدی، دکمه پخش ظاهر می‌شود. آن را لمس کن تا ماجراجویی را شروع کنی!";
+"tutorial.step3.title"      = "صحنه‌ها را ترتیب بده";
+"tutorial.step3.body"       = "کارت‌ها را به ترتیب درست بکش. هر موقعیت مهم است — فکر کن چه چیزی اول اتفاق می‌افتد!";
+"tutorial.step4.title"      = "برای راهنمایی برگردان";
+"tutorial.step4.body"       = "گیر کردی؟ یک کارت را برگردان تا توضیحش را بخوانی و بفهمی کجا باید باشد.";
+"tutorial.step5.title"      = "جواب را بررسی کن";
+"tutorial.step5.body"       = "وقتی همه جاها پر شد، بررسی! را فشار بده تا ببینی داستان را درست بازسازی کردی. موفق باشی!";
 
 /* Accessibility */
 "a11y.play_red_hood"        = "بازی شنل قرمزی";

@@ -46,13 +46,44 @@
 "reward.did_it"    = "You did it! Every try made you stronger!";
 
 /* Settings */
-"settings.title"       = "Settings";
-"settings.language"    = "Language";
+"settings.title"          = "Settings";
+"settings.language"       = "Language";
+"settings.music"          = "Music";
+"settings.music.mute"     = "Mute Music";
+"settings.music.unmute"   = "Unmute Music";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Little Red Riding Hood";
 "redhood.intro.mascot"  = "Oh no! A monster has destroyed all the fairy tales and scattered their scenes! Can you help me put the story of Little Red Riding Hood back together?";
 "redhood.intro.button"  = "Start the Adventure!";
+
+/* Onboarding */
+"onboarding.skip"           = "Skip";
+"onboarding.next"           = "Next";
+"onboarding.start"          = "Start the Adventure!";
+"onboarding.page1.title"    = "Welcome to World of Fables!";
+"onboarding.page1.body"     = "A wicked monster has scattered all the fairy tale scenes! Can you help put them back in the right order?";
+"onboarding.page2.title"    = "Explore the Map";
+"onboarding.page2.body"     = "Walk through the magical world and discover fairy tales waiting to be restored.";
+"onboarding.page3.title"    = "Order the Story";
+"onboarding.page3.body"     = "Drag the scene cards into the correct order to rebuild the fairy tale, one step at a time.";
+"onboarding.page4.title"    = "Flip & Check";
+"onboarding.page4.body"     = "Flip a card to read a hint about where it belongs. When all slots are filled, press Check!";
+
+/* Tutorial */
+"tutorial.skip"             = "Skip Tutorial";
+"tutorial.next"             = "Next";
+"tutorial.done"             = "Got it!";
+"tutorial.step1.title"      = "Welcome to the World Map!";
+"tutorial.step1.body"       = "All the fairy tale stories live here. Tap anywhere on the map to walk there!";
+"tutorial.step2.title"      = "Start a Story";
+"tutorial.step2.body"       = "When you reach a story island, a play button appears. Tap it to begin the adventure!";
+"tutorial.step3.title"      = "Order the Scenes";
+"tutorial.step3.body"       = "Drag the cards into the correct order. Each position matters — think about what happens first!";
+"tutorial.step4.title"      = "Flip for Hints";
+"tutorial.step4.body"       = "Stuck? Flip a card to read its description and figure out where it belongs.";
+"tutorial.step5.title"      = "Check Your Answer";
+"tutorial.step5.body"       = "When all slots are filled, press Check! to see if you got the story right. Good luck!";
 
 /* Accessibility */
 "a11y.play_red_hood"        = "Play Little Red Riding Hood";

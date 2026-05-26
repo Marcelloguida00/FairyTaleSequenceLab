@@ -4,17 +4,27 @@ struct SettingsView: View {
     @EnvironmentObject var lm: LanguageManager
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage("musicVolume") private var musicVolume: Double = 0.32
+    @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
+
     var body: some View {
         ZStack {
             Color.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header
-                languageSection
-                Spacer()
+                    .padding(.horizontal, 28)
+                    .padding(.top, 24)
+
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 28) {
+                        languageSection
+                        musicSection
+                    }
+                    .padding(.horizontal, 28)
+                    .padding(.bottom, 32)
+                }
             }
-            .padding(.horizontal, 28)
-            .padding(.top, 24)
         }
     }
 
@@ -126,6 +136,98 @@ struct SettingsView: View {
         if !isLast {
             Divider()
                 .padding(.leading, 60)
+        }
+    }
+
+    // MARK: - Music section
+
+    private var musicSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(lm.t("settings.music"))
+                .font(.system(.caption, design: .rounded))
+                .fontWeight(.black)
+                .textCase(.uppercase)
+                .foregroundStyle(Color.appSecondaryText)
+                .padding(.leading, 4)
+
+            VStack(spacing: 0) {
+                // Volume slider row
+                HStack(spacing: 14) {
+                    Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(musicMuted ? Color.appSecondaryText : Color.appAccent)
+                        .frame(width: 28)
+                        .animation(.easeInOut(duration: 0.2), value: musicMuted)
+
+                    Slider(value: Binding(
+                        get: { musicMuted ? 0 : musicVolume },
+                        set: { newValue in
+                            musicVolume = newValue
+                            if musicMuted && newValue > 0 {
+                                musicMuted = false
+                                BackgroundMusicPlayer.shared.setMuted(false)
+                            }
+                            BackgroundMusicPlayer.shared.setVolume(Float(newValue))
+                        }
+                    ), in: 0...1)
+                    .tint(Color.appAccent)
+                    .disabled(musicMuted)
+                    .opacity(musicMuted ? 0.4 : 1)
+                    .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
+
+                Divider()
+                    .padding(.leading, 60)
+
+                // Mute toggle row
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    musicMuted.toggle()
+                    BackgroundMusicPlayer.shared.setMuted(musicMuted)
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(musicMuted ? Color.appSecondaryText : Color.appAccent)
+                            .frame(width: 28)
+
+                        Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
+                            .font(.system(.body, design: .rounded))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.appPrimaryText)
+
+                        Spacer()
+
+                        // Toggle indicator
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(musicMuted ? Color.appSecondaryText.opacity(0.3) : Color.appAccent)
+                            .frame(width: 48, height: 28)
+                            .overlay(
+                                Circle()
+                                    .fill(.white)
+                                    .frame(width: 22, height: 22)
+                                    .offset(x: musicMuted ? -10 : 10)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: musicMuted)
+                            )
+                            .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 14)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.appPanelBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.appBorder, lineWidth: 1.5)
+                    )
+            )
+            .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
         }
     }
 }

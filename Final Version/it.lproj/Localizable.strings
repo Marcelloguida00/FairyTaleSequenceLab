@@ -46,13 +46,44 @@
 "reward.did_it"    = "Ce l'hai fatta! Ogni tentativo ti ha reso più forte!";
 
 /* Settings */
-"settings.title"       = "Impostazioni";
-"settings.language"    = "Lingua";
+"settings.title"          = "Impostazioni";
+"settings.language"       = "Lingua";
+"settings.music"          = "Musica";
+"settings.music.mute"     = "Silenzia Musica";
+"settings.music.unmute"   = "Riattiva Musica";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Cappuccetto Rosso";
 "redhood.intro.mascot"  = "Oh no! Un mostro ha distrutto tutte le fiabe e ha sparso le scene ovunque! Riesci ad aiutarmi a rimettere insieme la storia di Cappuccetto Rosso?";
 "redhood.intro.button"  = "Inizia l'avventura!";
+
+/* Onboarding */
+"onboarding.skip"           = "Salta";
+"onboarding.next"           = "Avanti";
+"onboarding.start"          = "Inizia l'avventura!";
+"onboarding.page1.title"    = "Benvenuto nel Mondo delle Favole!";
+"onboarding.page1.body"     = "Un mostro malvagio ha sparso tutte le scene delle fiabe! Riesci ad aiutarci a rimetterle nell'ordine giusto?";
+"onboarding.page2.title"    = "Esplora la Mappa";
+"onboarding.page2.body"     = "Cammina attraverso il mondo magico e scopri le fiabe che aspettano di essere ripristinate.";
+"onboarding.page3.title"    = "Metti in Ordine";
+"onboarding.page3.body"     = "Trascina le carte delle scene nell'ordine corretto per ricostruire la fiaba, passo dopo passo.";
+"onboarding.page4.title"    = "Gira e Controlla";
+"onboarding.page4.body"     = "Gira una carta per leggere un suggerimento su dove va. Quando tutti i posti sono occupati, premi Controlla!";
+
+/* Tutorial */
+"tutorial.skip"             = "Salta il tutorial";
+"tutorial.next"             = "Avanti";
+"tutorial.done"             = "Ho capito!";
+"tutorial.step1.title"      = "Benvenuto nella Mappa!";
+"tutorial.step1.body"       = "Qui vivono tutte le storie delle fiabe. Tocca un punto della mappa per camminare lì!";
+"tutorial.step2.title"      = "Inizia una Storia";
+"tutorial.step2.body"       = "Quando raggiungi l'isola di una storia, apparirà un pulsante play. Toccalo per iniziare l'avventura!";
+"tutorial.step3.title"      = "Metti in Ordine le Scene";
+"tutorial.step3.body"       = "Trascina le carte nell'ordine corretto. Ogni posizione è importante — pensa a cosa succede prima!";
+"tutorial.step4.title"      = "Gira per i Suggerimenti";
+"tutorial.step4.body"       = "Bloccato? Gira una carta per leggere la sua descrizione e capire dove va.";
+"tutorial.step5.title"      = "Controlla la Risposta";
+"tutorial.step5.body"       = "Quando tutti i posti sono occupati, premi Controlla! per vedere se hai ricostruito bene la storia. Buona fortuna!";
 
 /* Accessibility */
 "a11y.play_red_hood"        = "Gioca a Cappuccetto Rosso";
