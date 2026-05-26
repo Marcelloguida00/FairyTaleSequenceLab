@@ -43,7 +43,6 @@ struct ContentView: View {
     @State private var avatarPosition = MapGraph.initialWaypoint.point
     @State private var currentBaseID = MapGraph.initialWaypoint.id
     @State private var avatarDirection = WalkDirection.down
-    @State private var currentFrame = 0
     @State private var isWalking = false
     @State private var markerIsRaised = false
     @State private var isMapTransitioning = false
@@ -54,8 +53,6 @@ struct ContentView: View {
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var levelBannerLevel: Int? = nil
 
-    private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
-
     var body: some View {
         GeometryReader { proxy in
             let mapSize = fittedMapSize(in: proxy.size)
@@ -64,6 +61,7 @@ struct ContentView: View {
                 Color(red: 0.10, green: 0.55, blue: 0.78)
                     .ignoresSafeArea()
 
+                TimelineView(.periodic(from: .now, by: 0.12)) { timeline in
                 ZStack(alignment: .topLeading) {
                     Image(activeMap.imageName)
                         .resizable()
@@ -91,7 +89,7 @@ struct ContentView: View {
 
                     AvatarWithMarker(
                         direction: avatarDirection,
-                        frame: isWalking ? currentFrame : 0,
+                        frame: isWalking ? Int(timeline.date.timeIntervalSinceReferenceDate / 0.12) % 4 : 0,
                         size: avatarSize(for: mapSize),
                         markerIsRaised: markerIsRaised
                     )
@@ -167,6 +165,7 @@ struct ContentView: View {
                             handleMapTap(value.location, mapSize: mapSize)
                         }
                 )
+                } // TimelineView
 
                 if isMapTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01 {
                     CloudTransitionOverlay(
@@ -234,14 +233,6 @@ struct ContentView: View {
                     .zIndex(35)
                 #endif
             }
-        }
-        .onReceive(spriteTimer) { _ in
-            guard isWalking else {
-                currentFrame = 0
-                return
-            }
-
-            currentFrame = (currentFrame + 1) % 4
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) {
@@ -344,7 +335,6 @@ struct ContentView: View {
             avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point ?? MapGraph.initialWaypoint.point
             currentBaseID = MapGraph.redRidingHoodBaseID
             avatarDirection = .down
-            currentFrame = 0
         }
     }
 
@@ -496,7 +486,6 @@ struct ContentView: View {
             avatarPosition = RedHoodMapGraph.initialWaypoint.point
             currentBaseID = RedHoodMapGraph.initialWaypoint.id
             avatarDirection = .up
-            currentFrame = 0
         }
     }
 

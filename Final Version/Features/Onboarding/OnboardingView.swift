@@ -6,7 +6,7 @@ struct OnboardingView: View {
     @EnvironmentObject private var lm: LanguageManager
     @State private var currentPage = 0
 
-    private let skyTop    = Color(red: 0.05, green: 0.12, blue: 0.22)
+    private let skyTop = Color(red: 0.05, green: 0.12, blue: 0.22)
     private let skyBottom = Color(red: 0.10, green: 0.32, blue: 0.52)
 
     private struct PageData {
@@ -15,6 +15,7 @@ struct OnboardingView: View {
             case villainImage(String)
             case map
         }
+
         let visual: Visual
         let mascotFrames: [String]
         let titleKey: String
@@ -26,212 +27,270 @@ struct OnboardingView: View {
             visual: .logo,
             mascotFrames: ["Mascot Waving", "Mascot Neutral", "Mascot Waving"],
             titleKey: "onboarding.page1.title",
-            bodyKey:  "onboarding.page1.body"
+            bodyKey: "onboarding.page1.body"
         ),
         PageData(
             visual: .villainImage("villain_action"),
             mascotFrames: ["Mascot Neutral", "Mascot Talking", "Mascot Neutral"],
             titleKey: "onboarding.page2.title",
-            bodyKey:  "onboarding.page2.body"
+            bodyKey: "onboarding.page2.body"
         ),
         PageData(
             visual: .villainImage("villain_rage"),
             mascotFrames: ["Mascot Talking", "Mascot Neutral", "Mascot Talking"],
             titleKey: "onboarding.page3.title",
-            bodyKey:  "onboarding.page3.body"
+            bodyKey: "onboarding.page3.body"
         ),
         PageData(
             visual: .map,
             mascotFrames: ["Mascot Cheer", "Mascot Waving", "Mascot Cheer"],
             titleKey: "onboarding.page4.title",
-            bodyKey:  "onboarding.page4.body"
+            bodyKey: "onboarding.page4.body"
         ),
     ]
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                LinearGradient(colors: [skyTop, skyBottom],
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
-
-                starsOverlay
-
-                VStack(spacing: 0) {
-                    TabView(selection: $currentPage) {
-                        ForEach(Array(pages.enumerated()), id: \.offset) { i, page in
-                            pageView(page, geo: geo)
-                                .tag(i)
-                        }
+                TabView(selection: $currentPage) {
+                    ForEach(Array(pages.enumerated()), id: \.offset) { i, page in
+                        pageView(page, geo: geo)
+                            .tag(i)
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-
-                    bottomBar
-                        .padding(.horizontal, 44)
-                        .padding(.bottom, max(36, geo.safeAreaInsets.bottom + 16))
-                        .padding(.top, 8)
                 }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+
+                topSkipButton(geo: geo)
             }
         }
         .ignoresSafeArea()
     }
 
-    // MARK: - Stelle decorative
-
-    private var starsOverlay: some View {
-        GeometryReader { geo in
-            ForEach(0..<18, id: \.self) { i in
-                let fi = Double(i)
-                let x  = (sin(fi * 3.71 + 1.2) * 0.5 + 0.5) * geo.size.width
-                let y  = (sin(fi * 2.13 + 0.7) * 0.5 + 0.5) * geo.size.height * 0.55
-                let sz = CGFloat(2 + (sin(fi * 5.3) * 0.5 + 0.5) * 3)
-
-                Circle()
-                    .fill(Color.white.opacity(0.30 + (sin(fi * 1.9) * 0.5 + 0.5) * 0.25))
-                    .frame(width: sz, height: sz)
-                    .position(x: x, y: y)
-            }
-        }
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-
-    // MARK: - Pagina
+    // MARK: - Scene
 
     private func pageView(_ page: PageData, geo: GeometryProxy) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
+        let isLandscape = geo.size.width > geo.size.height
+        let mascotHeight = isLandscape
+            ? min(geo.size.height * 0.62, 430)
+            : min(geo.size.height * 0.42, 310)
 
-            visualElement(page.visual, geo: geo)
-                .padding(.bottom, 24)
+        return ZStack {
+            sceneBackground(page.visual, geo: geo)
 
-            MascotGuideView(
-                imageName: page.mascotFrames[0],
-                animatedImageNames: page.mascotFrames,
-                message: lm.t(page.bodyKey),
-                imageHeight: min(geo.size.height * 0.17, 140),
-                bubbleFont: .system(.title3, design: .rounded)
+            AnimatedMascotPortrait(
+                imageNames: page.mascotFrames,
+                imageHeight: mascotHeight
             )
-            .padding(.horizontal, 36)
+            .padding(.leading, isLandscape ? 18 : -18)
+            .padding(.bottom, max(geo.safeAreaInsets.bottom, 0))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            .zIndex(2)
 
-            Text(lm.t(page.titleKey))
-                .font(.system(.title2, design: .rounded))
-                .fontWeight(.black)
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 48)
-                .padding(.top, 18)
-                .shadow(color: .black.opacity(0.35), radius: 4, y: 2)
-
-            Spacer()
-            Spacer()
+            dialoguePanel(page, geo: geo)
+                .padding(.leading, dialogueLeading(for: geo))
+                .padding(.trailing, isLandscape ? 28 : 20)
+                .padding(.bottom, max(geo.safeAreaInsets.bottom + 16, 24))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .zIndex(3)
         }
+        .accessibilityElement(children: .contain)
     }
 
     @ViewBuilder
-    private func visualElement(_ visual: PageData.Visual, geo: GeometryProxy) -> some View {
-        let logoMaxH   = min(geo.size.height * 0.26, 200)
-        let villainMaxH = min(geo.size.height * 0.42, 340)
+    private func sceneBackground(_ visual: PageData.Visual, geo: GeometryProxy) -> some View {
+        ZStack {
+            LinearGradient(
+                colors: [skyTop, skyBottom],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            backgroundVisual(visual, geo: geo)
+
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.40)],
+                startPoint: UnitPoint(x: 0.5, y: 0.60),
+                endPoint: .bottom
+            )
+        }
+        .ignoresSafeArea()
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private func backgroundVisual(_ visual: PageData.Visual, geo: GeometryProxy) -> some View {
         switch visual {
         case .logo:
-            Image("world_of_fable_menu")
-                .resizable()
-                .scaledToFit()
-                .frame(height: logoMaxH)
-                .shadow(color: Color(red: 0.10, green: 0.55, blue: 0.78).opacity(0.6),
-                        radius: 18, y: 6)
-                .accessibilityHidden(true)
+            fullBleedImage("mappa", geo: geo)
+                .saturation(0.92)
+                .brightness(-0.06)
 
         case .villainImage(let name):
-            Image(name)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: geo.size.width * 0.92, maxHeight: villainMaxH)
-                .clipShape(RoundedRectangle(cornerRadius: 22))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 22)
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color(red: 0.6, green: 0.1, blue: 0.1).opacity(0.8),
-                                         Color(red: 0.4, green: 0.0, blue: 0.5).opacity(0.8)],
-                                startPoint: .topLeading, endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2.5
-                        )
-                )
-                .shadow(color: Color(red: 0.5, green: 0.0, blue: 0.5).opacity(0.55),
-                        radius: 20, y: 8)
-                .accessibilityHidden(true)
+            fullBleedImage(name, geo: geo)
+                .saturation(1.05)
+                .contrast(1.04)
 
         case .map:
-            Image("mappa")
-                .resizable()
-                .scaledToFill()
-                .frame(width: min(geo.size.width * 0.60, 400), height: logoMaxH)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .overlay(RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.white.opacity(0.30), lineWidth: 2))
-                .shadow(color: .black.opacity(0.40), radius: 14, y: 6)
-                .accessibilityHidden(true)
+            fullBleedImage("mappa", geo: geo)
+                .saturation(1.02)
         }
     }
 
-    // MARK: - Barra inferiore
+    private func fullBleedImage(_ name: String, geo: GeometryProxy) -> some View {
+        Image(name)
+            .resizable()
+            .scaledToFill()
+            .frame(width: geo.size.width, height: geo.size.height)
+            .clipped()
+    }
 
-    private var bottomBar: some View {
-        HStack(alignment: .center) {
-            Button(lm.t("onboarding.skip")) { onFinish() }
-                .font(.system(.body, design: .rounded))
-                .fontWeight(.semibold)
-                .foregroundColor(.white.opacity(0.65))
-                .opacity(currentPage < pages.count - 1 ? 1 : 0)
-                .disabled(currentPage == pages.count - 1)
-                .frame(minWidth: 80, alignment: .leading)
+    // MARK: - Dialogue
 
-            Spacer()
+    private func dialogueLeading(for geo: GeometryProxy) -> CGFloat {
+        if geo.size.width > geo.size.height {
+            return min(max(geo.size.width * 0.24, 220), 370)
+        }
 
-            HStack(spacing: 8) {
-                ForEach(0..<pages.count, id: \.self) { i in
-                    Capsule()
-                        .fill(i == currentPage
-                              ? Color.white
-                              : Color.white.opacity(0.30))
-                        .frame(width: i == currentPage ? 24 : 8, height: 8)
-                        .animation(.spring(response: 0.35, dampingFraction: 0.7),
-                                   value: currentPage)
-                }
+        return 20
+    }
+
+    private func dialoguePanel(_ page: PageData, geo: GeometryProxy) -> some View {
+        let isLandscape = geo.size.width > geo.size.height
+
+        return VStack(alignment: .leading, spacing: 10) {
+            Text(lm.t(page.titleKey))
+                .font(.system(.subheadline, design: .rounded))
+                .fontWeight(.black)
+                .foregroundColor(.white.opacity(0.85))
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+
+            Text(lm.t(page.bodyKey))
+                .font(.system(.subheadline, design: .rounded))
+                .fontWeight(.medium)
+                .foregroundColor(.white)
+                .lineSpacing(3)
+                .minimumScaleFactor(0.78)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 18) {
+                pageIndicators
+
+                Spacer(minLength: 12)
+
+                nextButton
             }
+            .padding(.top, 4)
+        }
+        .padding(.horizontal, isLandscape ? 28 : 20)
+        .padding(.vertical, 18)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black.opacity(0.55))
+        )
+    }
 
-            Spacer()
+    private var pageIndicators: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<pages.count, id: \.self) { i in
+                Capsule()
+                    .fill(i == currentPage ? Color.white : Color.white.opacity(0.30))
+                    .frame(width: i == currentPage ? 24 : 8, height: 8)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.7), value: currentPage)
+            }
+        }
+        .accessibilityHidden(true)
+    }
 
-            Button {
-                if currentPage < pages.count - 1 {
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage += 1 }
-                } else {
-                    onFinish()
+    private var nextButton: some View {
+        Button {
+            if currentPage < pages.count - 1 {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    currentPage += 1
                 }
+            } else {
+                onFinish()
+            }
+        } label: {
+            HStack(spacing: 9) {
+                Text(currentPage < pages.count - 1 ? lm.t("onboarding.next") : lm.t("onboarding.start"))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+
+                Image(systemName: currentPage < pages.count - 1 ? "arrow.right" : "sparkles")
+                    .font(.system(size: 15, weight: .black))
+            }
+            .font(.system(.body, design: .rounded))
+            .fontWeight(.black)
+            .foregroundColor(.black)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 11)
+            .background(
+                Capsule()
+                    .fill(Color.white)
+                    .shadow(color: .black.opacity(0.35), radius: 5, y: 2)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func topSkipButton(geo: GeometryProxy) -> some View {
+        if currentPage < pages.count - 1 {
+            Button {
+                onFinish()
             } label: {
-                Text(currentPage < pages.count - 1
-                     ? lm.t("onboarding.next")
-                     : lm.t("onboarding.start"))
+                Text(lm.t("onboarding.skip"))
                     .font(.system(.body, design: .rounded))
-                    .fontWeight(.bold)
+                    .fontWeight(.black)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 26)
-                    .padding(.vertical, 13)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
                     .background(
                         Capsule()
-                            .fill(Color(red: 0.10, green: 0.55, blue: 0.78))
-                            .shadow(color: Color(red: 0.10, green: 0.55, blue: 0.78).opacity(0.5),
-                                    radius: 10, y: 4)
+                            .fill(Color.black.opacity(0.52))
+                            .overlay(Capsule().stroke(Color.white.opacity(0.55), lineWidth: 1.5))
                     )
             }
             .buttonStyle(.plain)
-            .frame(minWidth: 80, alignment: .trailing)
+            .padding(.top, max(geo.safeAreaInsets.top + 14, 24))
+            .padding(.trailing, 24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
         }
     }
 }
+
+private struct AnimatedMascotPortrait: View {
+    let imageNames: [String]
+    let imageHeight: CGFloat
+    var frameDuration: Duration = .milliseconds(420)
+
+    @State private var frameIndex = 0
+
+    var body: some View {
+        Image(currentImageName)
+            .resizable()
+            .scaledToFit()
+            .frame(height: imageHeight)
+            .shadow(color: .black.opacity(0.45), radius: 12, x: 0, y: 8)
+            .accessibilityHidden(true)
+            .task(id: imageNames) {
+                frameIndex = 0
+                guard imageNames.count > 1 else { return }
+
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: frameDuration)
+                    frameIndex = (frameIndex + 1) % imageNames.count
+                }
+            }
+    }
+
+    private var currentImageName: String {
+        guard !imageNames.isEmpty else { return "Mascot Neutral" }
+        return imageNames[frameIndex % imageNames.count]
+    }
+}
+
 
 #Preview("Onboarding") {
     OnboardingView(onFinish: {})
