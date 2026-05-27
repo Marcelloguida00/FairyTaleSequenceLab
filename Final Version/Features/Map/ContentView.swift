@@ -28,7 +28,7 @@ private enum ActiveMap {
         case .main:
             return .fill
         case .redHood:
-            return .fill
+            return .fit
         }
     }
 

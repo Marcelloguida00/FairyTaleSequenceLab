@@ -5,9 +5,9 @@
     "introImageName": "Introduzione 1 evento",
     "introText": "Nëna i thotë Kapeles së Kuqe se gjyshja është e sëmurë. Duhet të përgatisin një shportë për t'ia çuar. Ndihmo të renditësh skenat e historisë saktë!",
     "cards": [
-      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Nëna dhe Kapeleja e Kuqe përgatisin shportën së bashku", "correctPosition": 0 },
+      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Nëna dhe Kësulëkuqja përgatisin shportën së bashku", "correctPosition": 0 },
       { "id": 1, "imageName": "Immagine 2 sequenza", "description": "Nëna i jep shportën Kapeles së Kuqe", "correctPosition": 1 },
-      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Kapeleja e Kuqe vesh mantelin e saj të kuq", "correctPosition": 2 },
+      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Kapeleja e Kuqe vesh kesulën e saj të kuqe", "correctPosition": 2 },
       { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Kapeleja e Kuqe largohet nga shtëpia", "correctPosition": 3 }
     ],
     "correctOrder": [0, 1, 2, 3],
