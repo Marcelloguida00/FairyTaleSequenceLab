@@ -14,7 +14,7 @@ struct RedHoodLevel0View: View {
                     Spacer()
 
                     Text(lm.t("redhood.intro.title"))
-                        .font(.system(.largeTitle, design: .rounded))
+                        .font(.app(.largeTitle))
                         .fontWeight(.bold)
                         .foregroundColor(Color.appPrimaryText)
                         .multilineTextAlignment(.center)
@@ -34,7 +34,7 @@ struct RedHoodLevel0View: View {
                             Image(systemName: "star.fill")
                                 .font(.title3)
                             Text(lm.t("redhood.intro.button"))
-                                .font(.system(.title3, design: .rounded))
+                                .font(.app(.title3))
                                 .fontWeight(.bold)
                             Image(systemName: "star.fill")
                                 .font(.title3)

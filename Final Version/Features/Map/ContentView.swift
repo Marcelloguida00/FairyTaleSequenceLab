@@ -136,6 +136,37 @@ struct ContentView: View {
                 .zIndex(30)
             }
 
+            if shouldShowRedHoodPlayButton,
+               let region = MapGraph.storyRegion(for: MapGraph.redRidingHoodBaseID) {
+                MapPlayCallout(title: lm.t(region.titleKey), accessibilityLabel: lm.t("a11y.play_red_hood")) {
+                    Task {
+                        await openRedHoodSubMap()
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 22)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .zIndex(28)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
+            if activeMap == .redHood,
+               activeRedHoodLevel == nil,
+               let level = pendingRedHoodLevel {
+                MapPlayCallout(title: levelBannerTitle(for: level), accessibilityLabel: lm.t("a11y.start_event")) {
+                    let selectedLevel = level
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        pendingRedHoodLevel = nil
+                        levelBannerLevel = selectedLevel
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 22)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .zIndex(28)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
         }
         .onReceive(spriteTimer) { _ in
             if isWalking {
@@ -225,22 +256,6 @@ struct ContentView: View {
                     .allowsHitTesting(false)
             }
 
-            if activeMap == .redHood, let level = pendingRedHoodLevel, let wp = RedHoodMapGraph.waypoint(id: level) {
-                LevelStartButton {
-                    let l = level
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        pendingRedHoodLevel = nil
-                        levelBannerLevel = l
-                    }
-                }
-                .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
-                .position(CGPoint(
-                    x: projection.screenPoint(fromPixel: wp.point).x,
-                    y: projection.screenPoint(fromPixel: wp.point).y - dotSize(for: mapSize) * 2.8
-                ))
-                .transition(.scale(scale: 0.75).combined(with: .opacity))
-            }
-
             if activeMap == .main, !isWalking,
                let region = MapGraph.storyRegion(for: currentBaseID),
                !MapGraph.comingSoonBaseIDs.contains(currentBaseID) {
@@ -264,16 +279,6 @@ struct ContentView: View {
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
 
-            if shouldShowRedHoodPlayButton {
-                RedHoodPlayButton {
-                    Task {
-                        await openRedHoodSubMap()
-                    }
-                }
-                .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
-                .position(projection.screenPoint(fromPixel: MapGraph.redRidingHoodPlayPoint))
-                .transition(.scale(scale: 0.82).combined(with: .opacity))
-            }
         }
         .frame(width: mapSize.width, height: mapSize.height)
         .contentShape(Rectangle())
@@ -296,10 +301,6 @@ struct ContentView: View {
 
     private func titleFontSize(for mapSize: CGSize) -> CGFloat {
         min(26, max(17, mapSize.width * 0.022))
-    }
-
-    private func playButtonSize(for mapSize: CGSize) -> CGFloat {
-        min(82, max(54, mapSize.width * 0.07))
     }
 
     private func handleBackButton() {
@@ -397,7 +398,8 @@ struct ContentView: View {
         activeMap == .main &&
             currentBaseID == MapGraph.redRidingHoodBaseID &&
             !isWalking &&
-            !isMapTransitioning
+            !isMapTransitioning &&
+            !isGlobalTransitioning
     }
 
     private func handleMapTap(_ location: CGPoint, projection: MapProjection) {
@@ -644,7 +646,7 @@ private struct StoryRegionPlaque: View {
 
     var body: some View {
         Text(title)
-            .font(.system(size: fontSize, weight: .semibold, design: .serif))
+            .font(.app(size: fontSize, weight: .semibold))
             .italic()
             .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
             .multilineTextAlignment(.center)
@@ -678,7 +680,7 @@ private struct ComingSoonBadge: View {
                 .font(.system(size: fontSize * 0.85))
                 .foregroundStyle(Color(red: 0.72, green: 0.38, blue: 0.04))
             Text(lm.t("map.coming_soon"))
-                .font(.system(size: fontSize, weight: .semibold, design: .serif))
+                .font(.app(size: fontSize, weight: .semibold))
                 .italic()
                 .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
                 .multilineTextAlignment(.center)
@@ -698,38 +700,59 @@ private struct ComingSoonBadge: View {
     }
 }
 
-private struct RedHoodPlayButton: View {
+private struct MapPlayCallout: View {
+    let title: String
+    let accessibilityLabel: String
     let action: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
-        Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(.blue)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .overlay(
-                        Circle()
-                            .stroke(.white, lineWidth: 4)
-                    )
-                    .shadow(color: .black.opacity(0.28), radius: 7, x: 0, y: 5)
+        HStack(spacing: 16) {
+            Text(title)
+                .font(.app(.headline))
+                .fontWeight(.black)
+                .foregroundColor(Color.appPrimaryText)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
+                .minimumScaleFactor(0.78)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: "play.fill")
-                    .font(.system(size: 28, weight: .black))
-                    .foregroundStyle(.white)
-                    .offset(x: 2)
+            Button(action: action) {
+                HStack(spacing: 10) {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 15, weight: .black))
+                        .offset(x: 1)
+
+                    Text(lm.t("button.play"))
+                        .font(.app(.callout))
+                        .fontWeight(.black)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .frame(minWidth: 118, minHeight: 46)
+                .background(Capsule().fill(Color.appAccent))
+                .overlay(Capsule().stroke(Color.white.opacity(0.74), lineWidth: 2))
+                .shadow(color: Color.appAccent.opacity(0.32), radius: 9, y: 4)
             }
-            .accessibilityLabel(lm.t("a11y.play_red_hood"))
+            .buttonStyle(.plain)
+            .accessibilityLabel(accessibilityLabel)
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 12)
+        .frame(maxWidth: 460)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.appBackground.opacity(0.96))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(Color.appBorder.opacity(0.70), lineWidth: 1.5)
+                )
+                .shadow(color: .black.opacity(0.24), radius: 16, y: 6)
+        )
     }
 }
 
@@ -841,34 +864,6 @@ private struct MainMapIslandDot: View {
     }
 }
 
-private struct LevelStartButton: View {
-    let action: () -> Void
-
-    @EnvironmentObject private var lm: LanguageManager
-
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(LinearGradient(
-                        colors: [Color(.blue)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ))
-                    .overlay(Circle().stroke(.white, lineWidth: 4))
-                    .shadow(color: .black.opacity(0.28), radius: 7, x: 0, y: 5)
-
-                Image(systemName: "play.fill")
-                    .font(.system(size: 26, weight: .black))
-                    .foregroundStyle(.white)
-                    .offset(x: 2)
-            }
-            .accessibilityLabel(lm.t("a11y.start_event"))
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 private struct BackButton: View {
     let action: () -> Void
 
@@ -880,7 +875,7 @@ private struct BackButton: View {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 16, weight: .bold))
                 Text(lm.t("button.back"))
-                    .font(.system(.subheadline, design: .rounded))
+                    .font(.app(.subheadline))
                     .fontWeight(.bold)
             }
             .foregroundColor(.white)
@@ -910,7 +905,7 @@ private struct MainMenuButton: View {
                 Image(systemName: "house.fill")
                     .font(.system(size: 15, weight: .bold))
                 Text(lm.t("button.menu"))
-                    .font(.system(.subheadline, design: .rounded))
+                    .font(.app(.subheadline))
                     .fontWeight(.bold)
             }
             .foregroundColor(.white)
@@ -955,7 +950,7 @@ private struct LevelStartBanner: View {
                     .shadow(color: .orange.opacity(0.6), radius: 12)
 
                 Text(title)
-                    .font(.system(.largeTitle, design: .rounded))
+                    .font(.app(.largeTitle))
                     .fontWeight(.black)
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.45), radius: 6)

@@ -22,7 +22,7 @@ struct EventIntroductionView: View {
                     ParchmentView {
                         HStack(alignment: .center, spacing: 24) {
                             Text(event.introText)
-                                .font(.system(.title2, design: .serif))
+                                .font(.app(.title2))
                                 .foregroundColor(Color.appPrimaryText)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -31,7 +31,7 @@ struct EventIntroductionView: View {
                             Button(action: onContinue) {
                                 HStack(spacing: 8) {
                                     Text(lm.t("button.continue"))
-                                        .font(.system(.headline, design: .rounded))
+                                        .font(.app(.headline))
                                     Image(systemName: "arrow.right")
                                         .font(.headline)
                                 }

@@ -44,18 +44,18 @@ struct RewardView: View {
                                     .font(.title3)
 
                                 Text(performanceNote)
-                                    .font(.system(.body, design: .rounded))
+                                    .font(.app(.body))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.appSecondaryText)
 
                                 Text(event.rewardText)
-                                    .font(.system(.title2, design: .serif))
+                                    .font(.app(.title2))
                                     .foregroundColor(Color.appPrimaryText)
                                     .multilineTextAlignment(.leading)
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 Text(event.learningOutcome)
-                                    .font(.system(.body, design: .rounded))
+                                    .font(.app(.body))
                                     .italic()
                                     .foregroundColor(Color.appSecondaryText)
                                     .padding(.top, 4)
@@ -66,7 +66,7 @@ struct RewardView: View {
                                 Button(action: onNext) {
                                     HStack(spacing: 8) {
                                         Text(event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"))
-                                            .font(.system(.subheadline, design: .rounded))
+                                            .font(.app(.subheadline))
                                             .fontWeight(.semibold)
                                         Image(systemName: event.isLastEvent ? "map" : "arrow.right")
                                             .font(.subheadline)
@@ -88,7 +88,7 @@ struct RewardView: View {
                                         Image(systemName: "arrow.clockwise")
                                             .font(.caption)
                                         Text(lm.t("button.play_again"))
-                                            .font(.system(.caption, design: .rounded))
+                                            .font(.app(.caption))
                                             .fontWeight(.semibold)
                                     }
                                     .foregroundColor(Color.appSecondaryText)

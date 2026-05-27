@@ -318,7 +318,7 @@ private struct MenuSettingsButton: View {
     var body: some View {
         Button(action: action) {
             Text(lm.t("button.settings"))
-                .font(.system(size: width * 0.14, weight: .heavy, design: .rounded))
+                .font(.app(size: width * 0.14, weight: .heavy))
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
@@ -391,7 +391,7 @@ private struct MenuTitleView: View {
         HStack(spacing: panelWidth * 0.03) {
             goldFlourish
             Text("of")
-                .font(.system(size: panelWidth * 0.055, weight: .bold, design: .serif))
+                .font(.app(size: panelWidth * 0.055, weight: .bold))
                 .foregroundStyle(titleGradient)
                 .shadow(color: outlineColor, radius: 0, x: 1, y: 1)
                 .shadow(color: outlineColor, radius: 0, x: -1, y: -1)
@@ -422,12 +422,12 @@ private struct MenuTitleView: View {
     private func titleLine(_ text: String, size: CGFloat) -> some View {
         ZStack {
             Text(text)
-                .font(.system(size: size, weight: .black, design: .serif))
+                .font(.app(size: size, weight: .black))
                 .foregroundStyle(outlineColor)
                 .offset(x: 1.5, y: 1.5)
 
             Text(text)
-                .font(.system(size: size, weight: .black, design: .serif))
+                .font(.app(size: size, weight: .black))
                 .foregroundStyle(titleGradient)
         }
     }
@@ -448,7 +448,7 @@ private struct MenuPlayButton: View {
     var body: some View {
         Button(action: action) {
             Text(lm.t("button.play"))
-                .font(.system(size: width * 0.14, weight: .heavy, design: .rounded))
+                .font(.app(size: width * 0.14, weight: .heavy))
                 .foregroundStyle(.white)
                 .tracking(1.2)
                 .frame(width: width, height: width * 0.38)

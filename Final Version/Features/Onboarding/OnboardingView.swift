@@ -92,7 +92,7 @@ struct OnboardingView: View {
             .ignoresSafeArea()
 
             Text(lm.t(page.titleKey))
-                .font(.system(.largeTitle, design: .rounded))
+                .font(.app(.largeTitle))
                 .fontWeight(.black)
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
@@ -154,7 +154,7 @@ struct OnboardingView: View {
     private var bottomBar: some View {
         HStack(alignment: .center) {
             Button(lm.t("onboarding.skip")) { onFinish() }
-                .font(.system(.body, design: .rounded))
+                .font(.app(.body))
                 .fontWeight(.semibold)
                 .foregroundColor(.white)
                 .padding(.horizontal, 18)
@@ -194,7 +194,7 @@ struct OnboardingView: View {
                     Text(currentPage < pages.count - 1
                          ? lm.t("onboarding.next")
                          : lm.t("onboarding.start"))
-                        .font(.system(.body, design: .rounded))
+                        .font(.app(.body))
                         .fontWeight(.bold)
                     if currentPage == pages.count - 1 {
                         Image(systemName: "star.fill").font(.title3)

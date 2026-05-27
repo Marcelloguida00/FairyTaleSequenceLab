@@ -50,7 +50,7 @@ struct TutorialOverlayView: View {
                     .accessibilityHidden(true)
 
                 Button(lm.t("tutorial.skip")) { onFinish() }
-                    .font(.system(.title3, design: .rounded))
+                    .font(.app(.title3))
                     .fontWeight(.black)
                     .foregroundColor(.white)
                     .padding(.horizontal, 34)
@@ -114,7 +114,7 @@ struct TutorialOverlayView: View {
             .padding(.top, step.villainImageName == nil ? 24 : 0)
 
             Text(lm.t(step.titleKey))
-                .font(.system(.title3, design: .rounded))
+                .font(.app(.title3))
                 .fontWeight(.black)
                 .foregroundColor(Color.appPrimaryText)
                 .multilineTextAlignment(.center)
@@ -146,7 +146,7 @@ struct TutorialOverlayView: View {
                     Text(currentStep < steps.count - 1
                          ? lm.t("tutorial.next")
                          : lm.t("tutorial.done"))
-                        .font(.system(.body, design: .rounded))
+                        .font(.app(.body))
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .padding(.horizontal, 28)

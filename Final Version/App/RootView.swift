@@ -77,6 +77,7 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
+        .font(.appBody)
         .onAppear {
             BackgroundMusicPlayer.shared.start()
         }

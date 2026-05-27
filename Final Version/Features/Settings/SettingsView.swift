@@ -66,7 +66,7 @@ struct SettingsView: View {
                     .foregroundStyle(SettingsTheme.secondaryText)
 
                 Text(lm.t("settings.title"))
-                    .font(.system(.title2, design: .serif))
+                    .font(.app(.title2))
                     .fontWeight(.bold)
                     .foregroundStyle(SettingsTheme.primaryText)
             }
@@ -77,7 +77,7 @@ struct SettingsView: View {
                 closeSettings()
             } label: {
                 Text(lm.t("button.done"))
-                    .font(.system(.body, design: .serif))
+                    .font(.app(.body))
                     .fontWeight(.semibold)
                     .foregroundStyle(SettingsTheme.primaryText)
                     .padding(.horizontal, 18)
@@ -111,7 +111,7 @@ struct SettingsView: View {
         HStack(spacing: 10) {
             sectionLine
             Text(title)
-                .font(.system(.caption, design: .serif))
+                .font(.app(.caption))
                 .fontWeight(.semibold)
                 .textCase(.uppercase)
                 .foregroundStyle(SettingsTheme.secondaryText)
@@ -161,10 +161,10 @@ struct SettingsView: View {
         } label: {
             HStack(spacing: 14) {
                 Text(lang.flag)
-                    .font(.system(size: 28))
+                    .font(.app(size: 28))
 
                 Text(lang.nativeName)
-                    .font(.system(.body, design: .serif))
+                    .font(.app(.body))
                     .fontWeight(.regular)
                     .italic(isSelected)
                     .foregroundStyle(SettingsTheme.primaryText)
@@ -246,7 +246,7 @@ struct SettingsView: View {
                             .frame(width: 28)
 
                         Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
-                            .font(.system(.body, design: .serif))
+                            .font(.app(.body))
                             .fontWeight(.regular)
                             .italic()
                             .foregroundStyle(SettingsTheme.primaryText)
@@ -294,7 +294,7 @@ struct SettingsView: View {
     private var progressSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(lm.t("settings.progress"))
-                .font(.system(.caption, design: .rounded))
+                .font(.app(.caption))
                 .fontWeight(.black)
                 .textCase(.uppercase)
                 .foregroundStyle(Color.appSecondaryText)
@@ -313,12 +313,12 @@ struct SettingsView: View {
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.reset_progress"))
-                                .font(.system(.body, design: .rounded))
+                                .font(.app(.body))
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color.red)
 
                             Text(lm.t("settings.reset_progress.description"))
-                                .font(.system(.caption, design: .rounded))
+                                .font(.app(.caption))
                                 .foregroundStyle(Color.appSecondaryText)
                                 .fixedSize(horizontal: false, vertical: true)
                         }

@@ -76,11 +76,11 @@ struct SequenceCardView: View {
 
             VStack(spacing: 14) {
                 Image(systemName: "book.pages")
-                    .font(.system(.title))
+                    .font(.title)
                     .foregroundColor(Color(red: 0.44, green: 0.24, blue: 0.12))
 
                 Text(card.description)
-                    .font(.system(.body, design: .rounded))
+                    .font(.app(.body))
                     .fontWeight(.semibold)
                     .foregroundColor(Color(red: 0.27, green: 0.14, blue: 0.07))
                     .multilineTextAlignment(.center)

@@ -76,9 +76,9 @@ struct CelebrationView: View {
     var body: some View {
         if reduceMotion {
             VStack(spacing: 12) {
-                Text("🎉").font(.system(size: 72))
+                Text("🎉").font(.app(size: 72))
                 Text(lm.t("celebration.title"))
-                    .font(.system(.largeTitle, design: .rounded))
+                    .font(.app(.largeTitle))
                     .fontWeight(.black)
                     .foregroundColor(.appPrimaryText)
             }
@@ -108,9 +108,9 @@ struct CelebrationView: View {
                     }
 
                     VStack(spacing: 10) {
-                        Text("🎉").font(.system(size: 80))
+                        Text("🎉").font(.app(size: 80))
                         Text(lm.t("celebration.title"))
-                            .font(.system(.largeTitle, design: .rounded))
+                            .font(.app(.largeTitle))
                             .fontWeight(.black)
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.4), radius: 6, y: 3)
@@ -184,7 +184,7 @@ private struct EmptySequenceSlotView: View {
 
     private var descriptionText: some View {
         Text(description)
-            .font(.system(.callout, design: .rounded))
+            .font(.app(.callout))
             .fontWeight(.heavy)
             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.06))
             .multilineTextAlignment(.center)
@@ -552,15 +552,13 @@ struct SequencingActivityView<Reward: View>: View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(event.bannerTitle)
-                    .font(.system(.caption, design: .rounded))
-                    .fontWeight(.black)
+                    .font(.app(.caption, weight: .black))
                     .foregroundColor(Color(red: 1.00, green: 0.83, blue: 0.38))
                     .textCase(.uppercase)
                     .shadow(color: .black.opacity(0.45), radius: 3, y: 1)
 
                 Text(lm.t("sequencing.instruction"))
-                    .font(.system(.title3, design: .rounded))
-                    .fontWeight(.black)
+                    .font(.app(.title3, weight: .black))
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
             }
@@ -572,7 +570,7 @@ struct SequencingActivityView<Reward: View>: View {
                     toolbarButtonLabel(
                         title: lm.t("button.flip_all"),
                         systemImage: "arrow.triangle.2.circlepath",
-                        fill: Color(red: 0.42, green: 0.20, blue: 0.48)
+                        fill: Color(.yellow)
                     )
                 }
                 .buttonStyle(.plain)
@@ -584,7 +582,7 @@ struct SequencingActivityView<Reward: View>: View {
                         title: lm.t("button.check"),
                         systemImage: "checkmark.circle.fill",
                         fill: allSlotsFilled
-                            ? Color(red: 0.14, green: 0.54, blue: 0.24)
+                        ? Color(.blue)
                             : Color(red: 0.45, green: 0.39, blue: 0.32).opacity(0.72)
                     )
                 }
@@ -601,9 +599,8 @@ struct SequencingActivityView<Reward: View>: View {
         HStack(spacing: 8) {
             Image(systemName: systemImage)
             Text(title)
-                .fontWeight(.bold)
+                .font(.app(.headline, weight: .bold))
         }
-        .font(.system(.headline, design: .rounded))
         .foregroundColor(.white)
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -794,7 +791,7 @@ struct SequencingActivityView<Reward: View>: View {
         // Slot number badge
         .overlay(
             Text("\(slot + 1)")
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(.app(size: 13, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 9)
                 .padding(.vertical, 3)
@@ -1109,7 +1106,7 @@ struct SequencingActivityView<Reward: View>: View {
         VStack {
             Spacer()
             Text(feedbackBannerText)
-                .font(.system(.title3, design: .rounded))
+                .font(.app(.title3))
                 .fontWeight(.bold)
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)

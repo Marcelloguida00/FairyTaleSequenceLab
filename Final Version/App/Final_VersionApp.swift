@@ -11,6 +11,10 @@ import SwiftUI
 struct Final_VersionApp: App {
     @StateObject private var languageManager = LanguageManager()
 
+    init() {
+        AppTypography.registerCustomFonts()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()
