@@ -321,6 +321,23 @@ private struct VineColumn: View {
 
 // MARK: - Main view
 
+private enum SequencingStageLayout {
+    static let aspectRatio: CGFloat = 4.0 / 3.0
+
+    static func stageSize(in container: CGSize) -> CGSize {
+        guard container.width > 0, container.height > 0 else { return .zero }
+
+        let containerAspectRatio = container.width / container.height
+        if containerAspectRatio > aspectRatio {
+            let height = container.height
+            return CGSize(width: height * aspectRatio, height: height)
+        }
+
+        let width = container.width
+        return CGSize(width: width, height: width / aspectRatio)
+    }
+}
+
 struct SequencingActivityView<Reward: View>: View {
     let event: EventData
     let makeReward: (Int, @escaping () -> Void) -> Reward
@@ -401,118 +418,129 @@ struct SequencingActivityView<Reward: View>: View {
     // MARK: - Body
 
     var body: some View {
-        GeometryReader { geo in
-            let cardW = computeCardWidth(geo)
+        GeometryReader { screenGeo in
+            let stageSize = SequencingStageLayout.stageSize(in: screenGeo.size)
+            let cardW = computeCardWidth(in: stageSize)
             let cardH = cardW * 16 / 9
 
             ZStack {
-                // Full-screen background
-                Image("background-redhood")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
+                sequencingBackground(screenSize: screenGeo.size)
 
-                // Subtle dark scrim so cards remain readable
-                Color.black.opacity(0.22).ignoresSafeArea()
-
-                RadialGradient(
-                    colors: [
-                        Color.clear,
-                        Color.black.opacity(0.32)
-                    ],
-                    center: .center,
-                    startRadius: min(geo.size.width, geo.size.height) * 0.18,
-                    endRadius: max(geo.size.width, geo.size.height) * 0.70
-                )
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-
-                VStack(spacing: 10) {
-                    topBar
-                        .padding(.horizontal, hPad)
-                        .padding(.top, 18)
-
-                    storybookPanel(cardW: cardW, cardH: cardH)
-                        .padding(.horizontal, hPad)
-
-                    Spacer(minLength: 0)
-
-                    sourceTray(cardW: cardW, cardH: cardH)
-                        .padding(.horizontal, hPad)
-                        .padding(.bottom, 18)
-                }
-
-                // Floating drag ghost
-                if let cardId = draggingCardId {
-                    SequenceCardView(
-                        card: event.cards[cardId],
-                        isFlipped: flippedStates[cardId]
-                    )
-                    .frame(width: cardW, height: cardH)
-                    .shadow(color: .black.opacity(0.45), radius: 20, y: 10)
-                    .position(dragPosition)
-                    .allowsHitTesting(false)
-                    .zIndex(50)
-                }
-
-                // Incorrect feedback banner
-                if checkResult == .incorrect {
-                    feedbackBanner
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .allowsHitTesting(false)
-                }
-
-                if showCelebration {
-                    CelebrationView().allowsHitTesting(false)
-                }
-
-                if dimForReward {
-                    Color.black.opacity(0.55)
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-                        .allowsHitTesting(false)
-                        .zIndex(9)
-                }
-
-                if showReward {
-                    makeReward(attemptCount) {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
-                            showReward      = false
-                            dimForReward    = false
-                            showCelebration = false
-                            checkResult     = nil
-                            attemptCount    = 0
-                            shuffledStart   = event.makeShuffledStart()
-                            slotContents    = Array(repeating: nil, count: event.cards.count)
-                            flippedStates   = Array(repeating: false, count: event.cards.count)
-                        }
-                    }
-                    .transition(.asymmetric(
-                        insertion: .scale(scale: 0.88).combined(with: .opacity),
-                        removal:   .scale(scale: 0.95).combined(with: .opacity)
-                    ))
-                    .zIndex(10)
-                }
+                sequencingStage(cardW: cardW, cardH: cardH)
+                    .frame(width: stageSize.width, height: stageSize.height)
+                    .position(x: screenGeo.size.width / 2, y: screenGeo.size.height / 2)
             }
-            .coordinateSpace(name: "gameBoard")
         }
         .ignoresSafeArea()
     }
 
+    @ViewBuilder
+    private func sequencingBackground(screenSize: CGSize) -> some View {
+        Image("background-redhood")
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
+
+        Color.black.opacity(0.22)
+            .ignoresSafeArea()
+
+        RadialGradient(
+            colors: [
+                Color.clear,
+                Color.black.opacity(0.32)
+            ],
+            center: .center,
+            startRadius: min(screenSize.width, screenSize.height) * 0.18,
+            endRadius: max(screenSize.width, screenSize.height) * 0.70
+        )
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+
+    private func sequencingStage(cardW: CGFloat, cardH: CGFloat) -> some View {
+        ZStack {
+            VStack(spacing: 10) {
+                topBar
+                    .padding(.horizontal, hPad)
+                    .padding(.top, 18)
+
+                storybookPanel(cardW: cardW, cardH: cardH)
+                    .padding(.horizontal, hPad)
+
+                Spacer(minLength: 0)
+
+                sourceTray(cardW: cardW, cardH: cardH)
+                    .padding(.horizontal, hPad)
+                    .padding(.bottom, 18)
+            }
+
+            if let cardId = draggingCardId {
+                SequenceCardView(
+                    card: event.cards[cardId],
+                    isFlipped: flippedStates[cardId]
+                )
+                .frame(width: cardW, height: cardH)
+                .shadow(color: .black.opacity(0.45), radius: 20, y: 10)
+                .position(dragPosition)
+                .allowsHitTesting(false)
+                .zIndex(50)
+            }
+
+            if checkResult == .incorrect {
+                feedbackBanner
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .allowsHitTesting(false)
+            }
+
+            if showCelebration {
+                CelebrationView().allowsHitTesting(false)
+            }
+
+            if dimForReward {
+                Color.black.opacity(0.55)
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
+                    .zIndex(9)
+            }
+
+            if showReward {
+                makeReward(attemptCount) {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                        showReward      = false
+                        dimForReward    = false
+                        showCelebration = false
+                        checkResult     = nil
+                        attemptCount    = 0
+                        shuffledStart   = event.makeShuffledStart()
+                        slotContents    = Array(repeating: nil, count: event.cards.count)
+                        flippedStates   = Array(repeating: false, count: event.cards.count)
+                    }
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.88).combined(with: .opacity),
+                    removal:   .scale(scale: 0.95).combined(with: .opacity)
+                ))
+                .zIndex(10)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .coordinateSpace(name: "gameBoard")
+    }
+
     // MARK: - Card sizing
 
-    private func computeCardWidth(_ geo: GeometryProxy) -> CGFloat {
+    private func computeCardWidth(in size: CGSize) -> CGFloat {
         let n         = CGFloat(event.cards.count)
         let totalGaps = cardGap * (n - 1)
         let framedHorizontalInset: CGFloat = 112
-        let maxByW    = (geo.size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
+        let maxByW    = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
 
         // Constrain for the storybook frame, bottom tray, and top controls.
         let topBarH: CGFloat = 72
         let storybookChrome: CGFloat = 78
         let trayChrome: CGFloat = 40
         let verticalBreathingRoom: CGFloat = 56
-        let availRowH = (geo.size.height - topBarH - storybookChrome - trayChrome - verticalBreathingRoom) / 2
+        let availRowH = (size.height - topBarH - storybookChrome - trayChrome - verticalBreathingRoom) / 2
         let maxByH    = availRowH * 9 / 16
 
         return max(104, min(maxByW, maxByH))
