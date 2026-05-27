@@ -4,25 +4,30 @@ struct SettingsView: View {
     @EnvironmentObject var lm: LanguageManager
     @Environment(\.dismiss) private var dismiss
 
+    var onClose: (() -> Void)? = nil
+    var inFrameMode: Bool = false
+
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
 
     var body: some View {
         ZStack {
-            Color.appBackground.ignoresSafeArea()
+            if !inFrameMode {
+                Color.appBackground.ignoresSafeArea()
+            }
 
             VStack(spacing: 0) {
                 header
-                    .padding(.horizontal, 28)
-                    .padding(.top, 24)
+                    .padding(.horizontal, inFrameMode ? 8 : 28)
+                    .padding(.top, inFrameMode ? 6 : 24)
 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 28) {
                         languageSection
                         musicSection
                     }
-                    .padding(.horizontal, 28)
-                    .padding(.bottom, 32)
+                    .padding(.horizontal, inFrameMode ? 8 : 28)
+                    .padding(.bottom, inFrameMode ? 8 : 32)
                 }
             }
         }
@@ -46,7 +51,7 @@ struct SettingsView: View {
             Spacer()
 
             Button {
-                dismiss()
+                closeSettings()
             } label: {
                 Text(lm.t("button.done"))
                     .font(.system(.body, design: .rounded))
@@ -63,6 +68,14 @@ struct SettingsView: View {
             .accessibilityLabel(lm.t("button.done"))
         }
         .padding(.bottom, 24)
+    }
+
+    private func closeSettings() {
+        if let onClose {
+            onClose()
+        } else {
+            dismiss()
+        }
     }
 
     // MARK: - Language section

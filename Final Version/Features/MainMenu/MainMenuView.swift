@@ -1,6 +1,7 @@
 import SwiftUI
 
 private let menuPanelAspectRatio: CGFloat = 600.0 / 1072.0
+private let settingsFrameAspectRatio: CGFloat = 997.0 / 1024.0
 
 struct MainMenuSceneView: View {
     @Binding var cloudEnterProgress: CGFloat
@@ -32,34 +33,121 @@ struct MainMenuPanelLayer: View {
     @State private var isPanelDissolving = false
     @State private var didRevealPanel = false
     @State private var showSettings = false
+    @State private var isSettingsTransitionActive = false
+    @State private var showsSettingsCloudOverlay = false
+    @State private var settingsCloudEnterProgress: CGFloat = 0
+    @State private var settingsCloudExitProgress: CGFloat = 0
     @EnvironmentObject var lm: LanguageManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let panelFadeDuration: TimeInterval = 0.30
+    private static let settingsFadeDuration: TimeInterval = 0.30
+
+    private var settingsFadeAnimation: Animation {
+        reduceMotion
+            ? .linear(duration: 0.01)
+            : .easeInOut(duration: Self.settingsFadeDuration)
+    }
+
+    private var cloudEnterDuration: TimeInterval {
+        reduceMotion ? 0.01 : CloudTransitionAnimator.enterDuration
+    }
+
+    private var cloudExitDuration: TimeInterval {
+        reduceMotion ? 0.01 : CloudTransitionAnimator.exitDuration
+    }
+
+    private var isInteractionBlocked: Bool {
+        isTransitioning || isPanelDissolving || isSettingsTransitionActive || showSettings
+    }
 
     var body: some View {
         ZStack {
             MenuPanelView(
-                isDisabled: isTransitioning || isPanelDissolving,
+                isDisabled: isInteractionBlocked,
                 onPlay: startGame,
-                onSettings: { showSettings = true }
+                onSettings: { Task { await openSettings() } }
             )
         }
         .opacity(panelOpacity)
         .scaleEffect(panelScale)
-        .allowsHitTesting(panelOpacity > 0.5 && !isTransitioning && !isPanelDissolving)
+        .allowsHitTesting(panelOpacity > 0.5 && !isInteractionBlocked)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
         .id(resetID)
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-                .environmentObject(lm)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
+        .overlay {
+            if showsSettingsCloudOverlay {
+                CloudTransitionOverlay(
+                    enterProgress: settingsCloudEnterProgress,
+                    exitProgress: settingsCloudExitProgress
+                )
+                .allowsHitTesting(false)
+                .zIndex(50)
+            }
+
+            if showSettings {
+                SettingsFrameOverlay(onClose: { Task { await closeSettings() } })
+                    .environmentObject(lm)
+                    .transition(.opacity)
+                    .zIndex(100)
+            }
         }
         .onAppear {
             tryRevealPanel()
         }
+    }
+
+    @MainActor
+    private func openSettings() async {
+        guard !isSettingsTransitionActive, !isTransitioning, !showSettings else { return }
+
+        isSettingsTransitionActive = true
+        AppSettings.hapticImpact(.light)
+
+        showsSettingsCloudOverlay = true
+        settingsCloudExitProgress = 0
+        settingsCloudEnterProgress = 0
+
+        withAnimation(.easeInOut(duration: cloudEnterDuration)) {
+            settingsCloudEnterProgress = 1
+        }
+
+        try? await Task.sleep(nanoseconds: UInt64(cloudEnterDuration * 1_000_000_000))
+
+        withAnimation(settingsFadeAnimation) {
+            showSettings = true
+        }
+
+        if !reduceMotion {
+            try? await Task.sleep(nanoseconds: UInt64(Self.settingsFadeDuration * 1_000_000_000))
+        }
+
+        isSettingsTransitionActive = false
+    }
+
+    @MainActor
+    private func closeSettings() async {
+        guard showSettings, !isSettingsTransitionActive else { return }
+
+        isSettingsTransitionActive = true
+        AppSettings.hapticImpact(.light)
+
+        withAnimation(settingsFadeAnimation) {
+            showSettings = false
+        }
+
+        try? await Task.sleep(nanoseconds: UInt64(Self.settingsFadeDuration * 1_000_000_000))
+
+        withAnimation(.easeInOut(duration: cloudExitDuration)) {
+            settingsCloudExitProgress = 1
+        }
+
+        try? await Task.sleep(nanoseconds: UInt64(cloudExitDuration * 1_000_000_000))
+
+        settingsCloudEnterProgress = 0
+        settingsCloudExitProgress = 0
+        showsSettingsCloudOverlay = false
+        isSettingsTransitionActive = false
     }
 
     private func tryRevealPanel() {
@@ -107,6 +195,48 @@ struct MainMenuPanelLayer: View {
             try? await Task.sleep(nanoseconds: UInt64(Self.panelFadeDuration * 1_000_000_000))
             onPlay()
         }
+    }
+}
+
+private struct SettingsFrameOverlay: View {
+    let onClose: () -> Void
+
+    var body: some View {
+        GeometryReader { proxy in
+            let frameSize = fittedSettingsFrameSize(in: proxy.size)
+
+            ZStack {
+                ZStack {
+                    Image("framesettings")
+                        .renderingMode(.original)
+                        .resizable()
+                        .interpolation(.high)
+                        .scaledToFit()
+                        .frame(width: frameSize.width, height: frameSize.height)
+                        .shadow(color: .black.opacity(0.36), radius: 16, y: 10)
+                        .accessibilityHidden(true)
+
+                    SettingsView(onClose: onClose, inFrameMode: true)
+                        .frame(width: frameSize.width * 0.72, height: frameSize.height * 0.70)
+                        .padding(.top, frameSize.height * 0.04)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+
+    private func fittedSettingsFrameSize(in container: CGSize) -> CGSize {
+        let maxHeight = container.height * 0.90
+        let maxWidth = container.width * 0.92
+        var height = maxHeight
+        var width = height * settingsFrameAspectRatio
+
+        if width > maxWidth {
+            width = maxWidth
+            height = width / settingsFrameAspectRatio
+        }
+
+        return CGSize(width: width, height: height)
     }
 }
 
