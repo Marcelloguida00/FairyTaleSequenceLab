@@ -26,9 +26,18 @@ private enum ActiveMap {
     var contentMode: MapLayout.ContentMode {
         switch self {
         case .main:
-            return .fit
+            return .fill
         case .redHood:
-            return .fit
+            return .fill
+        }
+    }
+
+    var imagePixelSize: CGSize {
+        switch self {
+        case .main:
+            return WorldMapPixel.size
+        case .redHood:
+            return RedHoodMapGraph.imageSize
         }
     }
 
@@ -174,13 +183,18 @@ struct ContentView: View {
 
     @ViewBuilder
     private func mapContent(mapSize: CGSize) -> some View {
+        let projection = MapProjection(
+            imageSize: activeMap.imagePixelSize,
+            renderedSize: mapSize
+        )
+
         ZStack(alignment: .topLeading) {
             MapBackgroundImage(name: activeMap.imageName, mapSize: mapSize)
 
             if activeMap == .redHood {
                 ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
                     WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
-                        .position(wp.point.scaled(to: mapSize))
+                        .position(projection.screenPoint(fromPixel: wp.point))
                         .allowsHitTesting(false)
                 }
             }
@@ -191,7 +205,7 @@ struct ContentView: View {
                         size: dotSize(for: mapSize),
                         isPulsing: wp.id == MapGraph.redRidingHoodBaseID
                     )
-                    .position(wp.point.scaled(to: mapSize))
+                    .position(projection.screenPoint(fromPixel: wp.point))
                     .allowsHitTesting(false)
                 }
             }
@@ -203,8 +217,7 @@ struct ContentView: View {
                 markerIsRaised: markerIsRaised
             )
             .position(
-                x: avatarPosition.x * mapSize.width,
-                y: avatarPosition.y * mapSize.height
+                projection.screenPoint(fromPixel: avatarPosition)
             )
 
             if let fgName = activeMap.foregroundImageName {
@@ -222,8 +235,8 @@ struct ContentView: View {
                 }
                 .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
                 .position(CGPoint(
-                    x: wp.point.x * mapSize.width,
-                    y: wp.point.y * mapSize.height - dotSize(for: mapSize) * 2.8
+                    x: projection.screenPoint(fromPixel: wp.point).x,
+                    y: projection.screenPoint(fromPixel: wp.point).y - dotSize(for: mapSize) * 2.8
                 ))
                 .transition(.scale(scale: 0.75).combined(with: .opacity))
             }
@@ -236,7 +249,7 @@ struct ContentView: View {
                     width: titleWidth(for: mapSize),
                     fontSize: titleFontSize(for: mapSize)
                 )
-                .position(region.titlePoint.scaled(to: mapSize))
+                .position(projection.screenPoint(fromPixel: region.titlePoint))
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
 
@@ -247,7 +260,7 @@ struct ContentView: View {
                     width: titleWidth(for: mapSize),
                     fontSize: titleFontSize(for: mapSize)
                 )
-                .position(region.titlePoint.scaled(to: mapSize))
+                .position(projection.screenPoint(fromPixel: region.titlePoint))
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
 
@@ -258,7 +271,7 @@ struct ContentView: View {
                     }
                 }
                 .frame(width: playButtonSize(for: mapSize), height: playButtonSize(for: mapSize))
-                .position(MapGraph.redRidingHoodPlayPoint.scaled(to: mapSize))
+                .position(projection.screenPoint(fromPixel: MapGraph.redRidingHoodPlayPoint))
                 .transition(.scale(scale: 0.82).combined(with: .opacity))
             }
         }
@@ -267,7 +280,7 @@ struct ContentView: View {
         .gesture(
             DragGesture(minimumDistance: 0)
                 .onEnded { value in
-                    handleMapTap(value.location, mapSize: mapSize)
+                    handleMapTap(value.location, projection: projection)
                 }
         )
     }
@@ -369,19 +382,16 @@ struct ContentView: View {
             !isMapTransitioning
     }
 
-    private func handleMapTap(_ location: CGPoint, mapSize: CGSize) {
+    private func handleMapTap(_ location: CGPoint, projection: MapProjection) {
         guard !isWalking, !isMapTransitioning else { return }
 
-        let normalizedTap = CGPoint(
-            x: min(max(location.x / mapSize.width, 0), 1),
-            y: min(max(location.y / mapSize.height, 0), 1)
-        )
+        let pixelTap = projection.pixelPoint(fromScreen: location)
 
         switch activeMap {
         case .main:
-            handleMainMapTap(normalizedTap)
+            handleMainMapTap(pixelTap)
         case .redHood:
-            handleRedHoodMapTap(normalizedTap)
+            handleRedHoodMapTap(pixelTap)
         }
     }
 
@@ -495,7 +505,7 @@ struct ContentView: View {
             let nextPosition = waypoint.point
             avatarDirection = WalkDirection(from: avatarPosition, to: nextPosition)
 
-            let distance = avatarPosition.distance(to: nextPosition)
+            let distance = normalizedMapDistance(from: avatarPosition, to: nextPosition)
             let duration = max(0.18, min(1.1, distance * 4.6))
 
             withAnimation(.linear(duration: duration)) {
@@ -512,6 +522,16 @@ struct ContentView: View {
         }
 
         isWalking = false
+    }
+
+    private func normalizedMapDistance(from start: CGPoint, to end: CGPoint) -> CGFloat {
+        let imageSize = activeMap.imagePixelSize
+        guard imageSize.width > 0, imageSize.height > 0 else { return 0 }
+
+        return hypot(
+            (end.x - start.x) / imageSize.width,
+            (end.y - start.y) / imageSize.height
+        )
     }
 }
 
@@ -953,12 +973,36 @@ private struct MapWaypoint: Identifiable {
     let neighbors: [Int]
 }
 
+private struct MapProjection {
+    let imageSize: CGSize
+    let renderedSize: CGSize
+
+    private var scale: CGFloat {
+        guard imageSize.width > 0, imageSize.height > 0 else { return 1 }
+        return min(renderedSize.width / imageSize.width, renderedSize.height / imageSize.height)
+    }
+
+    func screenPoint(fromPixel point: CGPoint) -> CGPoint {
+        CGPoint(x: point.x * scale, y: point.y * scale)
+    }
+
+    func pixelPoint(fromScreen point: CGPoint) -> CGPoint {
+        guard scale > 0 else { return .zero }
+
+        return CGPoint(
+            x: min(max(point.x / scale, 0), imageSize.width),
+            y: min(max(point.y / scale, 0), imageSize.height)
+        )
+    }
+}
+
 private enum WorldMapPixel {
     static let width: CGFloat = 3344
     static let height: CGFloat = 1882
+    static let size = CGSize(width: width, height: height)
 
     static func point(x: CGFloat, y: CGFloat) -> CGPoint {
-        CGPoint(x: x / width, y: y / height)
+        CGPoint(x: x, y: y)
     }
 }
 
@@ -969,7 +1013,7 @@ private enum MapGraph {
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let baseIDs: Set<Int> = [0, 7, 14, 18, 22]
     static let comingSoonBaseIDs: Set<Int> = [7, 14, 18, 22]
-    static let baseTapRadius: CGFloat = 0.055
+    static let baseTapRadius: CGFloat = 190
 
     static let storyRegions: [StoryRegion] = [
         StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: WorldMapPixel.point(x: 700, y: 300)),
@@ -1081,13 +1125,14 @@ private enum RedHoodMapGraph {
         static let height: CGFloat = 1882
 
         static func point(x: CGFloat, y: CGFloat) -> CGPoint {
-            CGPoint(x: x / width, y: y / height)
+            CGPoint(x: x, y: y)
         }
     }
 
+    static let imageSize = CGSize(width: Pixel.width, height: Pixel.height)
     static let openingStartID = 10
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
-    static let tapRadius: CGFloat = 0.09
+    static let tapRadius: CGFloat = 190
     static let storyWaypointIDs = Set(0...9)
 
     static let waypoints: [MapWaypoint] = [
@@ -1190,10 +1235,6 @@ private enum RedHoodMapGraph {
 private extension CGPoint {
     func distance(to other: CGPoint) -> CGFloat {
         hypot(x - other.x, y - other.y)
-    }
-
-    func scaled(to size: CGSize) -> CGPoint {
-        CGPoint(x: x * size.width, y: y * size.height)
     }
 }
 
