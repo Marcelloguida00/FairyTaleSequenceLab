@@ -23,12 +23,21 @@ private enum ActiveMap {
         }
     }
 
+    var contentMode: MapLayout.ContentMode {
+        switch self {
+        case .main:
+            return .fill
+        case .redHood:
+            return .fill
+        }
+    }
+
     var foregroundImageName: String? {
         switch self {
         case .main:
             return nil
         case .redHood:
-            return "Finalmente"
+            return nil
         }
     }
 }
@@ -60,7 +69,7 @@ struct ContentView: View {
         ZStack {
             AdaptiveMapContainer(
                 aspectRatio: activeMap.aspectRatio,
-                contentMode: .fill
+                contentMode: activeMap.contentMode
             ) { mapSize in
                 mapContent(mapSize: mapSize)
             }
@@ -276,7 +285,7 @@ struct ContentView: View {
     #endif
 
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
-        let multiplier: CGFloat = activeMap == .redHood ? 0.18 : 0.11
+        let multiplier: CGFloat = 0.11
         return min(mapSize.width, mapSize.height) * multiplier
     }
 
@@ -944,10 +953,19 @@ private struct MapWaypoint: Identifiable {
     let neighbors: [Int]
 }
 
+private enum WorldMapPixel {
+    static let width: CGFloat = 3344
+    static let height: CGFloat = 1882
+
+    static func point(x: CGFloat, y: CGFloat) -> CGPoint {
+        CGPoint(x: x / width, y: y / height)
+    }
+}
+
 private enum MapGraph {
-    static let openingStartID = 23
     static let redRidingHoodBaseID = 0
-    static let redRidingHoodPlayPoint = CGPoint(x: 0.210, y: 0.420)
+    static let openingStartID = redRidingHoodBaseID
+    static let redRidingHoodPlayPoint = WorldMapPixel.point(x: 826, y: 775)
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let baseIDs: Set<Int> = [0, 7, 14, 18, 22]
     static let comingSoonBaseIDs: Set<Int> = [7, 14, 18, 22]
@@ -955,41 +973,42 @@ private enum MapGraph {
 
     static let storyRegions: [StoryRegion] = [
         StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: CGPoint(x: 0.232, y: 0.226)),
-        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: CGPoint(x: 0.270, y: 0.612)),
-        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: CGPoint(x: 0.790, y: 0.704)),
-        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: CGPoint(x: 0.548, y: 0.462)),
-        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: CGPoint(x: 0.620, y: 0.205))
+        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: WorldMapPixel.point(x: 1273, y: 1487)),
+        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: WorldMapPixel.point(x: 2060, y: 1376)),
+        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: WorldMapPixel.point(x: 2182, y: 979)),
+        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: WorldMapPixel.point(x: 1773, y: 475))
     ]
 
     static let waypoints: [MapWaypoint] = [
-        MapWaypoint(id: 0, name: "Upper left target", point: CGPoint(x: 0.165, y: 0.417), neighbors: [1, 23]),
-        MapWaypoint(id: 1, name: "Left island climb", point: CGPoint(x: 0.180, y: 0.372), neighbors: [0, 2]),
-        MapWaypoint(id: 2, name: "Village outer curve", point: CGPoint(x: 0.233, y: 0.319), neighbors: [1, 3]),
-        MapWaypoint(id: 3, name: "Village upper path", point: CGPoint(x: 0.284, y: 0.314), neighbors: [2, 4]),
-        MapWaypoint(id: 4, name: "Mill bend", point: CGPoint(x: 0.330, y: 0.287), neighbors: [3, 5]),
-        MapWaypoint(id: 5, name: "Bridge to mine west", point: CGPoint(x: 0.420, y: 0.276), neighbors: [4, 6]),
-        MapWaypoint(id: 6, name: "Bridge to mine middle", point: CGPoint(x: 0.491, y: 0.275), neighbors: [5, 7]),
-        MapWaypoint(id: 7, name: "Mine target", point: CGPoint(x: 0.564, y: 0.275), neighbors: [6, 8]),
-        MapWaypoint(id: 8, name: "Mine exit", point: CGPoint(x: 0.612, y: 0.291), neighbors: [7, 9]),
-        MapWaypoint(id: 9, name: "Mountain descent", point: CGPoint(x: 0.644, y: 0.354), neighbors: [8, 10]),
-        MapWaypoint(id: 10, name: "Right island path", point: CGPoint(x: 0.684, y: 0.389), neighbors: [9, 11]),
-        MapWaypoint(id: 11, name: "Factory meadow", point: CGPoint(x: 0.738, y: 0.404), neighbors: [10, 12]),
-        MapWaypoint(id: 12, name: "Lower right bend", point: CGPoint(x: 0.805, y: 0.422), neighbors: [11, 13]),
-        MapWaypoint(id: 13, name: "Right bridge approach", point: CGPoint(x: 0.807, y: 0.478), neighbors: [12, 14]),
-        MapWaypoint(id: 14, name: "Central bridge target", point: CGPoint(x: 0.718, y: 0.543), neighbors: [13, 15]),
-        MapWaypoint(id: 15, name: "Central right shore", point: CGPoint(x: 0.677, y: 0.596), neighbors: [14, 16]),
-        MapWaypoint(id: 16, name: "Central lower bend", point: CGPoint(x: 0.604, y: 0.682), neighbors: [15, 17]),
-        MapWaypoint(id: 17, name: "Desert neck", point: CGPoint(x: 0.654, y: 0.736), neighbors: [16, 18]),
-        MapWaypoint(id: 18, name: "Desert target", point: CGPoint(x: 0.657, y: 0.779), neighbors: [17, 29]),
-        MapWaypoint(id: 19, name: "Lower desert curve", point: CGPoint(x: 0.609, y: 0.834), neighbors: [29, 20]),
-        MapWaypoint(id: 20, name: "South stones east", point: CGPoint(x: 0.547, y: 0.864), neighbors: [19, 21]),
-        MapWaypoint(id: 21, name: "South stones middle", point: CGPoint(x: 0.469, y: 0.862), neighbors: [20, 30]),
-        MapWaypoint(id: 22, name: "Bottom left target", point: CGPoint(x: 0.356, y: 0.831), neighbors: [32]),
-        MapWaypoint(id: 23, name: "Red Riding Hood bridge start", point: CGPoint(x: 0.118, y: 0.501), neighbors: [0]),
-        MapWaypoint(id: 29, name: "Desert lower exit", point: CGPoint(x: 0.646, y: 0.806), neighbors: [18, 19]),
-        MapWaypoint(id: 30, name: "South stones west", point: CGPoint(x: 0.428, y: 0.853), neighbors: [21, 31]),
-        MapWaypoint(id: 31, name: "Bottom island stones", point: CGPoint(x: 0.390, y: 0.842), neighbors: [30, 32]),
-        MapWaypoint(id: 32, name: "Bottom island approach", point: CGPoint(x: 0.369, y: 0.833), neighbors: [31, 22])
+        MapWaypoint(id: 0, name: "Red Riding Hood base", point: WorldMapPixel.point(x: 826, y: 873), neighbors: [1]),
+        MapWaypoint(id: 1, name: "Forest path entry", point: WorldMapPixel.point(x: 867, y: 846), neighbors: [0, 2]),
+        MapWaypoint(id: 2, name: "Forest climb", point: WorldMapPixel.point(x: 930, y: 781), neighbors: [1, 3]),
+        MapWaypoint(id: 3, name: "Village curve", point: WorldMapPixel.point(x: 1026, y: 727), neighbors: [2, 4]),
+        MapWaypoint(id: 4, name: "Village road", point: WorldMapPixel.point(x: 1204, y: 696), neighbors: [3, 5]),
+        MapWaypoint(id: 5, name: "Bridge west road", point: WorldMapPixel.point(x: 1478, y: 630), neighbors: [4, 6]),
+        MapWaypoint(id: 6, name: "Bridge west landing", point: WorldMapPixel.point(x: 1655, y: 627), neighbors: [5, 7]),
+        MapWaypoint(id: 7, name: "Mountain base", point: WorldMapPixel.point(x: 1773, y: 610), neighbors: [6, 8]),
+        MapWaypoint(id: 8, name: "Mountain exit", point: WorldMapPixel.point(x: 1846, y: 641), neighbors: [7, 9]),
+        MapWaypoint(id: 9, name: "Mountain descent", point: WorldMapPixel.point(x: 1955, y: 701), neighbors: [8, 10]),
+        MapWaypoint(id: 10, name: "Right island upper road", point: WorldMapPixel.point(x: 2045, y: 786), neighbors: [9, 11]),
+        MapWaypoint(id: 11, name: "Right island road", point: WorldMapPixel.point(x: 2151, y: 820), neighbors: [10, 12]),
+        MapWaypoint(id: 12, name: "Orchard road", point: WorldMapPixel.point(x: 2251, y: 854), neighbors: [11, 13]),
+        MapWaypoint(id: 13, name: "Right island bend", point: WorldMapPixel.point(x: 2445, y: 931), neighbors: [12, 24]),
+        MapWaypoint(id: 24, name: "Right bridge approach", point: WorldMapPixel.point(x: 2388, y: 1010), neighbors: [13, 25]),
+        MapWaypoint(id: 25, name: "Right bridge road", point: WorldMapPixel.point(x: 2262, y: 1064), neighbors: [24, 14]),
+        MapWaypoint(id: 14, name: "Right bridge base", point: WorldMapPixel.point(x: 2182, y: 1114), neighbors: [25, 15]),
+        MapWaypoint(id: 15, name: "Central island descent", point: WorldMapPixel.point(x: 2105, y: 1281), neighbors: [14, 16]),
+        MapWaypoint(id: 16, name: "Central island road", point: WorldMapPixel.point(x: 1962, y: 1333), neighbors: [15, 17]),
+        MapWaypoint(id: 17, name: "Desert approach", point: WorldMapPixel.point(x: 1887, y: 1334), neighbors: [16, 26]),
+        MapWaypoint(id: 26, name: "Desert bridge approach", point: WorldMapPixel.point(x: 1980, y: 1462), neighbors: [17, 18]),
+        MapWaypoint(id: 18, name: "Desert base", point: WorldMapPixel.point(x: 2060, y: 1511), neighbors: [26, 19]),
+        MapWaypoint(id: 19, name: "Desert lower exit", point: WorldMapPixel.point(x: 2101, y: 1563), neighbors: [18, 20]),
+        MapWaypoint(id: 20, name: "South coast curve", point: WorldMapPixel.point(x: 1950, y: 1687), neighbors: [19, 21]),
+        MapWaypoint(id: 21, name: "South coast road", point: WorldMapPixel.point(x: 1751, y: 1747), neighbors: [20, 27]),
+        MapWaypoint(id: 27, name: "South stones east", point: WorldMapPixel.point(x: 1552, y: 1740), neighbors: [21, 28]),
+        MapWaypoint(id: 28, name: "South stones middle", point: WorldMapPixel.point(x: 1449, y: 1717), neighbors: [27, 29]),
+        MapWaypoint(id: 29, name: "South stones west", point: WorldMapPixel.point(x: 1349, y: 1660), neighbors: [28, 22]),
+        MapWaypoint(id: 22, name: "Frog base", point: WorldMapPixel.point(x: 1273, y: 1622), neighbors: [29])
     ]
 
     static func waypoint(id: Int) -> MapWaypoint? {
@@ -1057,22 +1076,58 @@ private enum MapGraph {
 }
 
 private enum RedHoodMapGraph {
+    private enum Pixel {
+        static let width: CGFloat = 2509
+        static let height: CGFloat = 1882
+
+        static func point(x: CGFloat, y: CGFloat) -> CGPoint {
+            CGPoint(x: x / width, y: y / height)
+        }
+    }
+
     static let openingStartID = 10
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let tapRadius: CGFloat = 0.09
+    static let storyWaypointIDs = Set(0...9)
 
     static let waypoints: [MapWaypoint] = [
-        MapWaypoint(id: 10, name: "Bridge entry", point: CGPoint(x: 0.419, y: 0.940), neighbors: [0]),
-        MapWaypoint(id: 0, name: "Village dock", point: CGPoint(x: 0.419, y: 0.829), neighbors: [1, 10]),
-        MapWaypoint(id: 1, name: "Lower forest path", point: CGPoint(x: 0.400, y: 0.695), neighbors: [0, 2]),
-        MapWaypoint(id: 2, name: "Crossroads", point: CGPoint(x: 0.322, y: 0.604), neighbors: [1, 3, 4]),
-        MapWaypoint(id: 3, name: "Wolf clearing", point: CGPoint(x: 0.121, y: 0.608), neighbors: [2]),
-        MapWaypoint(id: 4, name: "Cottage bend", point: CGPoint(x: 0.326, y: 0.487), neighbors: [2, 5]),
-        MapWaypoint(id: 5, name: "Forest cottage", point: CGPoint(x: 0.532, y: 0.302), neighbors: [4, 6]),
-        MapWaypoint(id: 6, name: "Mill road", point: CGPoint(x: 0.587, y: 0.402), neighbors: [5, 7]),
-        MapWaypoint(id: 7, name: "Grandmother path", point: CGPoint(x: 0.535, y: 0.537), neighbors: [6, 8]),
-        MapWaypoint(id: 8, name: "Village entry", point: CGPoint(x: 0.606, y: 0.607), neighbors: [7, 9]),
-        MapWaypoint(id: 9, name: "Bridge lookout", point: CGPoint(x: 0.838, y: 0.510), neighbors: [8])
+        MapWaypoint(id: 10, name: "Bridge entry", point: Pixel.point(x: 1108, y: 1490), neighbors: [0]),
+        MapWaypoint(id: 0, name: "Bridge base", point: Pixel.point(x: 1108, y: 1391), neighbors: [10, 20]),
+        MapWaypoint(id: 20, name: "Bridge path climb", point: Pixel.point(x: 1082, y: 1374), neighbors: [0, 21]),
+        MapWaypoint(id: 21, name: "Lower path climb", point: Pixel.point(x: 1012, y: 1199), neighbors: [20, 1]),
+        MapWaypoint(id: 1, name: "Lower forest base", point: Pixel.point(x: 1063, y: 1141), neighbors: [21, 22]),
+        MapWaypoint(id: 22, name: "Lower forest bend", point: Pixel.point(x: 980, y: 1055), neighbors: [1, 23]),
+        MapWaypoint(id: 23, name: "Crossroads approach", point: Pixel.point(x: 930, y: 1017), neighbors: [22, 2]),
+        MapWaypoint(id: 2, name: "Crossroads base", point: Pixel.point(x: 885, y: 975), neighbors: [23, 24, 27]),
+        MapWaypoint(id: 24, name: "Wolf path east", point: Pixel.point(x: 746, y: 970), neighbors: [2, 25]),
+        MapWaypoint(id: 25, name: "Wolf path middle", point: Pixel.point(x: 604, y: 949), neighbors: [24, 26]),
+        MapWaypoint(id: 26, name: "Wolf path west", point: Pixel.point(x: 465, y: 943), neighbors: [25, 3]),
+        MapWaypoint(id: 3, name: "Wolf base", point: Pixel.point(x: 440, y: 981), neighbors: [26]),
+        MapWaypoint(id: 27, name: "Cottage climb", point: Pixel.point(x: 898, y: 858), neighbors: [2, 4]),
+        MapWaypoint(id: 4, name: "Cottage left base", point: Pixel.point(x: 898, y: 776), neighbors: [27, 28]),
+        MapWaypoint(id: 28, name: "Cottage path left", point: Pixel.point(x: 959, y: 726), neighbors: [4, 29]),
+        MapWaypoint(id: 29, name: "Cottage path roof", point: Pixel.point(x: 1037, y: 636), neighbors: [28, 30]),
+        MapWaypoint(id: 30, name: "Cottage path upper", point: Pixel.point(x: 1110, y: 570), neighbors: [29, 31]),
+        MapWaypoint(id: 31, name: "Cottage path ridge", point: Pixel.point(x: 1183, y: 504), neighbors: [30, 32]),
+        MapWaypoint(id: 32, name: "Cottage path treeline", point: Pixel.point(x: 1259, y: 478), neighbors: [31, 33]),
+        MapWaypoint(id: 33, name: "Cottage top approach", point: Pixel.point(x: 1338, y: 481), neighbors: [32, 5]),
+        MapWaypoint(id: 5, name: "Cottage top base", point: Pixel.point(x: 1404, y: 494), neighbors: [33, 34]),
+        MapWaypoint(id: 34, name: "Mill road upper", point: Pixel.point(x: 1490, y: 500), neighbors: [5, 35]),
+        MapWaypoint(id: 35, name: "Mill road bend", point: Pixel.point(x: 1530, y: 560), neighbors: [34, 36]),
+        MapWaypoint(id: 36, name: "Mill road approach", point: Pixel.point(x: 1540, y: 610), neighbors: [35, 6]),
+        MapWaypoint(id: 6, name: "Mill road base", point: Pixel.point(x: 1519, y: 643), neighbors: [36, 37]),
+        MapWaypoint(id: 37, name: "Grandmother curve upper", point: Pixel.point(x: 1531, y: 736), neighbors: [6, 38]),
+        MapWaypoint(id: 38, name: "Grandmother curve middle", point: Pixel.point(x: 1475, y: 808), neighbors: [37, 39]),
+        MapWaypoint(id: 39, name: "Grandmother curve lower", point: Pixel.point(x: 1425, y: 845), neighbors: [38, 7]),
+        MapWaypoint(id: 7, name: "Grandmother base", point: Pixel.point(x: 1380, y: 859), neighbors: [39, 40]),
+        MapWaypoint(id: 40, name: "Village road bend", point: Pixel.point(x: 1461, y: 892), neighbors: [7, 41]),
+        MapWaypoint(id: 41, name: "Village road lower", point: Pixel.point(x: 1530, y: 917), neighbors: [40, 8]),
+        MapWaypoint(id: 8, name: "Village road base", point: Pixel.point(x: 1545, y: 976), neighbors: [41, 42]),
+        MapWaypoint(id: 42, name: "Bridge road meadow", point: Pixel.point(x: 1687, y: 987), neighbors: [8, 43]),
+        MapWaypoint(id: 43, name: "Bridge road rise", point: Pixel.point(x: 1838, y: 946), neighbors: [42, 44]),
+        MapWaypoint(id: 44, name: "Bridge road east", point: Pixel.point(x: 1911, y: 901), neighbors: [43, 45]),
+        MapWaypoint(id: 45, name: "Bridge road approach", point: Pixel.point(x: 1987, y: 857), neighbors: [44, 9]),
+        MapWaypoint(id: 9, name: "Bridge lookout base", point: Pixel.point(x: 2066, y: 817), neighbors: [45])
     ]
 
     static func waypoint(id: Int) -> MapWaypoint? {
@@ -1081,6 +1136,7 @@ private enum RedHoodMapGraph {
 
     static func waypointHit(by point: CGPoint) -> MapWaypoint? {
         waypoints
+            .filter { storyWaypointIDs.contains($0.id) }
             .filter { $0.point.distance(to: point) <= tapRadius }
             .min { first, second in
                 first.point.distance(to: point) < second.point.distance(to: point)

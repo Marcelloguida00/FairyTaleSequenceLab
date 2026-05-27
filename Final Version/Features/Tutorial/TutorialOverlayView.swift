@@ -50,23 +50,23 @@ struct TutorialOverlayView: View {
                     .accessibilityHidden(true)
 
                 Button(lm.t("tutorial.skip")) { onFinish() }
-                    .font(.system(.subheadline, design: .rounded))
-                    .fontWeight(.bold)
+                    .font(.system(.title3, design: .rounded))
+                    .fontWeight(.black)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 22)
-                    .padding(.vertical, 11)
+                    .padding(.horizontal, 34)
+                    .padding(.vertical, 16)
                     .background(
                         Capsule()
-                            .fill(Color.white.opacity(0.28))
-                            .overlay(Capsule().stroke(Color.white.opacity(0.50), lineWidth: 1))
+                            .fill(Color.black.opacity(0.58))
+                            .overlay(Capsule().stroke(Color.white.opacity(0.72), lineWidth: 2))
                     )
-                    .shadow(color: .black.opacity(0.30), radius: 6, y: 2)
-                    .padding(.top, geo.safeAreaInsets.top + 16)
-                    .padding(.trailing, 24)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .shadow(color: .black.opacity(0.40), radius: 12, y: 5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .zIndex(2)
 
                 bottomSheet(geo: geo)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(1)
             }
         }
         .ignoresSafeArea()
