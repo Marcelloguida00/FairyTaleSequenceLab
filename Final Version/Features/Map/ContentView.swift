@@ -46,7 +46,7 @@ private enum ActiveMap {
         case .main:
             return nil
         case .redHood:
-            return nil
+            return "Finalmente"
         }
     }
 }
