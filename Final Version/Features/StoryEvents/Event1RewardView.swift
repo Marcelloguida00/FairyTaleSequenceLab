@@ -26,6 +26,12 @@ struct RewardView: View {
 
     var body: some View {
         GeometryReader { geometry in
+            let isLandscape = geometry.size.width > geometry.size.height
+            let panelRatio = isLandscape ? 0.46 : 0.40
+            let panelHeight = geometry.size.height * panelRatio
+            let imageHeight = geometry.size.height - panelHeight
+            let compactText = geometry.size.height < 900
+
             ZStack {
                 Color.appBackground.ignoresSafeArea()
 
@@ -33,32 +39,36 @@ struct RewardView: View {
                     Image(event.rewardImageName)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: geometry.size.width, height: geometry.size.height * 0.65)
+                        .frame(width: geometry.size.width, height: imageHeight)
                         .clipped()
                         .accessibilityHidden(true)
 
                     ParchmentView {
-                        HStack(alignment: .center, spacing: 24) {
-                            VStack(alignment: .leading, spacing: 6) {
+                        HStack(alignment: .center, spacing: compactText ? 16 : 24) {
+                            VStack(alignment: .leading, spacing: compactText ? 4 : 6) {
                                 Text(stars)
                                     .font(.title3)
 
                                 Text(performanceNote)
-                                    .font(.app(.body))
+                                    .font(.app(compactText ? .callout : .body))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.appSecondaryText)
 
                                 Text(event.rewardText)
-                                    .font(.app(.title2))
+                                    .font(.app(compactText ? .body : .title2))
+                                    .fontWeight(.regular)
                                     .foregroundColor(Color.appPrimaryText)
                                     .multilineTextAlignment(.leading)
                                     .fixedSize(horizontal: false, vertical: true)
+                                    .lineSpacing(compactText ? 0 : 2)
 
                                 Text(event.learningOutcome)
-                                    .font(.app(.body))
+                                    .font(.app(compactText ? .callout : .body))
                                     .italic()
                                     .foregroundColor(Color.appSecondaryText)
-                                    .padding(.top, 4)
+                                    .multilineTextAlignment(.leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.top, compactText ? 2 : 4)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -102,10 +112,10 @@ struct RewardView: View {
                                 .buttonStyle(.plain)
                             }
                         }
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 20)
+                        .padding(.horizontal, compactText ? 28 : 32)
+                        .padding(.vertical, compactText ? 14 : 20)
                     }
-                    .frame(height: geometry.size.height * 0.35)
+                    .frame(height: panelHeight)
                 }
             }
         }

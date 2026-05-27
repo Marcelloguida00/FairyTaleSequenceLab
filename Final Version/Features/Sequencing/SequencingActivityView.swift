@@ -184,8 +184,8 @@ private struct EmptySequenceSlotView: View {
 
     private var descriptionText: some View {
         Text(description)
-            .font(.app(.callout))
-            .fontWeight(.heavy)
+            .font(.app(.callout, weight: .black))
+            .fontWeight(.black)
             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.06))
             .multilineTextAlignment(.center)
             .lineLimit(7)
