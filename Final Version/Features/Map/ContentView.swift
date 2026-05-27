@@ -185,14 +185,15 @@ struct ContentView: View {
     private func mapContent(mapSize: CGSize) -> some View {
         let projection = MapProjection(
             imageSize: activeMap.imagePixelSize,
-            renderedSize: mapSize
+            containerSize: mapSize,
+            contentMode: activeMap.contentMode
         )
 
         ZStack(alignment: .topLeading) {
             MapBackgroundImage(name: activeMap.imageName, mapSize: mapSize)
 
             if activeMap == .redHood {
-                ForEach(RedHoodMapGraph.waypoints.filter { $0.id >= 0 && $0.id <= 9 }, id: \.id) { wp in
+                ForEach(RedHoodMapGraph.storyWaypoints, id: \.id) { wp in
                     WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
                         .position(projection.screenPoint(fromPixel: wp.point))
                         .allowsHitTesting(false)
@@ -358,6 +359,10 @@ struct ContentView: View {
         min(mapSize.width, mapSize.height) * 0.055
     }
 
+    private func dotHitRadius(for mapSize: CGSize) -> CGFloat {
+        max(44, dotSize(for: mapSize) * 0.72)
+    }
+
     private func dotState(for waypointId: Int) -> WaypointDot.DotState {
         if completedRedHoodLevels.contains(waypointId) { return .completed }
         return waypointId == nextRedHoodLevel ? .next : .locked
@@ -385,22 +390,25 @@ struct ContentView: View {
     private func handleMapTap(_ location: CGPoint, projection: MapProjection) {
         guard !isWalking, !isMapTransitioning else { return }
 
-        let pixelTap = projection.pixelPoint(fromScreen: location)
-
         switch activeMap {
         case .main:
-            handleMainMapTap(pixelTap)
+            handleMainMapTap(location, projection: projection)
         case .redHood:
-            handleRedHoodMapTap(pixelTap)
+            handleRedHoodMapTap(location, projection: projection)
         }
     }
 
-    private func handleMainMapTap(_ normalizedTap: CGPoint) {
+    private func handleMainMapTap(_ screenTap: CGPoint, projection: MapProjection) {
         guard let start = MapGraph.waypoint(id: currentBaseID) else {
             return
         }
 
-        guard let target = MapGraph.baseHit(by: normalizedTap) else {
+        guard let target = closestWaypoint(
+            to: screenTap,
+            among: MapGraph.baseWaypoints,
+            projection: projection,
+            radius: dotHitRadius(for: projection.renderedSize)
+        ) else {
             return
         }
 
@@ -417,10 +425,15 @@ struct ContentView: View {
         }
     }
 
-    private func handleRedHoodMapTap(_ normalizedTap: CGPoint) {
+    private func handleRedHoodMapTap(_ screenTap: CGPoint, projection: MapProjection) {
         guard activeRedHoodLevel == nil else { return }
         guard let start = RedHoodMapGraph.waypoint(id: currentBaseID) else { return }
-        guard let target = RedHoodMapGraph.waypointHit(by: normalizedTap) else {
+        guard let target = closestWaypoint(
+            to: screenTap,
+            among: RedHoodMapGraph.storyWaypoints,
+            projection: projection,
+            radius: dotHitRadius(for: projection.renderedSize)
+        ) else {
             if pendingRedHoodLevel != nil {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     pendingRedHoodLevel = nil
@@ -460,6 +473,23 @@ struct ContentView: View {
                 }
             }
         }
+    }
+
+    private func closestWaypoint(
+        to screenPoint: CGPoint,
+        among waypoints: [MapWaypoint],
+        projection: MapProjection,
+        radius: CGFloat
+    ) -> MapWaypoint? {
+        waypoints
+            .map { waypoint in
+                (waypoint: waypoint, distance: projection.screenPoint(fromPixel: waypoint.point).distance(to: screenPoint))
+            }
+            .filter { $0.distance <= radius }
+            .min { first, second in
+                first.distance < second.distance
+            }?
+            .waypoint
     }
 
     @ViewBuilder
@@ -975,23 +1005,56 @@ private struct MapWaypoint: Identifiable {
 
 private struct MapProjection {
     let imageSize: CGSize
-    let renderedSize: CGSize
+    let containerSize: CGSize
+    let contentMode: MapLayout.ContentMode
 
-    private var scale: CGFloat {
-        guard imageSize.width > 0, imageSize.height > 0 else { return 1 }
-        return min(renderedSize.width / imageSize.width, renderedSize.height / imageSize.height)
+    var renderedSize: CGSize {
+        guard imageSize.width > 0, imageSize.height > 0 else { return .zero }
+        return CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+    }
+
+    var contentOrigin: CGPoint {
+        CGPoint(
+            x: (containerSize.width - renderedSize.width) / 2,
+            y: (containerSize.height - renderedSize.height) / 2
+        )
+    }
+
+    var scale: CGFloat {
+        guard imageSize.width > 0,
+              imageSize.height > 0,
+              containerSize.width > 0,
+              containerSize.height > 0 else { return 1 }
+
+        let widthScale = containerSize.width / imageSize.width
+        let heightScale = containerSize.height / imageSize.height
+
+        switch contentMode {
+        case .fit:
+            return min(widthScale, heightScale)
+        case .fill:
+            return max(widthScale, heightScale)
+        }
+    }
+
+    func canvasLength(fromScreen length: CGFloat) -> CGFloat {
+        guard scale > 0 else { return length }
+        return length / scale
     }
 
     func screenPoint(fromPixel point: CGPoint) -> CGPoint {
-        CGPoint(x: point.x * scale, y: point.y * scale)
+        CGPoint(
+            x: contentOrigin.x + point.x * scale,
+            y: contentOrigin.y + point.y * scale
+        )
     }
 
     func pixelPoint(fromScreen point: CGPoint) -> CGPoint {
         guard scale > 0 else { return .zero }
 
         return CGPoint(
-            x: min(max(point.x / scale, 0), imageSize.width),
-            y: min(max(point.y / scale, 0), imageSize.height)
+            x: min(max((point.x - contentOrigin.x) / scale, 0), imageSize.width),
+            y: min(max((point.y - contentOrigin.y) / scale, 0), imageSize.height)
         )
     }
 }
@@ -1134,6 +1197,10 @@ private enum RedHoodMapGraph {
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let tapRadius: CGFloat = 190
     static let storyWaypointIDs = Set(0...9)
+
+    static var storyWaypoints: [MapWaypoint] {
+        waypoints.filter { storyWaypointIDs.contains($0.id) }
+    }
 
     static let waypoints: [MapWaypoint] = [
         MapWaypoint(id: 10, name: "Bridge entry", point: Pixel.point(x: 1108, y: 1490), neighbors: [0]),
