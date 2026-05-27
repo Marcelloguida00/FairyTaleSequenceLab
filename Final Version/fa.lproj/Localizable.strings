@@ -9,6 +9,7 @@
 "button.next_event"  = "صحنه بعدی";
 "button.back_to_map" = "بازگشت به نقشه";
 "button.done"        = "تمام";
+"button.cancel"      = "لغو";
 "button.settings"    = "تنظیمات";
 
 /* Sequencing activity */
@@ -52,6 +53,12 @@
 "settings.music"          = "موسیقی";
 "settings.music.mute"     = "قطع موسیقی";
 "settings.music.unmute"   = "روشن کردن موسیقی";
+"settings.progress"       = "پیشرفت";
+"settings.reset_progress" = "پاک کردن پیشرفت";
+"settings.reset_progress.description" = "ماجراجویی را از ابتدا شروع کن.";
+"settings.reset_progress.confirm.title" = "پیشرفت پاک شود؟";
+"settings.reset_progress.confirm.message" = "این کار پیشرفت ذخیره‌شده را پاک می‌کند و تو را به ابتدای ماجراجویی برمی‌گرداند.";
+"settings.reset_progress.confirm.action" = "پاک کردن";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "شنل قرمزی";

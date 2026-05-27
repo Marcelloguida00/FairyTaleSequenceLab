@@ -9,6 +9,7 @@
 "button.next_event"  = "Prossima scena";
 "button.back_to_map" = "Torna alla mappa";
 "button.done"        = "Fatto";
+"button.cancel"      = "Annulla";
 "button.settings"    = "IMPOSTAZIONI";
 
 /* Sequencing activity */
@@ -52,6 +53,12 @@
 "settings.music"          = "Musica";
 "settings.music.mute"     = "Silenzia Musica";
 "settings.music.unmute"   = "Riattiva Musica";
+"settings.progress"       = "Progressi";
+"settings.reset_progress" = "Cancella progressi";
+"settings.reset_progress.description" = "Ricomincia l'avventura dall'inizio.";
+"settings.reset_progress.confirm.title" = "Cancellare i progressi?";
+"settings.reset_progress.confirm.message" = "Questa azione rimuove i progressi salvati e ti riporta all'inizio dell'avventura.";
+"settings.reset_progress.confirm.action" = "Cancella";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Cappuccetto Rosso";

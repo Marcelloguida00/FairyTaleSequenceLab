@@ -9,6 +9,7 @@
 "button.next_event"  = "Next Event";
 "button.back_to_map" = "Back to Map";
 "button.done"        = "Done";
+"button.cancel"      = "Cancel";
 "button.settings"    = "SETTINGS";
 
 /* Sequencing activity */
@@ -52,6 +53,12 @@
 "settings.music"          = "Music";
 "settings.music.mute"     = "Mute Music";
 "settings.music.unmute"   = "Unmute Music";
+"settings.progress"       = "Progress";
+"settings.reset_progress" = "Reset Progress";
+"settings.reset_progress.description" = "Start the adventure from the beginning.";
+"settings.reset_progress.confirm.title" = "Reset progress?";
+"settings.reset_progress.confirm.message" = "This will remove saved progress and return you to the start of the adventure.";
+"settings.reset_progress.confirm.action" = "Reset";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Little Red Riding Hood";

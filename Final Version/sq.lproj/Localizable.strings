@@ -9,6 +9,7 @@
 "button.next_event"  = "Skena tjetër";
 "button.back_to_map" = "Kthehu te Harta";
 "button.done"        = "U krye";
+"button.cancel"      = "Anulo";
 "button.settings"    = "CILËSIMET";
 
 /* Sequencing activity */
@@ -52,6 +53,12 @@
 "settings.music"          = "Muzika";
 "settings.music.mute"     = "Heq zërin";
 "settings.music.unmute"   = "Aktivizo zërin";
+"settings.progress"       = "Progresi";
+"settings.reset_progress" = "Rivendos progresin";
+"settings.reset_progress.description" = "Fillo aventurën nga fillimi.";
+"settings.reset_progress.confirm.title" = "Të rivendoset progresi?";
+"settings.reset_progress.confirm.message" = "Kjo do të fshijë progresin e ruajtur dhe do të të kthejë në fillim të aventurës.";
+"settings.reset_progress.confirm.action" = "Rivendos";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Kapeleja e Kuqe";

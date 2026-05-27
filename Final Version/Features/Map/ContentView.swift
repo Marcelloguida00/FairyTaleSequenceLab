@@ -136,18 +136,6 @@ struct ContentView: View {
                 .zIndex(30)
             }
 
-            #if DEBUG
-            Button("Reset") { resetProgress() }
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Capsule().fill(Color.red.opacity(0.80)))
-                .padding(.top, 112)
-                .padding(.trailing, 20)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .zIndex(35)
-            #endif
         }
         .onReceive(spriteTimer) { _ in
             if isWalking {
@@ -159,9 +147,14 @@ struct ContentView: View {
                 markerIsRaised = true
             }
 
-            completedRedHoodLevels = Set(
+            let savedCompletedRedHoodLevels = Set(
                 UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
             )
+            completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: savedCompletedRedHoodLevels)
+
+            if completedRedHoodLevels != savedCompletedRedHoodLevels {
+                persistCompletedRedHoodLevels(completedRedHoodLevels)
+            }
 
             if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
                MapGraph.baseIDs.contains(savedID),
@@ -172,7 +165,13 @@ struct ContentView: View {
 
         }
         .onChange(of: completedRedHoodLevels) {
-            UserDefaults.standard.set(Array(completedRedHoodLevels), forKey: "completedRedHoodLevels")
+            let canonicalLevels = canonicalCompletedRedHoodLevels(from: completedRedHoodLevels)
+            if canonicalLevels != completedRedHoodLevels {
+                completedRedHoodLevels = canonicalLevels
+                return
+            }
+
+            persistCompletedRedHoodLevels(canonicalLevels)
         }
         .onChange(of: currentBaseID) {
             if MapGraph.baseIDs.contains(currentBaseID) {
@@ -286,18 +285,6 @@ struct ContentView: View {
         )
     }
 
-    #if DEBUG
-    private func resetProgress() {
-        completedRedHoodLevels = []
-        currentBaseID = MapGraph.openingStartID
-        avatarPosition = MapGraph.initialWaypoint.point
-        avatarDirection = .down
-        activeMap = .main
-        UserDefaults.standard.removeObject(forKey: "completedRedHoodLevels")
-        UserDefaults.standard.removeObject(forKey: "currentBaseID")
-    }
-    #endif
-
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
         let multiplier: CGFloat = 0.11
         return min(mapSize.width, mapSize.height) * multiplier
@@ -364,20 +351,46 @@ struct ContentView: View {
     }
 
     private func dotState(for waypointId: Int) -> WaypointDot.DotState {
-        if completedRedHoodLevels.contains(waypointId) { return .completed }
+        if canonicalCompletedRedHoodLevels(from: completedRedHoodLevels).contains(waypointId) { return .completed }
         return waypointId == nextRedHoodLevel ? .next : .locked
     }
 
     private var nextRedHoodLevel: Int? {
-        (0...EventLoader.maxEventId(from: lm.bundle)).first { !completedRedHoodLevels.contains($0) }
+        let completedLevels = canonicalCompletedRedHoodLevels(from: completedRedHoodLevels)
+        return redHoodLevelIDs.first { !completedLevels.contains($0) }
     }
 
     private func isRedHoodWaypointPlayable(_ waypointId: Int) -> Bool {
-        completedRedHoodLevels.contains(waypointId) || waypointId == nextRedHoodLevel
+        canonicalCompletedRedHoodLevels(from: completedRedHoodLevels).contains(waypointId) || waypointId == nextRedHoodLevel
     }
 
     private func shouldOfferRedHoodLevelStart(for waypointId: Int) -> Bool {
-        completedRedHoodLevels.contains(waypointId) || waypointId == nextRedHoodLevel
+        canonicalCompletedRedHoodLevels(from: completedRedHoodLevels).contains(waypointId) || waypointId == nextRedHoodLevel
+    }
+
+    private var redHoodLevelIDs: [Int] {
+        Array(0...EventLoader.maxEventId(from: lm.bundle))
+    }
+
+    private func canonicalCompletedRedHoodLevels(from levels: Set<Int>) -> Set<Int> {
+        var canonicalLevels: Set<Int> = []
+
+        for levelID in redHoodLevelIDs {
+            guard levels.contains(levelID) else { break }
+            canonicalLevels.insert(levelID)
+        }
+
+        return canonicalLevels
+    }
+
+    private func persistCompletedRedHoodLevels(_ levels: Set<Int>) {
+        UserDefaults.standard.set(Array(levels).sorted(), forKey: "completedRedHoodLevels")
+    }
+
+    private func markRedHoodLevelCompleted(_ level: Int) {
+        var updatedLevels = completedRedHoodLevels
+        updatedLevels.insert(level)
+        completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: updatedLevels)
     }
 
     private var shouldShowRedHoodPlayButton: Bool {
@@ -497,14 +510,14 @@ struct ContentView: View {
         if level == 0 {
             RedHoodLevel0View {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    completedRedHoodLevels.insert(0)
+                    markRedHoodLevelCompleted(0)
                     activeRedHoodLevel = nil
                 }
             }
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(eventData: eventData) {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    completedRedHoodLevels.insert(level)
+                    markRedHoodLevelCompleted(level)
                     activeRedHoodLevel = nil
                 }
             }

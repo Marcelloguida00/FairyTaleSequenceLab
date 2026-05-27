@@ -10,6 +10,8 @@ struct SettingsView: View {
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
 
+    @State private var showResetProgressConfirmation = false
+
     var body: some View {
         ZStack {
             if !inFrameMode {
@@ -25,11 +27,20 @@ struct SettingsView: View {
                     VStack(spacing: 28) {
                         languageSection
                         musicSection
+                        progressSection
                     }
                     .padding(.horizontal, inFrameMode ? 8 : 28)
                     .padding(.bottom, inFrameMode ? 8 : 32)
                 }
             }
+        }
+        .alert(lm.t("settings.reset_progress.confirm.title"), isPresented: $showResetProgressConfirmation) {
+            Button(lm.t("button.cancel"), role: .cancel) { }
+            Button(lm.t("settings.reset_progress.confirm.action"), role: .destructive) {
+                resetProgress()
+            }
+        } message: {
+            Text(lm.t("settings.reset_progress.confirm.message"))
         }
     }
 
@@ -242,6 +253,72 @@ struct SettingsView: View {
             )
             .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
         }
+    }
+
+    // MARK: - Progress section
+
+    private var progressSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(lm.t("settings.progress"))
+                .font(.system(.caption, design: .rounded))
+                .fontWeight(.black)
+                .textCase(.uppercase)
+                .foregroundStyle(Color.appSecondaryText)
+                .padding(.leading, 4)
+
+            VStack(alignment: .leading, spacing: 0) {
+                Button {
+                    AppSettings.hapticImpact(.medium)
+                    showResetProgressConfirmation = true
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "trash.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(Color.red)
+                            .frame(width: 28)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.reset_progress"))
+                                .font(.system(.body, design: .rounded))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.red)
+
+                            Text(lm.t("settings.reset_progress.description"))
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundStyle(Color.appSecondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(Color.appSecondaryText.opacity(0.65))
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 16)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(lm.t("settings.reset_progress"))
+                .accessibilityHint(lm.t("settings.reset_progress.description"))
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.appPanelBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.appBorder, lineWidth: 1.5)
+                    )
+            )
+            .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
+        }
+    }
+
+    private func resetProgress() {
+        UserDefaults.standard.removeObject(forKey: "completedRedHoodLevels")
+        UserDefaults.standard.removeObject(forKey: "currentBaseID")
+        AppSettings.hapticSuccess()
     }
 }
 

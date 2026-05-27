@@ -9,6 +9,7 @@
 "button.next_event"  = "Следующая сцена";
 "button.back_to_map" = "На карту";
 "button.done"        = "Готово";
+"button.cancel"      = "Отмена";
 "button.settings"    = "НАСТРОЙКИ";
 
 /* Sequencing activity */
@@ -52,6 +53,12 @@
 "settings.music"          = "Музыка";
 "settings.music.mute"     = "Выключить музыку";
 "settings.music.unmute"   = "Включить музыку";
+"settings.progress"       = "Прогресс";
+"settings.reset_progress" = "Сбросить прогресс";
+"settings.reset_progress.description" = "Начать приключение сначала.";
+"settings.reset_progress.confirm.title" = "Сбросить прогресс?";
+"settings.reset_progress.confirm.message" = "Это удалит сохранённый прогресс и вернёт тебя к началу приключения.";
+"settings.reset_progress.confirm.action" = "Сбросить";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Красная Шапочка";
