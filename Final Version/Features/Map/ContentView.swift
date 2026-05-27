@@ -1002,12 +1002,12 @@ private enum MapGraph {
         MapWaypoint(id: 17, name: "Desert approach", point: WorldMapPixel.point(x: 1845, y: 1375), neighbors: [16, 26]),
         MapWaypoint(id: 26, name: "Desert bridge approach", point: WorldMapPixel.point(x: 1945, y: 1465), neighbors: [17, 18]),
         MapWaypoint(id: 18, name: "Desert base", point: WorldMapPixel.point(x: 2038, y: 1532), neighbors: [26, 19]),
-        MapWaypoint(id: 19, name: "Desert lower exit", point: WorldMapPixel.point(x: 1945, y: 1465), neighbors: [18, 20]),
-        MapWaypoint(id: 20, name: "South coast curve", point: WorldMapPixel.point(x: 1805, y: 1375), neighbors: [19, 21]),
-        MapWaypoint(id: 21, name: "South coast road", point: WorldMapPixel.point(x: 1575, y: 1350), neighbors: [20, 27]),
-        MapWaypoint(id: 27, name: "South stones east", point: WorldMapPixel.point(x: 1340, y: 1295), neighbors: [21, 28]),
-        MapWaypoint(id: 28, name: "South stones middle", point: WorldMapPixel.point(x: 1135, y: 1345), neighbors: [27, 29]),
-        MapWaypoint(id: 29, name: "South stones west", point: WorldMapPixel.point(x: 930, y: 1515), neighbors: [28, 22]),
+        MapWaypoint(id: 19, name: "Desert stepping stones east", point: WorldMapPixel.point(x: 1900, y: 1580), neighbors: [18, 20]),
+        MapWaypoint(id: 20, name: "Desert stepping stones bend", point: WorldMapPixel.point(x: 1740, y: 1620), neighbors: [19, 21]),
+        MapWaypoint(id: 21, name: "South stepping stones middle", point: WorldMapPixel.point(x: 1570, y: 1650), neighbors: [20, 27]),
+        MapWaypoint(id: 27, name: "South stepping stones west", point: WorldMapPixel.point(x: 1375, y: 1655), neighbors: [21, 28]),
+        MapWaypoint(id: 28, name: "Frog island approach stones", point: WorldMapPixel.point(x: 1190, y: 1625), neighbors: [27, 29]),
+        MapWaypoint(id: 29, name: "Frog island approach", point: WorldMapPixel.point(x: 1085, y: 1565), neighbors: [28, 22]),
         MapWaypoint(id: 22, name: "Frog base", point: WorldMapPixel.point(x: 1045, y: 1630), neighbors: [29])
     ]
 
