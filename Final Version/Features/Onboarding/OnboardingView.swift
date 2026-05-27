@@ -48,17 +48,16 @@ struct OnboardingView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                Color.appBackground.ignoresSafeArea()
-
-                VStack(spacing: 0) {
-                    TabView(selection: $currentPage) {
-                        ForEach(Array(pages.enumerated()), id: \.offset) { i, page in
-                            pageView(page, geo: geo)
-                                .tag(i)
-                        }
+                TabView(selection: $currentPage) {
+                    ForEach(Array(pages.enumerated()), id: \.offset) { i, page in
+                        pageView(page, geo: geo)
+                            .tag(i)
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
 
+                VStack {
+                    Spacer()
                     bottomBar
                         .padding(.horizontal, 44)
                         .padding(.bottom, max(36, geo.safeAreaInsets.bottom + 16))
@@ -70,57 +69,84 @@ struct OnboardingView: View {
     }
 
     private func pageView(_ page: PageData, geo: GeometryProxy) -> some View {
-        VStack(spacing: 36) {
-            Spacer()
+        let mascotHeight = min(geo.size.height * 0.32, 260)
+        let mascotWidth = min(geo.size.width * 0.24, 280)
+        let bubbleWidth = min(geo.size.width * 0.66, 980)
+        let bubbleHeight = min(max(geo.size.height * 0.12, 116), 160)
+
+        return ZStack {
+            backgroundElement(page.visual, geo: geo)
+
+            Color.black.opacity(0.18)
+                .ignoresSafeArea()
+
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.58),
+                    Color.black.opacity(0.08),
+                    Color.black.opacity(0.64)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             Text(lm.t(page.titleKey))
                 .font(.system(.largeTitle, design: .rounded))
-                .fontWeight(.bold)
-                .foregroundColor(Color.appPrimaryText)
+                .fontWeight(.black)
+                .foregroundColor(.white)
                 .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.75)
                 .padding(.horizontal, 40)
+                .padding(.top, max(46, geo.safeAreaInsets.top + 24))
+                .shadow(color: .black.opacity(0.60), radius: 8, y: 3)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-            visualElement(page.visual, geo: geo)
-
-            MascotGuideView(
+            OnboardingDialogueView(
                 imageName: page.mascotFrames[0],
                 animatedImageNames: page.mascotFrames,
                 message: lm.t(page.bodyKey),
-                imageHeight: min(geo.size.height * 0.20, 160),
+                mascotWidth: mascotWidth,
+                mascotHeight: mascotHeight,
+                bubbleWidth: bubbleWidth,
+                bubbleHeight: bubbleHeight,
                 bubbleFont: .system(.title3, design: .rounded)
             )
-            .padding(.horizontal, 36)
-
-            Spacer()
-            Spacer()
+            .padding(.leading, max(18, geo.safeAreaInsets.leading + 18))
+            .padding(.trailing, max(24, geo.safeAreaInsets.trailing + 24))
+            .padding(.bottom, max(122, geo.safeAreaInsets.bottom + 102))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         }
     }
 
     @ViewBuilder
-    private func visualElement(_ visual: PageData.Visual, geo: GeometryProxy) -> some View {
-        let maxH = min(geo.size.height * 0.26, 200)
+    private func backgroundElement(_ visual: PageData.Visual, geo: GeometryProxy) -> some View {
         switch visual {
         case .logo:
             Image("world_of_fable_menu")
                 .resizable()
-                .scaledToFit()
-                .frame(height: maxH)
+                .scaledToFill()
+                .frame(width: geo.size.width, height: geo.size.height)
+                .clipped()
+                .ignoresSafeArea()
                 .accessibilityHidden(true)
 
         case .villainImage(let name):
             Image(name)
                 .resizable()
-                .scaledToFit()
-                .frame(maxWidth: geo.size.width * 0.80, maxHeight: maxH * 1.4)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .scaledToFill()
+                .frame(width: geo.size.width, height: geo.size.height)
+                .clipped()
+                .ignoresSafeArea()
                 .accessibilityHidden(true)
 
         case .map:
             Image("mappa")
                 .resizable()
                 .scaledToFill()
-                .frame(width: min(geo.size.width * 0.55, 380), height: maxH)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .frame(width: geo.size.width, height: geo.size.height)
+                .clipped()
+                .ignoresSafeArea()
                 .accessibilityHidden(true)
         }
     }
@@ -130,7 +156,10 @@ struct OnboardingView: View {
             Button(lm.t("onboarding.skip")) { onFinish() }
                 .font(.system(.body, design: .rounded))
                 .fontWeight(.semibold)
-                .foregroundColor(Color.appSecondaryText)
+                .foregroundColor(.white)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .background(Capsule().fill(Color.black.opacity(0.34)))
                 .opacity(currentPage < pages.count - 1 ? 1 : 0)
                 .disabled(currentPage == pages.count - 1)
                 .frame(minWidth: 80, alignment: .leading)
@@ -183,6 +212,67 @@ struct OnboardingView: View {
             .buttonStyle(.plain)
             .frame(minWidth: 80, alignment: .trailing)
         }
+    }
+}
+
+private struct OnboardingDialogueView: View {
+    let imageName: String
+    let animatedImageNames: [String]
+    let message: String
+    let mascotWidth: CGFloat
+    let mascotHeight: CGFloat
+    let bubbleWidth: CGFloat
+    let bubbleHeight: CGFloat
+    let bubbleFont: Font
+
+    @State private var frameIndex = 0
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 18) {
+            Image(currentImageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: mascotWidth, height: mascotHeight, alignment: .bottomLeading)
+                .shadow(color: .black.opacity(0.24), radius: 7, y: 4)
+                .accessibilityHidden(true)
+
+            Text(message)
+                .font(bubbleFont)
+                .fontWeight(.semibold)
+                .foregroundColor(Color.appPrimaryText)
+                .multilineTextAlignment(.leading)
+                .lineLimit(4)
+                .minimumScaleFactor(0.72)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
+                .frame(width: bubbleWidth, height: bubbleHeight, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 18)
+                        .fill(Color.appSpeechBubble)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color.appBorder, lineWidth: 2)
+                        )
+                        .shadow(color: .black.opacity(0.16), radius: 8, y: 3)
+                )
+
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(message)
+        .task(id: animatedImageNames) {
+            guard !animatedImageNames.isEmpty else { return }
+
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(420))
+                frameIndex = (frameIndex + 1) % animatedImageNames.count
+            }
+        }
+    }
+
+    private var currentImageName: String {
+        guard !animatedImageNames.isEmpty else { return imageName }
+        return animatedImageNames[frameIndex % animatedImageNames.count]
     }
 }
 

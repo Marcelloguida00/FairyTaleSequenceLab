@@ -205,6 +205,34 @@ private struct EmptySequenceSlotView: View {
     }
 }
 
+private struct SourceCardHintBorder: View {
+    let cardW: CGFloat
+    let cardH: CGFloat
+
+    @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(Color(red: 1.0, green: 0.78, blue: 0.16), lineWidth: 5)
+            .frame(width: cardW, height: cardH)
+            .shadow(
+                color: Color(red: 1.0, green: 0.78, blue: 0.16).opacity(pulse ? 0.92 : 0.50),
+                radius: pulse ? 16 : 8
+            )
+            .scaleEffect(pulse ? 1.035 : 1.0)
+            .animation(
+                reduceMotion ? nil : .easeInOut(duration: 0.75).repeatForever(autoreverses: true),
+                value: pulse
+            )
+            .onAppear {
+                guard !reduceMotion else { return }
+                pulse = true
+            }
+            .allowsHitTesting(false)
+    }
+}
+
 // MARK: - Storybook chrome
 
 private struct StorybookPageShape: Shape {
@@ -338,6 +366,14 @@ struct SequencingActivityView<Reward: View>: View {
 
     private var firstWrongSlot: Int? {
         slotContents.indices.first { i in slotContents[i] != event.correctOrder[i] }
+    }
+
+    private var guidedSourceCardID: Int? {
+        guard checkResult == .incorrect,
+              attemptCount >= 2,
+              let wrongSlot = firstWrongSlot else { return nil }
+
+        return event.correctOrder[wrongSlot]
     }
 
     // ABA contextual hint
@@ -866,6 +902,7 @@ struct SequencingActivityView<Reward: View>: View {
             .frame(width: cardW, height: cardH)
             .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
             .contentShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(sourceCardHintOverlay(cardId: cardId, cardW: cardW, cardH: cardH))
             .simultaneousGesture(
                 TapGesture().onEnded {
                     toggleCard(cardId)
@@ -880,6 +917,13 @@ struct SequencingActivityView<Reward: View>: View {
                         finalizeDrop(at: val.location, originSlot: nil)
                     }
             )
+    }
+
+    @ViewBuilder
+    private func sourceCardHintOverlay(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
+        if guidedSourceCardID == cardId {
+            SourceCardHintBorder(cardW: cardW, cardH: cardH)
+        }
     }
 
     // MARK: - Drop logic
