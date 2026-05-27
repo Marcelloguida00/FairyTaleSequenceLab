@@ -26,7 +26,7 @@ private enum ActiveMap {
     var contentMode: MapLayout.ContentMode {
         switch self {
         case .main:
-            return .fill
+            return .fit
         case .redHood:
             return .fit
         }
