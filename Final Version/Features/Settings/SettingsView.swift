@@ -1,5 +1,17 @@
 import SwiftUI
 
+private enum SettingsTheme {
+    static let background = Color(red: 0.976, green: 0.957, blue: 0.890)
+    static let panelFill = Color(red: 0.976, green: 0.957, blue: 0.890)
+    static let panelBorder = Color(red: 0.722, green: 0.631, blue: 0.420)
+    static let primaryText = Color(red: 0.290, green: 0.204, blue: 0.180)
+    static let secondaryText = Color(red: 0.549, green: 0.451, blue: 0.333)
+    static let selectionFill = Color(red: 0.910, green: 0.851, blue: 0.710)
+    static let controlFill = Color(red: 0.945, green: 0.918, blue: 0.827)
+    static let divider = Color(red: 0.722, green: 0.631, blue: 0.420).opacity(0.35)
+    static let sliderTrack = Color(red: 0.910, green: 0.851, blue: 0.710)
+}
+
 struct SettingsView: View {
     @EnvironmentObject var lm: LanguageManager
     @Environment(\.dismiss) private var dismiss
@@ -15,7 +27,7 @@ struct SettingsView: View {
     var body: some View {
         ZStack {
             if !inFrameMode {
-                Color.appBackground.ignoresSafeArea()
+                SettingsTheme.background.ignoresSafeArea()
             }
 
             VStack(spacing: 0) {
@@ -24,7 +36,7 @@ struct SettingsView: View {
                     .padding(.top, inFrameMode ? 6 : 24)
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 28) {
+                    VStack(spacing: inFrameMode ? 20 : 28) {
                         languageSection
                         musicSection
                         progressSection
@@ -51,12 +63,12 @@ struct SettingsView: View {
             HStack(spacing: 10) {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(Color.appAccent)
+                    .foregroundStyle(SettingsTheme.secondaryText)
 
                 Text(lm.t("settings.title"))
                     .font(.system(.title2, design: .serif))
                     .fontWeight(.bold)
-                    .foregroundStyle(Color.appPrimaryText)
+                    .foregroundStyle(SettingsTheme.primaryText)
             }
 
             Spacer()
@@ -65,20 +77,24 @@ struct SettingsView: View {
                 closeSettings()
             } label: {
                 Text(lm.t("button.done"))
-                    .font(.system(.body, design: .rounded))
+                    .font(.system(.body, design: .serif))
                     .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .foregroundStyle(SettingsTheme.primaryText)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
                     .background(
-                        Capsule()
-                            .fill(Color.appAccent)
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(SettingsTheme.controlFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
                     )
             }
             .buttonStyle(.plain)
             .accessibilityLabel(lm.t("button.done"))
         }
-        .padding(.bottom, 24)
+        .padding(.bottom, inFrameMode ? 16 : 24)
     }
 
     private func closeSettings() {
@@ -89,16 +105,33 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Section header
+
+    private func sectionHeader(_ title: String) -> some View {
+        HStack(spacing: 10) {
+            sectionLine
+            Text(title)
+                .font(.system(.caption, design: .serif))
+                .fontWeight(.semibold)
+                .textCase(.uppercase)
+                .foregroundStyle(SettingsTheme.secondaryText)
+                .tracking(1.1)
+            sectionLine
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private var sectionLine: some View {
+        Rectangle()
+            .fill(SettingsTheme.divider)
+            .frame(height: 1)
+    }
+
     // MARK: - Language section
 
     private var languageSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(lm.t("settings.language"))
-                .font(.system(.caption, design: .rounded))
-                .fontWeight(.black)
-                .textCase(.uppercase)
-                .foregroundStyle(Color.appSecondaryText)
-                .padding(.leading, 4)
+            sectionHeader(lm.t("settings.language"))
 
             VStack(spacing: 0) {
                 ForEach(Array(LanguageManager.supported.enumerated()), id: \.element.code) { index, lang in
@@ -106,14 +139,13 @@ struct SettingsView: View {
                 }
             }
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.appPanelBackground)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(SettingsTheme.panelFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.appBorder, lineWidth: 1.5)
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
                     )
             )
-            .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
         }
     }
 
@@ -132,24 +164,25 @@ struct SettingsView: View {
                     .font(.system(size: 28))
 
                 Text(lang.nativeName)
-                    .font(.system(.body, design: .rounded))
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color.appPrimaryText)
+                    .font(.system(.body, design: .serif))
+                    .fontWeight(.regular)
+                    .italic(isSelected)
+                    .foregroundStyle(SettingsTheme.primaryText)
 
                 Spacer()
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(Color.appAccent)
+                        .foregroundStyle(SettingsTheme.secondaryText)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .background(
                 isSelected
-                    ? Color.appAccent.opacity(0.10)
+                    ? SettingsTheme.selectionFill
                     : Color.clear
             )
             .contentShape(Rectangle())
@@ -158,8 +191,9 @@ struct SettingsView: View {
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
         if !isLast {
-            Divider()
-                .padding(.leading, 60)
+            SettingsTheme.divider
+                .frame(height: 1)
+                .padding(.leading, 56)
         }
     }
 
@@ -167,19 +201,13 @@ struct SettingsView: View {
 
     private var musicSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(lm.t("settings.music"))
-                .font(.system(.caption, design: .rounded))
-                .fontWeight(.black)
-                .textCase(.uppercase)
-                .foregroundStyle(Color.appSecondaryText)
-                .padding(.leading, 4)
+            sectionHeader(lm.t("settings.music"))
 
             VStack(spacing: 0) {
-                // Volume slider row
                 HStack(spacing: 14) {
                     Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(musicMuted ? Color.appSecondaryText : Color.appAccent)
+                        .foregroundStyle(SettingsTheme.secondaryText)
                         .frame(width: 28)
                         .animation(.easeInOut(duration: 0.2), value: musicMuted)
 
@@ -194,18 +222,18 @@ struct SettingsView: View {
                             BackgroundMusicPlayer.shared.setVolume(Float(newValue))
                         }
                     ), in: 0...1)
-                    .tint(Color.appAccent)
+                    .tint(SettingsTheme.secondaryText)
                     .disabled(musicMuted)
-                    .opacity(musicMuted ? 0.4 : 1)
+                    .opacity(musicMuted ? 0.45 : 1)
                     .animation(.easeInOut(duration: 0.2), value: musicMuted)
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
 
-                Divider()
-                    .padding(.leading, 60)
+                SettingsTheme.divider
+                    .frame(height: 1)
+                    .padding(.leading, 56)
 
-                // Mute toggle row
                 Button {
                     AppSettings.hapticImpact(.light)
                     musicMuted.toggle()
@@ -214,44 +242,50 @@ struct SettingsView: View {
                     HStack(spacing: 14) {
                         Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.fill")
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(musicMuted ? Color.appSecondaryText : Color.appAccent)
+                            .foregroundStyle(SettingsTheme.secondaryText)
                             .frame(width: 28)
 
                         Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
-                            .font(.system(.body, design: .rounded))
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color.appPrimaryText)
+                            .font(.system(.body, design: .serif))
+                            .fontWeight(.regular)
+                            .italic()
+                            .foregroundStyle(SettingsTheme.primaryText)
 
                         Spacer()
 
-                        // Toggle indicator
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(musicMuted ? Color.appSecondaryText.opacity(0.3) : Color.appAccent)
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(SettingsTheme.controlFill)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(SettingsTheme.panelBorder.opacity(0.7), lineWidth: 1)
+                            )
                             .frame(width: 48, height: 28)
                             .overlay(
                                 Circle()
-                                    .fill(.white)
+                                    .fill(SettingsTheme.selectionFill)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(SettingsTheme.panelBorder.opacity(0.5), lineWidth: 1)
+                                    )
                                     .frame(width: 22, height: 22)
-                                    .offset(x: musicMuted ? -10 : 10)
+                                    .offset(x: musicMuted ? 10 : -10)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: musicMuted)
                             )
-                            .animation(.easeInOut(duration: 0.2), value: musicMuted)
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 14)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.appPanelBackground)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(SettingsTheme.panelFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.appBorder, lineWidth: 1.5)
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
                     )
             )
-            .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
         }
     }
 
