@@ -72,6 +72,8 @@ struct ContentView: View {
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var levelBannerLevel: Int? = nil
     @State private var currentFrame = 0
+    @State private var walkTask: Task<Void, Never>? = nil
+    @State private var walkGeneration = 0
 
     private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
@@ -404,7 +406,7 @@ struct ContentView: View {
     }
 
     private func handleMapTap(_ location: CGPoint, projection: MapProjection) {
-        guard !isWalking, !isMapTransitioning else { return }
+        guard !isMapTransitioning else { return }
 
         switch activeMap {
         case .main:
@@ -415,16 +417,16 @@ struct ContentView: View {
     }
 
     private func handleMainMapTap(_ screenTap: CGPoint, projection: MapProjection) {
-        guard let start = MapGraph.waypoint(id: currentBaseID) else {
-            return
-        }
-
         guard let target = closestWaypoint(
             to: screenTap,
             among: MapGraph.baseWaypoints,
             projection: projection,
             radius: dotHitRadius(for: projection.renderedSize)
         ) else {
+            return
+        }
+
+        guard let start = nearestWaypoint(to: avatarPosition, among: MapGraph.waypoints) else {
             return
         }
 
@@ -436,14 +438,11 @@ struct ContentView: View {
             return
         }
 
-        Task {
-            await walk(route)
-        }
+        startWalking(route)
     }
 
     private func handleRedHoodMapTap(_ screenTap: CGPoint, projection: MapProjection) {
         guard activeRedHoodLevel == nil else { return }
-        guard let start = RedHoodMapGraph.waypoint(id: currentBaseID) else { return }
         guard let target = closestWaypoint(
             to: screenTap,
             among: RedHoodMapGraph.storyWaypoints,
@@ -460,7 +459,11 @@ struct ContentView: View {
 
         guard isRedHoodWaypointPlayable(target.id) else { return }
 
+        guard let start = nearestWaypoint(to: avatarPosition, among: RedHoodMapGraph.waypoints) else { return }
+
         if target.id == start.id {
+            guard !isWalking else { return }
+
             if shouldOfferRedHoodLevelStart(for: target.id) {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
@@ -481,8 +484,7 @@ struct ContentView: View {
             }
         }
 
-        Task {
-            await walk(route)
+        startWalking(route) {
             if shouldOfferRedHoodLevelStart(for: target.id) {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
@@ -506,6 +508,27 @@ struct ContentView: View {
                 first.distance < second.distance
             }?
             .waypoint
+    }
+
+    private func nearestWaypoint(to point: CGPoint, among waypoints: [MapWaypoint]) -> MapWaypoint? {
+        waypoints.min { first, second in
+            first.point.distance(to: point) < second.point.distance(to: point)
+        }
+    }
+
+    private func startWalking(_ route: [MapWaypoint], onArrival: (() -> Void)? = nil) {
+        walkTask?.cancel()
+        walkGeneration += 1
+
+        let generation = walkGeneration
+        walkTask = Task { @MainActor in
+            let completed = await walk(route, generation: generation)
+
+            guard completed, generation == walkGeneration, !Task.isCancelled else { return }
+
+            onArrival?()
+            walkTask = nil
+        }
     }
 
     @ViewBuilder
@@ -544,10 +567,14 @@ struct ContentView: View {
     }
 
     @MainActor
-    private func walk(_ route: [MapWaypoint]) async {
+    private func walk(_ route: [MapWaypoint], generation: Int) async -> Bool {
         isWalking = true
 
         for waypoint in route.dropFirst() {
+            guard generation == walkGeneration, !Task.isCancelled else {
+                return false
+            }
+
             let nextPosition = waypoint.point
             avatarDirection = WalkDirection(from: avatarPosition, to: nextPosition)
 
@@ -558,7 +585,20 @@ struct ContentView: View {
                 avatarPosition = nextPosition
             }
 
-            try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+            do {
+                try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+            } catch {
+                if generation == walkGeneration {
+                    isWalking = false
+                }
+                return false
+            }
+
+            guard generation == walkGeneration, !Task.isCancelled else {
+                return false
+            }
+
+            currentBaseID = waypoint.id
         }
 
         if let finalWaypoint = route.last, activeMap == .redHood || MapGraph.baseIDs.contains(finalWaypoint.id) {
@@ -568,6 +608,7 @@ struct ContentView: View {
         }
 
         isWalking = false
+        return true
     }
 
     private func normalizedMapDistance(from start: CGPoint, to end: CGPoint) -> CGFloat {
@@ -831,8 +872,8 @@ private struct MainMapIslandDot: View {
     @State private var pulse = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let dotColor = Color(red: 0.98, green: 0.58, blue: 0.08)
-    private let borderColor = Color(red: 0.82, green: 0.38, blue: 0.04)
+    private let dotColor = Color(red: 0.12, green: 0.64, blue: 0.92)
+    private let borderColor = Color(red: 0.03, green: 0.36, blue: 0.68)
 
     var body: some View {
         ZStack {
@@ -1062,7 +1103,7 @@ private struct MapProjection {
 }
 
 private enum WorldMapPixel {
-    static let width: CGFloat = 3344
+    static let width: CGFloat = 2784
     static let height: CGFloat = 1882
     static let size = CGSize(width: width, height: height)
 
@@ -1074,50 +1115,44 @@ private enum WorldMapPixel {
 private enum MapGraph {
     static let redRidingHoodBaseID = 0
     static let openingStartID = redRidingHoodBaseID
-    static let redRidingHoodPlayPoint = WorldMapPixel.point(x: 575, y: 730)
+    static let redRidingHoodPlayPoint = WorldMapPixel.point(x: 641, y: 799)
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let baseIDs: Set<Int> = [0, 7, 14, 18, 22]
     static let comingSoonBaseIDs: Set<Int> = [7, 14, 18, 22]
     static let baseTapRadius: CGFloat = 190
 
     static let storyRegions: [StoryRegion] = [
-        StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: WorldMapPixel.point(x: 700, y: 300)),
-        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: WorldMapPixel.point(x: 1045, y: 1550)),
-        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: WorldMapPixel.point(x: 2038, y: 1455)),
-        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: WorldMapPixel.point(x: 2195, y: 1030)),
-        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: WorldMapPixel.point(x: 1785, y: 450))
+        StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: WorldMapPixel.point(x: 520, y: 300)),
+        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: WorldMapPixel.point(x: 1041, y: 1390)),
+        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: WorldMapPixel.point(x: 1678, y: 1280)),
+        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: WorldMapPixel.point(x: 1788, y: 955)),
+        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: WorldMapPixel.point(x: 1454, y: 505))
     ]
 
     static let waypoints: [MapWaypoint] = [
-        MapWaypoint(id: 0, name: "Red Riding Hood base", point: WorldMapPixel.point(x: 575, y: 775), neighbors: [1]),
-        MapWaypoint(id: 1, name: "Forest path entry", point: WorldMapPixel.point(x: 650, y: 715), neighbors: [0, 2]),
-        MapWaypoint(id: 2, name: "Forest climb", point: WorldMapPixel.point(x: 760, y: 650), neighbors: [1, 3]),
-        MapWaypoint(id: 3, name: "Village curve", point: WorldMapPixel.point(x: 930, y: 610), neighbors: [2, 4]),
-        MapWaypoint(id: 4, name: "Village road", point: WorldMapPixel.point(x: 1125, y: 600), neighbors: [3, 5]),
-        MapWaypoint(id: 5, name: "Bridge west road", point: WorldMapPixel.point(x: 1435, y: 535), neighbors: [4, 6]),
-        MapWaypoint(id: 6, name: "Bridge west landing", point: WorldMapPixel.point(x: 1625, y: 535), neighbors: [5, 7]),
-        MapWaypoint(id: 7, name: "Mountain base", point: WorldMapPixel.point(x: 1785, y: 525), neighbors: [6, 8]),
-        MapWaypoint(id: 8, name: "Mountain exit", point: WorldMapPixel.point(x: 1920, y: 585), neighbors: [7, 9]),
-        MapWaypoint(id: 9, name: "Mountain descent", point: WorldMapPixel.point(x: 2025, y: 675), neighbors: [8, 10]),
-        MapWaypoint(id: 10, name: "Right island upper road", point: WorldMapPixel.point(x: 2165, y: 725), neighbors: [9, 11]),
-        MapWaypoint(id: 11, name: "Right island road", point: WorldMapPixel.point(x: 2325, y: 775), neighbors: [10, 12]),
-        MapWaypoint(id: 12, name: "Orchard road", point: WorldMapPixel.point(x: 2475, y: 840), neighbors: [11, 13]),
-        MapWaypoint(id: 13, name: "Right island bend", point: WorldMapPixel.point(x: 2495, y: 925), neighbors: [12, 24]),
-        MapWaypoint(id: 24, name: "Right bridge approach", point: WorldMapPixel.point(x: 2395, y: 1000), neighbors: [13, 25]),
-        MapWaypoint(id: 25, name: "Right bridge road", point: WorldMapPixel.point(x: 2270, y: 1065), neighbors: [24, 14]),
-        MapWaypoint(id: 14, name: "Right bridge base", point: WorldMapPixel.point(x: 2195, y: 1105), neighbors: [25, 15]),
-        MapWaypoint(id: 15, name: "Central island descent", point: WorldMapPixel.point(x: 2120, y: 1245), neighbors: [14, 16]),
-        MapWaypoint(id: 16, name: "Central island road", point: WorldMapPixel.point(x: 1985, y: 1335), neighbors: [15, 17]),
-        MapWaypoint(id: 17, name: "Desert approach", point: WorldMapPixel.point(x: 1845, y: 1375), neighbors: [16, 26]),
-        MapWaypoint(id: 26, name: "Desert bridge approach", point: WorldMapPixel.point(x: 1945, y: 1465), neighbors: [17, 18]),
-        MapWaypoint(id: 18, name: "Desert base", point: WorldMapPixel.point(x: 2038, y: 1532), neighbors: [26, 19]),
-        MapWaypoint(id: 19, name: "Desert stepping stones east", point: WorldMapPixel.point(x: 1900, y: 1580), neighbors: [18, 20]),
-        MapWaypoint(id: 20, name: "Desert stepping stones bend", point: WorldMapPixel.point(x: 1740, y: 1620), neighbors: [19, 21]),
-        MapWaypoint(id: 21, name: "South stepping stones middle", point: WorldMapPixel.point(x: 1570, y: 1650), neighbors: [20, 27]),
-        MapWaypoint(id: 27, name: "South stepping stones west", point: WorldMapPixel.point(x: 1375, y: 1655), neighbors: [21, 28]),
-        MapWaypoint(id: 28, name: "Frog island approach stones", point: WorldMapPixel.point(x: 1190, y: 1625), neighbors: [27, 29]),
-        MapWaypoint(id: 29, name: "Frog island approach", point: WorldMapPixel.point(x: 1085, y: 1565), neighbors: [28, 22]),
-        MapWaypoint(id: 22, name: "Frog base", point: WorldMapPixel.point(x: 1045, y: 1630), neighbors: [29])
+        MapWaypoint(id: 0, name: "Red Riding Hood target", point: WorldMapPixel.point(x: 641, y: 799), neighbors: [1]),
+        MapWaypoint(id: 1, name: "Forest path lower bend", point: WorldMapPixel.point(x: 700, y: 735), neighbors: [0, 2]),
+        MapWaypoint(id: 2, name: "Forest path middle bend", point: WorldMapPixel.point(x: 805, y: 685), neighbors: [1, 3]),
+        MapWaypoint(id: 3, name: "Forest path upper bend", point: WorldMapPixel.point(x: 930, y: 635), neighbors: [2, 4]),
+        MapWaypoint(id: 4, name: "Mill road", point: WorldMapPixel.point(x: 1065, y: 575), neighbors: [3, 5]),
+        MapWaypoint(id: 5, name: "Upper bridge center", point: WorldMapPixel.point(x: 1235, y: 560), neighbors: [4, 6]),
+        MapWaypoint(id: 6, name: "Upper bridge landing", point: WorldMapPixel.point(x: 1370, y: 575), neighbors: [5, 7]),
+        MapWaypoint(id: 7, name: "Mountain target", point: WorldMapPixel.point(x: 1454, y: 581), neighbors: [6, 8]),
+        MapWaypoint(id: 8, name: "Mountain road descent", point: WorldMapPixel.point(x: 1525, y: 660), neighbors: [7, 9]),
+        MapWaypoint(id: 9, name: "Cottage road curve", point: WorldMapPixel.point(x: 1645, y: 750), neighbors: [8, 10]),
+        MapWaypoint(id: 10, name: "Right island path", point: WorldMapPixel.point(x: 1815, y: 805), neighbors: [9, 11]),
+        MapWaypoint(id: 11, name: "Right bridge entry", point: WorldMapPixel.point(x: 2025, y: 870), neighbors: [10, 12]),
+        MapWaypoint(id: 12, name: "Right bridge center", point: WorldMapPixel.point(x: 1960, y: 935), neighbors: [11, 13]),
+        MapWaypoint(id: 13, name: "Right bridge landing", point: WorldMapPixel.point(x: 1870, y: 1005), neighbors: [12, 14]),
+        MapWaypoint(id: 14, name: "Beauty and Beast target", point: WorldMapPixel.point(x: 1788, y: 1031), neighbors: [13, 15]),
+        MapWaypoint(id: 15, name: "Central island road", point: WorldMapPixel.point(x: 1705, y: 1115), neighbors: [14, 16]),
+        MapWaypoint(id: 16, name: "Lower central road", point: WorldMapPixel.point(x: 1595, y: 1205), neighbors: [15, 17]),
+        MapWaypoint(id: 17, name: "Lower bridge center", point: WorldMapPixel.point(x: 1615, y: 1305), neighbors: [16, 18]),
+        MapWaypoint(id: 18, name: "Aladdin target", point: WorldMapPixel.point(x: 1678, y: 1357), neighbors: [17, 19]),
+        MapWaypoint(id: 19, name: "South road east", point: WorldMapPixel.point(x: 1575, y: 1425), neighbors: [18, 20]),
+        MapWaypoint(id: 20, name: "South stepping stones east", point: WorldMapPixel.point(x: 1430, y: 1495), neighbors: [19, 21]),
+        MapWaypoint(id: 21, name: "South stepping stones west", point: WorldMapPixel.point(x: 1215, y: 1500), neighbors: [20, 22]),
+        MapWaypoint(id: 22, name: "Frog target", point: WorldMapPixel.point(x: 1041, y: 1465), neighbors: [21])
     ]
 
     static func waypoint(id: Int) -> MapWaypoint? {

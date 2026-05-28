@@ -3,8 +3,8 @@ import SwiftUI
 
 /// Calcolo dimensioni mappa coerente tra menu e gioco (fit vs fill).
 enum MapLayout {
-    /// Rapporto dell'asset `mappa` (3344×1882).
-    static let worldMapAspectRatio: CGFloat = 3344.0 / 1882.0
+    /// Rapporto dell'asset `mappa` (2784×1882).
+    static let worldMapAspectRatio: CGFloat = 2784.0 / 1882.0
 
     /// Rapporto dell'asset `redhoodislefinal` (2509×1882).
     static let redHoodMapAspectRatio: CGFloat = 2509.0 / 1882.0
