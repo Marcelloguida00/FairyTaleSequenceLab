@@ -49,6 +49,7 @@ private enum ActiveMap {
             return "Finalmente"
         }
     }
+
 }
 
 struct ContentView: View {
