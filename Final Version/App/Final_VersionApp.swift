@@ -19,6 +19,7 @@ struct Final_VersionApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(languageManager)
+                .font(.appBody)
         }
     }
 }

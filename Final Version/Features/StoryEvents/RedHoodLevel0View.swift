@@ -25,19 +25,19 @@ struct RedHoodLevel0View: View {
                         animatedImageNames: ["Mascot Talking"],
                         message: lm.t("redhood.intro.mascot"),
                         imageHeight: min(geometry.size.height * 0.28, 220),
-                        bubbleFont: .system(.title3, design: .rounded)
+                        bubbleFont: .app(.title3)
                     )
                     .padding(.horizontal, 40)
 
                     Button(action: onComplete) {
                         HStack(spacing: 10) {
                             Image(systemName: "star.fill")
-                                .font(.title3)
+                                .font(.app(.title3))
                             Text(lm.t("redhood.intro.button"))
                                 .font(.app(.title3))
                                 .fontWeight(.bold)
                             Image(systemName: "star.fill")
-                                .font(.title3)
+                                .font(.app(.title3))
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, 36)

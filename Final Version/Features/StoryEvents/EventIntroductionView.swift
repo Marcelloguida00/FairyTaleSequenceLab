@@ -33,7 +33,7 @@ struct EventIntroductionView: View {
                                     Text(lm.t("button.continue"))
                                         .font(.app(.headline))
                                     Image(systemName: "arrow.right")
-                                        .font(.headline)
+                                        .font(.app(.headline))
                                 }
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 24)

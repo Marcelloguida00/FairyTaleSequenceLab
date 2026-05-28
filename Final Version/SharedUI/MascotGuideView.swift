@@ -74,7 +74,7 @@ struct MascotGuideView: View {
         animatedImageNames: ["Mascot Neutral", "Mascot Talking", "Mascot Waving", "Mascot Talking"],
         message: "A monster destroyed all the fairy tales and scattered their scenes. Help me put them back in order!",
         imageHeight: 220,
-        bubbleFont: .system(.title3, design: .rounded)
+        bubbleFont: .app(.title3)
     )
     .padding()
     .background(Color(red: 0.961, green: 0.945, blue: 0.922))

@@ -108,7 +108,7 @@ struct TutorialOverlayView: View {
                 animatedImageNames: step.mascotFrames,
                 message: lm.t(step.bodyKey),
                 imageHeight: min(geo.size.height * 0.15, 120),
-                bubbleFont: .system(.body, design: .rounded)
+                bubbleFont: .app(.body)
             )
             .padding(.horizontal, 28)
             .padding(.top, step.villainImageName == nil ? 24 : 0)

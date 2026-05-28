@@ -647,7 +647,6 @@ private struct StoryRegionPlaque: View {
     var body: some View {
         Text(title)
             .font(.app(size: fontSize, weight: .semibold))
-            .italic()
             .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
             .multilineTextAlignment(.center)
             .lineLimit(2)
@@ -677,11 +676,10 @@ private struct ComingSoonBadge: View {
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: "clock.fill")
-                .font(.system(size: fontSize * 0.85))
+                .font(.app(size: fontSize * 0.85))
                 .foregroundStyle(Color(red: 0.72, green: 0.38, blue: 0.04))
             Text(lm.t("map.coming_soon"))
                 .font(.app(size: fontSize, weight: .semibold))
-                .italic()
                 .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
                 .multilineTextAlignment(.center)
         }
@@ -711,7 +709,6 @@ private struct MapPlayCallout: View {
         HStack(spacing: 16) {
             Text(title)
                 .font(.app(.headline))
-                .fontWeight(.black)
                 .foregroundColor(Color.appPrimaryText)
                 .multilineTextAlignment(.leading)
                 .lineLimit(2)
@@ -721,12 +718,11 @@ private struct MapPlayCallout: View {
             Button(action: action) {
                 HStack(spacing: 10) {
                     Image(systemName: "play.fill")
-                        .font(.system(size: 15, weight: .black))
+                        .font(.app(size: 15, weight: .black))
                         .offset(x: 1)
 
                     Text(lm.t("button.play"))
                         .font(.app(.callout))
-                        .fontWeight(.black)
                         .lineLimit(1)
                         .minimumScaleFactor(0.78)
                 }
@@ -795,7 +791,7 @@ private struct WaypointDot: View {
         switch state {
         case .completed:
             Image(systemName: "checkmark")
-                .font(.system(size: size * 0.46, weight: .bold))
+                .font(.app(size: size * 0.46, weight: .bold))
                 .foregroundColor(.white)
         case .next:
             Circle()
@@ -803,7 +799,7 @@ private struct WaypointDot: View {
                 .frame(width: size * 0.32, height: size * 0.32)
         case .locked:
             Image(systemName: "lock.fill")
-                .font(.system(size: size * 0.38))
+                .font(.app(size: size * 0.38))
                 .foregroundColor(.white.opacity(0.85))
         }
     }
@@ -873,10 +869,9 @@ private struct BackButton: View {
         Button(action: action) {
             HStack(spacing: 7) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.app(size: 16, weight: .bold))
                 Text(lm.t("button.back"))
                     .font(.app(.subheadline))
-                    .fontWeight(.bold)
             }
             .foregroundColor(.white)
             .padding(.horizontal, 20)
@@ -903,10 +898,9 @@ private struct MainMenuButton: View {
         Button(action: action) {
             HStack(spacing: 7) {
                 Image(systemName: "house.fill")
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.app(size: 15, weight: .bold))
                 Text(lm.t("button.menu"))
                     .font(.app(.subheadline))
-                    .fontWeight(.bold)
             }
             .foregroundColor(.white)
             .padding(.horizontal, 20)
@@ -939,7 +933,7 @@ private struct LevelStartBanner: View {
 
             VStack(spacing: 16) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 56))
+                    .font(.app(size: 56))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [Color(red: 1, green: 0.88, blue: 0.1), Color(red: 1, green: 0.50, blue: 0.05)],
@@ -951,7 +945,6 @@ private struct LevelStartBanner: View {
 
                 Text(title)
                     .font(.app(.largeTitle))
-                    .fontWeight(.black)
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.45), radius: 6)
             }

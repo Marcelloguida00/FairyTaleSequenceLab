@@ -47,7 +47,7 @@ struct RewardView: View {
                         HStack(alignment: .center, spacing: compactText ? 16 : 24) {
                             VStack(alignment: .leading, spacing: compactText ? 4 : 6) {
                                 Text(stars)
-                                    .font(.title3)
+                                    .font(.app(.title3))
 
                                 Text(performanceNote)
                                     .font(.app(compactText ? .callout : .body))
@@ -79,7 +79,7 @@ struct RewardView: View {
                                             .font(.app(.subheadline))
                                             .fontWeight(.semibold)
                                         Image(systemName: event.isLastEvent ? "map" : "arrow.right")
-                                            .font(.subheadline)
+                                            .font(.app(.subheadline))
                                     }
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 20)
@@ -96,7 +96,7 @@ struct RewardView: View {
                                 Button(action: onDismiss) {
                                     HStack(spacing: 6) {
                                         Image(systemName: "arrow.clockwise")
-                                            .font(.caption)
+                                            .font(.app(.caption))
                                         Text(lm.t("button.play_again"))
                                             .font(.app(.caption))
                                             .fontWeight(.semibold)

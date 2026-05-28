@@ -79,7 +79,6 @@ struct CelebrationView: View {
                 Text("🎉").font(.app(size: 72))
                 Text(lm.t("celebration.title"))
                     .font(.app(.largeTitle))
-                    .fontWeight(.black)
                     .foregroundColor(.appPrimaryText)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -111,7 +110,6 @@ struct CelebrationView: View {
                         Text("🎉").font(.app(size: 80))
                         Text(lm.t("celebration.title"))
                             .font(.app(.largeTitle))
-                            .fontWeight(.black)
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.4), radius: 6, y: 3)
                     }
@@ -185,7 +183,6 @@ private struct EmptySequenceSlotView: View {
     private var descriptionText: some View {
         Text(description)
             .font(.app(.callout, weight: .black))
-            .fontWeight(.black)
             .foregroundColor(Color(red: 0.29, green: 0.15, blue: 0.06))
             .multilineTextAlignment(.center)
             .lineLimit(7)
@@ -307,7 +304,7 @@ private struct VineColumn: View {
         VStack(spacing: 9) {
             ForEach(0..<5, id: \.self) { index in
                 Image(systemName: index.isMultiple(of: 2) ? "leaf.fill" : "sparkle")
-                    .font(.system(size: index.isMultiple(of: 2) ? 19 : 12, weight: .bold))
+                    .font(.app(size: index.isMultiple(of: 2) ? 19 : 12, weight: .bold))
                     .foregroundColor(index.isMultiple(of: 2)
                                      ? Color(red: 0.23, green: 0.40, blue: 0.14)
                                      : Color(red: 0.83, green: 0.58, blue: 0.18))
@@ -681,12 +678,12 @@ struct SequencingActivityView<Reward: View>: View {
             )
 
             Image(systemName: "sparkles")
-                .font(.system(size: 42, weight: .light))
+                .font(.app(size: 42, weight: .light))
                 .foregroundColor(Color(red: 0.70, green: 0.42, blue: 0.15).opacity(0.13))
                 .offset(x: -190, y: -70)
 
             Image(systemName: "sparkles")
-                .font(.system(size: 34, weight: .light))
+                .font(.app(size: 34, weight: .light))
                 .foregroundColor(Color(red: 0.70, green: 0.42, blue: 0.15).opacity(0.12))
                 .offset(x: 210, y: 76)
         }
@@ -861,7 +858,7 @@ struct SequencingActivityView<Reward: View>: View {
             }
         } label: {
             Image(systemName: "xmark.circle.fill")
-                .font(.system(size: 20, weight: .bold))
+                .font(.app(size: 20, weight: .bold))
                 .foregroundColor(.white)
                 .background(Circle().fill(Color.red.opacity(0.85)).padding(3))
                 .shadow(color: .black.opacity(0.3), radius: 3)
@@ -1107,7 +1104,6 @@ struct SequencingActivityView<Reward: View>: View {
             Spacer()
             Text(feedbackBannerText)
                 .font(.app(.title3))
-                .fontWeight(.bold)
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
