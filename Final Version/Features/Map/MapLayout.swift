@@ -19,7 +19,8 @@ enum MapLayout {
     static func mapSize(
         in container: CGSize,
         aspectRatio: CGFloat,
-        contentMode: ContentMode
+        contentMode: ContentMode,
+        minimumVisibleAspectRatio: CGFloat? = nil
     ) -> CGSize {
         guard container.width > 0, container.height > 0 else { return .zero }
 
@@ -35,6 +36,12 @@ enum MapLayout {
             return CGSize(width: width, height: width / aspectRatio)
 
         case .fill:
+            if let minimumVisibleAspectRatio,
+               containerAspect < minimumVisibleAspectRatio {
+                let height = container.width / minimumVisibleAspectRatio
+                return CGSize(width: height * aspectRatio, height: height)
+            }
+
             if containerAspect > aspectRatio {
                 let width = container.width
                 return CGSize(width: width, height: width / aspectRatio)

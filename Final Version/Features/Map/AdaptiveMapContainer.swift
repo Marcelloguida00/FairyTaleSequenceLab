@@ -8,17 +8,20 @@ import SwiftUI
 struct AdaptiveMapContainer<Background: View, Content: View>: View {
     let aspectRatio: CGFloat
     let contentMode: MapLayout.ContentMode
+    let minimumVisibleAspectRatio: CGFloat?
     let background: Background
     @ViewBuilder let content: (_ mapSize: CGSize) -> Content
 
     init(
         aspectRatio: CGFloat,
         contentMode: MapLayout.ContentMode = .fit,
+        minimumVisibleAspectRatio: CGFloat? = nil,
         @ViewBuilder background: () -> Background,
         @ViewBuilder content: @escaping (_ mapSize: CGSize) -> Content
     ) {
         self.aspectRatio = aspectRatio
         self.contentMode = contentMode
+        self.minimumVisibleAspectRatio = minimumVisibleAspectRatio
         self.background = background()
         self.content = content
     }
@@ -28,7 +31,8 @@ struct AdaptiveMapContainer<Background: View, Content: View>: View {
             let mapSize = MapLayout.mapSize(
                 in: proxy.size,
                 aspectRatio: aspectRatio,
-                contentMode: contentMode
+                contentMode: contentMode,
+                minimumVisibleAspectRatio: minimumVisibleAspectRatio
             )
 
             ZStack {
@@ -49,12 +53,14 @@ extension AdaptiveMapContainer where Background == Color {
     init(
         aspectRatio: CGFloat,
         contentMode: MapLayout.ContentMode = .fit,
+        minimumVisibleAspectRatio: CGFloat? = nil,
         letterboxColor: Color = Color(red: 0.10, green: 0.55, blue: 0.78),
         @ViewBuilder content: @escaping (_ mapSize: CGSize) -> Content
     ) {
         self.init(
             aspectRatio: aspectRatio,
             contentMode: contentMode,
+            minimumVisibleAspectRatio: minimumVisibleAspectRatio,
             background: { letterboxColor },
             content: content
         )
