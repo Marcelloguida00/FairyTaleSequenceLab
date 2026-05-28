@@ -76,7 +76,7 @@ struct SequenceCardView: View {
 
             VStack(spacing: 14) {
                 Image(systemName: "book.pages")
-                    .font(.title)
+                    .font(.app(.title))
                     .foregroundColor(Color(red: 0.44, green: 0.24, blue: 0.12))
 
                 Text(card.description)

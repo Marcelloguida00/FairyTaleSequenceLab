@@ -110,7 +110,7 @@ struct OnboardingView: View {
                 mascotHeight: mascotHeight,
                 bubbleWidth: bubbleWidth,
                 bubbleHeight: bubbleHeight,
-                bubbleFont: .system(.title3, design: .rounded)
+                bubbleFont: .app(.title3)
             )
             .padding(.leading, max(18, geo.safeAreaInsets.leading + 18))
             .padding(.trailing, max(24, geo.safeAreaInsets.trailing + 24))
@@ -189,7 +189,7 @@ struct OnboardingView: View {
             } label: {
                 HStack(spacing: 10) {
                     if currentPage == pages.count - 1 {
-                        Image(systemName: "star.fill").font(.title3)
+                        Image(systemName: "star.fill").font(.app(.title3))
                     }
                     Text(currentPage < pages.count - 1
                          ? lm.t("onboarding.next")
@@ -197,7 +197,7 @@ struct OnboardingView: View {
                         .font(.app(.body))
                         .fontWeight(.bold)
                     if currentPage == pages.count - 1 {
-                        Image(systemName: "star.fill").font(.title3)
+                        Image(systemName: "star.fill").font(.app(.title3))
                     }
                 }
                 .foregroundColor(.white)

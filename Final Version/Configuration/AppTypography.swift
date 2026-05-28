@@ -2,11 +2,11 @@ import SwiftUI
 import CoreText
 
 enum AppTypography {
-    static let regular = "AlegreyaRoman-Regular"
-    static let medium = "AlegreyaRoman-Medium"
-    static let bold = "AlegreyaRoman-Bold"
-    static let extraBold = "AlegreyaRoman-ExtraBold"
-    static let black = "AlegreyaRoman-Black"
+    static let regular = "FredokaOne-Regular"
+    static let medium = "FredokaOne-Regular"
+    static let bold = "FredokaOne-Regular"
+    static let extraBold = "FredokaOne-Regular"
+    static let black = "FredokaOne-Regular"
 
     static func fontName(for weight: Font.Weight) -> String {
         switch weight {
@@ -24,7 +24,7 @@ enum AppTypography {
     }
 
     static func registerCustomFonts() {
-        ["Alegreya", "Alegreya-Italic"].forEach { fileName in
+        ["Alegreya", "Alegreya-Italic", "FredokaOne-Regular"].forEach { fileName in
             guard let fontURL = Bundle.main.url(forResource: fileName, withExtension: "ttf") else { return }
             CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
         }

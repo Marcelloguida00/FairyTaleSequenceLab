@@ -62,12 +62,11 @@ struct SettingsView: View {
         HStack {
             HStack(spacing: 10) {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.app(size: 22, weight: .bold))
                     .foregroundStyle(SettingsTheme.secondaryText)
 
                 Text(lm.t("settings.title"))
                     .font(.app(.title2))
-                    .fontWeight(.bold)
                     .foregroundStyle(SettingsTheme.primaryText)
             }
 
@@ -78,7 +77,6 @@ struct SettingsView: View {
             } label: {
                 Text(lm.t("button.done"))
                     .font(.app(.body))
-                    .fontWeight(.semibold)
                     .foregroundStyle(SettingsTheme.primaryText)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 8)
@@ -112,7 +110,6 @@ struct SettingsView: View {
             sectionLine
             Text(title)
                 .font(.app(.caption))
-                .fontWeight(.semibold)
                 .textCase(.uppercase)
                 .foregroundStyle(SettingsTheme.secondaryText)
                 .tracking(1.1)
@@ -165,15 +162,13 @@ struct SettingsView: View {
 
                 Text(lang.nativeName)
                     .font(.app(.body))
-                    .fontWeight(.regular)
-                    .italic(isSelected)
                     .foregroundStyle(SettingsTheme.primaryText)
 
                 Spacer()
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.app(size: 20, weight: .semibold))
                         .foregroundStyle(SettingsTheme.secondaryText)
                         .transition(.scale.combined(with: .opacity))
                 }
@@ -206,7 +201,7 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 14) {
                     Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.app(size: 20, weight: .semibold))
                         .foregroundStyle(SettingsTheme.secondaryText)
                         .frame(width: 28)
                         .animation(.easeInOut(duration: 0.2), value: musicMuted)
@@ -241,14 +236,12 @@ struct SettingsView: View {
                 } label: {
                     HStack(spacing: 14) {
                         Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.app(size: 20, weight: .semibold))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .frame(width: 28)
 
                         Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
                             .font(.app(.body))
-                            .fontWeight(.regular)
-                            .italic()
                             .foregroundStyle(SettingsTheme.primaryText)
 
                         Spacer()
@@ -295,7 +288,6 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(lm.t("settings.progress"))
                 .font(.app(.caption))
-                .fontWeight(.black)
                 .textCase(.uppercase)
                 .foregroundStyle(Color.appSecondaryText)
                 .padding(.leading, 4)
@@ -307,14 +299,13 @@ struct SettingsView: View {
                 } label: {
                     HStack(spacing: 14) {
                         Image(systemName: "trash.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.app(size: 20, weight: .semibold))
                             .foregroundStyle(Color.red)
                             .frame(width: 28)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.reset_progress"))
                                 .font(.app(.body))
-                                .fontWeight(.semibold)
                                 .foregroundStyle(Color.red)
 
                             Text(lm.t("settings.reset_progress.description"))
@@ -326,7 +317,7 @@ struct SettingsView: View {
                         Spacer()
 
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.app(size: 14, weight: .bold))
                             .foregroundStyle(Color.appSecondaryText.opacity(0.65))
                     }
                     .padding(.horizontal, 18)
