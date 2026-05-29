@@ -12,6 +12,12 @@
 "button.cancel"      = "Cancel";
 "button.settings"    = "SETTINGS";
 
+/* Info */
+"info.title"          = "Info";
+"info.developers"     = "Developers";
+"info.contacts"       = "Contacts";
+"info.support_email_subject" = "WORLD OF TAILS app support";
+
 /* Sequencing activity */
 "sequencing.instruction" = "Put the story in order";
 "celebration.title"      = "You did it!";
@@ -50,15 +56,52 @@
 /* Settings */
 "settings.title"          = "Settings";
 "settings.language"       = "Language";
+"settings.accessibility"  = "Accessibility";
+"settings.accessibility.description" = "Readable font and reading preferences.";
+"settings.accessibility.message" = "Manage options that make text easier to read and the app more accessible.";
+"settings.dyslexia_font"  = "Dyslexia font";
+"settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic on";
+"settings.dyslexia_font.disabled" = "OpenDyslexic off";
+"settings.sound"          = "Sound";
+"settings.sound.description" = "App volume and music.";
+"settings.sound.message" = "Adjust the app music and volume.";
 "settings.music"          = "Music";
+"settings.music.on"       = "Music on";
+"settings.music.muted"    = "Music muted";
 "settings.music.mute"     = "Mute Music";
 "settings.music.unmute"   = "Unmute Music";
 "settings.progress"       = "Progress";
+"settings.saved_data"     = "Saved Data";
 "settings.reset_progress" = "Reset Progress";
 "settings.reset_progress.description" = "Start the adventure from the beginning.";
 "settings.reset_progress.confirm.title" = "Reset progress?";
 "settings.reset_progress.confirm.message" = "This will remove saved progress and return you to the start of the adventure.";
 "settings.reset_progress.confirm.action" = "Reset";
+"settings.app" = "App";
+"settings.app_icon" = "App Icon";
+"settings.app_icon.message" = "This option is ready for alternate app icons when they become available.";
+"settings.change_language" = "Change Language";
+"settings.change_language.description" = "Choose the app language.";
+"settings.change_language.message" = "Select the language you want to use in the app.";
+"settings.show_onboarding_again" = "Show onboarding again";
+"settings.support" = "Support";
+"settings.whats_new" = "What's New";
+"settings.whats_new.message" = "Release notes will be added here.";
+"settings.contact_me" = "Contact me";
+"settings.rate_app" = "Rate the app";
+"settings.rate_app.message" = "The rating link will be available when the app is published.";
+"settings.about" = "About";
+"settings.about.message" = "World of Tails is an educational game for children. It helps develop story comprehension, logical event order, attention, and visual memory by rebuilding illustrated fairy tales.";
+"settings.version" = "Version";
+"settings.privacy_policy" = "Privacy Policy";
+"settings.privacy_policy.message" = "The full privacy policy will be added before release.";
+
+/* Accessibility */
+"a11y.info_button"       = "Info";
+"a11y.info_hint"         = "Shows the developers' names";
+"a11y.info_close_button" = "Close info";
+"a11y.info_email_button" = "Write a support email";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Little Red Riding Hood";

@@ -6,8 +6,8 @@ enum MapLayout {
     /// Rapporto dell'asset `mappa` (2784×1882).
     static let worldMapAspectRatio: CGFloat = 2784.0 / 1882.0
 
-    /// Rapporto dell'asset `redhoodislefinal` (2509×1882).
-    static let redHoodMapAspectRatio: CGFloat = 2509.0 / 1882.0
+    /// Rapporto dell'asset `redhoodislefinal` (2509×1881).
+    static let redHoodMapAspectRatio: CGFloat = 2509.0 / 1881.0
 
     enum ContentMode {
         /// Mostra tutta la mappa (possibili bande laterali/sopra-sotto).

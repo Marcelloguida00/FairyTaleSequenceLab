@@ -12,6 +12,12 @@
 "button.cancel"      = "Annulla";
 "button.settings"    = "IMPOSTAZIONI";
 
+/* Info */
+"info.title"          = "Info";
+"info.developers"     = "Sviluppatori";
+"info.contacts"       = "Contatti";
+"info.support_email_subject" = "Assistenza applicazione WORLD OF TAILS";
+
 /* Sequencing activity */
 "sequencing.instruction" = "Metti la storia in ordine";
 "celebration.title"      = "Ce l'hai fatta!";
@@ -50,15 +56,52 @@
 /* Settings */
 "settings.title"          = "Impostazioni";
 "settings.language"       = "Lingua";
+"settings.accessibility"  = "Accessibilità";
+"settings.accessibility.description" = "Font ad alta leggibilità e preferenze di lettura.";
+"settings.accessibility.message" = "Gestisci le opzioni che rendono il testo più leggibile e l'app più accessibile.";
+"settings.dyslexia_font"  = "Font dyslexia";
+"settings.dyslexia_font.description" = "Usa OpenDyslexic per tutte le scritte.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic attivo";
+"settings.dyslexia_font.disabled" = "OpenDyslexic disattivo";
+"settings.sound"          = "Suono";
+"settings.sound.description" = "Volume e musica dell'app.";
+"settings.sound.message" = "Regola la musica e il volume dell'app.";
 "settings.music"          = "Musica";
+"settings.music.on"       = "Musica attiva";
+"settings.music.muted"    = "Musica silenziata";
 "settings.music.mute"     = "Silenzia Musica";
 "settings.music.unmute"   = "Riattiva Musica";
 "settings.progress"       = "Progressi";
+"settings.saved_data"     = "Dati salvati";
 "settings.reset_progress" = "Cancella progressi";
 "settings.reset_progress.description" = "Ricomincia l'avventura dall'inizio.";
 "settings.reset_progress.confirm.title" = "Cancellare i progressi?";
 "settings.reset_progress.confirm.message" = "Questa azione rimuove i progressi salvati e ti riporta all'inizio dell'avventura.";
 "settings.reset_progress.confirm.action" = "Cancella";
+"settings.app" = "App";
+"settings.app_icon" = "Icona app";
+"settings.app_icon.message" = "Questa opzione è pronta per scegliere icone alternative quando saranno disponibili.";
+"settings.change_language" = "Cambia lingua";
+"settings.change_language.description" = "Scegli la lingua dell'app.";
+"settings.change_language.message" = "Seleziona la lingua che vuoi usare nell'app.";
+"settings.show_onboarding_again" = "Mostra onboarding di nuovo";
+"settings.support" = "Supporto";
+"settings.whats_new" = "Novità";
+"settings.whats_new.message" = "Le novità della versione saranno aggiunte qui.";
+"settings.contact_me" = "Contattami";
+"settings.rate_app" = "Valuta l'app";
+"settings.rate_app.message" = "Il collegamento alla valutazione sarà disponibile quando l'app sarà pubblicata.";
+"settings.about" = "Informazioni";
+"settings.about.message" = "World of Tails è un gioco educativo pensato per bambini e bambine. Aiuta a sviluppare comprensione narrativa, ordine logico degli eventi, attenzione e memoria visiva attraverso la ricostruzione di fiabe illustrate.";
+"settings.version" = "Versione";
+"settings.privacy_policy" = "Privacy Policy";
+"settings.privacy_policy.message" = "La privacy policy completa sarà aggiunta prima della pubblicazione.";
+
+/* Accessibility */
+"a11y.info_button"       = "Info";
+"a11y.info_hint"         = "Mostra i nomi degli sviluppatori";
+"a11y.info_close_button" = "Chiudi info";
+"a11y.info_email_button" = "Scrivi una email di assistenza";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Cappuccetto Rosso";

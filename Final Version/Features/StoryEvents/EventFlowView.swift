@@ -2,10 +2,12 @@ import SwiftUI
 
 struct EventFlowView: View {
     let eventData: EventData
+    let onRewardReached: () -> Void
     let onComplete: () -> Void
 
     private enum Phase { case intro, activity }
     @State private var phase: Phase = .intro
+    @State private var didNotifyRewardReached = false
 
     var body: some View {
         Group {
@@ -22,6 +24,11 @@ struct EventFlowView: View {
                         onDismiss: onDismiss,
                         onNext: onComplete
                     )
+                    .onAppear {
+                        guard !didNotifyRewardReached else { return }
+                        didNotifyRewardReached = true
+                        onRewardReached()
+                    }
                 }
             }
         }

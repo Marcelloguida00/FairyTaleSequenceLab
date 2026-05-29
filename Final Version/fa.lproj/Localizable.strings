@@ -12,6 +12,12 @@
 "button.cancel"      = "لغو";
 "button.settings"    = "تنظیمات";
 
+/* Info */
+"info.title"          = "اطلاعات";
+"info.developers"     = "توسعه‌دهندگان";
+"info.contacts"       = "تماس";
+"info.support_email_subject" = "پشتیبانی برنامه WORLD OF TAILS";
+
 /* Sequencing activity */
 "sequencing.instruction" = "داستان را به ترتیب بچین";
 "celebration.title"      = "آفرین!";
@@ -50,15 +56,52 @@
 /* Settings */
 "settings.title"          = "تنظیمات";
 "settings.language"       = "زبان";
+"settings.accessibility"  = "دسترسی‌پذیری";
+"settings.accessibility.description" = "فونت خواناتر و تنظیمات خواندن.";
+"settings.accessibility.message" = "گزینه‌هایی را مدیریت کن که متن را خواناتر و برنامه را دسترس‌پذیرتر می‌کنند.";
+"settings.dyslexia_font"  = "فونت دیسلکسیا";
+"settings.dyslexia_font.description" = "برای همه نوشته‌ها از OpenDyslexic استفاده کن.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic روشن است";
+"settings.dyslexia_font.disabled" = "OpenDyslexic خاموش است";
+"settings.sound"          = "صدا";
+"settings.sound.description" = "صدای برنامه و موسیقی.";
+"settings.sound.message" = "موسیقی و صدای برنامه را تنظیم کن.";
 "settings.music"          = "موسیقی";
+"settings.music.on"       = "موسیقی روشن است";
+"settings.music.muted"    = "موسیقی بی‌صداست";
 "settings.music.mute"     = "قطع موسیقی";
 "settings.music.unmute"   = "روشن کردن موسیقی";
 "settings.progress"       = "پیشرفت";
+"settings.saved_data"     = "داده‌های ذخیره‌شده";
 "settings.reset_progress" = "پاک کردن پیشرفت";
 "settings.reset_progress.description" = "ماجراجویی را از ابتدا شروع کن.";
 "settings.reset_progress.confirm.title" = "پیشرفت پاک شود؟";
 "settings.reset_progress.confirm.message" = "این کار پیشرفت ذخیره‌شده را پاک می‌کند و تو را به ابتدای ماجراجویی برمی‌گرداند.";
 "settings.reset_progress.confirm.action" = "پاک کردن";
+"settings.app" = "برنامه";
+"settings.app_icon" = "آیکون برنامه";
+"settings.app_icon.message" = "این گزینه برای انتخاب آیکون‌های جایگزین آماده است، وقتی که در دسترس باشند.";
+"settings.change_language" = "تغییر زبان";
+"settings.change_language.description" = "زبان برنامه را انتخاب کن.";
+"settings.change_language.message" = "زبانی را که می‌خواهی در برنامه استفاده کنی انتخاب کن.";
+"settings.show_onboarding_again" = "نمایش دوباره onboarding";
+"settings.support" = "پشتیبانی";
+"settings.whats_new" = "تازه‌ها";
+"settings.whats_new.message" = "یادداشت‌های نسخه اینجا اضافه خواهند شد.";
+"settings.contact_me" = "تماس با من";
+"settings.rate_app" = "امتیاز دادن به برنامه";
+"settings.rate_app.message" = "لینک امتیازدهی وقتی برنامه منتشر شود در دسترس خواهد بود.";
+"settings.about" = "درباره";
+"settings.about.message" = "World of Tails یک بازی آموزشی برای کودکان است. این بازی با بازسازی افسانه‌های تصویری به تقویت درک داستان، ترتیب منطقی رویدادها، توجه و حافظه دیداری کمک می‌کند.";
+"settings.version" = "نسخه";
+"settings.privacy_policy" = "سیاست حریم خصوصی";
+"settings.privacy_policy.message" = "سیاست کامل حریم خصوصی قبل از انتشار اضافه خواهد شد.";
+
+/* Accessibility */
+"a11y.info_button"       = "اطلاعات";
+"a11y.info_hint"         = "نام توسعه‌دهندگان را نشان می‌دهد";
+"a11y.info_close_button" = "بستن اطلاعات";
+"a11y.info_email_button" = "نوشتن ایمیل پشتیبانی";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "شنل قرمزی";

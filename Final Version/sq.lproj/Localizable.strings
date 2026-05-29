@@ -12,6 +12,12 @@
 "button.cancel"      = "Anulo";
 "button.settings"    = "CILËSIMET";
 
+/* Info */
+"info.title"          = "Info";
+"info.developers"     = "Zhvilluesit";
+"info.contacts"       = "Kontaktet";
+"info.support_email_subject" = "Mbështetje për aplikacionin WORLD OF TAILS";
+
 /* Sequencing activity */
 "sequencing.instruction" = "Rendit historinë në rend";
 "celebration.title"      = "E bëre!";
@@ -50,15 +56,52 @@
 /* Settings */
 "settings.title"          = "Cilësimet";
 "settings.language"       = "Gjuha";
+"settings.accessibility"  = "Aksesueshmëria";
+"settings.accessibility.description" = "Font i lexueshëm dhe preferenca leximi.";
+"settings.accessibility.message" = "Menaxho opsionet që e bëjnë tekstin më të lehtë për t'u lexuar dhe aplikacionin më të aksesueshëm.";
+"settings.dyslexia_font"  = "Font për disleksi";
+"settings.dyslexia_font.description" = "Përdor OpenDyslexic për të gjitha tekstet.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic aktiv";
+"settings.dyslexia_font.disabled" = "OpenDyslexic joaktiv";
+"settings.sound"          = "Zëri";
+"settings.sound.description" = "Volumi dhe muzika e aplikacionit.";
+"settings.sound.message" = "Rregullo muzikën dhe volumin e aplikacionit.";
 "settings.music"          = "Muzika";
+"settings.music.on"       = "Muzika aktive";
+"settings.music.muted"    = "Muzika e heshtur";
 "settings.music.mute"     = "Heq zërin";
 "settings.music.unmute"   = "Aktivizo zërin";
 "settings.progress"       = "Progresi";
+"settings.saved_data"     = "Të dhënat e ruajtura";
 "settings.reset_progress" = "Rivendos progresin";
 "settings.reset_progress.description" = "Fillo aventurën nga fillimi.";
 "settings.reset_progress.confirm.title" = "Të rivendoset progresi?";
 "settings.reset_progress.confirm.message" = "Kjo do të fshijë progresin e ruajtur dhe do të të kthejë në fillim të aventurës.";
 "settings.reset_progress.confirm.action" = "Rivendos";
+"settings.app" = "Aplikacioni";
+"settings.app_icon" = "Ikona e aplikacionit";
+"settings.app_icon.message" = "Ky opsion është gati për ikona alternative kur të jenë të disponueshme.";
+"settings.change_language" = "Ndrysho gjuhën";
+"settings.change_language.description" = "Zgjidh gjuhën e aplikacionit.";
+"settings.change_language.message" = "Zgjidh gjuhën që dëshiron të përdorësh në aplikacion.";
+"settings.show_onboarding_again" = "Shfaq onboarding përsëri";
+"settings.support" = "Mbështetje";
+"settings.whats_new" = "Çfarë ka të re";
+"settings.whats_new.message" = "Shënimet e versionit do të shtohen këtu.";
+"settings.contact_me" = "Më kontakto";
+"settings.rate_app" = "Vlerëso aplikacionin";
+"settings.rate_app.message" = "Lidhja për vlerësim do të jetë e disponueshme kur aplikacioni të publikohet.";
+"settings.about" = "Rreth";
+"settings.about.message" = "World of Tails është një lojë edukative për fëmijë. Ndihmon në zhvillimin e të kuptuarit të tregimeve, rendit logjik të ngjarjeve, vëmendjes dhe kujtesës vizuale duke rindërtuar përralla të ilustruara.";
+"settings.version" = "Versioni";
+"settings.privacy_policy" = "Politika e privatësisë";
+"settings.privacy_policy.message" = "Politika e plotë e privatësisë do të shtohet para publikimit.";
+
+/* Accessibility */
+"a11y.info_button"       = "Info";
+"a11y.info_hint"         = "Shfaq emrat e zhvilluesve";
+"a11y.info_close_button" = "Mbyll info";
+"a11y.info_email_button" = "Shkruaj një email mbështetjeje";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Kapeleja e Kuqe";
