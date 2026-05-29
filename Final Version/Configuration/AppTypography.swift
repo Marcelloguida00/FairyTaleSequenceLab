@@ -7,38 +7,57 @@ enum AppTypography {
     static let bold = "FredokaOne-Regular"
     static let extraBold = "FredokaOne-Regular"
     static let black = "FredokaOne-Regular"
+    static let dyslexiaRegular = "OpenDyslexic-Regular"
+    static let dyslexiaBold = "OpenDyslexic-Bold"
+    static let dyslexiaItalic = "OpenDyslexic-Italic"
 
     static func fontName(for weight: Font.Weight) -> String {
+        if UserDefaults.standard.bool(forKey: "dyslexiaFontEnabled") {
+            switch weight {
+            case .black, .heavy, .bold, .semibold:
+                return dyslexiaBold
+            default:
+                return dyslexiaRegular
+            }
+        }
+
         switch weight {
         case .black, .heavy:
-            black
+            return black
         case .bold:
-            bold
+            return bold
         case .semibold:
-            medium
+            return medium
         case .medium:
-            medium
+            return medium
         default:
-            regular
+            return regular
         }
     }
 
     static func registerCustomFonts() {
-        ["Alegreya", "Alegreya-Italic", "FredokaOne-Regular"].forEach { fileName in
-            guard let fontURL = Bundle.main.url(forResource: fileName, withExtension: "ttf") else { return }
+        [
+            ("Alegreya", "ttf"),
+            ("Alegreya-Italic", "ttf"),
+            ("FredokaOne-Regular", "ttf"),
+            ("OpenDyslexic-Regular", "otf"),
+            ("OpenDyslexic-Bold", "otf"),
+            ("OpenDyslexic-Italic", "otf")
+        ].forEach { fileName, fileExtension in
+            guard let fontURL = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else { return }
             CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
         }
     }
 }
 
 extension Font {
-    static let appBody = Font.custom(AppTypography.regular, size: 17, relativeTo: .body)
-    static let appCallout = Font.custom(AppTypography.medium, size: 16, relativeTo: .callout)
-    static let appCaption = Font.custom(AppTypography.medium, size: 12, relativeTo: .caption)
-    static let appHeadline = Font.custom(AppTypography.bold, size: 17, relativeTo: .headline)
-    static let appTitle3 = Font.custom(AppTypography.bold, size: 20, relativeTo: .title3)
-    static let appTitle2 = Font.custom(AppTypography.bold, size: 22, relativeTo: .title2)
-    static let appLargeTitle = Font.custom(AppTypography.extraBold, size: 34, relativeTo: .largeTitle)
+    static var appBody: Font { Font.custom(AppTypography.fontName(for: .regular), size: 17, relativeTo: .body) }
+    static var appCallout: Font { Font.custom(AppTypography.fontName(for: .medium), size: 16, relativeTo: .callout) }
+    static var appCaption: Font { Font.custom(AppTypography.fontName(for: .medium), size: 12, relativeTo: .caption) }
+    static var appHeadline: Font { Font.custom(AppTypography.fontName(for: .bold), size: 17, relativeTo: .headline) }
+    static var appTitle3: Font { Font.custom(AppTypography.fontName(for: .bold), size: 20, relativeTo: .title3) }
+    static var appTitle2: Font { Font.custom(AppTypography.fontName(for: .bold), size: 22, relativeTo: .title2) }
+    static var appLargeTitle: Font { Font.custom(AppTypography.fontName(for: .black), size: 34, relativeTo: .largeTitle) }
 
     static func app(size: CGFloat, weight: Font.Weight = .regular, relativeTo textStyle: Font.TextStyle = .body) -> Font {
         Font.custom(AppTypography.fontName(for: weight), size: size, relativeTo: textStyle)

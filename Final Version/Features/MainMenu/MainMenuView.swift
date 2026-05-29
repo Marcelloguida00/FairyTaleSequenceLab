@@ -62,13 +62,11 @@ struct MainMenuPanelLayer: View {
     }
 
     var body: some View {
-        ZStack {
-            MenuPanelView(
-                isDisabled: isInteractionBlocked,
-                onPlay: startGame,
-                onSettings: { Task { await openSettings() } }
-            )
-        }
+        MenuPanelView(
+            isDisabled: isInteractionBlocked,
+            onPlay: startGame,
+            onSettings: { Task { await openSettings() } }
+        )
         .opacity(panelOpacity)
         .scaleEffect(panelScale)
         .allowsHitTesting(panelOpacity > 0.5 && !isInteractionBlocked)
@@ -240,6 +238,235 @@ private struct SettingsFrameOverlay: View {
     }
 }
 
+private struct InfoFrameOverlay: View {
+    let onClose: () -> Void
+
+    var body: some View {
+        GeometryReader { proxy in
+            let frameSize = fittedInfoFrameSize(in: proxy.size)
+
+            ZStack {
+                ZStack {
+                    Image("framesettings")
+                        .renderingMode(.original)
+                        .resizable()
+                        .interpolation(.high)
+                        .scaledToFit()
+                        .frame(width: frameSize.width, height: frameSize.height)
+                        .shadow(color: .black.opacity(0.36), radius: 16, y: 10)
+                        .accessibilityHidden(true)
+
+                    InfoView(onClose: onClose)
+                        .frame(width: frameSize.width * 0.72, height: frameSize.height * 0.70)
+                        .padding(.top, frameSize.height * 0.04)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+
+    private func fittedInfoFrameSize(in container: CGSize) -> CGSize {
+        let maxHeight = container.height * 0.90
+        let maxWidth = container.width * 0.92
+        var height = maxHeight
+        var width = height * settingsFrameAspectRatio
+
+        if width > maxWidth {
+            width = maxWidth
+            height = width / settingsFrameAspectRatio
+        }
+
+        return CGSize(width: width, height: height)
+    }
+}
+
+private enum InfoTheme {
+    static let panelFill = Color(red: 0.976, green: 0.957, blue: 0.890)
+    static let panelBorder = Color(red: 0.722, green: 0.631, blue: 0.420)
+    static let primaryText = Color(red: 0.290, green: 0.204, blue: 0.180)
+    static let secondaryText = Color(red: 0.549, green: 0.451, blue: 0.333)
+    static let controlFill = Color(red: 0.945, green: 0.918, blue: 0.827)
+    static let divider = Color(red: 0.722, green: 0.631, blue: 0.420).opacity(0.35)
+}
+
+private struct InfoView: View {
+    let onClose: () -> Void
+
+    @EnvironmentObject private var lm: LanguageManager
+
+    private let supportEmail = "mguida2604@gmail.com"
+    private let developers = [
+        "Calisto Ciro",
+        "Chiappetta Giulia",
+        "De Marco Francesca",
+        "Guida Marcello",
+        "Karameta Albi",
+        "Toshpulatov Bobur",
+        "Torcicollo Adolfo"
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+                .padding(.horizontal, 8)
+                .padding(.top, 6)
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 18) {
+                    sectionHeader(lm.t("info.developers"))
+
+                    VStack(spacing: 0) {
+                        ForEach(Array(developers.enumerated()), id: \.offset) { index, developer in
+                            developerRow(developer, isLast: index == developers.count - 1)
+                        }
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(InfoTheme.panelFill)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
+                            )
+                    )
+
+                    sectionHeader(lm.t("info.contacts"))
+
+                    VStack(spacing: 0) {
+                        contactRow
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(InfoTheme.panelFill)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
+                            )
+                    )
+                }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 8)
+            }
+        }
+    }
+
+    private var header: some View {
+        HStack {
+            HStack(spacing: 10) {
+                Image(systemName: "info.circle.fill")
+                    .font(.app(size: 22, weight: .bold))
+                    .foregroundStyle(InfoTheme.secondaryText)
+
+                Text(lm.t("info.title"))
+                    .font(.app(.title2))
+                    .foregroundStyle(InfoTheme.primaryText)
+            }
+
+            Spacer()
+
+            Button(action: onClose) {
+                Text(lm.t("button.done"))
+                    .font(.app(.body))
+                    .foregroundStyle(InfoTheme.primaryText)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(InfoTheme.controlFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
+                    )
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(lm.t("a11y.info_close_button"))
+        }
+        .padding(.bottom, 16)
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        HStack(spacing: 10) {
+            sectionLine
+            Text(title)
+                .font(.app(.caption))
+                .textCase(.uppercase)
+                .foregroundStyle(InfoTheme.secondaryText)
+                .tracking(1.1)
+            sectionLine
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private var sectionLine: some View {
+        Rectangle()
+            .fill(InfoTheme.divider)
+            .frame(height: 1)
+    }
+
+    @ViewBuilder
+    private func developerRow(_ name: String, isLast: Bool) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: "person.fill")
+                .font(.app(size: 18, weight: .semibold))
+                .foregroundStyle(InfoTheme.secondaryText)
+                .frame(width: 28)
+
+            Text(name)
+                .font(.app(.body))
+                .foregroundStyle(InfoTheme.primaryText)
+
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+
+        if !isLast {
+            InfoTheme.divider
+                .frame(height: 1)
+                .padding(.leading, 56)
+        }
+    }
+
+    private var contactRow: some View {
+        Link(destination: supportMailURL) {
+            HStack(spacing: 14) {
+                Image(systemName: "envelope.fill")
+                    .font(.app(size: 18, weight: .semibold))
+                    .foregroundStyle(InfoTheme.secondaryText)
+                    .frame(width: 28)
+
+                Text(supportEmail)
+                    .font(.app(.body))
+                    .foregroundStyle(InfoTheme.primaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right")
+                    .font(.app(size: 14, weight: .bold))
+                    .foregroundStyle(InfoTheme.secondaryText.opacity(0.70))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(lm.t("a11y.info_email_button"))
+    }
+
+    private var supportMailURL: URL {
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = supportEmail
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: lm.t("info.support_email_subject"))
+        ]
+
+        return components.url ?? URL(string: "mailto:\(supportEmail)")!
+    }
+}
+
 // MARK: - Pannello centrale (cornice + titolo + Play)
 
 private struct MenuPanelView: View {
@@ -357,6 +584,60 @@ private struct MenuSettingsButton: View {
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
         .accessibilityLabel(lm.t("a11y.settings_button"))
+    }
+}
+
+// MARK: - Bottone Info
+
+private struct MenuInfoButton: View {
+    let size: CGFloat
+    let isDisabled: Bool
+    let action: () -> Void
+
+    @EnvironmentObject private var lm: LanguageManager
+
+    private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "info.circle.fill")
+                .font(.app(size: size * 0.48, weight: .heavy))
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.30, green: 0.48, blue: 0.82),
+                                    Color(red: 0.14, green: 0.25, blue: 0.55)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                )
+                .overlay(
+                    Circle()
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 1.0, green: 0.88, blue: 0.45),
+                                    gold
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: max(3, size * 0.08)
+                        )
+                )
+                .shadow(color: .black.opacity(0.30), radius: 7, y: 4)
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.55 : 1)
+        .accessibilityLabel(lm.t("a11y.info_button"))
+        .accessibilityHint(lm.t("a11y.info_hint"))
     }
 }
 

@@ -12,6 +12,12 @@
 "button.cancel"      = "Отмена";
 "button.settings"    = "НАСТРОЙКИ";
 
+/* Info */
+"info.title"          = "Инфо";
+"info.developers"     = "Разработчики";
+"info.contacts"       = "Контакты";
+"info.support_email_subject" = "Поддержка приложения WORLD OF TAILS";
+
 /* Sequencing activity */
 "sequencing.instruction" = "Расставь сцены по порядку";
 "celebration.title"      = "Ты справился!";
@@ -50,15 +56,52 @@
 /* Settings */
 "settings.title"          = "Настройки";
 "settings.language"       = "Язык";
+"settings.accessibility"  = "Доступность";
+"settings.accessibility.description" = "Удобный шрифт и настройки чтения.";
+"settings.accessibility.message" = "Настрой параметры, которые делают текст легче для чтения, а приложение доступнее.";
+"settings.dyslexia_font"  = "Шрифт для дислексии";
+"settings.dyslexia_font.description" = "Использовать OpenDyslexic для всего текста.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic включён";
+"settings.dyslexia_font.disabled" = "OpenDyslexic выключен";
+"settings.sound"          = "Звук";
+"settings.sound.description" = "Громкость и музыка приложения.";
+"settings.sound.message" = "Настрой музыку и громкость приложения.";
 "settings.music"          = "Музыка";
+"settings.music.on"       = "Музыка включена";
+"settings.music.muted"    = "Музыка выключена";
 "settings.music.mute"     = "Выключить музыку";
 "settings.music.unmute"   = "Включить музыку";
 "settings.progress"       = "Прогресс";
+"settings.saved_data"     = "Сохранённые данные";
 "settings.reset_progress" = "Сбросить прогресс";
 "settings.reset_progress.description" = "Начать приключение сначала.";
 "settings.reset_progress.confirm.title" = "Сбросить прогресс?";
 "settings.reset_progress.confirm.message" = "Это удалит сохранённый прогресс и вернёт тебя к началу приключения.";
 "settings.reset_progress.confirm.action" = "Сбросить";
+"settings.app" = "Приложение";
+"settings.app_icon" = "Иконка приложения";
+"settings.app_icon.message" = "Этот пункт готов для выбора альтернативных иконок, когда они станут доступны.";
+"settings.change_language" = "Изменить язык";
+"settings.change_language.description" = "Выбери язык приложения.";
+"settings.change_language.message" = "Выбери язык, который хочешь использовать в приложении.";
+"settings.show_onboarding_again" = "Показать обучение снова";
+"settings.support" = "Поддержка";
+"settings.whats_new" = "Что нового";
+"settings.whats_new.message" = "Заметки о версии будут добавлены здесь.";
+"settings.contact_me" = "Связаться";
+"settings.rate_app" = "Оценить приложение";
+"settings.rate_app.message" = "Ссылка для оценки появится, когда приложение будет опубликовано.";
+"settings.about" = "О приложении";
+"settings.about.message" = "World of Tails — образовательная игра для детей. Она помогает развивать понимание сюжета, логический порядок событий, внимание и зрительную память через восстановление иллюстрированных сказок.";
+"settings.version" = "Версия";
+"settings.privacy_policy" = "Политика конфиденциальности";
+"settings.privacy_policy.message" = "Полная политика конфиденциальности будет добавлена перед публикацией.";
+
+/* Accessibility */
+"a11y.info_button"       = "Инфо";
+"a11y.info_hint"         = "Показать имена разработчиков";
+"a11y.info_close_button" = "Закрыть инфо";
+"a11y.info_email_button" = "Написать письмо в поддержку";
 
 /* Red Hood intro */
 "redhood.intro.title"   = "Красная Шапочка";

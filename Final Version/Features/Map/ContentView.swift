@@ -313,10 +313,6 @@ struct ContentView: View {
                 levelBannerLevel = nil
                 pendingRedHoodLevel = nil
             }
-        } else if pendingRedHoodLevel != nil {
-            withAnimation(.easeInOut(duration: 0.25)) {
-                pendingRedHoodLevel = nil
-            }
         } else if activeMap == .redHood {
             Task { await closeRedHoodSubMap() }
         }
@@ -541,7 +537,12 @@ struct ContentView: View {
                 }
             }
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
-            EventFlowView(eventData: eventData) {
+            EventFlowView(
+                eventData: eventData,
+                onRewardReached: {
+                    markRedHoodLevelCompleted(level)
+                }
+            ) {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     markRedHoodLevelCompleted(level)
                     activeRedHoodLevel = nil
@@ -724,6 +725,9 @@ private struct ComingSoonBadge: View {
                 .font(.app(size: fontSize, weight: .semibold))
                 .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
                 .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+                .allowsTightening(true)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 9)
@@ -1222,7 +1226,7 @@ private enum MapGraph {
 private enum RedHoodMapGraph {
     private enum Pixel {
         static let width: CGFloat = 2509
-        static let height: CGFloat = 1882
+        static let height: CGFloat = 1881
 
         static func point(x: CGFloat, y: CGFloat) -> CGPoint {
             CGPoint(x: x, y: y)
