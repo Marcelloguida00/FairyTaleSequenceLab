@@ -74,6 +74,7 @@ struct ContentView: View {
     @State private var currentFrame = 0
     @State private var walkTask: Task<Void, Never>? = nil
     @State private var walkGeneration = 0
+    @State private var isBookOpen = false
 
     private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
@@ -169,7 +170,35 @@ struct ContentView: View {
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+            if activeMap == .main {
+                // Interactive Storybook Button
+                Button(action: {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        isBookOpen = true
+                    }
+                }) {
+                    BookIcon3D()
+                }
+                .padding(.bottom, 24)
+                .padding(.trailing, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .zIndex(35)
+                .opacity(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil ? 0 : 1)
+                .animation(.easeInOut, value: isWalking)
+                .disabled(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil)
+            }
 
+        }
+        .overlay {
+            if isBookOpen {
+                BookView(onDismiss: {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        isBookOpen = false
+                    }
+                })
+                .transition(.scale(scale: 0.1).combined(with: .opacity))
+                .zIndex(100)
+            }
         }
         .onReceive(spriteTimer) { _ in
             if isWalking {
@@ -793,6 +822,112 @@ private struct MapPlayCallout: View {
         )
     }
 }
+
+private struct BookIcon3D: View {
+    var body: some View {
+        ZStack {
+            // Shadow on the map
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(Color.black.opacity(0.6))
+                .frame(width: 68, height: 86)
+                .offset(x: 10, y: 12)
+                .blur(radius: 4)
+            
+            // Back Cover (Shifted down for vertical depth)
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(Color(red: 0.12, green: 0.05, blue: 0.03)) // Very dark brown
+                .frame(width: 68, height: 86)
+                .offset(x: 6, y: 10)
+            
+            // Book Pages (Inset horizontally, shifted down)
+            RoundedRectangle(cornerRadius: 4)
+                .fill(LinearGradient(
+                    gradient: Gradient(colors: [Color(red: 0.6, green: 0.5, blue: 0.3), Color(red: 0.9, green: 0.85, blue: 0.65)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                ))
+                .overlay(
+                    // Page lines texture (horizontal lines stacking vertically)
+                    VStack(spacing: 2) {
+                        Spacer()
+                        ForEach(0..<6, id: \.self) { _ in
+                            Rectangle().fill(Color.black.opacity(0.2)).frame(height: 1)
+                        }
+                    }
+                    .padding(.bottom, 4)
+                    .padding(.horizontal, 6)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+                .frame(width: 62, height: 86) // 3px inset on left and right
+                .offset(x: 6, y: 5)
+                
+            // Inner shadow from front cover onto pages
+            VStack {
+                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.9), .clear]), startPoint: .top, endPoint: .bottom)
+                    .frame(height: 14)
+                Spacer()
+            }
+            .frame(width: 62, height: 86)
+            .offset(x: 6, y: 5)
+            
+            // Red Bookmark (Hanging from the bottom)
+            Path { path in
+                path.move(to: CGPoint(x: 0, y: 0))
+                path.addLine(to: CGPoint(x: 14, y: 0))
+                path.addLine(to: CGPoint(x: 14, y: 34))
+                path.addLine(to: CGPoint(x: 7, y: 26))
+                path.addLine(to: CGPoint(x: 0, y: 34))
+                path.closeSubpath()
+            }
+            .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 0.7, green: 0.1, blue: 0.1), Color(red: 0.4, green: 0.02, blue: 0.02)]), startPoint: .top, endPoint: .bottom))
+            .frame(width: 14, height: 34)
+            .offset(x: 18, y: 42)
+            .shadow(color: .black.opacity(0.6), radius: 3, x: 2, y: 3)
+
+            // Front Cover
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(LinearGradient(
+                    gradient: Gradient(colors: [Color(red: 0.25, green: 0.12, blue: 0.08), Color(red: 0.35, green: 0.18, blue: 0.12)]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ))
+                .frame(width: 68, height: 86)
+                .offset(x: 6, y: 0)
+
+            // The Binding (Rilegatura - Pezzo unico)
+            // Left edge of front cover is 6 - 34 = -28.
+            ZStack {
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .fill(Color(red: 0.1, green: 0.04, blue: 0.02)) // Very dark leather
+                    .frame(width: 18, height: 96) // Taller to cover y:0 to y:10
+                
+                // Binding Ribs (Nervature)
+                VStack(spacing: 16) {
+                    ForEach(0..<4, id: \.self) { _ in
+                        Rectangle()
+                            .fill(Color(red: 0.08, green: 0.03, blue: 0.01))
+                            .frame(width: 18, height: 4)
+                            .overlay(Rectangle().fill(Color.white.opacity(0.15)).frame(height: 1), alignment: .top)
+                    }
+                }
+            }
+            .offset(x: -24, y: 5) // Covers the left edge completely
+            .shadow(color: .black.opacity(0.6), radius: 3, x: 2, y: 0)
+
+            // Front Cover Decorative Gold Border removed as requested
+
+            // The image user provided (CastleBookIcon)
+            Image("CastleBookIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 34, height: 34)
+                .offset(x: 10, y: 0) // Centered within the gold border
+        }
+        // Hover/press bounce effect
+        .scaleEffect(1.0)
+    }
+}
+
 
 private struct WaypointDot: View {
     enum DotState { case completed, next, locked }
