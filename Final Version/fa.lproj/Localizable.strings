@@ -85,6 +85,12 @@
 "settings.change_language.description" = "زبان برنامه را انتخاب کن.";
 "settings.change_language.message" = "زبانی را که می‌خواهی در برنامه استفاده کنی انتخاب کن.";
 "settings.show_onboarding_again" = "نمایش دوباره onboarding";
+"settings.advanced_settings" = "تنظیمات پیشرفته";
+"settings.advanced_gate.title" = "برای بزرگسالان";
+"settings.advanced_gate.message" = "این جمع را حل کن تا تنظیمات پیشرفته باز شود.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "ادامه";
+"settings.advanced_gate.wrong" = "درست نیست. دوباره امتحان کن!";
 "settings.support" = "پشتیبانی";
 "settings.whats_new" = "تازه‌ها";
 "settings.whats_new.message" = "یادداشت‌های نسخه اینجا اضافه خواهند شد.";

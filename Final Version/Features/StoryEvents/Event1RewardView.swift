@@ -73,25 +73,16 @@ struct RewardView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                             VStack(spacing: 10) {
-                                Button(action: onNext) {
-                                    HStack(spacing: 8) {
-                                        Text(event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"))
-                                            .font(.app(.subheadline))
-                                            .fontWeight(.semibold)
-                                        Image(systemName: event.isLastEvent ? "map" : "arrow.right")
-                                            .font(.app(.subheadline))
-                                    }
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 14)
-                                    .frame(minWidth: 120, minHeight: 48)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .fill(Color.appAccent)
-                                            .shadow(color: .black.opacity(0.18), radius: 4, y: 2)
-                                    )
-                                }
-                                .buttonStyle(.plain)
+                                GamePillButton(
+                                    title: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"),
+                                    fontSize: 14,
+                                    horizontalPadding: 18,
+                                    verticalPadding: 12,
+                                    minWidth: 120,
+                                    minHeight: 48,
+                                    trailingIcon: event.isLastEvent ? "map" : "arrow.right",
+                                    action: onNext
+                                )
 
                                 Button(action: onDismiss) {
                                     HStack(spacing: 6) {

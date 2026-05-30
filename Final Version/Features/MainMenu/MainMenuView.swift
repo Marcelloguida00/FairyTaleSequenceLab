@@ -37,6 +37,9 @@ struct MainMenuPanelLayer: View {
     @State private var showsSettingsCloudOverlay = false
     @State private var settingsCloudEnterProgress: CGFloat = 0
     @State private var settingsCloudExitProgress: CGFloat = 0
+    @State private var showAdvancedMathGate = false
+    @State private var advancedMathProblem = MathAdditionProblem.randomSimple()
+    @State private var advancedSettingsUnlocked = false
     @EnvironmentObject var lm: LanguageManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -84,12 +87,41 @@ struct MainMenuPanelLayer: View {
             }
 
             if showSettings {
-                SettingsFrameOverlay(onClose: { Task { await closeSettings() } })
-                    .environmentObject(lm)
-                    .transition(.opacity)
-                    .zIndex(100)
+                SettingsFrameOverlay(
+                    onClose: { Task { await closeSettings() } },
+                    onAdvancedSettingsRequested: {
+                        advancedMathProblem = MathAdditionProblem.randomSimple()
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showAdvancedMathGate = true
+                        }
+                    },
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                )
+                .environmentObject(lm)
+                .transition(.opacity)
+                .zIndex(100)
+                .allowsHitTesting(!showAdvancedMathGate)
+            }
+
+            if showAdvancedMathGate {
+                AdvancedSettingsMathGate(
+                    problem: advancedMathProblem,
+                    onSuccess: {
+                        showAdvancedMathGate = false
+                        advancedSettingsUnlocked = true
+                    },
+                    onCancel: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showAdvancedMathGate = false
+                        }
+                    }
+                )
+                .environmentObject(lm)
+                .transition(.opacity)
+                .zIndex(200)
             }
         }
+        .ignoresSafeArea(.keyboard)
         .onAppear {
             tryRevealPanel()
         }
@@ -132,6 +164,7 @@ struct MainMenuPanelLayer: View {
 
         withAnimation(settingsFadeAnimation) {
             showSettings = false
+            showAdvancedMathGate = false
         }
 
         try? await Task.sleep(nanoseconds: UInt64(Self.settingsFadeDuration * 1_000_000_000))
@@ -198,29 +231,41 @@ struct MainMenuPanelLayer: View {
 
 private struct SettingsFrameOverlay: View {
     let onClose: () -> Void
+    let onAdvancedSettingsRequested: () -> Void
+    @Binding var advancedSettingsUnlocked: Bool
+
+    private let contentInset: CGFloat = 100
+
+    @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
         GeometryReader { proxy in
             let frameSize = fittedSettingsFrameSize(in: proxy.size)
 
             ZStack {
-                ZStack {
-                    Image("framesettings")
-                        .renderingMode(.original)
-                        .resizable()
-                        .interpolation(.high)
-                        .scaledToFit()
-                        .frame(width: frameSize.width, height: frameSize.height)
-                        .shadow(color: .black.opacity(0.36), radius: 16, y: 10)
-                        .accessibilityHidden(true)
+                Image("framesettings")
+                    .renderingMode(.original)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
+                    .frame(width: frameSize.width, height: frameSize.height)
+                    .shadow(color: .black.opacity(0.36), radius: 16, y: 10)
+                    .accessibilityHidden(true)
 
-                    SettingsView(onClose: onClose, inFrameMode: true)
-                        .frame(width: frameSize.width * 0.72, height: frameSize.height * 0.70)
-                        .padding(.top, frameSize.height * 0.04)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                SettingsView(
+                    onClose: onClose,
+                    inFrameMode: true,
+                    onAdvancedSettingsRequested: onAdvancedSettingsRequested,
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                )
+                .padding(contentInset)
+                .frame(width: frameSize.width, height: frameSize.height)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
+        .ignoresSafeArea(.keyboard)
     }
 
     private func fittedSettingsFrameSize(in container: CGSize) -> CGSize {
@@ -363,22 +408,13 @@ private struct InfoView: View {
 
             Spacer()
 
-            Button(action: onClose) {
-                Text(lm.t("button.done"))
-                    .font(.app(.body))
-                    .foregroundStyle(InfoTheme.primaryText)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(InfoTheme.controlFill)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
-                    )
-            }
-            .buttonStyle(.plain)
+            GamePillButton(
+                title: lm.t("button.done"),
+                fontSize: 14,
+                horizontalPadding: 16,
+                verticalPadding: 8,
+                action: onClose
+            )
             .accessibilityLabel(lm.t("a11y.info_close_button"))
         }
         .padding(.bottom, 16)
@@ -540,49 +576,17 @@ private struct MenuSettingsButton: View {
 
     @EnvironmentObject private var lm: LanguageManager
 
-    private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
-
     var body: some View {
-        Button(action: action) {
-            Text(lm.t("button.settings"))
-                .font(.app(size: width * 0.14, weight: .heavy))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-                .padding(.horizontal, width * 0.07)
-                .frame(width: width, height: width * 0.38)
-                .background(
-                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.38, green: 0.24, blue: 0.08),
-                                    Color(red: 0.22, green: 0.13, blue: 0.04)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 1.0, green: 0.88, blue: 0.45),
-                                    gold
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: max(4, width * 0.04)
-                        )
-                )
-                .shadow(color: .black.opacity(0.30), radius: 8, y: 4)
-        }
-        .buttonStyle(.plain)
-        .disabled(isDisabled)
-        .opacity(isDisabled ? 0.55 : 1)
+        GamePillButton(
+            title: lm.t("button.settings"),
+            fontSize: width * 0.14,
+            horizontalPadding: width * 0.07,
+            verticalPadding: width * 0.08,
+            minWidth: width,
+            minHeight: width * 0.38,
+            isDisabled: isDisabled,
+            action: action
+        )
         .accessibilityLabel(lm.t("a11y.settings_button"))
     }
 }
@@ -723,48 +727,17 @@ private struct MenuPlayButton: View {
 
     @EnvironmentObject private var lm: LanguageManager
 
-    private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
-    private let green = Color(red: 0.18, green: 0.52, blue: 0.28)
-
     var body: some View {
-        Button(action: action) {
-            Text(lm.t("button.play"))
-                .font(.app(size: width * 0.14, weight: .heavy))
-                .foregroundStyle(.white)
-                .tracking(1.2)
-                .frame(width: width, height: width * 0.38)
-                .background(
-                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.22, green: 0.58, blue: 0.32),
-                                    green
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: width * 0.14, style: .continuous)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 1.0, green: 0.88, blue: 0.45),
-                                    gold
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: max(4, width * 0.04)
-                        )
-                )
-                .shadow(color: .black.opacity(0.30), radius: 8, y: 4)
-        }
-        .buttonStyle(.plain)
-        .disabled(isDisabled)
-        .opacity(isDisabled ? 0.55 : 1)
+        GamePillButton(
+            title: lm.t("button.play"),
+            fontSize: width * 0.14,
+            horizontalPadding: width * 0.07,
+            verticalPadding: width * 0.08,
+            minWidth: width,
+            minHeight: width * 0.38,
+            isDisabled: isDisabled,
+            action: action
+        )
         .accessibilityLabel(lm.t("a11y.play_button"))
         .accessibilityHint(lm.t("a11y.play_hint"))
     }

@@ -136,24 +136,21 @@ struct TutorialOverlayView: View {
 
                 Spacer()
 
-                Button {
-                    if currentStep < steps.count - 1 {
-                        withAnimation(.easeInOut(duration: 0.25)) { currentStep += 1 }
-                    } else {
-                        onFinish()
+                GamePillButton(
+                    title: currentStep < steps.count - 1
+                        ? lm.t("tutorial.next")
+                        : lm.t("tutorial.done"),
+                    fontSize: 16,
+                    horizontalPadding: 24,
+                    verticalPadding: 11,
+                    action: {
+                        if currentStep < steps.count - 1 {
+                            withAnimation(.easeInOut(duration: 0.25)) { currentStep += 1 }
+                        } else {
+                            onFinish()
+                        }
                     }
-                } label: {
-                    Text(currentStep < steps.count - 1
-                         ? lm.t("tutorial.next")
-                         : lm.t("tutorial.done"))
-                        .font(.app(.body))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 13)
-                        .background(Capsule().fill(Color.appAccent))
-                }
-                .buttonStyle(.plain)
+                )
             }
             .padding(.horizontal, 32)
             .padding(.top, 18)

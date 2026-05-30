@@ -28,24 +28,16 @@ struct EventIntroductionView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                            Button(action: onContinue) {
-                                HStack(spacing: 8) {
-                                    Text(lm.t("button.continue"))
-                                        .font(.app(.headline))
-                                    Image(systemName: "arrow.right")
-                                        .font(.app(.headline))
-                                }
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 16)
-                                .frame(minWidth: 60, minHeight: 60)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color.appAccent)
-                                        .shadow(color: .black.opacity(0.18), radius: 4, y: 2)
-                                )
-                            }
-                            .buttonStyle(.plain)
+                            GamePillButton(
+                                title: lm.t("button.continue"),
+                                fontSize: 16,
+                                horizontalPadding: 22,
+                                verticalPadding: 14,
+                                minWidth: 60,
+                                minHeight: 60,
+                                trailingIcon: "arrow.right",
+                                action: onContinue
+                            )
                             .accessibilityLabel(lm.t("a11y.continue_sequencing"))
                         }
                         .padding(.horizontal, 32)

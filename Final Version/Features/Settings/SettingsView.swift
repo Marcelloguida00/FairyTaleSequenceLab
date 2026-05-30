@@ -10,6 +10,14 @@ private enum SettingsTheme {
     static let controlFill = Color(red: 0.945, green: 0.918, blue: 0.827)
     static let divider = Color(red: 0.722, green: 0.631, blue: 0.420).opacity(0.35)
     static let sliderTrack = Color(red: 0.910, green: 0.851, blue: 0.710)
+    static let menuPanelFill = Color(red: 0.98, green: 0.95, blue: 0.86)
+    static let menuRowText = Color(red: 0.18, green: 0.10, blue: 0.08)
+}
+
+private enum SettingsRoute: Equatable {
+    case main
+    case advanced
+    case detail(SettingsDetail)
 }
 
 struct SettingsView: View {
@@ -19,6 +27,8 @@ struct SettingsView: View {
 
     var onClose: (() -> Void)? = nil
     var inFrameMode: Bool = false
+    var onAdvancedSettingsRequested: (() -> Void)? = nil
+    @Binding var advancedSettingsUnlocked: Bool
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
@@ -26,7 +36,30 @@ struct SettingsView: View {
     @AppStorage("dyslexiaFontEnabled") private var dyslexiaFontEnabled = false
 
     @State private var showResetProgressConfirmation = false
-    @State private var selectedDetail: SettingsDetail?
+    @State private var route: SettingsRoute = .main
+    @State private var returnRoute: SettingsRoute = .main
+    @State private var showInternalAdvancedMathGate = false
+    @State private var internalAdvancedMathProblem = MathAdditionProblem.randomSimple()
+
+    init(
+        onClose: (() -> Void)? = nil,
+        inFrameMode: Bool = false,
+        onAdvancedSettingsRequested: (() -> Void)? = nil,
+        advancedSettingsUnlocked: Binding<Bool> = .constant(false)
+    ) {
+        self.onClose = onClose
+        self.inFrameMode = inFrameMode
+        self.onAdvancedSettingsRequested = onAdvancedSettingsRequested
+        self._advancedSettingsUnlocked = advancedSettingsUnlocked
+    }
+
+    private var usesFrameLayout: Bool {
+        inFrameMode
+    }
+
+    private var usesExpandedMainRows: Bool {
+        inFrameMode && route == .main
+    }
 
     var body: some View {
         ZStack {
@@ -36,28 +69,51 @@ struct SettingsView: View {
 
             VStack(spacing: 0) {
                 header
-                    .padding(.horizontal, inFrameMode ? 8 : 28)
-                    .padding(.top, inFrameMode ? 6 : 24)
+                    .padding(.horizontal, usesFrameLayout ? 0 : (inFrameMode ? 8 : 28))
+                    .padding(.top, usesFrameLayout ? 0 : (inFrameMode ? 6 : 24))
 
                 Group {
-                    if let selectedDetail {
-                        settingsDetailView(selectedDetail)
-                            .transition(.move(edge: .trailing).combined(with: .opacity))
-                    } else {
+                    switch route {
+                    case .main:
+                        mainSettingsSection
+                            .padding(.horizontal, usesFrameLayout ? 0 : (inFrameMode ? 8 : 28))
+                            .padding(.bottom, usesFrameLayout ? 0 : (inFrameMode ? 8 : 32))
+                            .frame(maxHeight: usesExpandedMainRows ? .infinity : nil)
+                            .transition(.move(edge: .leading).combined(with: .opacity))
+
+                    case .advanced:
                         ScrollView(.vertical, showsIndicators: false) {
-                            VStack(spacing: inFrameMode ? 20 : 28) {
-                                appSection
-                                supportSection
-                            }
-                            .padding(.horizontal, inFrameMode ? 8 : 28)
-                            .padding(.bottom, inFrameMode ? 8 : 32)
+                            advancedSettingsSection
+                                .padding(.horizontal, usesFrameLayout ? 0 : 28)
+                                .padding(.bottom, usesFrameLayout ? 0 : 32)
                         }
-                        .transition(.move(edge: .leading).combined(with: .opacity))
+                        .frame(maxHeight: usesFrameLayout ? .infinity : nil)
+                        .transition(.move(edge: .trailing).combined(with: .opacity))
+
+                    case .detail(let selectedDetail):
+                        settingsDetailView(selectedDetail)
+                            .frame(maxHeight: usesFrameLayout ? .infinity : nil)
+                            .transition(.move(edge: .trailing).combined(with: .opacity))
                     }
                 }
                 .id(lm.currentLanguage)
-                .animation(.easeInOut(duration: 0.22), value: selectedDetail?.id)
+                .animation(.easeInOut(duration: 0.22), value: route)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if !inFrameMode && showInternalAdvancedMathGate {
+                AdvancedSettingsMathGate(
+                    problem: internalAdvancedMathProblem,
+                    onSuccess: openAdvancedSettings,
+                    onCancel: { showInternalAdvancedMathGate = false }
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.96)))
+            }
+        }
+        .onChange(of: advancedSettingsUnlocked) { _, unlocked in
+            guard unlocked else { return }
+            advancedSettingsUnlocked = false
+            openAdvancedSettings()
         }
         .alert(lm.t("settings.reset_progress.confirm.title"), isPresented: $showResetProgressConfirmation) {
             Button(lm.t("button.cancel"), role: .cancel) { }
@@ -71,78 +127,79 @@ struct SettingsView: View {
 
     // MARK: - Header
 
-    private var header: some View {
-        HStack {
-            if let selectedDetail {
-                Button {
-                    AppSettings.hapticImpact(.light)
-                    withAnimation(.easeInOut(duration: 0.22)) {
-                        self.selectedDetail = nil
-                    }
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "chevron.left")
-                            .font(.app(size: 18, weight: .bold))
-
-                        Text(selectedDetail.title(using: lm))
-                            .font(.app(.title2))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.72)
-                    }
-                    .foregroundStyle(SettingsTheme.primaryText)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(lm.t("button.back"))
-            } else {
-                HStack(spacing: 10) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.app(size: 22, weight: .bold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
-
-                    Text(lm.t("settings.title"))
-                        .font(.app(.title2))
-                        .foregroundStyle(SettingsTheme.primaryText)
-                }
-            }
-
-            Spacer()
-
-            Button {
-                closeSettings()
-            } label: {
-                Text(lm.t("button.done"))
-                    .font(.app(.body))
-                    .foregroundStyle(SettingsTheme.primaryText)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(SettingsTheme.controlFill)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
-                    )
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(lm.t("button.done"))
-        }
-        .padding(.bottom, inFrameMode ? 16 : 24)
+    private var headerCircleSize: CGFloat {
+        usesFrameLayout ? 52 : 40
     }
 
-    private func closeSettings() {
-        if selectedDetail != nil {
-            withAnimation(.easeInOut(duration: 0.22)) {
-                selectedDetail = nil
-            }
-            return
-        }
+    private var headerTitleSize: CGFloat {
+        usesFrameLayout ? 34 : 22
+    }
 
+    private var header: some View {
+        HStack(spacing: 0) {
+            GameCircleBackButton(size: headerCircleSize) {
+                AppSettings.hapticImpact(.light)
+                handleBackButton()
+            }
+            .accessibilityLabel(lm.t("button.back"))
+
+            Text(headerTitle)
+                .font(.app(size: headerTitleSize, weight: .bold))
+                .foregroundStyle(SettingsTheme.menuRowText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+
+            Color.clear
+                .frame(width: headerCircleSize, height: headerCircleSize)
+                .accessibilityHidden(true)
+        }
+        .padding(.bottom, usesFrameLayout ? 18 : (inFrameMode ? 16 : 24))
+    }
+
+    private var headerTitle: String {
+        switch route {
+        case .main:
+            return lm.t("settings.title")
+        case .advanced:
+            return lm.t("settings.advanced_settings")
+        case .detail(let detail):
+            return detail.title(using: lm)
+        }
+    }
+
+    private func navigateBack() {
+        withAnimation(.easeInOut(duration: 0.22)) {
+            switch route {
+            case .detail:
+                route = returnRoute
+            case .advanced:
+                route = .main
+            case .main:
+                break
+            }
+        }
+    }
+
+    private func handleBackButton() {
+        if route == .main {
+            dismissSettings()
+        } else {
+            navigateBack()
+        }
+    }
+
+    private func dismissSettings() {
         if let onClose {
             onClose()
         } else {
             dismiss()
         }
+    }
+
+    private func closeSettings() {
+        dismissSettings()
     }
 
     // MARK: - Section header
@@ -151,7 +208,7 @@ struct SettingsView: View {
         HStack(spacing: 10) {
             sectionLine
             Text(title)
-                .font(.app(.caption))
+                .font(.app(size: usesFrameLayout ? 14 : 12, weight: .semibold))
                 .textCase(.uppercase)
                 .foregroundStyle(SettingsTheme.secondaryText)
                 .tracking(1.1)
@@ -189,7 +246,7 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private func languageRow(lang: LanguageManager.Language, isLast: Bool) -> some View {
+    private func languageRow(lang: LanguageManager.Language, isLast: Bool, expanded: Bool = false) -> some View {
         let isSelected = lm.currentLanguage == lang.code
 
         Button {
@@ -198,25 +255,25 @@ struct SettingsView: View {
             }
             AppSettings.hapticImpact(.light)
         } label: {
-            HStack(spacing: 14) {
+            HStack(spacing: expanded ? 18 : 14) {
                 Text(lang.flag)
-                    .font(.app(size: 28))
+                    .font(.app(size: expanded ? 34 : 28))
 
                 Text(lang.nativeName)
-                    .font(.app(.body))
-                    .foregroundStyle(SettingsTheme.primaryText)
+                    .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                    .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
                 Spacer()
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.app(size: 20, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .font(.app(size: expanded ? 26 : 20, weight: .semibold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, expanded ? 24 : 16)
+            .padding(.vertical, expanded ? 18 : 12)
             .background(
                 isSelected
                     ? SettingsTheme.selectionFill
@@ -229,8 +286,8 @@ struct SettingsView: View {
 
         if !isLast {
             SettingsTheme.divider
-                .frame(height: 1)
-                .padding(.leading, 56)
+                .frame(height: expanded ? 1.5 : 1)
+                .padding(.leading, expanded ? 68 : 56)
         }
     }
 
@@ -361,14 +418,19 @@ struct SettingsView: View {
         }
     }
 
-    private func settingsToggle(isOn: Bool) -> some View {
-        RoundedRectangle(cornerRadius: 14, style: .continuous)
+    private func settingsToggle(isOn: Bool, expanded: Bool = false) -> some View {
+        let trackWidth = expanded ? 58.0 : 48.0
+        let trackHeight = expanded ? 34.0 : 28.0
+        let knobSize = expanded ? 26.0 : 22.0
+        let knobOffset = expanded ? 12.0 : 10.0
+
+        return RoundedRectangle(cornerRadius: trackHeight / 2, style: .continuous)
             .fill(SettingsTheme.controlFill)
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: trackHeight / 2, style: .continuous)
                     .stroke(SettingsTheme.panelBorder.opacity(0.7), lineWidth: 1)
             )
-            .frame(width: 48, height: 28)
+            .frame(width: trackWidth, height: trackHeight)
             .overlay(
                 Circle()
                     .fill(isOn ? SettingsTheme.selectionFill : SettingsTheme.panelFill)
@@ -376,8 +438,8 @@ struct SettingsView: View {
                         Circle()
                             .stroke(SettingsTheme.panelBorder.opacity(0.5), lineWidth: 1)
                     )
-                    .frame(width: 22, height: 22)
-                    .offset(x: isOn ? 10 : -10)
+                    .frame(width: knobSize, height: knobSize)
+                    .offset(x: isOn ? knobOffset : -knobOffset)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
             )
     }
@@ -436,148 +498,172 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - App section
+    // MARK: - Main settings (child-friendly)
 
-    private var appSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(lm.t("settings.app"))
+    private var mainSettingsSection: some View {
+        settingsCard(largeStyle: usesFrameLayout, fillAvailableHeight: usesExpandedMainRows) {
+            settingsActionRow(
+                icon: "speaker.wave.2.fill",
+                title: lm.t("settings.sound"),
+                detail: nil,
+                showsDisclosure: true,
+                largeStyle: usesFrameLayout,
+                fillHeight: usesExpandedMainRows
+            ) {
+                openDetail(.sound, returningTo: .main)
+            }
 
-            settingsCard {
+            settingsDivider(largeStyle: usesFrameLayout)
+
+            settingsActionRow(
+                icon: "app.badge",
+                title: lm.t("settings.app_icon"),
+                detail: nil,
+                showsDisclosure: true,
+                largeStyle: usesFrameLayout,
+                fillHeight: usesExpandedMainRows
+            ) {
+                openDetail(.appIcon, returningTo: .main)
+            }
+
+            settingsDivider(largeStyle: usesFrameLayout)
+
+            settingsActionRow(
+                icon: "rectangle.stack.badge.play",
+                title: lm.t("settings.show_onboarding_again"),
+                detail: nil,
+                showsDisclosure: false,
+                largeStyle: usesFrameLayout,
+                fillHeight: usesExpandedMainRows
+            ) {
+                AppSettings.hapticImpact(.light)
+                hasSeenOnboarding = false
+                closeSettings()
+            }
+
+            settingsDivider(largeStyle: usesFrameLayout)
+
+            settingsActionRow(
+                icon: "figure.and.child.holdinghands",
+                title: lm.t("settings.advanced_settings"),
+                detail: nil,
+                showsDisclosure: true,
+                largeStyle: usesFrameLayout,
+                fillHeight: usesExpandedMainRows
+            ) {
+                requestAdvancedSettingsAccess()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: usesExpandedMainRows ? .infinity : nil)
+    }
+
+    // MARK: - Advanced settings (parent / support)
+
+    private var advancedSettingsSection: some View {
+        VStack(spacing: usesFrameLayout ? 24 : 18) {
+            settingsCard(largeStyle: usesFrameLayout) {
                 settingsActionRow(
                     icon: "figure",
                     title: lm.t("settings.accessibility"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.accessibility)
+                    openDetail(.accessibility, returningTo: .advanced)
                 }
 
-                settingsDivider()
-
-                settingsActionRow(
-                    icon: "speaker.wave.2.fill",
-                    title: lm.t("settings.sound"),
-                    detail: nil,
-                    showsDisclosure: true
-                ) {
-                    openDetail(.sound)
-                }
-
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 settingsActionRow(
                     icon: "globe",
                     title: lm.t("settings.change_language"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.changeLanguage)
+                    openDetail(.changeLanguage, returningTo: .advanced)
                 }
 
-                settingsDivider()
-
-                settingsActionRow(
-                    icon: "app.badge",
-                    title: lm.t("settings.app_icon"),
-                    detail: nil,
-                    showsDisclosure: true
-                ) {
-                    openDetail(.appIcon)
-                }
-
-                settingsDivider()
-
-                settingsActionRow(
-                    icon: "rectangle.stack.badge.play",
-                    title: lm.t("settings.show_onboarding_again"),
-                    detail: nil,
-                    showsDisclosure: false
-                ) {
-                    AppSettings.hapticImpact(.light)
-                    hasSeenOnboarding = false
-                    closeSettings()
-                }
-
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 settingsActionRow(
                     icon: "externaldrive.fill",
                     title: lm.t("settings.saved_data"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.savedData)
+                    openDetail(.savedData, returningTo: .advanced)
                 }
             }
-        }
-    }
 
-    // MARK: - Support section
-
-    private var supportSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(lm.t("settings.support"))
-
-            settingsCard {
+            settingsCard(largeStyle: usesFrameLayout) {
                 settingsActionRow(
                     icon: "sparkles",
                     title: lm.t("settings.whats_new"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.whatsNew)
+                    openDetail(.whatsNew, returningTo: .advanced)
                 }
 
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 settingsActionRow(
                     icon: "envelope.fill",
                     title: lm.t("settings.contact_me"),
                     detail: nil,
-                    showsDisclosure: false
+                    showsDisclosure: false,
+                    largeStyle: usesFrameLayout
                 ) {
                     openURL(supportMailURL)
                 }
 
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 settingsActionRow(
                     icon: "heart.fill",
                     title: lm.t("settings.rate_app"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.rateApp)
+                    openDetail(.rateApp, returningTo: .advanced)
                 }
 
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 settingsActionRow(
                     icon: "info.circle.fill",
                     title: lm.t("settings.about"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.about)
+                    openDetail(.about, returningTo: .advanced)
                 }
 
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 settingsActionRow(
                     icon: "hand.raised.fill",
                     title: lm.t("settings.privacy_policy"),
                     detail: nil,
-                    showsDisclosure: true
+                    showsDisclosure: true,
+                    largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.privacyPolicy)
+                    openDetail(.privacyPolicy, returningTo: .advanced)
                 }
             }
         }
     }
 
+    // MARK: - Legacy sections (kept for reference, unused in navigation)
+
     private func settingsDetailView(_ detail: SettingsDetail) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: usesFrameLayout ? 24 : 18) {
                 if detail == .about {
                     aboutDetailContent
                 } else {
@@ -597,65 +683,65 @@ struct SettingsView: View {
                     }
                 }
             }
-            .padding(.horizontal, inFrameMode ? 8 : 28)
-            .padding(.bottom, inFrameMode ? 8 : 32)
+            .padding(.horizontal, usesFrameLayout ? 0 : (inFrameMode ? 0 : 28))
+            .padding(.bottom, usesFrameLayout ? 0 : (inFrameMode ? 0 : 32))
         }
     }
 
     private func detailHeaderCard(_ detail: SettingsDetail) -> some View {
-        settingsCard {
-            VStack(alignment: .leading, spacing: 16) {
+        settingsCard(largeStyle: usesFrameLayout) {
+            VStack(alignment: .leading, spacing: usesFrameLayout ? 20 : 16) {
                 Image(systemName: detail.icon)
-                    .font(.app(size: 30, weight: .bold))
-                    .foregroundStyle(SettingsTheme.secondaryText)
+                    .font(.app(size: usesFrameLayout ? 38 : 30, weight: .bold))
+                    .foregroundStyle(SettingsTheme.menuRowText)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 Text(detail.title(using: lm))
-                    .font(.app(.title2))
-                    .foregroundStyle(SettingsTheme.primaryText)
+                    .font(.app(size: usesFrameLayout ? 28 : 22, weight: .bold))
+                    .foregroundStyle(SettingsTheme.menuRowText)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(detail.message(using: lm))
-                    .font(.app(.body))
+                    .font(.app(size: usesFrameLayout ? 20 : 17, weight: .regular))
                     .foregroundStyle(SettingsTheme.secondaryText)
-                    .lineSpacing(5)
+                    .lineSpacing(usesFrameLayout ? 6 : 5)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(18)
+            .padding(usesFrameLayout ? 24 : 18)
         }
     }
 
     private var accessibilityDetailCard: some View {
-        settingsCard {
+        settingsCard(largeStyle: usesFrameLayout) {
             Button {
                 AppSettings.hapticImpact(.light)
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     dyslexiaFontEnabled.toggle()
                 }
             } label: {
-                HStack(spacing: 14) {
+                HStack(spacing: usesFrameLayout ? 18 : 14) {
                     Image(systemName: "textformat")
-                        .font(.app(size: 20, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
-                        .frame(width: 28)
+                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .frame(width: usesFrameLayout ? 36 : 28)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lm.t("settings.dyslexia_font"))
-                            .font(.app(.body))
-                            .foregroundStyle(SettingsTheme.primaryText)
+                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
                         Text(lm.t("settings.dyslexia_font.description"))
-                            .font(.app(.caption))
+                            .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
                     Spacer()
 
-                    settingsToggle(isOn: dyslexiaFontEnabled)
+                    settingsToggle(isOn: dyslexiaFontEnabled, expanded: usesFrameLayout)
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
+                .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                .padding(.vertical, usesFrameLayout ? 20 : 16)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -663,13 +749,14 @@ struct SettingsView: View {
     }
 
     private var soundDetailCard: some View {
-        settingsCard {
+        settingsCard(largeStyle: usesFrameLayout) {
             VStack(spacing: 0) {
-                HStack(spacing: 14) {
+                HStack(spacing: usesFrameLayout ? 18 : 14) {
                     Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                        .font(.app(size: 20, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
-                        .frame(width: 28)
+                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .frame(width: usesFrameLayout ? 36 : 28)
+                        .animation(.easeInOut(duration: 0.2), value: musicMuted)
 
                     Slider(value: Binding(
                         get: { musicMuted ? 0 : musicVolume },
@@ -682,37 +769,37 @@ struct SettingsView: View {
                             BackgroundMusicPlayer.shared.setVolume(Float(newValue))
                         }
                     ), in: 0...1)
-                    .tint(SettingsTheme.secondaryText)
+                    .tint(SettingsTheme.menuRowText)
                     .disabled(musicMuted)
                     .opacity(musicMuted ? 0.45 : 1)
                     .animation(.easeInOut(duration: 0.2), value: musicMuted)
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
+                .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                .padding(.vertical, usesFrameLayout ? 20 : 16)
 
-                settingsDivider()
+                settingsDivider(largeStyle: usesFrameLayout)
 
                 Button {
                     AppSettings.hapticImpact(.light)
                     musicMuted.toggle()
                     BackgroundMusicPlayer.shared.setMuted(musicMuted)
                 } label: {
-                    HStack(spacing: 14) {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
                         Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.fill")
-                            .font(.app(size: 20, weight: .semibold))
-                            .foregroundStyle(SettingsTheme.secondaryText)
-                            .frame(width: 28)
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
 
                         Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
-                            .font(.app(.body))
-                            .foregroundStyle(SettingsTheme.primaryText)
+                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
                         Spacer()
 
-                        settingsToggle(isOn: musicMuted)
+                        settingsToggle(isOn: musicMuted, expanded: usesFrameLayout)
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -721,42 +808,46 @@ struct SettingsView: View {
     }
 
     private var languageDetailCard: some View {
-        settingsCard {
+        settingsCard(largeStyle: usesFrameLayout) {
             VStack(spacing: 0) {
                 ForEach(Array(LanguageManager.supported.enumerated()), id: \.element.code) { index, lang in
-                    languageRow(lang: lang, isLast: index == LanguageManager.supported.count - 1)
+                    languageRow(
+                        lang: lang,
+                        isLast: index == LanguageManager.supported.count - 1,
+                        expanded: usesFrameLayout
+                    )
                 }
             }
         }
     }
 
     private var savedDataDetailCard: some View {
-        settingsCard {
+        settingsCard(largeStyle: usesFrameLayout) {
             Button {
                 AppSettings.hapticImpact(.medium)
                 showResetProgressConfirmation = true
             } label: {
-                HStack(spacing: 14) {
+                HStack(spacing: usesFrameLayout ? 18 : 14) {
                     Image(systemName: "trash.fill")
-                        .font(.app(size: 20, weight: .semibold))
+                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
                         .foregroundStyle(Color.red)
-                        .frame(width: 28)
+                        .frame(width: usesFrameLayout ? 36 : 28)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lm.t("settings.reset_progress"))
-                            .font(.app(.body))
+                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
                             .foregroundStyle(Color.red)
 
                         Text(lm.t("settings.reset_progress.description"))
-                            .font(.app(.caption))
+                            .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
                     Spacer()
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
+                .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                .padding(.vertical, usesFrameLayout ? 20 : 16)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -764,34 +855,34 @@ struct SettingsView: View {
     }
 
     private var aboutDetailContent: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            settingsCard {
-                VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: usesFrameLayout ? 24 : 18) {
+            settingsCard(largeStyle: usesFrameLayout) {
+                VStack(alignment: .leading, spacing: usesFrameLayout ? 18 : 14) {
                     Text(lm.t("settings.about.message"))
-                        .font(.app(.body))
+                        .font(.app(size: usesFrameLayout ? 20 : 17, weight: .regular))
                         .foregroundStyle(SettingsTheme.secondaryText)
-                        .lineSpacing(5)
+                        .lineSpacing(usesFrameLayout ? 6 : 5)
                         .fixedSize(horizontal: false, vertical: true)
 
                     SettingsTheme.divider
-                        .frame(height: 1)
+                        .frame(height: usesFrameLayout ? 1.5 : 1)
 
-                    HStack(spacing: 10) {
+                    HStack(spacing: usesFrameLayout ? 14 : 10) {
                         Image(systemName: "number.circle.fill")
-                            .font(.app(size: 20, weight: .bold))
-                            .foregroundStyle(SettingsTheme.secondaryText)
+                            .font(.app(size: usesFrameLayout ? 26 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
 
                         Text("\(lm.t("settings.version")) \(appVersionText)")
-                            .font(.app(.body))
-                            .foregroundStyle(SettingsTheme.primaryText)
+                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                            .foregroundStyle(SettingsTheme.menuRowText)
                     }
                 }
-                .padding(18)
+                .padding(usesFrameLayout ? 24 : 18)
             }
 
             sectionHeader(lm.t("info.developers"))
 
-            VStack(spacing: 14) {
+            VStack(spacing: usesFrameLayout ? 18 : 14) {
                 ForEach(developers) { developer in
                     developerProfileCard(developer)
                 }
@@ -800,17 +891,17 @@ struct SettingsView: View {
     }
 
     private func developerProfileCard(_ developer: DeveloperProfile) -> some View {
-        settingsCard {
-            HStack(spacing: 16) {
+        settingsCard(largeStyle: usesFrameLayout) {
+            HStack(spacing: usesFrameLayout ? 20 : 16) {
                 developerAvatar
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: usesFrameLayout ? 10 : 8) {
                     Text(developer.name)
-                        .font(.app(.body))
-                        .foregroundStyle(SettingsTheme.primaryText)
+                        .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                        .foregroundStyle(SettingsTheme.menuRowText)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: usesFrameLayout ? 14 : 12) {
                         developerLinkButton(title: "LinkedIn", icon: "link", urlString: developer.linkedInURL)
                         developerLinkButton(title: "Instagram", icon: "camera.fill", urlString: developer.instagramURL)
                     }
@@ -818,7 +909,7 @@ struct SettingsView: View {
 
                 Spacer(minLength: 0)
             }
-            .padding(16)
+            .padding(usesFrameLayout ? 20 : 16)
         }
     }
 
@@ -856,16 +947,16 @@ struct SettingsView: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.app(size: 13, weight: .bold))
+                    .font(.app(size: usesFrameLayout ? 15 : 13, weight: .bold))
 
                 Text(title)
-                    .font(.app(size: 13, weight: .semibold))
+                    .font(.app(size: usesFrameLayout ? 15 : 13, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
             }
-            .foregroundStyle(SettingsTheme.primaryText)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
+            .foregroundStyle(SettingsTheme.menuRowText)
+            .padding(.horizontal, usesFrameLayout ? 14 : 10)
+            .padding(.vertical, usesFrameLayout ? 9 : 7)
             .background(
                 Capsule()
                     .fill(SettingsTheme.controlFill)
@@ -882,25 +973,30 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private func settingsCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+    private func settingsCard<Content: View>(
+        largeStyle: Bool = false,
+        fillAvailableHeight: Bool = false,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             content()
         }
+        .frame(maxWidth: .infinity, maxHeight: fillAvailableHeight ? .infinity : nil, alignment: .top)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(SettingsTheme.panelFill)
+            RoundedRectangle(cornerRadius: largeStyle ? 24 : 18, style: .continuous)
+                .fill(SettingsTheme.menuPanelFill)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
+                    RoundedRectangle(cornerRadius: largeStyle ? 24 : 18, style: .continuous)
+                        .stroke(SettingsTheme.panelBorder, lineWidth: largeStyle ? 2.5 : 2)
                 )
         )
-        .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
+        .shadow(color: .black.opacity(largeStyle ? 0.08 : 0.06), radius: largeStyle ? 6 : 4, y: 2)
     }
 
-    private func settingsDivider() -> some View {
+    private func settingsDivider(largeStyle: Bool = false) -> some View {
         SettingsTheme.divider
-            .frame(height: 1)
-            .padding(.leading, 56)
+            .frame(height: largeStyle ? 1.5 : 1)
+            .padding(.leading, largeStyle ? 68 : 56)
     }
 
     private func settingsActionRow(
@@ -908,22 +1004,27 @@ struct SettingsView: View {
         title: String,
         detail: String?,
         showsDisclosure: Bool,
+        largeStyle: Bool = false,
+        fillHeight: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
         Button {
             AppSettings.hapticImpact(.light)
             action()
         } label: {
-            HStack(spacing: 14) {
+            HStack(spacing: largeStyle ? 18 : 14) {
                 Image(systemName: icon)
-                    .font(.app(size: 20, weight: .semibold))
-                    .foregroundStyle(SettingsTheme.secondaryText)
-                    .frame(width: 28)
+                    .font(.app(size: largeStyle ? 28 : 20, weight: .bold))
+                    .foregroundStyle(largeStyle ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                    .frame(width: largeStyle ? 36 : 28)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.app(.body))
-                        .foregroundStyle(SettingsTheme.primaryText)
+                        .font(.app(size: largeStyle ? 22 : 17, weight: largeStyle ? .semibold : .regular))
+                        .foregroundStyle(largeStyle ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+                        .lineLimit(largeStyle ? 2 : 1)
+                        .minimumScaleFactor(largeStyle ? 0.82 : 1)
+                        .multilineTextAlignment(.leading)
 
                     if let detail {
                         Text(detail)
@@ -937,15 +1038,22 @@ struct SettingsView: View {
 
                 if showsDisclosure {
                     Image(systemName: "chevron.right")
-                        .font(.app(size: 14, weight: .bold))
-                        .foregroundStyle(SettingsTheme.secondaryText.opacity(0.65))
+                        .font(.app(size: largeStyle ? 18 : 14, weight: .bold))
+                        .foregroundStyle(
+                            largeStyle
+                                ? SettingsTheme.menuRowText.opacity(0.72)
+                                : SettingsTheme.secondaryText.opacity(0.65)
+                        )
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
+            .padding(.horizontal, largeStyle ? 24 : 18)
+            .padding(.vertical, fillHeight ? 0 : (largeStyle ? 18 : 16))
+            .frame(maxWidth: .infinity, maxHeight: fillHeight ? .infinity : nil, alignment: .leading)
+            .frame(minHeight: fillHeight ? 64 : nil)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .frame(maxHeight: fillHeight ? .infinity : nil)
         .accessibilityLabel(title)
     }
 
@@ -955,9 +1063,31 @@ struct SettingsView: View {
         AppSettings.hapticSuccess()
     }
 
-    private func openDetail(_ detail: SettingsDetail) {
+    private func requestAdvancedSettingsAccess() {
+        AppSettings.hapticImpact(.light)
+
+        if let onAdvancedSettingsRequested {
+            onAdvancedSettingsRequested()
+            return
+        }
+
+        internalAdvancedMathProblem = MathAdditionProblem.randomSimple()
+        withAnimation(.easeInOut(duration: 0.2)) {
+            showInternalAdvancedMathGate = true
+        }
+    }
+
+    private func openAdvancedSettings() {
+        showInternalAdvancedMathGate = false
         withAnimation(.easeInOut(duration: 0.22)) {
-            selectedDetail = detail
+            route = .advanced
+        }
+    }
+
+    private func openDetail(_ detail: SettingsDetail, returningTo: SettingsRoute) {
+        returnRoute = returningTo
+        withAnimation(.easeInOut(duration: 0.22)) {
+            route = .detail(detail)
         }
     }
 
@@ -1012,7 +1142,7 @@ private struct DeveloperProfile: Identifiable {
     let instagramURL: String
 }
 
-private enum SettingsDetail: Identifiable {
+private enum SettingsDetail: Identifiable, Equatable {
     case accessibility
     case sound
     case appIcon

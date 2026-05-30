@@ -85,6 +85,12 @@
 "settings.change_language.description" = "Scegli la lingua dell'app.";
 "settings.change_language.message" = "Seleziona la lingua che vuoi usare nell'app.";
 "settings.show_onboarding_again" = "Mostra onboarding di nuovo";
+"settings.advanced_settings" = "Impostazioni avanzate";
+"settings.advanced_gate.title" = "Per i grandi";
+"settings.advanced_gate.message" = "Risolvi questa addizione per aprire le Impostazioni avanzate.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "Continua";
+"settings.advanced_gate.wrong" = "Non è corretto. Riprova!";
 "settings.support" = "Supporto";
 "settings.whats_new" = "Novità";
 "settings.whats_new.message" = "Le novità della versione saranno aggiunte qui.";

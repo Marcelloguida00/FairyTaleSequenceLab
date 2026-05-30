@@ -85,6 +85,12 @@
 "settings.change_language.description" = "Zgjidh gjuhën e aplikacionit.";
 "settings.change_language.message" = "Zgjidh gjuhën që dëshiron të përdorësh në aplikacion.";
 "settings.show_onboarding_again" = "Shfaq onboarding përsëri";
+"settings.advanced_settings" = "Cilësimet e avancuara";
+"settings.advanced_gate.title" = "Për të rritur";
+"settings.advanced_gate.message" = "Zgjidh këtë mbledhje për të hapur Cilësimet e avancuara.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "Vazhdo";
+"settings.advanced_gate.wrong" = "Nuk është e saktë. Provo përsëri!";
 "settings.support" = "Mbështetje";
 "settings.whats_new" = "Çfarë ka të re";
 "settings.whats_new.message" = "Shënimet e versionit do të shtohen këtu.";

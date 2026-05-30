@@ -85,6 +85,12 @@
 "settings.change_language.description" = "Выбери язык приложения.";
 "settings.change_language.message" = "Выбери язык, который хочешь использовать в приложении.";
 "settings.show_onboarding_again" = "Показать обучение снова";
+"settings.advanced_settings" = "Расширенные настройки";
+"settings.advanced_gate.title" = "Для взрослых";
+"settings.advanced_gate.message" = "Решите пример, чтобы открыть расширенные настройки.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "Продолжить";
+"settings.advanced_gate.wrong" = "Неверно. Попробуйте ещё раз!";
 "settings.support" = "Поддержка";
 "settings.whats_new" = "Что нового";
 "settings.whats_new.message" = "Заметки о версии будут добавлены здесь.";

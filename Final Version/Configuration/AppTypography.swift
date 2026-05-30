@@ -2,11 +2,11 @@ import SwiftUI
 import CoreText
 
 enum AppTypography {
-    static let regular = "FredokaOne-Regular"
-    static let medium = "FredokaOne-Regular"
-    static let bold = "FredokaOne-Regular"
-    static let extraBold = "FredokaOne-Regular"
-    static let black = "FredokaOne-Regular"
+    static let light = "Fredoka-Light"
+    static let regular = "Fredoka-Regular"
+    static let medium = "Fredoka-Medium"
+    static let semibold = "Fredoka-SemiBold"
+    static let bold = "Fredoka-Bold"
     static let dyslexiaRegular = "OpenDyslexic-Regular"
     static let dyslexiaBold = "OpenDyslexic-Bold"
     static let dyslexiaItalic = "OpenDyslexic-Italic"
@@ -22,14 +22,16 @@ enum AppTypography {
         }
 
         switch weight {
-        case .black, .heavy:
-            return black
-        case .bold:
-            return bold
-        case .semibold:
-            return medium
+        case .ultraLight, .thin, .light:
+            return light
         case .medium:
             return medium
+        case .semibold:
+            return semibold
+        case .bold:
+            return bold
+        case .heavy, .black:
+            return bold
         default:
             return regular
         }
@@ -39,7 +41,7 @@ enum AppTypography {
         [
             ("Alegreya", "ttf"),
             ("Alegreya-Italic", "ttf"),
-            ("FredokaOne-Regular", "ttf"),
+            ("Fredoka-Variable", "ttf"),
             ("OpenDyslexic-Regular", "otf"),
             ("OpenDyslexic-Bold", "otf"),
             ("OpenDyslexic-Italic", "otf")
@@ -54,10 +56,10 @@ extension Font {
     static var appBody: Font { Font.custom(AppTypography.fontName(for: .regular), size: 17, relativeTo: .body) }
     static var appCallout: Font { Font.custom(AppTypography.fontName(for: .medium), size: 16, relativeTo: .callout) }
     static var appCaption: Font { Font.custom(AppTypography.fontName(for: .medium), size: 12, relativeTo: .caption) }
-    static var appHeadline: Font { Font.custom(AppTypography.fontName(for: .bold), size: 17, relativeTo: .headline) }
+    static var appHeadline: Font { Font.custom(AppTypography.fontName(for: .semibold), size: 17, relativeTo: .headline) }
     static var appTitle3: Font { Font.custom(AppTypography.fontName(for: .bold), size: 20, relativeTo: .title3) }
     static var appTitle2: Font { Font.custom(AppTypography.fontName(for: .bold), size: 22, relativeTo: .title2) }
-    static var appLargeTitle: Font { Font.custom(AppTypography.fontName(for: .black), size: 34, relativeTo: .largeTitle) }
+    static var appLargeTitle: Font { Font.custom(AppTypography.fontName(for: .bold), size: 34, relativeTo: .largeTitle) }
 
     static func app(size: CGFloat, weight: Font.Weight = .regular, relativeTo textStyle: Font.TextStyle = .body) -> Font {
         Font.custom(AppTypography.fontName(for: weight), size: size, relativeTo: textStyle)

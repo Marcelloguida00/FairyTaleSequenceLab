@@ -790,26 +790,16 @@ private struct MapPlayCallout: View {
                 .minimumScaleFactor(0.78)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Button(action: action) {
-                HStack(spacing: 10) {
-                    Image(systemName: "play.fill")
-                        .font(.app(size: 15, weight: .black))
-                        .offset(x: 1)
-
-                    Text(lm.t("button.play"))
-                        .font(.app(.callout))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.78)
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .frame(minWidth: 118, minHeight: 46)
-                .background(Capsule().fill(Color.appAccent))
-                .overlay(Capsule().stroke(Color.white.opacity(0.74), lineWidth: 2))
-                .shadow(color: Color.appAccent.opacity(0.32), radius: 9, y: 4)
-            }
-            .buttonStyle(.plain)
+            GamePillButton(
+                title: lm.t("button.play"),
+                fontSize: 15,
+                horizontalPadding: 20,
+                verticalPadding: 10,
+                minWidth: 118,
+                minHeight: 46,
+                leadingIcon: "play.fill",
+                action: action
+            )
             .accessibilityLabel(accessibilityLabel)
         }
         .padding(.horizontal, 18)
