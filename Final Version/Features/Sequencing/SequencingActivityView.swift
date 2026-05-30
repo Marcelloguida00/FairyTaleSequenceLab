@@ -354,6 +354,7 @@ struct SequencingActivityView<Reward: View>: View {
     @State private var showCelebration = false
     @State private var dimForReward = false
     @State private var showReward = false
+    @State private var nextPlacementChordIndex = 0
 
     // Drag state
     @State private var draggingCardId: Int? = nil
@@ -511,6 +512,7 @@ struct SequencingActivityView<Reward: View>: View {
                         shuffledStart   = event.makeShuffledStart()
                         slotContents    = Array(repeating: nil, count: event.cards.count)
                         flippedStates   = Array(repeating: false, count: event.cards.count)
+                        nextPlacementChordIndex = 0
                     }
                 }
                 .transition(.asymmetric(
@@ -1005,6 +1007,8 @@ struct SequencingActivityView<Reward: View>: View {
             return
         }
 
+        let shouldPlayPlacementChord = originSlot != targetSlot
+
         withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
             var nextContents = slotContents
             let displaced = nextContents[targetSlot]
@@ -1020,6 +1024,10 @@ struct SequencingActivityView<Reward: View>: View {
 
             slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
             checkResult = nil
+        }
+
+        if shouldPlayPlacementChord {
+            playNextPlacementChord()
         }
     }
 
@@ -1051,6 +1059,14 @@ struct SequencingActivityView<Reward: View>: View {
         dragOriginSlot = nil
         dragPosition   = .zero
         hoveredSlot    = nil
+    }
+
+    private func playNextPlacementChord() {
+        let chords = PianoChord.allCases
+        guard !chords.isEmpty else { return }
+
+        PianoChordPlayer.shared.play(chords[nextPlacementChordIndex % chords.count])
+        nextPlacementChordIndex += 1
     }
 
     // MARK: - Check

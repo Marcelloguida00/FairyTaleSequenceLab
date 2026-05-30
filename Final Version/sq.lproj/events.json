@@ -13,7 +13,7 @@
     "correctOrder": [0, 1, 2, 3],
     "learningOutcome": "Mësove: Ngjarjet e një historie ndodhin në REND — çdo veprim e bën të mundur tjetrin!",
     "rewardImageName": "Fine primo evento",
-    "rewardText": "Fantastike! I renditëve të gjitha skenat në rendin e duhur! Tani Kapeleja e Kuqe mund ta marrë shportën, të veshë mantelin e kuq dhe të vrapojë nëpër pyll për t'i çuar gjyshe ca ëmbëlsira. Historia mund të vazhdojë — falë TEJE!",
+    "rewardText": "Fantastike! I renditëve të gjitha skenat në rendin e duhur! Tani Kapeleja e Kuqe can ta marrë shportën, të veshë mantelin e kuq dhe të vrapojë nëpër pyll për t'i çuar gjyshe ca ëmbëlsira. Historia mund të vazhdojë — falë TEJE!",
     "isLastEvent": false
   },
   {
@@ -48,6 +48,91 @@
     "learningOutcome": "Mësove: PASOJA = VEPRIMET KANË REZULTATE",
     "rewardImageName": "Fine 3",
     "rewardText": "Tani ujku di ku të gjejë gjyshen. Çfarë do të ndodhë tjetër?",
+    "isLastEvent": false
+  },
+  {
+    "id": 4,
+    "bannerTitle": "Skena 4",
+    "introImageName": "3_1",
+    "introText": "Ujku vrapon me shpejtësi të madhe drejt shtëpisë së gjyshes për të mbërritur atje para Kësulëkuqes. Vendosni kartat në rendin e duhur nga e majta në të djathtë për të parë se si arrin ai!",
+    "cards": [
+      { "id": 0, "imageName": "scene4_card1", "description": "Ujku vrapon shpejt mes pemëve dhe rrënjëve të pyllit", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene4_card2", "description": "Ujku ndjek një rrugë të shkurtër të fshehtë për të mbërritur i pari", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene4_card3", "description": "Ujku arrin i lodhur por i lumtur para shtëpisë së gjyshes", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene4_card4", "description": "Ujku troket në derën e gjyshes duke u hequr si Kësulëkuqja", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Të veprosh shpejt dhe të planifikosh hapat të çon drejt qëllimit tënd!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Punë e shkëlqyer! Ti e rendite vrapimin e ujkut në mënyrë të përsosur! Tani ujku ka mbërritur te shtëpia dhe po troket në derë. Historia vazhdon!",
+    "isLastEvent": false
+  },
+  {
+    "id": 5,
+    "bannerTitle": "Skena 5",
+    "introImageName": "3_3",
+    "introText": "Ujku ka hyrë në shtëpinë e gjyshes dhe përgatitet të presë Kësulëkuqen i maskuar si gjyshe. Vendosni kartat në rendin e duhur për të përfunduar maskimin e tij!",
+    "cards": [
+      { "id": 0, "imageName": "scene5_card1", "description": "Ujku hyn në shtëpi dhe gjyshja e frikësuar fshihet në një dollap", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene5_card2", "description": "Ujku gjen rrobat e gjyshes dhe vendos të maskohet", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene5_card3", "description": "Ujku vendos kapuçin e natës dhe futet nën batanijet e krevatit", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene5_card4", "description": "Ujku pret në heshtje në krevat mbërritjen e Kësulëkuqes", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Të dallosh qëllimet e të tjerëve të ndihmon të kuptosh historinë!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "T lumtë! Ti e përfundove maskimin e ujkut! Tani ai është nën batanije gati për të mashtruar Kësulëkuqen. Le të vazhdojmë!",
+    "isLastEvent": false
+  },
+  {
+    "id": 6,
+    "bannerTitle": "Skena 6",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Pasi eci në pyll, Kësulëkuqja arrin te shtëpia dhe troket në derë. Vendosni kartat në rendin e duhur për ta lënë të hyjë!",
+    "cards": [
+      { "id": 0, "imageName": "scene6_card1", "description": "Kapeleja e Kuqe arrin te shtëpia mes luleve", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene6_card2", "description": "Kapeleja e Kuqe troket lehtë në derën prej druri", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene6_card3", "description": "Ujku përgjigjet me një zë të ngjirur, duke e ftuar vajzën të hyjë", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene6_card4", "description": "Kapeleja e Kuqe hap ngadalë derën dhe hyn e habitur", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Të kushtosh vëmendje ndaj detajeve të pazakonta (si një zë i ngjirur) është një indici i rëndësishëm!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "E pabesueshme! Ti e rendite mbërritjen e saj në mënyrë të përsosur! Tani Kapeleja e Kuqe ka hyrë në dhomë dhe është pranë krevatit. Le të shohim se çfarë ndodh më tej!",
+    "isLastEvent": false
+  },
+  {
+    "id": 7,
+    "bannerTitle": "Skena 7",
+    "introImageName": "3_3",
+    "introText": "Kapeleja e Kuqe bisedon me gjyshen e saj dhe vëren diçka shumë të çuditshme në pamjen e saj. Vendosni kartat në rendin e duhur për të zbuluar ujkun!",
+    "cards": [
+      { "id": 0, "imageName": "scene7_card1", "description": "Kapeleja e Kuqe i afrohet krevatit, duke vënë re veshët e mëdhenj të gjyshes", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene7_card2", "description": "Vajza vëzhgon sytë e mëdhenj dhe i bën ujkut një pyetje tjetër", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene7_card3", "description": "Kapeleja e Kuqe sheh dhëmbë të gjatë dhe të mprehtë nën kapuç", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene7_card4", "description": "Vajza e frikësuar më la fund kupton se ujku është në krevat", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Të bësh pyetje dhe të vëzhgosh me kujdes zbulon të vërtetën!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Përrallore! Ti i rendite dialogët në mënyrë të përsosur! Kapeleja e Kuqe e kuptoi trukun e ujkut dhe ka nevojë për ndihmë. Le të vrapojmë te skena e fundit!",
+    "isLastEvent": false
+  },
+  {
+    "id": 8,
+    "bannerTitle": "Skena 8",
+    "introImageName": "Fine 3",
+    "introText": "Ujku zbulohet, Kapeleja e Kuqe bërtet dhe ndihma arrin për të ndjekur ujkun përgjithmonë. Vendosni kartat në rendin e duhur për fundin e lumtur!",
+    "cards": [
+      { "id": 0, "imageName": "scene8_card1", "description": "Kapeleja e Kuqe vrapon në korridor dhe bërtet fort për ndihmë", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene8_card2", "description": "Prerësit e druve dëgjojnë thirrjet dhe vrapojnë drejt shtëpisë për ta shpëtuar", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene8_card3", "description": "Ujku i frikësuar shpëton nga dritarja dhe vrapon larg në pyll", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene8_card4", "description": "Gjyshja del nga dollapi dhe përqafon fort Kapelejen e Kuqe, më në fund të sigurta", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Mësove: Të ndihmosh njëri-tjetrin në momente vështirësie çon gjithmonë në një fund të lumtur!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Urime! Ke zhbllokuar historinë e plotë të Kësulëkuqes!",
     "isLastEvent": true
   }
 ]

@@ -32,5 +32,13 @@ struct EventFlowView: View {
                 }
             }
         }
+        .onAppear {
+            BackgroundMusicPlayer.shared.fadeOut()
+            ForestAmbiencePlayer.shared.fadeIn()
+        }
+        .onDisappear {
+            ForestAmbiencePlayer.shared.fadeOutAndStop()
+            BackgroundMusicPlayer.shared.fadeIn()
+        }
     }
 }

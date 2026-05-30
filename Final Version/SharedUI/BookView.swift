@@ -35,24 +35,21 @@ struct PageCurlBookView<Page: View>: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIPageViewController, context: Context) {
-        // Update pages if they changed
-        let pagesChanged = context.coordinator.parent.pages.count != pages.count
-        if pagesChanged {
-            context.coordinator.parent = self
-            context.coordinator.setupControllers()
-            
-            // If the UIPageViewController is empty (e.g. loaded before pages were generated), initialize it now
-            if uiViewController.viewControllers?.isEmpty ?? true, !pages.isEmpty {
-                let initialViewControllers = context.coordinator.viewControllers(for: currentPage)
-                uiViewController.setViewControllers(
-                    initialViewControllers,
-                    direction: .forward,
-                    animated: false,
-                    completion: nil
-                )
-                return
-            }
+        context.coordinator.parent = self
+        context.coordinator.updateControllers(with: pages)
+        
+        // If the UIPageViewController is empty (e.g. loaded before pages were generated), initialize it now
+        if uiViewController.viewControllers?.isEmpty ?? true, !pages.isEmpty {
+            let initialViewControllers = context.coordinator.viewControllers(for: currentPage)
+            uiViewController.setViewControllers(
+                initialViewControllers,
+                direction: .forward,
+                animated: false,
+                completion: nil
+            )
+            return
         }
+        
         // Handle programmatic page changes
         if let currentVC = uiViewController.viewControllers?.first,
            let currentIndex = context.coordinator.controllers.firstIndex(of: currentVC) {
@@ -74,7 +71,7 @@ struct PageCurlBookView<Page: View>: UIViewControllerRepresentable {
         init(_ parent: PageCurlBookView) {
             self.parent = parent
             super.init()
-            self.setupControllers()
+            self.updateControllers(with: parent.pages)
         }
         
         func turnToPage(_ targetLeft: Int, in pageViewController: UIPageViewController) {
@@ -109,12 +106,20 @@ struct PageCurlBookView<Page: View>: UIViewControllerRepresentable {
             }
         }
         
-        func setupControllers() {
-            controllers = parent.pages.enumerated().map { index, view in
-                let hc = UIHostingController(rootView: view)
-                hc.view.backgroundColor = .clear
-                hc.view.tag = index
-                return hc
+        func updateControllers(with newPages: [Page]) {
+            if controllers.count != newPages.count {
+                controllers = newPages.enumerated().map { index, view in
+                    let hc = UIHostingController(rootView: view)
+                    hc.view.backgroundColor = .clear
+                    hc.view.tag = index
+                    return hc
+                }
+            } else {
+                for (index, view) in newPages.enumerated() {
+                    if let hc = controllers[index] as? UIHostingController<Page> {
+                        hc.rootView = view
+                    }
+                }
             }
         }
 
@@ -195,89 +200,183 @@ struct FairyTaleBookmark: Identifiable {
     let startPageIndex: Int
 }
 
+struct StoryScene: Identifiable {
+    let id: Int
+    let titleKey: String
+    let text1Key: String
+    let text2Key: String
+    let introImageName: String
+    let rewardImageName: String
+}
+
 struct BookView: View {
+    static let redHoodScenes = [
+        StoryScene(
+            id: 1,
+            titleKey: "story.redhood.scene1.title",
+            text1Key: "story.redhood.scene1.text1",
+            text2Key: "story.redhood.scene1.text2",
+            introImageName: "Introduzione 1 evento",
+            rewardImageName: "Fine primo evento"
+        ),
+        StoryScene(
+            id: 2,
+            titleKey: "story.redhood.scene2.title",
+            text1Key: "story.redhood.scene2.text1",
+            text2Key: "story.redhood.scene2.text2",
+            introImageName: "Introduzione 2 evento",
+            rewardImageName: "Reward evento 2"
+        ),
+        StoryScene(
+            id: 3,
+            titleKey: "story.redhood.scene3.title",
+            text1Key: "story.redhood.scene3.text1",
+            text2Key: "story.redhood.scene3.text2",
+            introImageName: "Introduzione_3",
+            rewardImageName: "Fine 3"
+        ),
+        StoryScene(
+            id: 4,
+            titleKey: "story.redhood.scene4.title",
+            text1Key: "story.redhood.scene4.text1",
+            text2Key: "story.redhood.scene4.text2",
+            introImageName: "3_1",
+            rewardImageName: "Fine 3"
+        ),
+        StoryScene(
+            id: 5,
+            titleKey: "story.redhood.scene5.title",
+            text1Key: "story.redhood.scene5.text1",
+            text2Key: "story.redhood.scene5.text2",
+            introImageName: "3_3",
+            rewardImageName: "Fine 3"
+        ),
+        StoryScene(
+            id: 6,
+            titleKey: "story.redhood.scene6.title",
+            text1Key: "story.redhood.scene6.text1",
+            text2Key: "story.redhood.scene6.text2",
+            introImageName: "Introduzione 2 evento",
+            rewardImageName: "Fine 3"
+        ),
+        StoryScene(
+            id: 7,
+            titleKey: "story.redhood.scene7.title",
+            text1Key: "story.redhood.scene7.text1",
+            text2Key: "story.redhood.scene7.text2",
+            introImageName: "3_3",
+            rewardImageName: "Fine 3"
+        ),
+        StoryScene(
+            id: 8,
+            titleKey: "story.redhood.scene8.title",
+            text1Key: "story.redhood.scene8.text1",
+            text2Key: "story.redhood.scene8.text2",
+            introImageName: "Fine 3",
+            rewardImageName: "Fine primo evento"
+        )
+    ]
+
     let onDismiss: () -> Void
     @EnvironmentObject private var lm: LanguageManager
     @State private var completedEvents: [EventData] = []
     @State private var currentPage = 0
     @State private var bookPages: [AnyView] = []
     @State private var bookmarks: [FairyTaleBookmark] = []
+    @State private var lastIsCompact: Bool? = nil
     
     var body: some View {
-        ZStack {
-            // Background
-            Color.black.opacity(0.8).ignoresSafeArea()
+        GeometryReader { geom in
+            let isCompact = geom.size.width < 600
             
-            ZStack(alignment: .topTrailing) {
-                OpenBookBackground()
+            ZStack {
+                // Background
+                Color.black.opacity(0.8).ignoresSafeArea()
                 
-                PageCurlBookView(pages: bookPages, currentPage: $currentPage)
-                
-                // Bookmarks UI
-                VStack(spacing: 8) {
-                    ForEach(bookmarks) { bookmark in
-                        Button(action: {
-                            // Turn to page when bookmark is tapped
-                            currentPage = bookmark.startPageIndex
-                        }) {
-                            ZStack {
-                                Path { path in
-                                    path.move(to: CGPoint(x: 0, y: 0))
-                                    path.addLine(to: CGPoint(x: 40, y: 0))
-                                    path.addLine(to: CGPoint(x: 40, y: 50))
-                                    path.addLine(to: CGPoint(x: 20, y: 40))
-                                    path.addLine(to: CGPoint(x: 0, y: 50))
-                                    path.closeSubpath()
+                ZStack(alignment: .topTrailing) {
+                    OpenBookBackground()
+                    
+                    PageCurlBookView(pages: bookPages, currentPage: $currentPage)
+                    
+                    // Bookmarks UI
+                    VStack(spacing: isCompact ? 6 : 8) {
+                        ForEach(bookmarks) { bookmark in
+                            Button(action: {
+                                currentPage = bookmark.startPageIndex
+                            }) {
+                                ZStack {
+                                    Path { path in
+                                        let w: CGFloat = isCompact ? 24 : 40
+                                        let h: CGFloat = isCompact ? 32 : 50
+                                        let arrow: CGFloat = isCompact ? 25 : 40
+                                        path.move(to: CGPoint(x: 0, y: 0))
+                                        path.addLine(to: CGPoint(x: w, y: 0))
+                                        path.addLine(to: CGPoint(x: w, y: h))
+                                        path.addLine(to: CGPoint(x: w / 2, y: arrow))
+                                        path.addLine(to: CGPoint(x: 0, y: h))
+                                        path.closeSubpath()
+                                    }
+                                    .fill(LinearGradient(gradient: Gradient(colors: [bookmark.info.color.opacity(0.9), bookmark.info.color.opacity(0.7)]), startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: isCompact ? 24 : 40, height: isCompact ? 32 : 50)
+                                    .shadow(color: .black.opacity(0.4), radius: 2, x: 2, y: 2)
+                                    
+                                    Text(bookmark.info.emoji)
+                                        .font(.system(size: isCompact ? 12 : 20))
+                                        .offset(y: isCompact ? -3 : -5)
                                 }
-                                .fill(LinearGradient(gradient: Gradient(colors: [bookmark.info.color.opacity(0.9), bookmark.info.color.opacity(0.7)]), startPoint: .leading, endPoint: .trailing))
-                                .frame(width: 40, height: 50)
-                                .shadow(color: .black.opacity(0.4), radius: 2, x: 2, y: 2)
-                                
-                                // Icon representing the specific fairy tale
-                                Text(bookmark.info.emoji)
-                                    .font(.system(size: 20))
-                                    .offset(y: -5)
                             }
+                            .buttonStyle(.plain)
+                            .offset(x: isBookmarkActive(bookmark) ? (isCompact ? -12 : -20) : 0)
+                            .animation(.spring(), value: currentPage)
                         }
-                        .buttonStyle(.plain)
-                        // Make active bookmark stick out more
-                        .offset(x: isBookmarkActive(bookmark) ? -20 : 0)
-                        .animation(.spring(), value: currentPage)
                     }
+                    .offset(x: isCompact ? 15 : 30, y: isCompact ? 10 : 20)
                 }
-                .offset(x: 30, y: 20) // Hang off the right side
-            }
-            .aspectRatio(1.5, contentMode: .fit)
-            .padding(50)
-            
-            // Close Button
-            VStack {
-                HStack {
+                .aspectRatio(1.5, contentMode: .fit)
+                .padding(isCompact ? 12 : 50)
+                
+                // Close Button
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button(action: onDismiss) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: isCompact ? 30 : 40))
+                                .foregroundColor(.white)
+                                .padding(isCompact ? 12 : 20)
+                        }
+                    }
                     Spacer()
-                    Button(action: onDismiss) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(.white)
-                            .padding()
-                    }
                 }
-                Spacer()
             }
-        }
-        .onAppear {
-            loadCompletedEvents()
+            .onAppear {
+                let initialCompact = geom.size.width < 600
+                self.lastIsCompact = initialCompact
+                loadCompletedEvents(isCompact: initialCompact)
+            }
+            .onChange(of: lm.currentLanguage) { _ in
+                if let isCompact = lastIsCompact {
+                    buildPagesAndBookmarks(isCompact: isCompact)
+                }
+            }
+            .onChange(of: geom.size.width) { _ in
+                let isCompact = geom.size.width < 600
+                if isCompact != lastIsCompact {
+                    self.lastIsCompact = isCompact
+                    buildPagesAndBookmarks(isCompact: isCompact)
+                }
+            }
         }
     }
     
     private func isBookmarkActive(_ bookmark: FairyTaleBookmark) -> Bool {
-        // A bookmark is active if the current page is within its range
         guard let index = bookmarks.firstIndex(where: { $0.id == bookmark.id }) else { return false }
         let startPage = bookmark.startPageIndex
         let endPage = (index < bookmarks.count - 1) ? bookmarks[index + 1].startPageIndex : bookPages.count
         return currentPage >= startPage && currentPage < endPage
     }
     
-    private func loadCompletedEvents() {
+    private func loadCompletedEvents(isCompact: Bool) {
         let savedLevels = Set(UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? [])
         let bundle = lm.bundle
         var loadedEvents: [EventData] = []
@@ -289,34 +388,70 @@ struct BookView: View {
             }
         }
         self.completedEvents = loadedEvents
-        buildPagesAndBookmarks()
+        buildPagesAndBookmarks(isCompact: isCompact)
     }
     
-    private func buildPagesAndBookmarks() {
+    private func paginateText(_ text: String, isDyslexiaEnabled: Bool, isCompact: Bool) -> [String] {
+        let paragraphs = text.components(separatedBy: "\n\n")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        
+        let maxChars = isCompact 
+            ? (isDyslexiaEnabled ? 130 : 180) 
+            : (isDyslexiaEnabled ? 180 : 250)
+            
+        var pages: [String] = []
+        var currentPage = ""
+        
+        for paragraph in paragraphs {
+            if currentPage.isEmpty {
+                currentPage = paragraph
+            } else {
+                if currentPage.count + paragraph.count + 2 > maxChars {
+                    pages.append(currentPage)
+                    currentPage = paragraph
+                } else {
+                    currentPage += "\n\n" + paragraph
+                }
+            }
+        }
+        
+        if !currentPage.isEmpty {
+            pages.append(currentPage)
+        }
+        
+        return pages
+    }
+    
+    private func buildPagesAndBookmarks(isCompact: Bool) {
         var newPages: [AnyView] = []
         var newBookmarks: [FairyTaleBookmark] = []
+        
+        let isDyslexiaEnabled = UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey)
+        let pagePadding: CGFloat = isCompact ? 16 : 40
+        let titleFont = isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)
+        let textFont = isCompact ? Font.app(.subheadline, weight: .regular) : Font.app(.title3, weight: .regular)
+        let lineSpacing: CGFloat = isCompact ? 3 : 6
         
         func pageContainer<Content: View>(isLeft: Bool, @ViewBuilder content: () -> Content) -> AnyView {
             AnyView(
                 ZStack {
-                    // Solid page color
                     Color(red: 0.96, green: 0.92, blue: 0.82)
                     
-                    // Spine shadow for depth
                     HStack(spacing: 0) {
                         if isLeft {
                             Spacer(minLength: 0)
                             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .trailing, endPoint: .leading)
-                                .frame(width: 40)
+                                .frame(width: isCompact ? 20 : 40)
                         } else {
                             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .leading, endPoint: .trailing)
-                                .frame(width: 40)
+                                .frame(width: isCompact ? 20 : 40)
                             Spacer(minLength: 0)
                         }
                     }
                     
                     content()
-                        .padding(40)
+                        .padding(pagePadding)
                 }
                 .clipped()
             )
@@ -324,12 +459,12 @@ struct BookView: View {
         
         func addPlaceholder(title: String, subtitle: String) {
             let emptyLeft = pageContainer(isLeft: true) {
-                VStack(spacing: 20) {
+                VStack(spacing: isCompact ? 10 : 20) {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 60))
+                        .font(.system(size: isCompact ? 30 : 60))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
                     Text(subtitle)
-                        .font(.app(.title3))
+                        .font(isCompact ? .app(.subheadline) : .app(.title3))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
                         .multilineTextAlignment(.center)
                 }
@@ -337,7 +472,7 @@ struct BookView: View {
             let emptyRight = pageContainer(isLeft: false) {
                 VStack(alignment: .leading) {
                     Text(title)
-                        .font(.app(.title))
+                        .font(isCompact ? .app(.headline) : .app(.title))
                         .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
                     Spacer()
                 }
@@ -346,41 +481,165 @@ struct BookView: View {
             newPages.append(emptyRight)
         }
         
-        // Build for each fairy tale
         for tale in fairyTales {
             let startPage = newPages.count
             newBookmarks.append(FairyTaleBookmark(info: tale, startPageIndex: startPage))
             
             if tale.title == "Cappuccetto Rosso" {
                 if completedEvents.isEmpty {
-                    addPlaceholder(title: tale.title, subtitle: "Gioca per sbloccare le scene!")
+                    addPlaceholder(title: tale.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
                 } else {
-                    for event in completedEvents {
-                        let leftPage = pageContainer(isLeft: true) {
-                            Image(event.rewardImageName)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
-                        let rightPage = pageContainer(isLeft: false) {
-                            VStack(alignment: .leading, spacing: 20) {
-                                Text(event.bannerTitle)
-                                    .font(.app(.title))
-                                    .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
-                                Text(event.rewardText)
-                                    .font(.app(.title3))
-                                    .foregroundColor(Color(red: 0.2, green: 0.1, blue: 0.05))
-                                    .multilineTextAlignment(.leading)
-                                Spacer()
+                    let maxCompletedId = completedEvents.map(\.id).max() ?? 0
+                    let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
+                    
+                    if visibleScenes.isEmpty {
+                        addPlaceholder(title: tale.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
+                    } else {
+                        var pageIndex = newPages.count
+                        for scene in visibleScenes {
+                            // Page 1: Chapter Title + Intro Image
+                            let introPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                                VStack(spacing: isCompact ? 10 : 20) {
+                                    Text(lm.t(scene.titleKey))
+                                        .font(titleFont)
+                                        .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, isCompact ? 10 : 20)
+                                    
+                                    Rectangle()
+                                        .fill(Color(red: 0.55, green: 0.31, blue: 0.09).opacity(0.3))
+                                        .frame(height: 1.5)
+                                        .frame(width: isCompact ? 40 : 80)
+                                    
+                                    Spacer(minLength: 0)
+                                    
+                                    if UIImage(named: scene.introImageName) != nil {
+                                        Image(scene.introImageName)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .cornerRadius(isCompact ? 8 : 12)
+                                            .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
+                                            .padding(.horizontal, isCompact ? 10 : 20)
+                                    } else {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                                .fill(LinearGradient(
+                                                    colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
+                                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                                ))
+                                            
+                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                                .strokeBorder(
+                                                    Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
+                                                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
+                                                )
+                                            
+                                            VStack(spacing: isCompact ? 4 : 8) {
+                                                Image(systemName: "photo.on.rectangle.angled")
+                                                    .font(.system(size: isCompact ? 20 : 32))
+                                                    .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
+                                                Text(lm.t("Immagine di Introduzione"))
+                                                    .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
+                                                    .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
+                                            }
+                                        }
+                                        .aspectRatio(16/9, contentMode: .fit)
+                                        .padding(.horizontal, isCompact ? 10 : 20)
+                                    }
+                                    
+                                    Spacer(minLength: 0)
+                                }
+                                .padding(.vertical, isCompact ? 12 : 30)
                             }
+                            newPages.append(introPage)
+                            pageIndex += 1
+                            
+                            // Text Pages
+                            let fullText = lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
+                            let textPages = paginateText(fullText, isDyslexiaEnabled: isDyslexiaEnabled, isCompact: isCompact)
+                            
+                            for chunk in textPages {
+                                let textPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                                    VStack(alignment: .leading, spacing: isCompact ? 8 : 16) {
+                                        Text(chunk)
+                                            .font(textFont)
+                                            .foregroundColor(Color(red: 0.2, green: 0.1, blue: 0.05))
+                                            .lineSpacing(lineSpacing)
+                                            .multilineTextAlignment(.leading)
+                                            .padding(.horizontal, isCompact ? 5 : 10)
+                                    }
+                                    .padding(.vertical, isCompact ? 10 : 20)
+                                }
+                                newPages.append(textPage)
+                                pageIndex += 1
+                            }
+                            
+                            // Filler Page (if total scene pages is odd, we balance to keep it double-sided)
+                            if textPages.count % 2 != 0 {
+                                let fillerPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                                    VStack {
+                                        Spacer()
+                                        Text("🌸")
+                                            .font(.system(size: isCompact ? 18 : 30))
+                                            .opacity(0.3)
+                                        Spacer()
+                                    }
+                                }
+                                newPages.append(fillerPage)
+                                pageIndex += 1
+                            }
+                            
+                            // Reward Image Page
+                            let rewardPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                                VStack {
+                                    Spacer()
+                                    if UIImage(named: scene.rewardImageName) != nil {
+                                        Image(scene.rewardImageName)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .cornerRadius(isCompact ? 8 : 12)
+                                            .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
+                                            .padding(.horizontal, isCompact ? 10 : 20)
+                                    } else {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                                .fill(LinearGradient(
+                                                    colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
+                                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                                ))
+                                            
+                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                                .strokeBorder(
+                                                    Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
+                                                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
+                                                )
+                                            
+                                            VStack(spacing: isCompact ? 4 : 8) {
+                                                Image(systemName: "photo.on.rectangle")
+                                                    .font(.system(size: isCompact ? 20 : 32))
+                                                    .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
+                                                Text(lm.t("Immagine di Ricompensa"))
+                                                    .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
+                                                    .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
+                                            }
+                                        }
+                                        .aspectRatio(16/9, contentMode: .fit)
+                                        .padding(.horizontal, isCompact ? 10 : 20)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, isCompact ? 12 : 30)
+                            }
+                            newPages.append(rewardPage)
+                            pageIndex += 1
                         }
-                        newPages.append(leftPage)
-                        newPages.append(rightPage)
                     }
                 }
             } else {
-                addPlaceholder(title: tale.title, subtitle: "Prossimamente...")
+                addPlaceholder(title: tale.title, subtitle: lm.t("Prossimamente..."))
             }
         }
+
         
         self.bookPages = newPages
         self.bookmarks = newBookmarks

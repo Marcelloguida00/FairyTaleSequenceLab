@@ -48,6 +48,91 @@
     "learningOutcome": "یاد گرفتی: عواقب = اعمال نتیجه دارند",
     "rewardImageName": "Fine 3",
     "rewardText": "حالا گرگ می‌داند کجا می‌تواند مادربزرگ را پیدا کند. بعد چه اتفاقی می‌افتد؟",
+    "isLastEvent": false
+  },
+  {
+    "id": 4,
+    "bannerTitle": "صحنه ۴",
+    "introImageName": "3_1",
+    "introText": "گرگ با تمام سرعت به سمت خانه مادربزرگ می‌دود تا قبل از شنل قرمزی به آنجا برسد. کارت‌ها را به ترتیب صحیح از چپ به راست قرار دهید تا ببینید او چگونه می‌رسد!",
+    "cards": [
+      { "id": 0, "imageName": "scene4_card1", "description": "گرگ با سرعت از میان درختان و ریشه‌های جنگل می‌دود", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene4_card2", "description": "گرگ برای اینکه اولین نفر برسد، یک میانبر مخفی را دنبال می‌کند", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene4_card3", "description": "گرگ خسته اما خوشحال به جلوی کلبه مادربزرگ می‌رسد", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene4_card4", "description": "گرگ با تظاهر به شنل قرمزی در خانه مادربزرگ را می‌زند", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتید: سریع اقدام کردن و برنامه‌ریزی مراحل شما را به هدفتان می‌رساند!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "کار عالی! شما دویدن گرگ را به خوبی مرتب کردید! اکنون گرگ به کلبه رسیده و در خانه مادربزرگ را می‌زند. داستان ادامه دارد!",
+    "isLastEvent": false
+  },
+  {
+    "id": 5,
+    "bannerTitle": "صحنه ۵",
+    "introImageName": "3_3",
+    "introText": "گرگ وارد خانه مادربزرگ شده و آماده می‌شود تا با لباس مبدل مادربزرگ منتظر شنل قرمزی بماند. کارت‌ها را مرتب کنید تا تغییر چهره او کامل شود!",
+    "cards": [
+      { "id": 0, "imageName": "scene5_card1", "description": "گرگ وارد کلبه می‌شود و مادربزرگ ترسیده در یک کمد پنهان می‌شود", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene5_card2", "description": "گرگ لباس‌های مادربزرگ را پیدا می‌کند و تصمیم می‌گیرد تغییر چهره دهد", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene5_card3", "description": "گرگ کلاه خواب را سرش می‌گذارد و به زیر پتو می‌رود", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene5_card4", "description": "گرگ بی صدا در رختخواب منتظر ورود شنل قرمزی می‌ماند", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتید: شناختن نیات دیگران به شما در درک داستان کمک می‌کند!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "آفرین! شما تغییر چهره گرگ را کامل کردید! اکنون او زیر پتو است و آماده است تا شنل قرمزی را فریب دهد. بیایید ادامه دهیم!",
+    "isLastEvent": false
+  },
+  {
+    "id": 6,
+    "bannerTitle": "صحنه ۶",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "شنل قرمزی پس از راه رفتن در جنگل به کلبه می‌رسد و در می‌زند. کارت‌ها را مرتب کنید تا او وارد شود!",
+    "cards": [
+      { "id": 0, "imageName": "scene6_card1", "description": "شنل قرمزی به کلبه در میان گل‌ها می‌رسد", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene6_card2", "description": "شنل قرمزی به آرامی در چوبی را می‌زند", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene6_card3", "description": "گرگ با صدایی گرفته پاسخ می‌دهد و دخترک را به داخل دعوت می‌کند", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene6_card4", "description": "شنل قرمزی به آرامی در را باز می‌کند و با تعجب وارد می‌شود", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتید: توجه به جزئیات غیرعادی (مانند صدای گرفته) یک سرنخ مهم است!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "فوق‌العاده! شما ورود او را به خوبی مرتب کردید! اکنون شنل قرمزی وارد اتاق شده و به رختخواب نزدیک است. بیایید ببینیم چه می‌شود!",
+    "isLastEvent": false
+  },
+  {
+    "id": 7,
+    "bannerTitle": "صحنه ۷",
+    "introImageName": "3_3",
+    "introText": "شنل قرمزی با مادربزرگش صحبت می‌کند و متوجه چیز بسیار عجیبی در ظاهر او می‌شود. کارت‌ها را مرتب کنید تا دست گرگ رو شود!",
+    "cards": [
+      { "id": 0, "imageName": "scene7_card1", "description": "شنل قرمزی به رختخواب نزدیک می‌شود و متوجه گوش‌های بزرگ مادربزرگ می‌شود", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene7_card2", "description": "دخترک چشم‌های بزرگ را مشاهده می‌کند و سوال دیگری از گرگ می‌پرسد", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene7_card3", "description": "شنل قرمزی دندان‌های بلند و تیز را زیر کلاه خواب می‌بیند", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene7_card4", "description": "دخترک ترسیده بالاخره متوجه می‌شود که گرگ در رختخواب است", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتید: سوال پرسیدن و مشاهده دقیق حقیقت را آشکار می‌کند!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "شگفت‌انگیز! شما دیالوگ‌ها را عالی مرتب کردید! شنل قرمزی متوجه حقه گرگ شد و نیاز به کمک دارد. بیایید به صحنه آخر برویم!",
+    "isLastEvent": false
+  },
+  {
+    "id": 8,
+    "bannerTitle": "صحنه ۸",
+    "introImageName": "Fine 3",
+    "introText": "دست گرگ رو می‌شود، شنل قرمزی فریاد می‌زند و کمک می‌رسد تا گرگ را برای همیشه فراری دهد. کارت‌ها را برای پایان خوش داستان مرتب کنید!",
+    "cards": [
+      { "id": 0, "imageName": "scene8_card1", "description": "شنل قرمزی به راهرو می‌دود و با صدای بلند فریاد می‌زند و کمک می‌خواهد", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene8_card2", "description": "هیزم‌شکنان فریادها را می‌شنوند و برای نجات او به خانه می‌دوند", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene8_card3", "description": "گرگ ترسیده از پنجره فرار می‌کند و به اعماق جنگل می‌گریزد", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene8_card4", "description": "مادربزرگ از کمد خارج می‌شود و شنل قرمزی را در آغوش می‌گیرد، آنها بالاخره در امان هستند", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "یاد گرفتید: کمک به یکدیگر در مواقع سختی همیشه به یک پایان خوش منجر می‌شود!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "تبریک می‌گویم! شما داستان کامل شنل قرمزی را باز کردید!",
     "isLastEvent": true
   }
 ]
