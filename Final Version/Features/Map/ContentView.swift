@@ -368,6 +368,7 @@ struct ContentView: View {
 
     private func levelBannerTitle(for level: Int) -> String {
         if level == 0 { return lm.t("level.adventure_begins") }
+        if level == 9 { return lm.t("redhood.final.title") == "redhood.final.title" ? "Incantesimo Spezzato!" : lm.t("redhood.final.title") }
         return EventLoader.event(id: level, from: lm.bundle)?.bannerTitle ?? lm.t("level.new_scene")
     }
 
@@ -402,7 +403,7 @@ struct ContentView: View {
     }
 
     private var redHoodLevelIDs: [Int] {
-        Array(0...EventLoader.maxEventId(from: lm.bundle))
+        Array(0...9)
     }
 
     private func canonicalCompletedRedHoodLevels(from levels: Set<Int>) -> Set<Int> {
@@ -566,6 +567,13 @@ struct ContentView: View {
             RedHoodLevel0View {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     markRedHoodLevelCompleted(0)
+                    activeRedHoodLevel = nil
+                }
+            }
+        } else if level == 9 {
+            RedHoodLevelFinalView {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    markRedHoodLevelCompleted(9)
                     activeRedHoodLevel = nil
                 }
             }
