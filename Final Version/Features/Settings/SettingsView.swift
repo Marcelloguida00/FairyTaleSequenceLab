@@ -22,6 +22,7 @@ private enum SettingsRoute: Equatable {
 
 struct SettingsView: View {
     @EnvironmentObject var lm: LanguageManager
+    @Environment(AppFontSettings.self) private var fontSettings
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -33,8 +34,6 @@ struct SettingsView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
-    @AppStorage("dyslexiaFontEnabled") private var dyslexiaFontEnabled = false
-
     @State private var showResetProgressConfirmation = false
     @State private var route: SettingsRoute = .main
     @State private var returnRoute: SettingsRoute = .main
@@ -301,7 +300,7 @@ struct SettingsView: View {
                 Button {
                     AppSettings.hapticImpact(.light)
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        dyslexiaFontEnabled.toggle()
+                        fontSettings.dyslexiaFontEnabled.toggle()
                     }
                 } label: {
                     HStack(spacing: 14) {
@@ -323,7 +322,7 @@ struct SettingsView: View {
 
                         Spacer()
 
-                        settingsToggle(isOn: dyslexiaFontEnabled)
+                        settingsToggle(isOn: fontSettings.dyslexiaFontEnabled)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -332,7 +331,7 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(lm.t("settings.dyslexia_font"))
                 .accessibilityHint(lm.t("settings.dyslexia_font.description"))
-                .accessibilityAddTraits(dyslexiaFontEnabled ? [.isSelected] : [])
+                .accessibilityAddTraits(fontSettings.dyslexiaFontEnabled ? [.isSelected] : [])
             }
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -716,7 +715,7 @@ struct SettingsView: View {
             Button {
                 AppSettings.hapticImpact(.light)
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    dyslexiaFontEnabled.toggle()
+                    fontSettings.dyslexiaFontEnabled.toggle()
                 }
             } label: {
                 HStack(spacing: usesFrameLayout ? 18 : 14) {
@@ -738,7 +737,7 @@ struct SettingsView: View {
 
                     Spacer()
 
-                    settingsToggle(isOn: dyslexiaFontEnabled, expanded: usesFrameLayout)
+                    settingsToggle(isOn: fontSettings.dyslexiaFontEnabled, expanded: usesFrameLayout)
                 }
                 .padding(.horizontal, usesFrameLayout ? 24 : 18)
                 .padding(.vertical, usesFrameLayout ? 20 : 16)

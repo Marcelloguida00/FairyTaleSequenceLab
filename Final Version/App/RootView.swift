@@ -3,7 +3,7 @@ import SwiftUI
 struct RootView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("hasSeenTutorial")   private var hasSeenTutorial   = false
-    @AppStorage("dyslexiaFontEnabled") private var dyslexiaFontEnabled = false
+    @Environment(AppFontSettings.self) private var fontSettings
 
     @State private var gameStarted = false
     @State private var menuCloudEnterProgress: CGFloat = 1
@@ -78,7 +78,8 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .font(dyslexiaFontEnabled ? .appBody : .appBody)
+        .font(.appBody)
+        .id(fontSettings.dyslexiaFontEnabled)
         .onAppear {
             BackgroundMusicPlayer.shared.start()
         }

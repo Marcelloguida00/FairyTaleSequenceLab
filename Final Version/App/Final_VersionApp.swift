@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct Final_VersionApp: App {
     @StateObject private var languageManager = LanguageManager()
+    @State private var fontSettings = AppFontSettings()
 
     init() {
         AppTypography.registerCustomFonts()
@@ -19,6 +20,7 @@ struct Final_VersionApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(languageManager)
+                .environment(fontSettings)
                 .font(.appBody)
         }
     }
