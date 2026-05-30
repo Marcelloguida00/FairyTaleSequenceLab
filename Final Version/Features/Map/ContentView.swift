@@ -757,6 +757,10 @@ private struct ComingSoonBadge: View {
 
     @EnvironmentObject private var lm: LanguageManager
 
+    private var releaseDateText: String {
+        MapReleaseSchedule.formattedComingSoonDate(languageCode: lm.currentLanguage)
+    }
+
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: "clock.fill")
@@ -768,6 +772,13 @@ private struct ComingSoonBadge: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(1)
                 .minimumScaleFactor(0.65)
+                .allowsTightening(true)
+            Text(releaseDateText)
+                .font(.app(size: fontSize * 0.72, weight: .regular))
+                .foregroundStyle(Color(red: 0.42, green: 0.22, blue: 0.08))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
                 .allowsTightening(true)
         }
         .padding(.horizontal, 16)
@@ -1250,6 +1261,19 @@ private enum WorldMapPixel {
 
     static func point(x: CGFloat, y: CGFloat) -> CGPoint {
         CGPoint(x: x, y: y)
+    }
+}
+
+private enum MapReleaseSchedule {
+    /// Target release for locked map regions (one month from May 29, 2026).
+    static let comingSoonDate = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 29))!
+
+    static func formattedComingSoonDate(languageCode: String) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: languageCode)
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter.string(from: comingSoonDate)
     }
 }
 

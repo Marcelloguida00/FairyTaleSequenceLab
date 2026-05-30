@@ -21,7 +21,14 @@ struct Final_VersionApp: App {
             RootView()
                 .environmentObject(languageManager)
                 .environment(fontSettings)
-                .font(.appBody)
+                .font(Font.custom(
+                    AppTypography.fontName(
+                        for: .regular,
+                        dyslexiaEnabled: fontSettings.dyslexiaFontEnabled
+                    ),
+                    size: 17,
+                    relativeTo: .body
+                ))
         }
     }
 }
