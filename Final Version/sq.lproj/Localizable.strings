@@ -159,3 +159,40 @@
 "a11y.continue_sequencing"  = "Vazhdo te aktiviteti i renditjes";
 "a11y.check_order"          = "Kontrollo rendin e historisë";
 "a11y.flip_all"             = "Kthej të gjitha kartat";
+
+/* Albanian Story Book Scenes */
+"story.redhood.scene1.title" = "Skena 1 — Shporta për Gjyshen";
+"story.redhood.scene1.text1" = "Kësulëkuqja ishte në shtëpi me nënën e saj. Ishte një mëngjes i qetë, por nëna ishte pak e shqetësuar sepse gjyshja nuk ndihej mirë.\n\nKështu ajo mori një shportë dhe filloi ta mbushte me gjëra të mira: bukë të butë, fruta të freskëta, një kulaç të vogël dhe diçka të ngrohtë për t'i çuar gjyshes.";
+"story.redhood.scene1.text2" = "«Kësulëkuqe,» tha nëna me ëmbëlsi, «a mund t'ia çosh këtë shportë gjyshes? Ajo do të gëzohet shumë për vizitën tënde.»\n\nKësulëkuqja buzëqeshi. Ajo veshi mantelin e saj të kuq, mori shportën cuar me kujdes dhe përshëndeti nënën.\n\nPastaj hapi derën e shtëpisë dhe doli jashtë, e gatshme për të ecur drejt shtëpisë së gjyshes.";
+
+"story.redhood.scene2.title" = "Skena 2 — Rruga në Pyll";
+"story.redhood.scene2.text1" = "Kësulëkuqja hyri në pyll duke ndjekur shtegun që e njihte mirë. Ecëte ngadalë, duke e mbajtur shportën shtrënguar në duar.\n\nRreth saj kishte pemë të larta, gjethe të gjelbra dhe shumë tinguj të vegjël.";
+"story.redhood.scene2.text2" = "Zogjtë këndonin nëpër degë dhe disa flutura fluturonin lehtë mes luleve.\n\nKësulëkuqja u ndal për një çast të shikonte lulet shumëngjyrëshe pranë shtegut. Ishin të bukura dhe me aromë të mirë.\n\nPastaj iu kujtua gjyshja dhe vazhdoi të ecte.\n\n«Duhet të arrij shpejt,» mendoi ajo. «Gjyshja po më pret.»";
+
+"story.redhood.scene3.title" = "Skena 3 — Takimi me Ujkun";
+"story.redhood.scene3.text1" = "Ndërsa Kësulëkuqja po ecte përgjatë shtegut, pas një peme u shfaq një ujk.\n\nUjku e shikoi dhe i foli me zë të butë.\n\n«Mirëdita, vogëlushe. Ku po shkon me atë shportë të bukur?»";
+"story.redhood.scene3.text2" = "Kësulëkuqja, që ishte e edukuar, u përgjigj: «Po shkoj te gjyshja ime. Nuk ndihet mirë dhe po i çoj diçka për të ngrënë.»\n\nUjku dëgjoi me vëmendje. Pastaj buzëqeshi me dhelpëri.\n\n«Sa vajzë e mirë,» tha ai.\n\nPor në mendjen e tij, ujku po thurte një plan për të arritur para saj te shtëpia e gjyshes.";
+
+"story.redhood.scene4.title" = "Skena 4 — Ujku Vrapon te Gjyshja";
+"story.redhood.scene4.text1" = "Sapo Kësulëkuqja filloi të ecte përsëri, ujku vrapoi shpejt nëpër pyll.\n\nKaloi mes pemëve, këceu mbi rrënjët dhe ndoqi një rrugë të shkurtër të fshehur.";
+"story.redhood.scene4.text2" = "Për pak kohë mbërriti para shtëpisë së gjyshes. Shtëpiza ishte e vogël dhe e qetë, me një derë druri dhe një dritare pranë kopshtit.\n\nUjku iu afrua derës dhe trokiti.\n\nTrok, trok, trok.\n\nNga brenda, gjyshja pyeti: «Kush është?»\n\nUjku u përpoq të bënte një zë të ëmbël dhe u përgjigj: «Jam unë, Kësulëkuqja.»";
+
+"story.redhood.scene5.title" = "Skena 5 — Ujku Heq si Gjyshja";
+"story.redhood.scene5.text1" = "Ujku hyri në shtëpinë e gjyshes. Gjyshja, duke kuptuar se diçka nuk shkonte, u fsheh e sigurt në një dhomëz të vogël.";
+"story.redhood.scene5.text2" = "Ndërkohë ujku shkoi në dhomën e gjyshes. Pa shtratin e saj, jastëkun dhe kapelën e saj të natës.\n\nKështu veshi kapelën e gjyshes dhe u fut nën batanije. U përpoq të dukej fiks si ajo.\n\nPastaj qëndroi pa lëvizur në shtrat, duke pritur Kësulëkuqen.\n\nDhoma ishte e qetë, por ujku i mbante veshët mirë hapur.";
+
+"story.redhood.scene6.title" = "Skena 6 — Kësulëkuqja Mbërrin te Shtëpiza";
+"story.redhood.scene6.text1" = "Pasi eci edhe pak, Kësulëkuqja më në fund mbërriti te shtëpia e gjyshes.\n\nU ndal para derës dhe trokiti lehtë.\n\nTrok, trok, trok.";
+"story.redhood.scene6.text2" = "Nga brenda u dëgjua një zë i çuditshëm, pak i ngjirur.\n\n«Hyr brenda, vajza ime.»\n\nKësulëkuqja u habit. Zëri i gjyshes dukej ndryshe nga zakonisht.\n\nHapi derën ngadalë, hyri në shtëpi dhe iu afrua dhomës së gjumit.";
+
+"story.redhood.scene7.title" = "Skena 7 — Diçka nuk Shkon";
+"story.redhood.scene7.text1" = "Kësulëkuqja hyri në dhomën e gjumit dhe pa «gjyshen» të shtrirë në shtrat. U afrua me kujdes.\n\nShikoi fytyrën nën kapelë dhe e kuptoi menjëherë se diçka nuk shkonte.\n\n«Gjyshe,» tha ajo, «sa veshë të mëdhenj që ke!»\n\n«Janë për të të dëgjuar më mirë,» u përgjigj ujku.";
+"story.redhood.scene7.text2" = "Kësulëkuqja bëri një hap tjetër.\n\n«Gjyshe, sa sy të mëdhenj që ke!»\n\n«Janë për të të parë më mirë,» tha ujku.\n\nPastaj Kësulëkuqja pa dhëmbët.\n\n«Gjyshe… sa dhëmbë të mëdhenj që ke!»\n\nNë Spiral, ajo e kuptoi se ajo nuk ishte gjyshja e saj.";
+
+"story.redhood.scene8.title" = "Skena 8 — Fundi i Lumtur";
+"story.redhood.scene8.text1" = "Kësulëkuqja u frikësua dhe bërtiti menjëherë për ndihmë.\n\n«Ndihmë! Ndihmë!»\n\nZëri i saj u dëgjua jashtë shtëpisë. Pak më vonë, disa njerëz që kalonin pranë shtegut dëgjuan thirrjen dhe vrapuan te shtëpiza e gjyshes.";
+"story.redhood.scene8.text2" = "Ujku, duke parë se po vinte ndihmë, u frikësua edhe vetë. Këceu nga shtrati dhe u arratis nëpër pyll, pa e kthyer kokën pas.\n\nGjyshja doli nga dhoma e vogël ku ishte fshehur. Kësulëkuqja vrapoi ta përqafonte.\n\nMë në fund të dyja ishin të sigurta.\n\nGjyshja buzëqeshi dhe tha: «Faleminderit, vajza ime. Ke qenë shumë e guximshme.»\n\nEdhe Kësulëkuqja buzëqeshi. Që nga ajo ditë mësoi se, kur ecën vetëm, duhet të jesh gjithmonë i kujdesshëm dhe të mos u besosh të panjohurve.";
+
+/* Image placeholders */
+"Immagine di Introduzione" = "Imazhi i Hyrjes";
+"Immagine di Ricompensa" = "Imazhi i Shpërblimit";

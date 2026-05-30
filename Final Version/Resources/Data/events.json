@@ -48,6 +48,91 @@
     "learningOutcome": "You learned: CONSEQUENCES = ACTIONS HAVE RESULTS",
     "rewardImageName": "Fine 3",
     "rewardText": "Now the wolf knows where to find Grandmother. What will happen next?",
+    "isLastEvent": false
+  },
+  {
+    "id": 4,
+    "bannerTitle": "Scene 4",
+    "introImageName": "3_1",
+    "introText": "The wolf runs at top speed to Grandmother's house to get there before Little Red Riding Hood. Put the cards in the correct order from left to right to see how he arrives!",
+    "cards": [
+      { "id": 0, "imageName": "scene4_card1", "description": "The wolf runs fast through the trees and roots of the forest", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene4_card2", "description": "The wolf follows a secret shortcut to arrive first", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene4_card3", "description": "The wolf arrives tired but happy in front of Grandmother's cottage", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene4_card4", "description": "The wolf knocks on the door pretending to be Little Red Riding Hood", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "You learned: Acting quickly and planning your steps leads to reaching your goal!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Great work! You sorted the wolf's run perfectly! Now the wolf has arrived at the cottage and is knocking on Grandma's door. The story continues!",
+    "isLastEvent": false
+  },
+  {
+    "id": 5,
+    "bannerTitle": "Scene 5",
+    "introImageName": "3_3",
+    "introText": "The wolf has entered Grandmother's house and prepares to wait for Little Red Riding Hood disguised as Grandma. Put the cards in the correct order from left to right to complete his disguise!",
+    "cards": [
+      { "id": 0, "imageName": "scene5_card1", "description": "The wolf enters the cottage and Grandma hides safely in a cupboard", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene5_card2", "description": "The wolf finds Grandmother's clothes and decides to disguise himself", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene5_card3", "description": "The wolf puts on the nightcap and gets under the bed covers", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene5_card4", "description": "The wolf waits silently in bed for Little Red Riding Hood to arrive", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "You learned: Recognizing others' intentions helps you understand the story!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Well done! You completed the wolf's disguise! Now he is under the covers ready to trick Little Red Riding Hood. Let's continue to see what happens!",
+    "isLastEvent": false
+  },
+  {
+    "id": 6,
+    "bannerTitle": "Scene 6",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "After walking in the forest, Little Red Riding Hood arrives at the cottage and knocks on the door. Put the cards in the correct order from left to right to let her in!",
+    "cards": [
+      { "id": 0, "imageName": "scene6_card1", "description": "Little Red Riding Hood arrives at the cottage among the flowers", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene6_card2", "description": "Little Red Riding Hood knocks gently on the wooden door", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene6_card3", "description": "The wolf answers with a hoarse voice, inviting the girl to enter", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene6_card4", "description": "Little Red Riding Hood slowly opens the door and enters surprised", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "You learned: Paying attention to unusual details (like a hoarse voice) is an important clue!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Incredible! You sorted her arrival perfectly! Now Little Red Riding Hood has entered the room and is close to the bed. Let's see what happens next!",
+    "isLastEvent": false
+  },
+  {
+    "id": 7,
+    "bannerTitle": "Scene 7",
+    "introImageName": "3_3",
+    "introText": "Little Red Riding Hood speaks with her grandmother and notices something very strange about her appearance. Put the cards in the correct order from left to right to uncover the wolf!",
+    "cards": [
+      { "id": 0, "imageName": "scene7_card1", "description": "Little Red Riding Hood approaches the bed, noticing Grandmother's large ears", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene7_card2", "description": "The girl observes the large eyes and asks the wolf another question", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene7_card3", "description": "Little Red Riding Hood sees long, sharp teeth under the nightcap", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene7_card4", "description": "The frightened girl finally realizes that the wolf is in the bed", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "You learned: Asking questions and observing carefully reveals the truth!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Fabulous! You sorted the dialogues perfectly! Little Red Riding Hood realized the wolf's trick and needs help. Let's run to the last scene!",
+    "isLastEvent": false
+  },
+  {
+    "id": 8,
+    "bannerTitle": "Scene 8",
+    "introImageName": "Fine 3",
+    "introText": "The wolf is discovered, Little Red Riding Hood screams, and help arrives to chase the wolf away forever. Put the cards in the correct order from left to right for the happy ending!",
+    "cards": [
+      { "id": 0, "imageName": "scene8_card1", "description": "Little Red Riding Hood runs into the hallway and screams loudly for help", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene8_card2", "description": "The woodcutters hear the screams and run to the house to save her", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene8_card3", "description": "The frightened wolf escapes through the window and runs far away into the forest", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene8_card4", "description": "Grandmother comes out of the cupboard and hugs Little Red Riding Hood tightly, safe at last", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "You learned: Helping each other in times of trouble always leads to a happy ending!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Congratulations! You have unlocked the complete story of Little Red Riding Hood!",
     "isLastEvent": true
   }
 ]

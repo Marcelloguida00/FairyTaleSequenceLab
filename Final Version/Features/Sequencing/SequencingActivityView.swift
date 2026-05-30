@@ -430,14 +430,6 @@ struct SequencingActivityView<Reward: View>: View {
             }
         }
         .ignoresSafeArea()
-        .onAppear {
-            BackgroundMusicPlayer.shared.pause()
-            ForestAmbiencePlayer.shared.start()
-        }
-        .onDisappear {
-            ForestAmbiencePlayer.shared.stop()
-            BackgroundMusicPlayer.shared.start()
-        }
     }
 
     @ViewBuilder

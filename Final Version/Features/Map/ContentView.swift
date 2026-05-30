@@ -256,7 +256,7 @@ struct ContentView: View {
 
             if activeMap == .redHood {
                 ForEach(RedHoodMapGraph.storyWaypoints, id: \.id) { wp in
-                    WaypointDot(state: dotState(for: wp.id), size: dotSize(for: mapSize))
+                    WaypointDot(state: dotState(for: wp.id), size: redHoodDotSize(for: mapSize))
                         .position(projection.screenPoint(fromPixel: wp.point))
                         .allowsHitTesting(false)
                 }
@@ -375,8 +375,12 @@ struct ContentView: View {
         min(mapSize.width, mapSize.height) * 0.055
     }
 
+    private func redHoodDotSize(for mapSize: CGSize) -> CGFloat {
+        min(mapSize.width, mapSize.height) * 0.064
+    }
+
     private func dotHitRadius(for mapSize: CGSize) -> CGFloat {
-        max(44, dotSize(for: mapSize) * 0.72)
+        max(44, redHoodDotSize(for: mapSize) * 0.72)
     }
 
     private func dotState(for waypointId: Int) -> WaypointDot.DotState {

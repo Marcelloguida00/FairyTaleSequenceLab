@@ -34,11 +34,33 @@ struct SequenceCardView: View {
                     )
                 )
 
-            Image(card.imageName)
-                .resizable()
-                .scaledToFill()
-                .clipShape(RoundedRectangle(cornerRadius: 11))
-                .padding(6)
+            if UIImage(named: card.imageName) != nil {
+                Image(card.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(RoundedRectangle(cornerRadius: 11))
+                    .padding(6)
+            } else {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11)
+                        .fill(Color(red: 0.95, green: 0.90, blue: 0.80))
+                        .padding(6)
+                    
+                    RoundedRectangle(cornerRadius: 11)
+                        .strokeBorder(Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.4), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                        .padding(9)
+                    
+                    VStack(spacing: 8) {
+                        Image(systemName: "photo")
+                            .font(.system(size: 24))
+                            .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.1))
+                        
+                        Text("Scena \(card.id + 1)")
+                            .font(.app(.caption, weight: .bold))
+                            .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.05))
+                    }
+                }
+            }
         }
         .aspectRatio(9 / 16, contentMode: .fit)
         .overlay(

@@ -36,12 +36,35 @@ struct RewardView: View {
                 Color.appBackground.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    Image(event.rewardImageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+                    if UIImage(named: event.rewardImageName) != nil {
+                        Image(event.rewardImageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geometry.size.width, height: imageHeight)
+                            .clipped()
+                            .accessibilityHidden(true)
+                    } else {
+                        ZStack {
+                            LinearGradient(
+                                colors: [Color(red: 0.1, green: 0.2, blue: 0.15), Color(red: 0.15, green: 0.3, blue: 0.22)],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                            
+                            VStack(spacing: 12) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 44))
+                                    .foregroundColor(Color(red: 0.4, green: 0.9, blue: 0.5))
+                                
+                                Text(stars)
+                                    .font(.app(.title))
+                                
+                                Text("Reward: 16:9 Image Placeholder")
+                                    .font(.app(.body))
+                                    .foregroundColor(Color(red: 0.8, green: 0.9, blue: 0.85))
+                            }
+                        }
                         .frame(width: geometry.size.width, height: imageHeight)
-                        .clipped()
-                        .accessibilityHidden(true)
+                    }
 
                     ParchmentView {
                         HStack(alignment: .center, spacing: compactText ? 16 : 24) {

@@ -159,3 +159,43 @@
 "a11y.continue_sequencing"  = "Continue to the sequencing activity";
 "a11y.check_order"          = "Check your story order";
 "a11y.flip_all"             = "Flip all cards";
+
+/* English Story Book Scenes */
+"story.redhood.scene1.title" = "Scene 1 — The Basket for Grandmother";
+"story.redhood.scene1.text1" = "Little Red Riding Hood was at home with her mother. It was a peaceful morning, but mother was a little worried because grandmother was not feeling well.\n\nSo she took a basket and began to fill it with good things: soft bread, fresh fruit, a small cake, and something warm to bring to grandmother.";
+"story.redhood.scene1.text2" = "\"Little Red Riding Hood,\" mother said gently, \"can you take this basket to grandmother? She will be happy to have a visitor.\"\n\nLittle Red Riding Hood smiled. She put on her red cloak, took the basket carefully, and said goodbye to her mother.\n\nThen she opened the front door and went out, ready to walk toward grandmother's house.";
+
+"story.redhood.scene2.title" = "Scene 2 — The Path in the Forest";
+"story.redhood.scene2.text1" = "Little Red Riding Hood entered the forest, following the path she knew well. She walked slowly, holding the basket tightly in her hands.\n\nAround her were tall trees, green leaves, and many quiet sounds.";
+"story.redhood.scene2.text2" = "Little birds sang on the branches, and some butterflies flew lightly among the flowers.\n\nLittle Red Riding Hood stopped for a moment to look at the colorful flowers near the path. They were beautiful and sweet-smelling.\n\nThen she remembered grandmother and resumed walking.\n\n\"I must arrive soon,\" she thought. \"Grandmother is waiting for me.\"";
+
+"story.redhood.scene3.title" = "Scene 3 — The Encounter with the Wolf";
+"story.redhood.scene3.text1" = "While Little Red Riding Hood was walking along the path, a wolf appeared from behind a tree.\n\nThe wolf looked at her and spoke to her in a gentle voice.\n\n\"Good morning, child. Where are you going with that beautiful basket?\"";
+"story.redhood.scene3.text2" = "Little Red Riding Hood, who was polite, replied: \"I am going to my grandmother's. She is not feeling well, and I am bringing her something to eat.\"\n\nThe wolf listened carefully. Then he gave a sly smile.\n\n\"What a good girl,\" he said.\n\nBut inside, the wolf was already thinking of a plan to get to grandmother's house before she did.";
+
+"story.redhood.scene4.title" = "Scene 4 — The Wolf Runs to Grandmother";
+"story.redhood.scene4.text1" = "As soon as Little Red Riding Hood resumed walking, the wolf ran off quickly through the forest.\n\nHe darted through the trees, jumped over roots, and followed a hidden shortcut.";
+"story.redhood.scene4.text2" = "In a short time, he arrived in front of grandmother's house. The cottage was small and quiet, with a wooden door and a window near the garden.\n\nThe wolf went up to the door and knocked.\n\nKnock, knock, knock.\n\nFrom inside, grandmother asked: \"Who is it?\"\n\nThe wolf tried to make his voice sound sweet and replied: \"It's me, Little Red Riding Hood.\"";
+
+"story.redhood.scene5.title" = "Scene 5 — The Wolf Pretends to Be Grandmother";
+"story.redhood.scene5.text1" = "The wolf entered grandmother's house. Grandmother, realizing something was wrong, hid safely in a small room.";
+"story.redhood.scene5.text2" = "The wolf, on the other hand, went into grandmother's bedroom. He saw her bed, her pillow, and her nightcap.\n\nSo he put on grandmother's nightcap and slid under the covers. He tried to look just like her.\n\nThen he lay still in bed, waiting for Little Red Riding Hood.\n\nThe room was silent, but the wolf kept his ears wide open.";
+
+"story.redhood.scene6.title" = "Scene 6 — Little Red Riding Hood Arrives";
+"story.redhood.scene6.text1" = "After walking a bit more, Little Red Riding Hood finally arrived at grandmother's house.\n\nShe stopped in front of the door and knocked gently.\n\nKnock, knock, knock.";
+"story.redhood.scene6.text2" = "From inside, a strange, somewhat raspy voice was heard.\n\n\"Come on in, my child.\"\n\nLittle Red Riding Hood was surprised. Grandmother's voice sounded different than usual.\n\nShe opened the door slowly, entered the house, and approached the bedroom.";
+
+"story.redhood.scene7.title" = "Scene 7 — Something Is Wrong";
+"story.redhood.scene7.text1" = "Little Red Riding Hood entered the bedroom and saw \"grandmother\" lying in bed. She approached carefully.\n\nShe looked at the face under the nightcap and immediately knew something was strange.\n\n\"Grandmother,\" she said, \"what big ears you have!\"\n\n\"All the better to hear you with,\" replied the wolf.";
+"story.redhood.scene7.text2" = "Little Red Riding Hood took another step.\n\n\"Grandmother, what big eyes you have!\"\n\n\"All the better to see you with,\" said the wolf.\n\nThen Little Red Riding Hood saw the teeth.\n\n\"Grandmother... what big teeth you have!\"\n\nAt that point, she realized that this was not her grandmother.";
+
+"story.redhood.scene8.title" = "Scene 8 — The Happy Ending";
+"story.redhood.scene8.text1" = "Little Red Riding Hood was frightened and immediately called for help.\n\n\"Help! Help!\"\n\nHer voice reached outside the house. Shortly after, some people passing near the path heard the cry and ran to grandmother's cottage.";
+"story.redhood.scene8.text2" = "The wolf, seeing help arrive, got frightened himself. He jumped out of bed and ran away into the forest, without looking back.\n\nGrandmother came out of the small room where she had hidden. Little Red Riding Hood ran to hug her.\n\nFinally, they were both safe.\n\nGrandmother smiled and said: \"Thank you, my child. You were very brave.\"\n\nLittle Red Riding Hood smiled too. From that day on, she learned that when walking alone, you must always be careful and not trust strangers.";
+
+/* Image placeholders */
+"Immagine di Introduzione" = "Introduction Image";
+"Immagine di Ricompensa" = "Reward Image";
+
+
+

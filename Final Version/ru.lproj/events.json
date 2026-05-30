@@ -48,6 +48,91 @@
     "learningOutcome": "Ты узнал: ПОСЛЕДСТВИЯ = ДЕЙСТВИЯ ИМЕЮТ РЕЗУЛЬТАТ",
     "rewardImageName": "Fine 3",
     "rewardText": "Теперь волк знает, где найти бабушку. Что будет дальше?",
+    "isLastEvent": false
+  },
+  {
+    "id": 4,
+    "bannerTitle": "Сцена 4",
+    "introImageName": "3_1",
+    "introText": "Волк бежит во всю прыть к домику бабушки, чтобы добраться туда раньше Красной Шапочки. Расставь карты в правильном порядке слева направо, чтобы увидеть, как он добирается!",
+    "cards": [
+      { "id": 0, "imageName": "scene4_card1", "description": "Волк быстро бежит среди деревьев и корней леса", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene4_card2", "description": "Волк бежит по секретной короткой тропинке, чтобы успеть первым", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene4_card3", "description": "Волк уставший, но довольный добирается до домика бабушки", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene4_card4", "description": "Волк стучит в дверь бабушки, притворяясь Красной Шапочкой", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Ты узнал: быстрое действие и планирование шагов помогают достичь цели!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Отличная работа! Ты идеально распределил бег волка! Волк у домика и стучит в дверь. История продолжается!",
+    "isLastEvent": false
+  },
+  {
+    "id": 5,
+    "bannerTitle": "Сцена 5",
+    "introImageName": "3_3",
+    "introText": "Волк вошел в дом бабушки и готовится ждать Красную Шапочку, переодевшись бабулей. Расставь карты в правильном порядке слева направо, чтобы завершить маскировку!",
+    "cards": [
+      { "id": 0, "imageName": "scene5_card1", "description": "Волк входит в дом, а испуганная бабушка прячется в чулан", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene5_card2", "description": "Волк находит вещи бабушки и решает переодеться", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene5_card3", "description": "Волк надевает чепец и ложится под одеяло в кровать", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene5_card4", "description": "Волк молча ждет в постели прихода Красной Шапочки", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Ты узнал: понимание чужих намерений помогает понять всю историю!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Молодец! Ты завершил маскировку волка! Теперь он под одеялом ждет девочку. Продолжаем!",
+    "isLastEvent": false
+  },
+  {
+    "id": 6,
+    "bannerTitle": "Сцена 6",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Пройдя через лес, Красная Шапочка подходит к домику и стучит в дверь. Расставь карты в правильном порядке слева направо, чтобы впустить ее!",
+    "cards": [
+      { "id": 0, "imageName": "scene6_card1", "description": "Красная Шапочка подходит к домику среди цветов", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene6_card2", "description": "Красная Шапочка осторожно стучит в деревянную дверь", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene6_card3", "description": "Волк отвечает хриплым голосом, приглашая девочку войти", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene6_card4", "description": "Красная Шапочка тихо открывает дверь и входит с удивлением", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Ты узнал: внимание к необычным деталям (хриплый голос) — важная подсказка!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Невероятно! Ты правильно распределил прибытие! Красная Шапочка вошла в комнату и подходит к постели. Посмотрим, что дальше!",
+    "isLastEvent": false
+  },
+  {
+    "id": 7,
+    "bannerTitle": "Сцена 7",
+    "introImageName": "3_3",
+    "introText": "Красная Шапочка говорит с бабушкой и замечает много странного в ее внешности. Расставь карты в правильном порядке слева направо, чтобы разоблачить волка!",
+    "cards": [
+      { "id": 0, "imageName": "scene7_card1", "description": "Красная Шапочка подходит к кровати, замечая большие уши", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene7_card2", "description": "Девочка смотрит в большие глаза и задает волку еще один вопрос", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene7_card3", "description": "Красная Шапочка видит длинные острые зубы под чепцом", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene7_card4", "description": "Испуганная девочка понимает, что в постели лежит волк", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Ты узнал: вопросы и внимательное наблюдение раскрывают правду!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Великолепно! Ты идеально расставил диалоги! Девочка разгадала уловку волка, ей нужна помощь. Спешим к финалу!",
+    "isLastEvent": false
+  },
+  {
+    "id": 8,
+    "bannerTitle": "Сцена 8",
+    "introImageName": "Fine 3",
+    "introText": "Волка разоблачают, Красная Шапочка кричит, и на помощь прибегают люди, чтобы прогнать волка навсегда. Расставь карты в правильном порядке для счастливого конца!",
+    "cards": [
+      { "id": 0, "imageName": "scene8_card1", "description": "Красная Шапочка выбегает в коридор и громко зовет на помощь", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene8_card2", "description": "Дровосеки слышат крики и спешат к дому на спасение", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene8_card3", "description": "Испуганный волк выпрыгивает из окна и убегает глубоко в лес", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene8_card4", "description": "Бабушка выходит из чулана и крепко обнимает Красную Шапочку, они в безопасности", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Ты узнал: взаимовыручка в трудную минуту всегда ведет к счастливому концу!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Поздравляем! Вы разблокировали полную историю Красной Шапочки!",
     "isLastEvent": true
   }
 ]

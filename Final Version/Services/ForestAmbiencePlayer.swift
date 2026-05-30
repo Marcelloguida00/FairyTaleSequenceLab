@@ -7,6 +7,7 @@ final class ForestAmbiencePlayer {
 
     private var player: AVAudioPlayer?
     private var restartTask: Task<Void, Never>?
+    private var fadeTask: Task<Void, Never>?
     private let resourceName = "ForestAmbience"
     private let resourceExtension = "mp3"
     private let loopDuration: TimeInterval = 300
@@ -15,6 +16,7 @@ final class ForestAmbiencePlayer {
 
     func start() {
         restartTask?.cancel()
+        fadeTask?.cancel()
 
         guard !isMuted else {
             stop()
@@ -32,9 +34,36 @@ final class ForestAmbiencePlayer {
         scheduleRestart()
     }
 
+    func fadeIn(duration: TimeInterval = 2.2) {
+        restartTask?.cancel()
+        fadeTask?.cancel()
+
+        guard !isMuted else {
+            stop()
+            return
+        }
+
+        if player == nil {
+            preparePlayer()
+        }
+
+        guard let player else { return }
+        player.currentTime = 0
+        player.volume = 0
+        player.play()
+        scheduleRestart()
+        fade(to: savedVolume, duration: duration, stopWhenFinished: false)
+    }
+
+    func fadeOutAndStop(duration: TimeInterval = 2.2) {
+        fade(to: 0, duration: duration, stopWhenFinished: true)
+    }
+
     func stop() {
         restartTask?.cancel()
         restartTask = nil
+        fadeTask?.cancel()
+        fadeTask = nil
         player?.stop()
         player?.currentTime = 0
     }
@@ -86,6 +115,46 @@ final class ForestAmbiencePlayer {
             player = newPlayer
         } catch {
             assertionFailure("Unable to start forest ambience: \(error.localizedDescription)")
+        }
+    }
+
+    private func fade(to targetVolume: Float, duration: TimeInterval, stopWhenFinished: Bool) {
+        fadeTask?.cancel()
+
+        guard !isMuted else {
+            stop()
+            return
+        }
+
+        guard let player else { return }
+
+        let startVolume = player.volume
+        let clampedTarget = max(0, min(targetVolume, 1))
+        let steps = 36
+        let stepDuration = max(duration / Double(steps), 0.01)
+
+        fadeTask = Task { [weak self] in
+            for step in 1...steps {
+                guard !Task.isCancelled else { return }
+                try? await Task.sleep(for: .seconds(stepDuration))
+                await MainActor.run {
+                    guard let self, let player = self.player else { return }
+                    guard !self.isMuted else {
+                        self.stop()
+                        return
+                    }
+
+                    let progress = Float(step) / Float(steps)
+                    player.volume = startVolume + (clampedTarget - startVolume) * progress
+                }
+            }
+
+            await MainActor.run {
+                guard let self else { return }
+                if stopWhenFinished {
+                    self.stop()
+                }
+            }
         }
     }
 }

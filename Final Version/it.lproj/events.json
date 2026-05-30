@@ -48,6 +48,91 @@
     "learningOutcome": "Hai imparato: CONSEGUENZE = LE AZIONI HANNO RISULTATI",
     "rewardImageName": "Fine 3",
     "rewardText": "Ora il lupo sa dove trovare la nonna. Cosa succederà dopo?",
+    "isLastEvent": false
+  },
+  {
+    "id": 4,
+    "bannerTitle": "Scena 4",
+    "introImageName": "3_1",
+    "introText": "Il lupo corre a tutta velocità verso la casa della nonna per arrivarci prima di Cappuccetto Rosso. Metti le carte nell'ordine corretto da sinistra a destra per vedere come arriva!",
+    "cards": [
+      { "id": 0, "imageName": "scene4_card1", "description": "Il lupo corre veloce tra gli alberi e le radici della foresta", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene4_card2", "description": "Il lupo segue una scorciatoia segreta per arrivare prima", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene4_card3", "description": "Il lupo arriva stanco ma felice davanti alla casetta della nonna", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene4_card4", "description": "Il lupo bussa alla porta della nonna fingendo di essere Cappuccetto Rosso", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: Agire con rapidità e pianificare i passi porta a raggiungere l'obiettivo!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Ottimo lavoro! Hai ordinato la corsa del lupo alla perfezione! Ora il lupo è arrivato davanti alla casetta e sta bussando alla porta della nonna. La storia continua!",
+    "isLastEvent": false
+  },
+  {
+    "id": 5,
+    "bannerTitle": "Scena 5",
+    "introImageName": "3_3",
+    "introText": "Il lupo è entrato nella casa della nonna e si prepara ad aspettare Cappuccetto Rosso travestito da nonnina. Metti le carte nell'ordine corretto da sinistra a destra per completare il suo travestimento!",
+    "cards": [
+      { "id": 0, "imageName": "scene5_card1", "description": "Il lupo entra nella casetta e la nonna spaventata si nasconde in uno sgabuzzino", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene5_card2", "description": "Il lupo trova i vestiti della nonna e decide di travestirsi", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene5_card3", "description": "Il lupo indossa il berretto da notte e si infila sotto le coperte del letto", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene5_card4", "description": "Il lupo aspetta in silenzio nel letto l'arrivo di Cappuccetto Rosso", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: Riconoscere le intenzioni degli altri aiuta a capire la storia!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Bravissimo! Hai completato il travestimento del lupo! Ora è sotto le coperte pronto a ingannare Cappuccetto Rosso. Continuiamo per vedere cosa succede!",
+    "isLastEvent": false
+  },
+  {
+    "id": 6,
+    "bannerTitle": "Scena 6",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Dopo aver camminato nel bosco, Cappuccetto Rosso arriva alla casetta e bussa alla porta. Metti le carte nell'ordine corretto da sinistra a destra per farla entrare!",
+    "cards": [
+      { "id": 0, "imageName": "scene6_card1", "description": "Cappuccetto Rosso arriva alla casetta in mezzo ai fiori", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene6_card2", "description": "Cappuccetto Rosso bussa delicatamente alla porta di legno", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene6_card3", "description": "Il lupo risponde con voce roca invitando la bambina a entrare", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene6_card4", "description": "Cappuccetto Rosso apre piano la porta ed entra sorpresa", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: Prestare attenzione ai dettagli insoliti (come una voce roca) è un indizio importante!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Incredibile! Hai ordinato l'arrivo alla casa alla perfezione! Ora Cappuccetto Rosso è entrata nella camera ed è vicina al letto. Vediamo cosa succede ora!",
+    "isLastEvent": false
+  },
+  {
+    "id": 7,
+    "bannerTitle": "Scena 7",
+    "introImageName": "3_3",
+    "introText": "Cappuccetto Rosso parla con la nonna e nota che ha qualcosa di molto strano nel suo aspetto. Metti le carte nell'ordine corretto da sinistra a destra per scoprire il lupo!",
+    "cards": [
+      { "id": 0, "imageName": "scene7_card1", "description": "Cappuccetto Rosso si avvicina al letto notando le grandi orecchie della nonna", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene7_card2", "description": "La bambina osserva i grandi occhi e fa un'altra domanda al lupo", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene7_card3", "description": "Cappuccetto Rosso vede dei denti lunghi e aguzzi sotto la cuffia", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene7_card4", "description": "La bambina spaventata capisce finalmente che nel letto c'è il lupo", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: Fare domande e osservare con attenzione ci rivela la verità!",
+    "rewardImageName": "Fine 3",
+    "rewardText": "Favoloso! Hai ordinato i dialoghi alla perfezione! Cappuccetto Rosso ha capito il trucco del lupo e ha bisogno di aiuto. Corriamo all'ultima scena!",
+    "isLastEvent": false
+  },
+  {
+    "id": 8,
+    "bannerTitle": "Scena 8",
+    "introImageName": "Fine 3",
+    "introText": "Il lupo viene scoperto, Cappuccetto Rosso grida e arrivano i soccorsi per cacciare via il lupo per sempre. Metti le carte nell'ordine corretto da sinistra a destra per il lieto fine!",
+    "cards": [
+      { "id": 0, "imageName": "scene8_card1", "description": "Cappuccetto Rosso scappa in corridoio e urla forte chiedendo aiuto", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene8_card2", "description": "I boscaioli sentono le urla e corrono verso la casa per salvarla", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene8_card3", "description": "Il lupo spaventato scappa dalla finestra e corre via lontano nel bosco", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene8_card4", "description": "La nonna esce dallo sgabuzzino e abbraccia forte Cappuccetto Rosso, finalmente al sicuro", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Hai imparato: Aiutarsi a vicenda nei momenti di difficoltà porta sempre a un lieto fine!",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Complimenti! Hai sbloccato la storia completa di Cappuccetto Rosso!",
     "isLastEvent": true
   }
 ]

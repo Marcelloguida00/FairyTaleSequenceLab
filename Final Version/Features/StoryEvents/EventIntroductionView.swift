@@ -12,12 +12,36 @@ struct EventIntroductionView: View {
                 Color.appBackground.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    Image(event.introImageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+                    if UIImage(named: event.introImageName) != nil {
+                        Image(event.introImageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geometry.size.width, height: geometry.size.height * 0.65)
+                            .clipped()
+                            .accessibilityHidden(true)
+                    } else {
+                        ZStack {
+                            LinearGradient(
+                                colors: [Color(red: 0.15, green: 0.08, blue: 0.05), Color(red: 0.25, green: 0.15, blue: 0.10)],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                            
+                            VStack(spacing: 12) {
+                                Image(systemName: "photo.on.rectangle.angled")
+                                    .font(.system(size: 44))
+                                    .foregroundColor(Color(red: 0.8, green: 0.6, blue: 0.4))
+                                
+                                Text(event.bannerTitle)
+                                    .font(.app(.title, weight: .bold))
+                                    .foregroundColor(.white)
+                                
+                                Text("Placeholder: 16:9 Introduction Image")
+                                    .font(.app(.body))
+                                    .foregroundColor(Color(red: 0.8, green: 0.7, blue: 0.6))
+                            }
+                        }
                         .frame(width: geometry.size.width, height: geometry.size.height * 0.65)
-                        .clipped()
-                        .accessibilityHidden(true)
+                    }
 
                     ParchmentView {
                         HStack(alignment: .center, spacing: 24) {

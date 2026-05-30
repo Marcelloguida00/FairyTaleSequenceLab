@@ -26,6 +26,7 @@ final class BackgroundMusicPlayer {
     static let shared = BackgroundMusicPlayer()
 
     private var player: AVAudioPlayer?
+    private var fadeTask: Task<Void, Never>?
     private let resourceExtension = "mp3"
 
     private init() {}
@@ -42,6 +43,15 @@ final class BackgroundMusicPlayer {
 
     func pause() {
         player?.pause()
+    }
+
+    func fadeOut(duration: TimeInterval = 2.2) {
+        fade(to: 0, duration: duration)
+    }
+
+    func fadeIn(duration: TimeInterval = 2.2) {
+        start()
+        fade(to: savedVolume, duration: duration)
     }
 
     // MARK: - Volume & Mute
@@ -64,6 +74,7 @@ final class BackgroundMusicPlayer {
 
     func setMuted(_ muted: Bool) {
         UserDefaults.standard.set(muted, forKey: "musicMuted")
+        fadeTask?.cancel()
         player?.volume = muted ? 0 : savedVolume
     }
 
@@ -108,6 +119,47 @@ final class BackgroundMusicPlayer {
             player = newPlayer
         } catch {
             assertionFailure("Unable to start background music: \(error.localizedDescription)")
+        }
+    }
+
+    private func fade(to targetVolume: Float, duration: TimeInterval) {
+        fadeTask?.cancel()
+
+        guard !isMuted else {
+            player?.volume = 0
+            return
+        }
+
+        if player == nil {
+            preparePlayer()
+        }
+
+        guard let player else { return }
+        if !player.isPlaying {
+            player.play()
+        }
+
+        let startVolume = player.volume
+        let clampedTarget = max(0, min(targetVolume, 1))
+        let steps = 36
+        let stepDuration = max(duration / Double(steps), 0.01)
+
+        fadeTask = Task { [weak self] in
+            for step in 1...steps {
+                guard !Task.isCancelled else { return }
+                try? await Task.sleep(for: .seconds(stepDuration))
+                await MainActor.run {
+                    guard let self, let player = self.player else { return }
+                    guard !self.isMuted else {
+                        player.volume = 0
+                        self.fadeTask?.cancel()
+                        return
+                    }
+
+                    let progress = Float(step) / Float(steps)
+                    player.volume = startVolume + (clampedTarget - startVolume) * progress
+                }
+            }
         }
     }
 }
