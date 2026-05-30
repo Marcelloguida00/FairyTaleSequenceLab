@@ -71,6 +71,10 @@
 "settings.music.muted"    = "Музыка выключена";
 "settings.music.mute"     = "Выключить музыку";
 "settings.music.unmute"   = "Включить музыку";
+"settings.music.theme.garden_gate" = "За садовой калиткой";
+"settings.music.theme.red_hood_1" = "Тема Красной Шапочки 1";
+"settings.music.theme.red_hood_2" = "Тема Красной Шапочки 2";
+"settings.music.theme.red_hood_3" = "Тема Красной Шапочки 3";
 "settings.progress"       = "Прогресс";
 "settings.saved_data"     = "Сохранённые данные";
 "settings.reset_progress" = "Сбросить прогресс";

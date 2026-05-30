@@ -71,6 +71,10 @@
 "settings.music.muted"    = "Muzika e heshtur";
 "settings.music.mute"     = "Heq zërin";
 "settings.music.unmute"   = "Aktivizo zërin";
+"settings.music.theme.garden_gate" = "Përtej portës së kopshtit";
+"settings.music.theme.red_hood_1" = "Tema Kësulëkuqja 1";
+"settings.music.theme.red_hood_2" = "Tema Kësulëkuqja 2";
+"settings.music.theme.red_hood_3" = "Tema Kësulëkuqja 3";
 "settings.progress"       = "Progresi";
 "settings.saved_data"     = "Të dhënat e ruajtura";
 "settings.reset_progress" = "Rivendos progresin";

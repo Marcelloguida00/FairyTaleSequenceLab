@@ -71,6 +71,10 @@
 "settings.music.muted"    = "Musica silenziata";
 "settings.music.mute"     = "Silenzia Musica";
 "settings.music.unmute"   = "Riattiva Musica";
+"settings.music.theme.garden_gate" = "Oltre il cancello del giardino";
+"settings.music.theme.red_hood_1" = "Tema Cappuccetto Rosso 1";
+"settings.music.theme.red_hood_2" = "Tema Cappuccetto Rosso 2";
+"settings.music.theme.red_hood_3" = "Tema Cappuccetto Rosso 3";
 "settings.progress"       = "Progressi";
 "settings.saved_data"     = "Dati salvati";
 "settings.reset_progress" = "Cancella progressi";

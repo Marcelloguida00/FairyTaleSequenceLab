@@ -34,6 +34,8 @@ struct SettingsView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
+    @AppStorage("musicTheme") private var musicTheme: String = BackgroundMusicTheme.gardenGate.rawValue
+    @AppStorage("dyslexiaFontEnabled") private var dyslexiaFontEnabled = false
     @State private var showResetProgressConfirmation = false
     @State private var route: SettingsRoute = .main
     @State private var returnRoute: SettingsRoute = .main
@@ -405,6 +407,16 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+
+                SettingsTheme.divider
+                    .frame(height: 1)
+                    .padding(.leading, 56)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { index, theme in
+                        musicThemeRow(theme, isLast: index == BackgroundMusicTheme.allCases.count - 1)
+                    }
+                }
             }
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -802,7 +814,60 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+
+                settingsDivider()
+
+                VStack(spacing: 0) {
+                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { index, theme in
+                        musicThemeRow(theme, isLast: index == BackgroundMusicTheme.allCases.count - 1)
+                    }
+                }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func musicThemeRow(_ theme: BackgroundMusicTheme, isLast: Bool) -> some View {
+        let isSelected = musicTheme == theme.rawValue
+
+        Button {
+            AppSettings.hapticImpact(.light)
+            BackgroundMusicPlayer.shared.setTheme(theme)
+            withAnimation(.easeInOut(duration: 0.2)) {
+                musicTheme = theme.rawValue
+            }
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "music.note")
+                    .font(.app(size: 20, weight: .semibold))
+                    .foregroundStyle(SettingsTheme.secondaryText)
+                    .frame(width: 28)
+
+                Text(lm.t(theme.localizedNameKey))
+                    .font(.app(.body))
+                    .foregroundStyle(SettingsTheme.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.app(size: 20, weight: .semibold))
+                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+            .background(isSelected ? SettingsTheme.selectionFill : Color.clear)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(lm.t(theme.localizedNameKey))
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+
+        if !isLast {
+            settingsDivider()
         }
     }
 

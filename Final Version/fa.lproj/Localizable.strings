@@ -71,6 +71,10 @@
 "settings.music.muted"    = "موسیقی بی‌صداست";
 "settings.music.mute"     = "قطع موسیقی";
 "settings.music.unmute"   = "روشن کردن موسیقی";
+"settings.music.theme.garden_gate" = "فراتر از دروازه باغ";
+"settings.music.theme.red_hood_1" = "تم شنل قرمزی ۱";
+"settings.music.theme.red_hood_2" = "تم شنل قرمزی ۲";
+"settings.music.theme.red_hood_3" = "تم شنل قرمزی ۳";
 "settings.progress"       = "پیشرفت";
 "settings.saved_data"     = "داده‌های ذخیره‌شده";
 "settings.reset_progress" = "پاک کردن پیشرفت";

@@ -71,6 +71,10 @@
 "settings.music.muted"    = "Music muted";
 "settings.music.mute"     = "Mute Music";
 "settings.music.unmute"   = "Unmute Music";
+"settings.music.theme.garden_gate" = "Beyond the Garden Gate";
+"settings.music.theme.red_hood_1" = "Red Riding Hood Theme 1";
+"settings.music.theme.red_hood_2" = "Red Riding Hood Theme 2";
+"settings.music.theme.red_hood_3" = "Red Riding Hood Theme 3";
 "settings.progress"       = "Progress";
 "settings.saved_data"     = "Saved Data";
 "settings.reset_progress" = "Reset Progress";
