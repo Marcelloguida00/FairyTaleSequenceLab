@@ -1124,6 +1124,7 @@ struct SettingsView: View {
     private func resetProgress() {
         UserDefaults.standard.removeObject(forKey: "completedRedHoodLevels")
         UserDefaults.standard.removeObject(forKey: "currentBaseID")
+        UserDefaults.standard.removeObject(forKey: "unlockedWorldBaseIDs")
         AppSettings.hapticSuccess()
     }
 

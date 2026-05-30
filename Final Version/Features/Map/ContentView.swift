@@ -68,6 +68,7 @@ struct ContentView: View {
     @State private var cloudEnterProgress: CGFloat = 0
     @State private var cloudExitProgress: CGFloat = 0
     @State private var completedRedHoodLevels: Set<Int> = []
+    @State private var unlockedWorldBaseIDs: Set<Int> = [MapGraph.redRidingHoodBaseID]
     @State private var activeRedHoodLevel: Int? = nil
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var levelBannerLevel: Int? = nil
@@ -170,8 +171,7 @@ struct ContentView: View {
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            if activeMap == .main {
-                // Interactive Storybook Button
+            if showsStorybookButton {
                 Button(action: {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         isBookOpen = true
@@ -183,9 +183,9 @@ struct ContentView: View {
                 .padding(.trailing, 24)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .zIndex(35)
-                .opacity(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil ? 0 : 1)
+                .opacity(isBookInteractionBlocked ? 0 : 1)
                 .animation(.easeInOut, value: isWalking)
-                .disabled(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil)
+                .disabled(isBookInteractionBlocked)
             }
 
         }
@@ -219,8 +219,11 @@ struct ContentView: View {
                 persistCompletedRedHoodLevels(completedRedHoodLevels)
             }
 
+            loadWorldMapProgress()
+
             if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
                MapGraph.baseIDs.contains(savedID),
+               unlockedWorldBaseIDs.contains(savedID),
                let wp = MapGraph.waypoint(id: savedID) {
                 currentBaseID = savedID
                 avatarPosition = wp.point
@@ -235,6 +238,7 @@ struct ContentView: View {
             }
 
             persistCompletedRedHoodLevels(canonicalLevels)
+            syncWorldUnlocksWithStoryProgress()
         }
         .onChange(of: currentBaseID) {
             if MapGraph.baseIDs.contains(currentBaseID) {
@@ -264,10 +268,16 @@ struct ContentView: View {
 
             if activeMap == .main {
                 ForEach(MapGraph.baseWaypoints, id: \.id) { wp in
-                    MainMapIslandDot(
-                        size: dotSize(for: mapSize),
-                        isPulsing: wp.id == MapGraph.redRidingHoodBaseID
-                    )
+                    Group {
+                        if isWorldBaseUnlocked(wp.id) {
+                            MainMapIslandDot(
+                                size: dotSize(for: mapSize),
+                                isPulsing: wp.id == pulsingWorldBaseID
+                            )
+                        } else {
+                            WaypointDot(state: .locked, size: dotSize(for: mapSize))
+                        }
+                    }
                     .position(projection.screenPoint(fromPixel: wp.point))
                     .allowsHitTesting(false)
                 }
@@ -384,6 +394,134 @@ struct ContentView: View {
         max(44, redHoodDotSize(for: mapSize) * 0.72)
     }
 
+    private var isRedHoodIslandComplete: Bool {
+        canonicalCompletedRedHoodLevels(from: completedRedHoodLevels).count == redHoodLevelIDs.count
+    }
+
+    private var pulsingWorldBaseID: Int {
+        if !isRedHoodIslandComplete {
+            return MapGraph.redRidingHoodBaseID
+        }
+
+        return MapGraph.islandUnlockOrder.last { unlockedWorldBaseIDs.contains($0) } ?? MapGraph.redRidingHoodBaseID
+    }
+
+    private func isWorldBaseUnlocked(_ baseID: Int) -> Bool {
+        unlockedWorldBaseIDs.contains(baseID)
+    }
+
+    private func loadWorldMapProgress() {
+        if let saved = UserDefaults.standard.array(forKey: "unlockedWorldBaseIDs") as? [Int] {
+            unlockedWorldBaseIDs = Set(saved.filter { MapGraph.baseIDs.contains($0) })
+        }
+
+        unlockedWorldBaseIDs.insert(MapGraph.redRidingHoodBaseID)
+        syncWorldUnlocksWithStoryProgress()
+    }
+
+    private func persistUnlockedWorldBaseIDs() {
+        UserDefaults.standard.set(
+            MapGraph.islandUnlockOrder.filter { unlockedWorldBaseIDs.contains($0) },
+            forKey: "unlockedWorldBaseIDs"
+        )
+    }
+
+    private func syncWorldUnlocksWithStoryProgress() {
+        guard isRedHoodIslandComplete,
+              let nextIsland = MapGraph.nextIsland(after: MapGraph.redRidingHoodBaseID) else { return }
+
+        let didChange = !unlockedWorldBaseIDs.contains(nextIsland)
+        unlockedWorldBaseIDs.insert(nextIsland)
+
+        if didChange {
+            persistUnlockedWorldBaseIDs()
+        }
+    }
+
+    private func unlockNextWorldIslandIfNeeded() {
+        syncWorldUnlocksWithStoryProgress()
+    }
+
+    @MainActor
+    private func returnToWorldMapAfterRedHoodCompletion() async {
+        guard activeMap == .redHood else { return }
+
+        pendingRedHoodLevel = nil
+        levelBannerLevel = nil
+
+        await CloudTransitionAnimator.runSceneTransition(
+            isActive: $isMapTransitioning,
+            enterProgress: $cloudEnterProgress,
+            exitProgress: $cloudExitProgress
+        ) {
+            activeMap = .main
+            avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point ?? MapGraph.initialWaypoint.point
+            currentBaseID = MapGraph.redRidingHoodBaseID
+            avatarDirection = .down
+        }
+    }
+
+    private func handleRedHoodChapterCompletion(_ level: Int) {
+        if level == 9 {
+            handleRedHoodFinalCompletion()
+            return
+        }
+
+        withAnimation(.easeInOut(duration: 0.3)) {
+            markRedHoodLevelCompleted(level)
+            activeRedHoodLevel = nil
+            pendingRedHoodLevel = nil
+            levelBannerLevel = nil
+        }
+
+        Task { @MainActor in
+            await advanceToNextRedHoodChapter(afterCompletedLevel: level)
+        }
+    }
+
+    @MainActor
+    private func advanceToNextRedHoodChapter(afterCompletedLevel level: Int) async {
+        guard activeMap == .redHood, level < 9 else { return }
+
+        try? await Task.sleep(nanoseconds: 350_000_000)
+
+        guard activeMap == .redHood,
+              activeRedHoodLevel == nil,
+              let nextLevel = nextRedHoodLevel,
+              nextLevel == level + 1,
+              let target = RedHoodMapGraph.waypoint(id: nextLevel),
+              let start = nearestWaypoint(to: avatarPosition, among: RedHoodMapGraph.waypoints) else { return }
+
+        if start.id == target.id {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                pendingRedHoodLevel = nextLevel
+            }
+            return
+        }
+
+        guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
+
+        startWalking(route) {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                pendingRedHoodLevel = nextLevel
+            }
+        }
+    }
+
+    private func handleRedHoodFinalCompletion() {
+        let wasAlreadyComplete = isRedHoodIslandComplete
+
+        withAnimation(.easeInOut(duration: 0.3)) {
+            markRedHoodLevelCompleted(9)
+            activeRedHoodLevel = nil
+        }
+
+        guard !wasAlreadyComplete else { return }
+
+        unlockNextWorldIslandIfNeeded()
+        Task { await returnToWorldMapAfterRedHoodCompletion() }
+    }
+
     private func dotState(for waypointId: Int) -> WaypointDot.DotState {
         if canonicalCompletedRedHoodLevels(from: completedRedHoodLevels).contains(waypointId) { return .completed }
         return waypointId == nextRedHoodLevel ? .next : .locked
@@ -427,6 +565,14 @@ struct ContentView: View {
         completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: updatedLevels)
     }
 
+    private var showsStorybookButton: Bool {
+        activeMap == .main || activeMap == .redHood
+    }
+
+    private var isBookInteractionBlocked: Bool {
+        isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil
+    }
+
     private var shouldShowRedHoodPlayButton: Bool {
         activeMap == .main &&
             currentBaseID == MapGraph.redRidingHoodBaseID &&
@@ -447,9 +593,11 @@ struct ContentView: View {
     }
 
     private func handleMainMapTap(_ screenTap: CGPoint, projection: MapProjection) {
+        let reachableBases = MapGraph.baseWaypoints.filter { isWorldBaseUnlocked($0.id) }
+
         guard let target = closestWaypoint(
             to: screenTap,
-            among: MapGraph.baseWaypoints,
+            among: reachableBases,
             projection: projection,
             radius: dotHitRadius(for: projection.renderedSize)
         ) else {
@@ -565,30 +713,22 @@ struct ContentView: View {
     private func levelView(for level: Int) -> some View {
         if level == 0 {
             RedHoodLevel0View {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    markRedHoodLevelCompleted(0)
-                    activeRedHoodLevel = nil
-                }
+                handleRedHoodChapterCompletion(0)
             }
         } else if level == 9 {
             RedHoodLevelFinalView {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    markRedHoodLevelCompleted(9)
-                    activeRedHoodLevel = nil
-                }
+                handleRedHoodChapterCompletion(9)
             }
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(
                 eventData: eventData,
                 onRewardReached: {
                     markRedHoodLevelCompleted(level)
+                },
+                onComplete: {
+                    handleRedHoodChapterCompletion(level)
                 }
-            ) {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    markRedHoodLevelCompleted(level)
-                    activeRedHoodLevel = nil
-                }
-            }
+            )
         }
     }
 
@@ -842,106 +982,12 @@ private struct MapPlayCallout: View {
 
 private struct BookIcon3D: View {
     var body: some View {
-        ZStack {
-            // Shadow on the map
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(Color.black.opacity(0.6))
-                .frame(width: 68, height: 86)
-                .offset(x: 10, y: 12)
-                .blur(radius: 4)
-            
-            // Back Cover (Shifted down for vertical depth)
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(Color(red: 0.12, green: 0.05, blue: 0.03)) // Very dark brown
-                .frame(width: 68, height: 86)
-                .offset(x: 6, y: 10)
-            
-            // Book Pages (Inset horizontally, shifted down)
-            RoundedRectangle(cornerRadius: 4)
-                .fill(LinearGradient(
-                    gradient: Gradient(colors: [Color(red: 0.6, green: 0.5, blue: 0.3), Color(red: 0.9, green: 0.85, blue: 0.65)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                ))
-                .overlay(
-                    // Page lines texture (horizontal lines stacking vertically)
-                    VStack(spacing: 2) {
-                        Spacer()
-                        ForEach(0..<6, id: \.self) { _ in
-                            Rectangle().fill(Color.black.opacity(0.2)).frame(height: 1)
-                        }
-                    }
-                    .padding(.bottom, 4)
-                    .padding(.horizontal, 6)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-                .frame(width: 62, height: 86) // 3px inset on left and right
-                .offset(x: 6, y: 5)
-                
-            // Inner shadow from front cover onto pages
-            VStack {
-                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.9), .clear]), startPoint: .top, endPoint: .bottom)
-                    .frame(height: 14)
-                Spacer()
-            }
-            .frame(width: 62, height: 86)
-            .offset(x: 6, y: 5)
-            
-            // Red Bookmark (Hanging from the bottom)
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: 0))
-                path.addLine(to: CGPoint(x: 14, y: 0))
-                path.addLine(to: CGPoint(x: 14, y: 34))
-                path.addLine(to: CGPoint(x: 7, y: 26))
-                path.addLine(to: CGPoint(x: 0, y: 34))
-                path.closeSubpath()
-            }
-            .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 0.7, green: 0.1, blue: 0.1), Color(red: 0.4, green: 0.02, blue: 0.02)]), startPoint: .top, endPoint: .bottom))
-            .frame(width: 14, height: 34)
-            .offset(x: 18, y: 42)
-            .shadow(color: .black.opacity(0.6), radius: 3, x: 2, y: 3)
-
-            // Front Cover
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(LinearGradient(
-                    gradient: Gradient(colors: [Color(red: 0.25, green: 0.12, blue: 0.08), Color(red: 0.35, green: 0.18, blue: 0.12)]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ))
-                .frame(width: 68, height: 86)
-                .offset(x: 6, y: 0)
-
-            // The Binding (Rilegatura - Pezzo unico)
-            // Left edge of front cover is 6 - 34 = -28.
-            ZStack {
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(Color(red: 0.1, green: 0.04, blue: 0.02)) // Very dark leather
-                    .frame(width: 18, height: 96) // Taller to cover y:0 to y:10
-                
-                // Binding Ribs (Nervature)
-                VStack(spacing: 16) {
-                    ForEach(0..<4, id: \.self) { _ in
-                        Rectangle()
-                            .fill(Color(red: 0.08, green: 0.03, blue: 0.01))
-                            .frame(width: 18, height: 4)
-                            .overlay(Rectangle().fill(Color.white.opacity(0.15)).frame(height: 1), alignment: .top)
-                    }
-                }
-            }
-            .offset(x: -24, y: 5) // Covers the left edge completely
-            .shadow(color: .black.opacity(0.6), radius: 3, x: 2, y: 0)
-
-            // Front Cover Decorative Gold Border removed as requested
-
-            // The image user provided (CastleBookIcon)
-            Image("CastleBookIcon")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 34, height: 34)
-                .offset(x: 10, y: 0) // Centered within the gold border
-        }
-        // Hover/press bounce effect
-        .scaleEffect(1.0)
+        Image("StoryBookButton")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 92, height: 92)
+            .shadow(color: .black.opacity(0.32), radius: 8, x: 0, y: 5)
+            .accessibilityHidden(true)
     }
 }
 
@@ -1284,7 +1330,15 @@ private enum MapGraph {
     static let initialWaypoint = waypoint(id: openingStartID) ?? waypoints[0]
     static let baseIDs: Set<Int> = [0, 7, 14, 18, 22]
     static let comingSoonBaseIDs: Set<Int> = [7, 14, 18, 22]
+    static let islandUnlockOrder: [Int] = [0, 7, 14, 18, 22]
+    static let playableBaseIDs: Set<Int> = [0]
     static let baseTapRadius: CGFloat = 190
+
+    static func nextIsland(after baseID: Int) -> Int? {
+        guard let index = islandUnlockOrder.firstIndex(of: baseID),
+              index + 1 < islandUnlockOrder.count else { return nil }
+        return islandUnlockOrder[index + 1]
+    }
 
     static let storyRegions: [StoryRegion] = [
         StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: WorldMapPixel.point(x: 520, y: 300)),

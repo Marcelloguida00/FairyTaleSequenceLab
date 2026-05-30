@@ -1,21 +1,21 @@
 {
-  "images": [
+  "images" : [
     {
-      "filename": "scene4_card2.png",
-      "idiom": "universal",
-      "scale": "1x"
+      "filename" : "ChatGPT Image May 30, 2026 at 10_40_59 PM.png",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "idiom": "universal",
-      "scale": "2x"
+      "idiom" : "universal",
+      "scale" : "2x"
     },
     {
-      "idiom": "universal",
-      "scale": "3x"
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
-  "info": {
-    "author": "xcode",
-    "version": 1
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
   }
 }

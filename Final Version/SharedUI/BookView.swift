@@ -186,14 +186,6 @@ struct FairyTaleInfo {
     let emoji: String
 }
 
-let fairyTales = [
-    FairyTaleInfo(title: "Cappuccetto Rosso", color: Color(red: 0.7, green: 0.1, blue: 0.1), emoji: "👧"), // Bimba/Cappuccetto
-    FairyTaleInfo(title: "Biancaneve", color: Color(red: 0.1, green: 0.3, blue: 0.7), emoji: "💎"), // Gemma
-    FairyTaleInfo(title: "La Bella e la Bestia", color: Color(red: 0.8, green: 0.6, blue: 0.1), emoji: "🌹"), // Rosa
-    FairyTaleInfo(title: "Aladdin", color: Color(red: 0.5, green: 0.1, blue: 0.6), emoji: "🪔"), // Lampada
-    FairyTaleInfo(title: "Il Principe Ranocchio", color: Color(red: 0.1, green: 0.6, blue: 0.2), emoji: "🐸") // Ranocchio
-]
-
 struct FairyTaleBookmark: Identifiable {
     let id = UUID()
     let info: FairyTaleInfo
@@ -481,166 +473,164 @@ struct BookView: View {
             newPages.append(emptyRight)
         }
         
-        for tale in fairyTales {
-            let startPage = newPages.count
-            newBookmarks.append(FairyTaleBookmark(info: tale, startPageIndex: startPage))
-            
-            if tale.title == "Cappuccetto Rosso" {
-                if completedEvents.isEmpty {
-                    addPlaceholder(title: tale.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
-                } else {
-                    let maxCompletedId = completedEvents.map(\.id).max() ?? 0
-                    let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
-                    
-                    if visibleScenes.isEmpty {
-                        addPlaceholder(title: tale.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
-                    } else {
-                        var pageIndex = newPages.count
-                        for scene in visibleScenes {
-                            // Page 1: Chapter Title + Intro Image
-                            let introPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                                VStack(spacing: isCompact ? 10 : 20) {
-                                    Text(lm.t(scene.titleKey))
-                                        .font(titleFont)
-                                        .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
-                                        .multilineTextAlignment(.center)
-                                        .padding(.horizontal, isCompact ? 10 : 20)
-                                    
-                                    Rectangle()
-                                        .fill(Color(red: 0.55, green: 0.31, blue: 0.09).opacity(0.3))
-                                        .frame(height: 1.5)
-                                        .frame(width: isCompact ? 40 : 80)
-                                    
-                                    Spacer(minLength: 0)
-                                    
-                                    if UIImage(named: scene.introImageName) != nil {
-                                        Image(scene.introImageName)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .cornerRadius(isCompact ? 8 : 12)
-                                            .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
-                                            .padding(.horizontal, isCompact ? 10 : 20)
-                                    } else {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                                .fill(LinearGradient(
-                                                    colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
-                                                    startPoint: .topLeading, endPoint: .bottomTrailing
-                                                ))
-                                            
-                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                                .strokeBorder(
-                                                    Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
-                                                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
-                                                )
-                                            
-                                            VStack(spacing: isCompact ? 4 : 8) {
-                                                Image(systemName: "photo.on.rectangle.angled")
-                                                    .font(.system(size: isCompact ? 20 : 32))
-                                                    .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
-                                                Text(lm.t("Immagine di Introduzione"))
-                                                    .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
-                                                    .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
-                                            }
-                                        }
-                                        .aspectRatio(16/9, contentMode: .fit)
-                                        .padding(.horizontal, isCompact ? 10 : 20)
-                                    }
-                                    
-                                    Spacer(minLength: 0)
-                                }
-                                .padding(.vertical, isCompact ? 12 : 30)
-                            }
-                            newPages.append(introPage)
-                            pageIndex += 1
-                            
-                            // Text Pages
-                            let fullText = lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
-                            let textPages = paginateText(fullText, isDyslexiaEnabled: isDyslexiaEnabled, isCompact: isCompact)
-                            
-                            for chunk in textPages {
-                                let textPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                                    VStack(alignment: .leading, spacing: isCompact ? 8 : 16) {
-                                        Text(chunk)
-                                            .font(textFont)
-                                            .foregroundColor(Color(red: 0.2, green: 0.1, blue: 0.05))
-                                            .lineSpacing(lineSpacing)
-                                            .multilineTextAlignment(.leading)
-                                            .padding(.horizontal, isCompact ? 5 : 10)
-                                    }
-                                    .padding(.vertical, isCompact ? 10 : 20)
-                                }
-                                newPages.append(textPage)
-                                pageIndex += 1
-                            }
-                            
-                            // Filler Page (if total scene pages is odd, we balance to keep it double-sided)
-                            if textPages.count % 2 != 0 {
-                                let fillerPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                                    VStack {
-                                        Spacer()
-                                        Text("🌸")
-                                            .font(.system(size: isCompact ? 18 : 30))
-                                            .opacity(0.3)
-                                        Spacer()
-                                    }
-                                }
-                                newPages.append(fillerPage)
-                                pageIndex += 1
-                            }
-                            
-                            // Reward Image Page
-                            let rewardPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                                VStack {
-                                    Spacer()
-                                    if UIImage(named: scene.rewardImageName) != nil {
-                                        Image(scene.rewardImageName)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .cornerRadius(isCompact ? 8 : 12)
-                                            .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
-                                            .padding(.horizontal, isCompact ? 10 : 20)
-                                    } else {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                                .fill(LinearGradient(
-                                                    colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
-                                                    startPoint: .topLeading, endPoint: .bottomTrailing
-                                                ))
-                                            
-                                            RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                                .strokeBorder(
-                                                    Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
-                                                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
-                                                )
-                                            
-                                            VStack(spacing: isCompact ? 4 : 8) {
-                                                Image(systemName: "photo.on.rectangle")
-                                                    .font(.system(size: isCompact ? 20 : 32))
-                                                    .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
-                                                Text(lm.t("Immagine di Ricompensa"))
-                                                    .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
-                                                    .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
-                                            }
-                                        }
-                                        .aspectRatio(16/9, contentMode: .fit)
-                                        .padding(.horizontal, isCompact ? 10 : 20)
-                                    }
-                                    Spacer()
-                                }
-                                .padding(.vertical, isCompact ? 12 : 30)
-                            }
-                            newPages.append(rewardPage)
-                            pageIndex += 1
-                        }
-                    }
-                }
+        let redRidingHood = FairyTaleInfo(
+            title: lm.t("map.region.red_riding_hood"),
+            color: Color(red: 0.7, green: 0.1, blue: 0.1),
+            emoji: "👧"
+        )
+
+        newBookmarks.append(FairyTaleBookmark(info: redRidingHood, startPageIndex: 0))
+
+        if completedEvents.isEmpty {
+            addPlaceholder(title: redRidingHood.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
+        } else {
+            let maxCompletedId = completedEvents.map(\.id).max() ?? 0
+            let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
+
+            if visibleScenes.isEmpty {
+                addPlaceholder(title: redRidingHood.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
             } else {
-                addPlaceholder(title: tale.title, subtitle: lm.t("Prossimamente..."))
+                var pageIndex = newPages.count
+                for scene in visibleScenes {
+                    // Page 1: Chapter Title + Intro Image
+                    let introPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                        VStack(spacing: isCompact ? 10 : 20) {
+                            Text(lm.t(scene.titleKey))
+                                .font(titleFont)
+                                .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, isCompact ? 10 : 20)
+
+                            Rectangle()
+                                .fill(Color(red: 0.55, green: 0.31, blue: 0.09).opacity(0.3))
+                                .frame(height: 1.5)
+                                .frame(width: isCompact ? 40 : 80)
+
+                            Spacer(minLength: 0)
+
+                            if UIImage(named: scene.introImageName) != nil {
+                                Image(scene.introImageName)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .cornerRadius(isCompact ? 8 : 12)
+                                    .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
+                                    .padding(.horizontal, isCompact ? 10 : 20)
+                            } else {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                        .fill(LinearGradient(
+                                            colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
+                                            startPoint: .topLeading, endPoint: .bottomTrailing
+                                        ))
+
+                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                        .strokeBorder(
+                                            Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
+                                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
+                                        )
+
+                                    VStack(spacing: isCompact ? 4 : 8) {
+                                        Image(systemName: "photo.on.rectangle.angled")
+                                            .font(.system(size: isCompact ? 20 : 32))
+                                            .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
+                                        Text(lm.t("Immagine di Introduzione"))
+                                            .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
+                                            .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
+                                    }
+                                }
+                                .aspectRatio(16/9, contentMode: .fit)
+                                .padding(.horizontal, isCompact ? 10 : 20)
+                            }
+
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.vertical, isCompact ? 12 : 30)
+                    }
+                    newPages.append(introPage)
+                    pageIndex += 1
+
+                    // Text Pages
+                    let fullText = lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
+                    let textPages = paginateText(fullText, isDyslexiaEnabled: isDyslexiaEnabled, isCompact: isCompact)
+
+                    for chunk in textPages {
+                        let textPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                            VStack(alignment: .leading, spacing: isCompact ? 8 : 16) {
+                                Text(chunk)
+                                    .font(textFont)
+                                    .foregroundColor(Color(red: 0.2, green: 0.1, blue: 0.05))
+                                    .lineSpacing(lineSpacing)
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.horizontal, isCompact ? 5 : 10)
+                            }
+                            .padding(.vertical, isCompact ? 10 : 20)
+                        }
+                        newPages.append(textPage)
+                        pageIndex += 1
+                    }
+
+                    // Filler Page (if total scene pages is odd, we balance to keep it double-sided)
+                    if textPages.count % 2 != 0 {
+                        let fillerPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                            VStack {
+                                Spacer()
+                                Text("🌸")
+                                    .font(.system(size: isCompact ? 18 : 30))
+                                    .opacity(0.3)
+                                Spacer()
+                            }
+                        }
+                        newPages.append(fillerPage)
+                        pageIndex += 1
+                    }
+
+                    // Reward Image Page
+                    let rewardPage = pageContainer(isLeft: pageIndex % 2 == 0) {
+                        VStack {
+                            Spacer()
+                            if UIImage(named: scene.rewardImageName) != nil {
+                                Image(scene.rewardImageName)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .cornerRadius(isCompact ? 8 : 12)
+                                    .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
+                                    .padding(.horizontal, isCompact ? 10 : 20)
+                            } else {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                        .fill(LinearGradient(
+                                            colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
+                                            startPoint: .topLeading, endPoint: .bottomTrailing
+                                        ))
+
+                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
+                                        .strokeBorder(
+                                            Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
+                                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
+                                        )
+
+                                    VStack(spacing: isCompact ? 4 : 8) {
+                                        Image(systemName: "photo.on.rectangle")
+                                            .font(.system(size: isCompact ? 20 : 32))
+                                            .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
+                                        Text(lm.t("Immagine di Ricompensa"))
+                                            .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
+                                            .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
+                                    }
+                                }
+                                .aspectRatio(16/9, contentMode: .fit)
+                                .padding(.horizontal, isCompact ? 10 : 20)
+                            }
+                            Spacer()
+                        }
+                        .padding(.vertical, isCompact ? 12 : 30)
+                    }
+                    newPages.append(rewardPage)
+                    pageIndex += 1
+                }
             }
         }
 
-        
         self.bookPages = newPages
         self.bookmarks = newBookmarks
     }

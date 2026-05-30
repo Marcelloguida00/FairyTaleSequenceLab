@@ -337,6 +337,8 @@ private enum SequencingStageLayout {
 
 struct SequencingActivityView<Reward: View>: View {
     let event: EventData
+    let showsReward: Bool
+    let onSuccess: (() -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var lm: LanguageManager
@@ -369,8 +371,15 @@ struct SequencingActivityView<Reward: View>: View {
         [lm.t("pos.1st"), lm.t("pos.2nd"), lm.t("pos.3rd"), lm.t("pos.4th")]
     }
 
-    init(event: EventData, @ViewBuilder makeReward: @escaping (Int, @escaping () -> Void) -> Reward) {
+    init(
+        event: EventData,
+        showsReward: Bool = true,
+        onSuccess: (() -> Void)? = nil,
+        @ViewBuilder makeReward: @escaping (Int, @escaping () -> Void) -> Reward
+    ) {
         self.event = event
+        self.showsReward = showsReward
+        self.onSuccess = onSuccess
         self.makeReward = makeReward
         _shuffledStart = State(initialValue: event.makeShuffledStart())
         _slotContents  = State(initialValue: Array(repeating: nil, count: event.cards.count))
@@ -1082,14 +1091,19 @@ struct SequencingActivityView<Reward: View>: View {
         if correct {
             AppSettings.hapticSuccess()
             UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
-            withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
-                showCelebration = true
-            }
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(1.5))
-                withAnimation(.easeIn(duration: 0.4)) { dimForReward = true }
-                try? await Task.sleep(for: .seconds(0.45))
-                withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { showReward = true }
+
+            if showsReward {
+                withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
+                    showCelebration = true
+                }
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(1.5))
+                    withAnimation(.easeIn(duration: 0.4)) { dimForReward = true }
+                    try? await Task.sleep(for: .seconds(0.45))
+                    withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { showReward = true }
+                }
+            } else {
+                onSuccess?()
             }
         } else {
             attemptCount += 1

@@ -5,12 +5,37 @@
     "introImageName": "Introduzione 1 evento",
     "introText": "Mother tells Little Red Riding Hood that Grandmother is sick. They must prepare a basket to bring to her. Help order the story scenes correctly!",
     "cards": [
-      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Mother and Little Red Riding Hood prepare the basket together", "correctPosition": 0 },
-      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "Mother gives the basket to Little Red Riding Hood", "correctPosition": 1 },
-      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Little Red Riding Hood puts on her red cloak", "correctPosition": 2 },
-      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Little Red Riding Hood leaves the house", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Immagine 1 sequenza",
+        "description": "Mother and Little Red Riding Hood prepare the basket together",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Immagine 2 sequenza",
+        "description": "Mother gives the basket to Little Red Riding Hood",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Immagine 3 sequenza",
+        "description": "Little Red Riding Hood puts on her red cloak",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Immagine 4 sequenza",
+        "description": "Little Red Riding Hood leaves the house",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Story events happen in ORDER — each action makes the next one possible!",
     "rewardImageName": "Fine primo evento",
     "rewardText": "Amazing! You sorted all the scenes in the right order! Now Little Red Riding Hood can pick up her basket, put on her red cloak, and skip through the forest to bring some tasty treats to Grandma. The story can go on — all thanks to YOU!",
@@ -22,12 +47,37 @@
     "introImageName": "Introduzione 2 evento",
     "introText": "Little Red Riding Hood sets off alone into the deep forest. She walks peacefully along the path, surrounded by tall trees. Can you put the story scenes in the right order?",
     "cards": [
-      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Little Red Riding Hood walks along the forest path, basket in hand", "correctPosition": 0 },
-      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "She spots beautiful colorful flowers growing beside the path", "correctPosition": 1 },
-      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "She picks the flowers and wanders off the path, distracted", "correctPosition": 2 },
-      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "She strays far from the path, lost in collecting flowers", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Sequenza 2 evento 1",
+        "description": "Little Red Riding Hood walks along the forest path, basket in hand",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Sequenza 2 evento 2",
+        "description": "She spots beautiful colorful flowers growing beside the path",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Sequenza 2 evento 3",
+        "description": "She picks the flowers and wanders off the path, distracted",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Sequenza 2 evento 4",
+        "description": "She strays far from the path, lost in collecting flowers",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Distractions change where a story goes — the ORDER of choices matters!",
     "rewardImageName": "Reward evento 2",
     "rewardText": "Incredible! You got every scene in the right order! You followed Little Red Riding Hood's journey through the forest perfectly — step by step, all the way to where she strayed from the path. You are a true story hero and guardian of the forest! Watch out — there's a wolf watching her from behind the trees…",
@@ -36,102 +86,252 @@
   {
     "id": 3,
     "bannerTitle": "Scene 3",
-    "introImageName": "Introduzione_3",
+    "introImageName": "event3_intro",
     "introText": "The wolf has spotted Little Red Riding Hood in the forest. He watches her carefully, thinking of a clever plan. Little Red Riding Hood has no idea that the wolf is watching... Help order the story scenes correctly!",
     "cards": [
-      { "id": 0, "imageName": "3_1", "description": "The wolf thinks of a plan to reach Grandmother's house", "correctPosition": 0 },
-      { "id": 1, "imageName": "3.2", "description": "The wolf appears on the path where Little Red Riding Hood is walking", "correctPosition": 1 },
-      { "id": 2, "imageName": "3_3", "description": "The wolf asks: 'Where are you going, little girl?'", "correctPosition": 2 },
-      { "id": 3, "imageName": "3.4", "description": "Little Red Riding Hood tells the wolf: 'I'm going to Grandmother's house'", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event3_card1",
+        "description": "Wolf appears on the path ahead",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event3_card2",
+        "description": "Wolf steps closer, curious and friendly",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event3_card3",
+        "description": "She points toward the distant path",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event3_card4",
+        "description": "Wolf thinks up a clever plan",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: CONSEQUENCES = ACTIONS HAVE RESULTS",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event3_reward",
     "rewardText": "Now the wolf knows where to find Grandmother. What will happen next?",
     "isLastEvent": false
   },
   {
     "id": 4,
     "bannerTitle": "Scene 4",
-    "introImageName": "3_1",
+    "introImageName": "event4_intro",
     "introText": "The wolf runs at top speed to Grandmother's house to get there before Little Red Riding Hood. Put the cards in the correct order from left to right to see how he arrives!",
     "cards": [
-      { "id": 0, "imageName": "scene4_card1", "description": "The wolf runs fast through the trees and roots of the forest", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene4_card2", "description": "The wolf follows a secret shortcut to arrive first", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene4_card3", "description": "The wolf arrives tired but happy in front of Grandmother's cottage", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene4_card4", "description": "The wolf knocks on the door pretending to be Little Red Riding Hood", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene4_card1",
+        "description": "The wolf runs fast through the trees and roots of the forest",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene4_card2",
+        "description": "The wolf follows a secret shortcut to arrive first",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene4_card3",
+        "description": "The wolf arrives tired but happy in front of Grandmother's cottage",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene4_card4",
+        "description": "The wolf knocks on the door pretending to be Little Red Riding Hood",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Acting quickly and planning your steps leads to reaching your goal!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event4_reward",
     "rewardText": "Great work! You sorted the wolf's run perfectly! Now the wolf has arrived at the cottage and is knocking on Grandma's door. The story continues!",
     "isLastEvent": false
   },
   {
     "id": 5,
     "bannerTitle": "Scene 5",
-    "introImageName": "3_3",
+    "introImageName": "event5_intro",
     "introText": "The wolf has entered Grandmother's house and prepares to wait for Little Red Riding Hood disguised as Grandma. Put the cards in the correct order from left to right to complete his disguise!",
     "cards": [
-      { "id": 0, "imageName": "scene5_card1", "description": "The wolf enters the cottage and Grandma hides safely in a cupboard", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene5_card2", "description": "The wolf finds Grandmother's clothes and decides to disguise himself", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene5_card3", "description": "The wolf puts on the nightcap and gets under the bed covers", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene5_card4", "description": "The wolf waits silently in bed for Little Red Riding Hood to arrive", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event5_card1",
+        "description": "Wolf enters the bedroom with a sneaky smile",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event5_card2",
+        "description": "Grandma hides scared in the wardrobe",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event5_card3",
+        "description": "Wolf puts on Grandma's nightcap and glasses",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event5_card4",
+        "description": "Wolf waits under the blankets",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Recognizing others' intentions helps you understand the story!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event5_reward",
     "rewardText": "Well done! You completed the wolf's disguise! Now he is under the covers ready to trick Little Red Riding Hood. Let's continue to see what happens!",
     "isLastEvent": false
   },
   {
     "id": 6,
     "bannerTitle": "Scene 6",
-    "introImageName": "Introduzione 2 evento",
+    "introImageName": "event6_intro",
     "introText": "After walking in the forest, Little Red Riding Hood arrives at the cottage and knocks on the door. Put the cards in the correct order from left to right to let her in!",
     "cards": [
-      { "id": 0, "imageName": "scene6_card1", "description": "Little Red Riding Hood arrives at the cottage among the flowers", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene6_card2", "description": "Little Red Riding Hood knocks gently on the wooden door", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene6_card3", "description": "The wolf answers with a hoarse voice, inviting the girl to enter", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene6_card4", "description": "Little Red Riding Hood slowly opens the door and enters surprised", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene6_card1",
+        "description": "Little Red Riding Hood arrives at the cottage among the flowers",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene6_card2",
+        "description": "Little Red Riding Hood knocks gently on the wooden door",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene6_card3",
+        "description": "The wolf answers with a hoarse voice, inviting the girl to enter",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene6_card4",
+        "description": "Little Red Riding Hood slowly opens the door and enters surprised",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Paying attention to unusual details (like a hoarse voice) is an important clue!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event6_reward",
     "rewardText": "Incredible! You sorted her arrival perfectly! Now Little Red Riding Hood has entered the room and is close to the bed. Let's see what happens next!",
     "isLastEvent": false
   },
   {
     "id": 7,
     "bannerTitle": "Scene 7",
-    "introImageName": "3_3",
+    "introImageName": "event7_intro",
     "introText": "Little Red Riding Hood speaks with her grandmother and notices something very strange about her appearance. Put the cards in the correct order from left to right to uncover the wolf!",
     "cards": [
-      { "id": 0, "imageName": "scene7_card1", "description": "Little Red Riding Hood approaches the bed, noticing Grandmother's large ears", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene7_card2", "description": "The girl observes the large eyes and asks the wolf another question", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene7_card3", "description": "Little Red Riding Hood sees long, sharp teeth under the nightcap", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene7_card4", "description": "The frightened girl finally realizes that the wolf is in the bed", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event7_card1",
+        "description": "She approaches the bed",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event7_card2",
+        "description": "She notices the big ears",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event7_card3",
+        "description": "She notices the big eyes",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event7_card4",
+        "description": "She notices the big teeth",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Asking questions and observing carefully reveals the truth!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event7_reward",
     "rewardText": "Fabulous! You sorted the dialogues perfectly! Little Red Riding Hood realized the wolf's trick and needs help. Let's run to the last scene!",
     "isLastEvent": false
   },
   {
     "id": 8,
     "bannerTitle": "Scene 8",
-    "introImageName": "Fine 3",
+    "introImageName": "event8_intro",
     "introText": "The wolf is discovered, Little Red Riding Hood screams, and help arrives to chase the wolf away forever. Put the cards in the correct order from left to right for the happy ending!",
     "cards": [
-      { "id": 0, "imageName": "scene8_card1", "description": "Little Red Riding Hood runs into the hallway and screams loudly for help", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene8_card2", "description": "The woodcutters hear the screams and run to the house to save her", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene8_card3", "description": "The frightened wolf escapes through the window and runs far away into the forest", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene8_card4", "description": "Grandmother comes out of the cupboard and hugs Little Red Riding Hood tightly, safe at last", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene8_card1",
+        "description": "Red Riding Hood gets scared and screams",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene8_card2",
+        "description": "A woodcutter arrives running towards the house",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene8_card3",
+        "description": "The wolf runs away from the woodcutter",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene8_card4",
+        "description": "Grandma and Red Riding Hood happy on the sofa",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "You learned: Helping each other in times of trouble always leads to a happy ending!",
-    "rewardImageName": "Fine primo evento",
+    "rewardImageName": "event8_reward",
     "rewardText": "Congratulations! You have unlocked the complete story of Little Red Riding Hood!",
     "isLastEvent": false
   }

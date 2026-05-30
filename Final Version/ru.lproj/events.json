@@ -5,12 +5,37 @@
     "introImageName": "Introduzione 1 evento",
     "introText": "Мама говорит Красной Шапочке, что бабушка заболела. Нужно собрать корзинку и отнести ей. Помоги правильно расставить сцены истории по порядку!",
     "cards": [
-      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Мама и Красная Шапочка вместе собирают корзинку", "correctPosition": 0 },
-      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "Мама отдаёт корзинку Красной Шапочке", "correctPosition": 1 },
-      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Красная Шапочка надевает свой красный плащ", "correctPosition": 2 },
-      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Красная Шапочка выходит из дома", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Immagine 1 sequenza",
+        "description": "Мама и Красная Шапочка вместе собирают корзинку",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Immagine 2 sequenza",
+        "description": "Мама отдаёт корзинку Красной Шапочке",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Immagine 3 sequenza",
+        "description": "Красная Шапочка надевает свой красный плащ",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Immagine 4 sequenza",
+        "description": "Красная Шапочка выходит из дома",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: события истории происходят по ПОРЯДКУ — каждое действие делает следующее возможным!",
     "rewardImageName": "Fine primo evento",
     "rewardText": "Потрясающе! Ты расставил все сцены в правильном порядке! Теперь Красная Шапочка может взять корзинку, надеть красный плащ и отправиться через лес к бабушке. История продолжается — благодаря ТЕБЕ!",
@@ -22,12 +47,37 @@
     "introImageName": "Introduzione 2 evento",
     "introText": "Красная Шапочка одна отправляется в густой лес. Она спокойно идёт по тропинке среди высоких деревьев. Сможешь расставить сцены истории в правильном порядке?",
     "cards": [
-      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Красная Шапочка идёт по лесной тропинке с корзинкой в руке", "correctPosition": 0 },
-      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "Она замечает красивые цветы, растущие у тропинки", "correctPosition": 1 },
-      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "Она срывает цветы и отходит от тропинки, отвлёкшись", "correctPosition": 2 },
-      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "Она уходит далеко от тропинки, увлёкшись сбором цветов", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Sequenza 2 evento 1",
+        "description": "Красная Шапочка идёт по лесной тропинке с корзинкой в руке",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Sequenza 2 evento 2",
+        "description": "Она замечает красивые цветы, растущие у тропинки",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Sequenza 2 evento 3",
+        "description": "Она срывает цветы и отходит от тропинки, отвлёкшись",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Sequenza 2 evento 4",
+        "description": "Она уходит далеко от тропинки, увлёкшись сбором цветов",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: отвлечения меняют ход истории — ПОРЯДОК выборов важен!",
     "rewardImageName": "Reward evento 2",
     "rewardText": "Невероятно! Ты правильно расставил каждую сцену! Ты идеально проследил путь Красной Шапочки через лес — шаг за шагом, до того места, где она свернула с тропинки. Ты настоящий герой истории и хранитель леса! Осторожно — за деревьями прячется волк…",
@@ -36,102 +86,252 @@
   {
     "id": 3,
     "bannerTitle": "Сцена 3",
-    "introImageName": "Introduzione_3",
+    "introImageName": "event3_intro",
     "introText": "Волк заметил Красную Шапочку в лесу. Он внимательно наблюдает за ней, придумывая хитрый план. Красная Шапочка не подозревает, что волк следит за ней... Помоги правильно расставить сцены истории!",
     "cards": [
-      { "id": 0, "imageName": "3_1", "description": "Волк придумывает план, как добраться до домика бабушки", "correctPosition": 0 },
-      { "id": 1, "imageName": "3.2", "description": "Волк выходит на тропинку, по которой идёт Красная Шапочка", "correctPosition": 1 },
-      { "id": 2, "imageName": "3_3", "description": "Волк спрашивает: «Куда ты идёшь, девочка?»", "correctPosition": 2 },
-      { "id": 3, "imageName": "3.4", "description": "Красная Шапочка говорит волку: «Я иду к бабушке»", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event3_card1",
+        "description": "Волк появляется на тропинке",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event3_card2",
+        "description": "Волк подходит ближе",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event3_card3",
+        "description": "Она указывает на дальний путь",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event3_card4",
+        "description": "Волк задумывает хитрый план",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: ПОСЛЕДСТВИЯ = ДЕЙСТВИЯ ИМЕЮТ РЕЗУЛЬТАТ",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event3_reward",
     "rewardText": "Теперь волк знает, где найти бабушку. Что будет дальше?",
     "isLastEvent": false
   },
   {
     "id": 4,
     "bannerTitle": "Сцена 4",
-    "introImageName": "3_1",
+    "introImageName": "event4_intro",
     "introText": "Волк бежит во всю прыть к домику бабушки, чтобы добраться туда раньше Красной Шапочки. Расставь карты в правильном порядке слева направо, чтобы увидеть, как он добирается!",
     "cards": [
-      { "id": 0, "imageName": "scene4_card1", "description": "Волк быстро бежит среди деревьев и корней леса", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene4_card2", "description": "Волк бежит по секретной короткой тропинке, чтобы успеть первым", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene4_card3", "description": "Волк уставший, но довольный добирается до домика бабушки", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene4_card4", "description": "Волк стучит в дверь бабушки, притворяясь Красной Шапочкой", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene4_card1",
+        "description": "Волк быстро бежит среди деревьев и корней леса",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene4_card2",
+        "description": "Волк бежит по секретной короткой тропинке, чтобы успеть первым",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene4_card3",
+        "description": "Волк уставший, но довольный добирается до домика бабушки",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene4_card4",
+        "description": "Волк стучит в дверь бабушки, притворяясь Красной Шапочкой",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: быстрое действие и планирование шагов помогают достичь цели!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event4_reward",
     "rewardText": "Отличная работа! Ты идеально распределил бег волка! Волк у домика и стучит в дверь. История продолжается!",
     "isLastEvent": false
   },
   {
     "id": 5,
     "bannerTitle": "Сцена 5",
-    "introImageName": "3_3",
+    "introImageName": "event5_intro",
     "introText": "Волк вошел в дом бабушки и готовится ждать Красную Шапочку, переодевшись бабулей. Расставь карты в правильном порядке слева направо, чтобы завершить маскировку!",
     "cards": [
-      { "id": 0, "imageName": "scene5_card1", "description": "Волк входит в дом, а испуганная бабушка прячется в чулан", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene5_card2", "description": "Волк находит вещи бабушки и решает переодеться", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene5_card3", "description": "Волк надевает чепец и ложится под одеяло в кровать", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene5_card4", "description": "Волк молча ждет в постели прихода Красной Шапочки", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event5_card1",
+        "description": "Волк входит в спальню с хитрой улыбкой",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event5_card2",
+        "description": "Бабушка прячется в шкаф от страха",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event5_card3",
+        "description": "Волк надевает чепец и очки бабушки",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event5_card4",
+        "description": "Волк ждёт под одеялом",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: понимание чужих намерений помогает понять всю историю!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event5_reward",
     "rewardText": "Молодец! Ты завершил маскировку волка! Теперь он под одеялом ждет девочку. Продолжаем!",
     "isLastEvent": false
   },
   {
     "id": 6,
     "bannerTitle": "Сцена 6",
-    "introImageName": "Introduzione 2 evento",
+    "introImageName": "event6_intro",
     "introText": "Пройдя через лес, Красная Шапочка подходит к домику и стучит в дверь. Расставь карты в правильном порядке слева направо, чтобы впустить ее!",
     "cards": [
-      { "id": 0, "imageName": "scene6_card1", "description": "Красная Шапочка подходит к домику среди цветов", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene6_card2", "description": "Красная Шапочка осторожно стучит в деревянную дверь", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene6_card3", "description": "Волк отвечает хриплым голосом, приглашая девочку войти", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene6_card4", "description": "Красная Шапочка тихо открывает дверь и входит с удивлением", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene6_card1",
+        "description": "Красная Шапочка подходит к домику среди цветов",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene6_card2",
+        "description": "Красная Шапочка осторожно стучит в деревянную дверь",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene6_card3",
+        "description": "Волк отвечает хриплым голосом, приглашая девочку войти",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene6_card4",
+        "description": "Красная Шапочка тихо открывает дверь и входит с удивлением",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: внимание к необычным деталям (хриплый голос) — важная подсказка!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event6_reward",
     "rewardText": "Невероятно! Ты правильно распределил прибытие! Красная Шапочка вошла в комнату и подходит к постели. Посмотрим, что дальше!",
     "isLastEvent": false
   },
   {
     "id": 7,
     "bannerTitle": "Сцена 7",
-    "introImageName": "3_3",
+    "introImageName": "event7_intro",
     "introText": "Красная Шапочка говорит с бабушкой и замечает много странного в ее внешности. Расставь карты в правильном порядке слева направо, чтобы разоблачить волка!",
     "cards": [
-      { "id": 0, "imageName": "scene7_card1", "description": "Красная Шапочка подходит к кровати, замечая большие уши", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene7_card2", "description": "Девочка смотрит в большие глаза и задает волку еще один вопрос", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene7_card3", "description": "Красная Шапочка видит длинные острые зубы под чепцом", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene7_card4", "description": "Испуганная девочка понимает, что в постели лежит волк", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event7_card1",
+        "description": "Она подходит к кровати",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event7_card2",
+        "description": "Замечает большие уши",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event7_card3",
+        "description": "Замечает большие глаза",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event7_card4",
+        "description": "Замечает большие зубы",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: вопросы и внимательное наблюдение раскрывают правду!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event7_reward",
     "rewardText": "Великолепно! Ты идеально расставил диалоги! Девочка разгадала уловку волка, ей нужна помощь. Спешим к финалу!",
     "isLastEvent": false
   },
   {
     "id": 8,
     "bannerTitle": "Сцена 8",
-    "introImageName": "Fine 3",
+    "introImageName": "event8_intro",
     "introText": "Волка разоблачают, Красная Шапочка кричит, и на помощь прибегают люди, чтобы прогнать волка навсегда. Расставь карты в правильном порядке для счастливого конца!",
     "cards": [
-      { "id": 0, "imageName": "scene8_card1", "description": "Красная Шапочка выбегает в коридор и громко зовет на помощь", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene8_card2", "description": "Дровосеки слышат крики и спешат к дому на спасение", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene8_card3", "description": "Испуганный волк выпрыгивает из окна и убегает глубоко в лес", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene8_card4", "description": "Бабушка выходит из чулана и крепко обнимает Красную Шапочку, они в безопасности", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene8_card1",
+        "description": "Красная Шапочка пугается и кричит",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene8_card2",
+        "description": "Лесоруб бежит к дому",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene8_card3",
+        "description": "Волк убегает от лесоруба",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene8_card4",
+        "description": "Бабушка и Красная Шапочка счастливы на диване",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Ты узнал: взаимовыручка в трудную минуту всегда ведет к счастливому концу!",
-    "rewardImageName": "Fine primo evento",
+    "rewardImageName": "event8_reward",
     "rewardText": "Поздравляем! Вы разблокировали полную историю Красной Шапочки!",
     "isLastEvent": false
   }

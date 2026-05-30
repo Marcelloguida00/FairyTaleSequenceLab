@@ -5,12 +5,37 @@
     "introImageName": "Introduzione 1 evento",
     "introText": "Nëna i thotë Kapeles së Kuqe se gjyshja është e sëmurë. Duhet të përgatisin një shportë për t'ia çuar. Ndihmo të renditësh skenat e historisë saktë!",
     "cards": [
-      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "Nëna dhe Kësulëkuqja përgatisin shportën së bashku", "correctPosition": 0 },
-      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "Nëna i jep shportën Kapeles së Kuqe", "correctPosition": 1 },
-      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Kapeleja e Kuqe vesh kesulën e saj të kuqe", "correctPosition": 2 },
-      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Kapeleja e Kuqe largohet nga shtëpia", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Immagine 1 sequenza",
+        "description": "Nëna dhe Kësulëkuqja përgatisin shportën së bashku",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Immagine 2 sequenza",
+        "description": "Nëna i jep shportën Kapeles së Kuqe",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Immagine 3 sequenza",
+        "description": "Kapeleja e Kuqe vesh kesulën e saj të kuqe",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Immagine 4 sequenza",
+        "description": "Kapeleja e Kuqe largohet nga shtëpia",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Ngjarjet e një historie ndodhin në REND — çdo veprim e bën të mundur tjetrin!",
     "rewardImageName": "Fine primo evento",
     "rewardText": "Fantastike! I renditëve të gjitha skenat në rendin e duhur! Tani Kapeleja e Kuqe can ta marrë shportën, të veshë mantelin e kuq dhe të vrapojë nëpër pyll për t'i çuar gjyshe ca ëmbëlsira. Historia mund të vazhdojë — falë TEJE!",
@@ -22,12 +47,37 @@
     "introImageName": "Introduzione 2 evento",
     "introText": "Kapeleja e Kuqe niset vetëm në pyllin e thellë. Ecën qetësisht nëpër shteg, e rrethuar nga pemë të larta. A mund t'i renditësh skenat e historisë në rendin e duhur?",
     "cards": [
-      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Kapeleja e Kuqe ecën nëpër shtegun e pyllit, me shportën në dorë", "correctPosition": 0 },
-      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "Ajo sheh lule të bukura me ngjyra që rriten pranë shtegun", "correctPosition": 1 },
-      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "Mbledh lulet dhe largohet nga shtegu, e shpërqendruar", "correctPosition": 2 },
-      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "Ajo largohet shumë nga shtegu, e humbur në mbledhjen e luleve", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Sequenza 2 evento 1",
+        "description": "Kapeleja e Kuqe ecën nëpër shtegun e pyllit, me shportën në dorë",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Sequenza 2 evento 2",
+        "description": "Ajo sheh lule të bukura me ngjyra që rriten pranë shtegun",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Sequenza 2 evento 3",
+        "description": "Mbledh lulet dhe largohet nga shtegu, e shpërqendruar",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Sequenza 2 evento 4",
+        "description": "Ajo largohet shumë nga shtegu, e humbur në mbledhjen e luleve",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Shpërqendrimet ndryshojnë drejtimin e një historie — RENDI i zgjedhjeve është i rëndësishëm!",
     "rewardImageName": "Reward evento 2",
     "rewardText": "Mahnitëse! I vure të gjitha skenat në rendin e duhur! E ndoqe udhëtimin e Kapeles së Kuqe nëpër pyll perfektisht — hap pas hapi, deri atje ku u largua nga shtegu. Je një hero i vërtetë i historisë dhe guardian i pyllit! Kujdes — ka një ujk që e vëzhgon nga pas pemëve…",
@@ -36,102 +86,252 @@
   {
     "id": 3,
     "bannerTitle": "Skena 3",
-    "introImageName": "Introduzione_3",
+    "introImageName": "event3_intro",
     "introText": "Ujku e ka vënë re Kapelen e Kuqe në pyll. E vëzhgon me kujdes, duke menduar një plan të zgjuar. Kapeleja e Kuqe nuk di fare që ujku po e shikon... Ndihmo të renditësh skenat e historisë saktë!",
     "cards": [
-      { "id": 0, "imageName": "3_1", "description": "Ujku mendon një plan për të arritur në shtëpinë e gjyshes", "correctPosition": 0 },
-      { "id": 1, "imageName": "3.2", "description": "Ujku shfaqet në shteg ku ecën Kapeleja e Kuqe", "correctPosition": 1 },
-      { "id": 2, "imageName": "3_3", "description": "Ujku pyet: 'Ku po shkon, vajzë?'", "correctPosition": 2 },
-      { "id": 3, "imageName": "3.4", "description": "Kapeleja e Kuqe i thotë ujkut: 'Po shkoj tek gjyshja'", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event3_card1",
+        "description": "Ujku shfaqet në shteg",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event3_card2",
+        "description": "Ujku afrohet me kureshtje",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event3_card3",
+        "description": "A tregon shtegun në larg",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event3_card4",
+        "description": "Ujku mendon një plan",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: PASOJA = VEPRIMET KANË REZULTATE",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event3_reward",
     "rewardText": "Tani ujku di ku të gjejë gjyshen. Çfarë do të ndodhë tjetër?",
     "isLastEvent": false
   },
   {
     "id": 4,
     "bannerTitle": "Skena 4",
-    "introImageName": "3_1",
+    "introImageName": "event4_intro",
     "introText": "Ujku vrapon me shpejtësi të madhe drejt shtëpisë së gjyshes për të mbërritur atje para Kësulëkuqes. Vendosni kartat në rendin e duhur nga e majta në të djathtë për të parë se si arrin ai!",
     "cards": [
-      { "id": 0, "imageName": "scene4_card1", "description": "Ujku vrapon shpejt mes pemëve dhe rrënjëve të pyllit", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene4_card2", "description": "Ujku ndjek një rrugë të shkurtër të fshehtë për të mbërritur i pari", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene4_card3", "description": "Ujku arrin i lodhur por i lumtur para shtëpisë së gjyshes", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene4_card4", "description": "Ujku troket në derën e gjyshes duke u hequr si Kësulëkuqja", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene4_card1",
+        "description": "Ujku vrapon shpejt mes pemëve dhe rrënjëve të pyllit",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene4_card2",
+        "description": "Ujku ndjek një rrugë të shkurtër të fshehtë për të mbërritur i pari",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene4_card3",
+        "description": "Ujku arrin i lodhur por i lumtur para shtëpisë së gjyshes",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene4_card4",
+        "description": "Ujku troket në derën e gjyshes duke u hequr si Kësulëkuqja",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Të veprosh shpejt dhe të planifikosh hapat të çon drejt qëllimit tënd!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event4_reward",
     "rewardText": "Punë e shkëlqyer! Ti e rendite vrapimin e ujkut në mënyrë të përsosur! Tani ujku ka mbërritur te shtëpia dhe po troket në derë. Historia vazhdon!",
     "isLastEvent": false
   },
   {
     "id": 5,
     "bannerTitle": "Skena 5",
-    "introImageName": "3_3",
+    "introImageName": "event5_intro",
     "introText": "Ujku ka hyrë në shtëpinë e gjyshes dhe përgatitet të presë Kësulëkuqen i maskuar si gjyshe. Vendosni kartat në rendin e duhur për të përfunduar maskimin e tij!",
     "cards": [
-      { "id": 0, "imageName": "scene5_card1", "description": "Ujku hyn në shtëpi dhe gjyshja e frikësuar fshihet në një dollap", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene5_card2", "description": "Ujku gjen rrobat e gjyshes dhe vendos të maskohet", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene5_card3", "description": "Ujku vendos kapuçin e natës dhe futet nën batanijet e krevatit", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene5_card4", "description": "Ujku pret në heshtje në krevat mbërritjen e Kësulëkuqes", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event5_card1",
+        "description": "Ujku hyn në dhomë me buzëqeshje të tinjisë",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event5_card2",
+        "description": "Gjyshja fshihet e frikësuar në dollap",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event5_card3",
+        "description": "Ujku vesh kapuçin dhe syzet e gjyshes",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event5_card4",
+        "description": "Ujku pret nën batanijet",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Të dallosh qëllimet e të tjerëve të ndihmon të kuptosh historinë!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event5_reward",
     "rewardText": "T lumtë! Ti e përfundove maskimin e ujkut! Tani ai është nën batanije gati për të mashtruar Kësulëkuqen. Le të vazhdojmë!",
     "isLastEvent": false
   },
   {
     "id": 6,
     "bannerTitle": "Skena 6",
-    "introImageName": "Introduzione 2 evento",
+    "introImageName": "event6_intro",
     "introText": "Pasi eci në pyll, Kësulëkuqja arrin te shtëpia dhe troket në derë. Vendosni kartat në rendin e duhur për ta lënë të hyjë!",
     "cards": [
-      { "id": 0, "imageName": "scene6_card1", "description": "Kapeleja e Kuqe arrin te shtëpia mes luleve", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene6_card2", "description": "Kapeleja e Kuqe troket lehtë në derën prej druri", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene6_card3", "description": "Ujku përgjigjet me një zë të ngjirur, duke e ftuar vajzën të hyjë", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene6_card4", "description": "Kapeleja e Kuqe hap ngadalë derën dhe hyn e habitur", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene6_card1",
+        "description": "Kapeleja e Kuqe arrin te shtëpia mes luleve",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene6_card2",
+        "description": "Kapeleja e Kuqe troket lehtë në derën prej druri",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene6_card3",
+        "description": "Ujku përgjigjet me një zë të ngjirur, duke e ftuar vajzën të hyjë",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene6_card4",
+        "description": "Kapeleja e Kuqe hap ngadalë derën dhe hyn e habitur",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Të kushtosh vëmendje ndaj detajeve të pazakonta (si një zë i ngjirur) është një indici i rëndësishëm!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event6_reward",
     "rewardText": "E pabesueshme! Ti e rendite mbërritjen e saj në mënyrë të përsosur! Tani Kapeleja e Kuqe ka hyrë në dhomë dhe është pranë krevatit. Le të shohim se çfarë ndodh më tej!",
     "isLastEvent": false
   },
   {
     "id": 7,
     "bannerTitle": "Skena 7",
-    "introImageName": "3_3",
+    "introImageName": "event7_intro",
     "introText": "Kapeleja e Kuqe bisedon me gjyshen e saj dhe vëren diçka shumë të çuditshme në pamjen e saj. Vendosni kartat në rendin e duhur për të zbuluar ujkun!",
     "cards": [
-      { "id": 0, "imageName": "scene7_card1", "description": "Kapeleja e Kuqe i afrohet krevatit, duke vënë re veshët e mëdhenj të gjyshes", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene7_card2", "description": "Vajza vëzhgon sytë e mëdhenj dhe i bën ujkut një pyetje tjetër", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene7_card3", "description": "Kapeleja e Kuqe sheh dhëmbë të gjatë dhe të mprehtë nën kapuç", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene7_card4", "description": "Vajza e frikësuar më la fund kupton se ujku është në krevat", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event7_card1",
+        "description": "I afrohet krevatit",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event7_card2",
+        "description": "Vëren veshët e mëdhenj",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event7_card3",
+        "description": "Vëren sytë e mëdhenj",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event7_card4",
+        "description": "Vëren dhëmbët e mëdhenj",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Të bësh pyetje dhe të vëzhgosh me kujdes zbulon të vërtetën!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event7_reward",
     "rewardText": "Përrallore! Ti i rendite dialogët në mënyrë të përsosur! Kapeleja e Kuqe e kuptoi trukun e ujkut dhe ka nevojë për ndihmë. Le të vrapojmë te skena e fundit!",
     "isLastEvent": false
   },
   {
     "id": 8,
     "bannerTitle": "Skena 8",
-    "introImageName": "Fine 3",
+    "introImageName": "event8_intro",
     "introText": "Ujku zbulohet, Kapeleja e Kuqe bërtet dhe ndihma arrin për të ndjekur ujkun përgjithmonë. Vendosni kartat në rendin e duhur për fundin e lumtur!",
     "cards": [
-      { "id": 0, "imageName": "scene8_card1", "description": "Kapeleja e Kuqe vrapon në korridor dhe bërtet fort për ndihmë", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene8_card2", "description": "Prerësit e druve dëgjojnë thirrjet dhe vrapojnë drejt shtëpisë për ta shpëtuar", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene8_card3", "description": "Ujku i frikësuar shpëton nga dritarja dhe vrapon larg në pyll", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene8_card4", "description": "Gjyshja del nga dollapi dhe përqafon fort Kapelejen e Kuqe, më në fund të sigurta", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene8_card1",
+        "description": "Kapeleja e Kuqe frikësohet dhe bërtet",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene8_card2",
+        "description": "Një druvar vjen duke vrapuar drejt shtëpisë",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene8_card3",
+        "description": "Ujku ikën nga druvari",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene8_card4",
+        "description": "Gjyshja dhe Kapeleja e Kuqe të lumtura në divan",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "Mësove: Të ndihmosh njëri-tjetrin në momente vështirësie çon gjithmonë në një fund të lumtur!",
-    "rewardImageName": "Fine primo evento",
+    "rewardImageName": "event8_reward",
     "rewardText": "Urime! Ke zhbllokuar historinë e plotë të Kësulëkuqes!",
     "isLastEvent": false
   }

@@ -5,12 +5,37 @@
     "introImageName": "Introduzione 1 evento",
     "introText": "مادر به شنل قرمزی می‌گوید که مادربزرگ بیمار است. باید یک سبد برای او آماده کنند. کمک کن صحنه‌های داستان را به ترتیب درست بچینی!",
     "cards": [
-      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "مادر و شنل قرمزی با هم سبد را آماده می‌کنند", "correctPosition": 0 },
-      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "مادر سبد را به شنل قرمزی می‌دهد", "correctPosition": 1 },
-      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "شنل قرمزی شنل قرمزش را می‌پوشد", "correctPosition": 2 },
-      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "شنل قرمزی از خانه خارج می‌شود", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Immagine 1 sequenza",
+        "description": "مادر و شنل قرمزی با هم سبد را آماده می‌کنند",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Immagine 2 sequenza",
+        "description": "مادر سبد را به شنل قرمزی می‌دهد",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Immagine 3 sequenza",
+        "description": "شنل قرمزی شنل قرمزش را می‌پوشد",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Immagine 4 sequenza",
+        "description": "شنل قرمزی از خانه خارج می‌شود",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتی: رویدادهای داستان به ترتیب اتفاق می‌افتند — هر کار، کار بعدی را ممکن می‌کند!",
     "rewardImageName": "Fine primo evento",
     "rewardText": "عالی! همه صحنه‌ها را به ترتیب درست چیدی! حالا شنل قرمزی می‌تواند سبدش را بردارد، شنلش را بپوشد و از جنگل بگذرد تا چیزهای خوشمزه‌ای برای مادربزرگ ببرد. داستان می‌تواند ادامه پیدا کند — همه این‌ها به خاطر تو!",
@@ -22,12 +47,37 @@
     "introImageName": "Introduzione 2 evento",
     "introText": "شنل قرمزی تنها به داخل جنگل عمیق می‌رود. آرام در طول مسیر قدم می‌زند، احاطه شده توسط درختان بلند. می‌تونی صحنه‌های داستان را به ترتیب درست بچینی؟",
     "cards": [
-      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "شنل قرمزی با سبد در دست در امتداد مسیر جنگل قدم می‌زند", "correctPosition": 0 },
-      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "گل‌های زیبای رنگارنگی کنار مسیر می‌بیند", "correctPosition": 1 },
-      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "گل‌ها را می‌چیند و حواس‌پرت از مسیر دور می‌شود", "correctPosition": 2 },
-      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "در حال چیدن گل‌ها خیلی دور از مسیر می‌رود", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "Sequenza 2 evento 1",
+        "description": "شنل قرمزی با سبد در دست در امتداد مسیر جنگل قدم می‌زند",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "Sequenza 2 evento 2",
+        "description": "گل‌های زیبای رنگارنگی کنار مسیر می‌بیند",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "Sequenza 2 evento 3",
+        "description": "گل‌ها را می‌چیند و حواس‌پرت از مسیر دور می‌شود",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "Sequenza 2 evento 4",
+        "description": "در حال چیدن گل‌ها خیلی دور از مسیر می‌رود",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتی: حواس‌پرتی‌ها جهت داستان را تغییر می‌دهند — ترتیب انتخاب‌ها مهم است!",
     "rewardImageName": "Reward evento 2",
     "rewardText": "باورنکردنی! هر صحنه را به ترتیب درست چیدی! سفر شنل قرمزی در جنگل را عالی دنبال کردی — قدم به قدم، تا جایی که از مسیر منحرف شد. تو یک قهرمان واقعی داستان و نگهبان جنگل هستی! مواظب باش — یه گرگ از پشت درختان او را تماشا می‌کند…",
@@ -36,102 +86,252 @@
   {
     "id": 3,
     "bannerTitle": "صحنه ۳",
-    "introImageName": "Introduzione_3",
+    "introImageName": "event3_intro",
     "introText": "گرگ شنل قرمزی را در جنگل دیده است. با دقت او را نگاه می‌کند و نقشه‌ای حیله‌گرانه می‌کشد. شنل قرمزی نمی‌داند که گرگ او را می‌پاید... کمک کن صحنه‌های داستان را به ترتیب درست بچینی!",
     "cards": [
-      { "id": 0, "imageName": "3_1", "description": "گرگ نقشه‌ای برای رسیدن به خانه مادربزرگ می‌کشد", "correctPosition": 0 },
-      { "id": 1, "imageName": "3.2", "description": "گرگ بر سر مسیری که شنل قرمزی می‌رود ظاهر می‌شود", "correctPosition": 1 },
-      { "id": 2, "imageName": "3_3", "description": "گرگ می‌پرسد: «به کجا می‌روی، دختر کوچک؟»", "correctPosition": 2 },
-      { "id": 3, "imageName": "3.4", "description": "شنل قرمزی به گرگ می‌گوید: «دارم به خانه مادربزرگم می‌روم»", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event3_card1",
+        "description": "گرگ روی مسیر ظاهر می‌شود",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event3_card2",
+        "description": "گرگ با کنجکاوی نزدیک‌تر می‌شود",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event3_card3",
+        "description": "او به مسیر دور اشاره می‌کند",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event3_card4",
+        "description": "گرگ نقشه‌ای می‌کشد",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتی: عواقب = اعمال نتیجه دارند",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event3_reward",
     "rewardText": "حالا گرگ می‌داند کجا می‌تواند مادربزرگ را پیدا کند. بعد چه اتفاقی می‌افتد؟",
     "isLastEvent": false
   },
   {
     "id": 4,
     "bannerTitle": "صحنه ۴",
-    "introImageName": "3_1",
+    "introImageName": "event4_intro",
     "introText": "گرگ با تمام سرعت به سمت خانه مادربزرگ می‌دود تا قبل از شنل قرمزی به آنجا برسد. کارت‌ها را به ترتیب صحیح از چپ به راست قرار دهید تا ببینید او چگونه می‌رسد!",
     "cards": [
-      { "id": 0, "imageName": "scene4_card1", "description": "گرگ با سرعت از میان درختان و ریشه‌های جنگل می‌دود", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene4_card2", "description": "گرگ برای اینکه اولین نفر برسد، یک میانبر مخفی را دنبال می‌کند", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene4_card3", "description": "گرگ خسته اما خوشحال به جلوی کلبه مادربزرگ می‌رسد", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene4_card4", "description": "گرگ با تظاهر به شنل قرمزی در خانه مادربزرگ را می‌زند", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene4_card1",
+        "description": "گرگ با سرعت از میان درختان و ریشه‌های جنگل می‌دود",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene4_card2",
+        "description": "گرگ برای اینکه اولین نفر برسد، یک میانبر مخفی را دنبال می‌کند",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene4_card3",
+        "description": "گرگ خسته اما خوشحال به جلوی کلبه مادربزرگ می‌رسد",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene4_card4",
+        "description": "گرگ با تظاهر به شنل قرمزی در خانه مادربزرگ را می‌زند",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتید: سریع اقدام کردن و برنامه‌ریزی مراحل شما را به هدفتان می‌رساند!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event4_reward",
     "rewardText": "کار عالی! شما دویدن گرگ را به خوبی مرتب کردید! اکنون گرگ به کلبه رسیده و در خانه مادربزرگ را می‌زند. داستان ادامه دارد!",
     "isLastEvent": false
   },
   {
     "id": 5,
     "bannerTitle": "صحنه ۵",
-    "introImageName": "3_3",
+    "introImageName": "event5_intro",
     "introText": "گرگ وارد خانه مادربزرگ شده و آماده می‌شود تا با لباس مبدل مادربزرگ منتظر شنل قرمزی بماند. کارت‌ها را مرتب کنید تا تغییر چهره او کامل شود!",
     "cards": [
-      { "id": 0, "imageName": "scene5_card1", "description": "گرگ وارد کلبه می‌شود و مادربزرگ ترسیده در یک کمد پنهان می‌شود", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene5_card2", "description": "گرگ لباس‌های مادربزرگ را پیدا می‌کند و تصمیم می‌گیرد تغییر چهره دهد", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene5_card3", "description": "گرگ کلاه خواب را سرش می‌گذارد و به زیر پتو می‌رود", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene5_card4", "description": "گرگ بی صدا در رختخواب منتظر ورود شنل قرمزی می‌ماند", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event5_card1",
+        "description": "گرگ با لبخند حیله‌گونه وارد اتاق می‌شود",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event5_card2",
+        "description": "مادربزرگ ترسیده در کمد پنهان می‌شود",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event5_card3",
+        "description": "گرگ کلاه خواب و عینک مادربزرگ را می‌گذارد",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event5_card4",
+        "description": "گرگ زیر پتو منتظر می‌ماند",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتید: شناختن نیات دیگران به شما در درک داستان کمک می‌کند!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event5_reward",
     "rewardText": "آفرین! شما تغییر چهره گرگ را کامل کردید! اکنون او زیر پتو است و آماده است تا شنل قرمزی را فریب دهد. بیایید ادامه دهیم!",
     "isLastEvent": false
   },
   {
     "id": 6,
     "bannerTitle": "صحنه ۶",
-    "introImageName": "Introduzione 2 evento",
+    "introImageName": "event6_intro",
     "introText": "شنل قرمزی پس از راه رفتن در جنگل به کلبه می‌رسد و در می‌زند. کارت‌ها را مرتب کنید تا او وارد شود!",
     "cards": [
-      { "id": 0, "imageName": "scene6_card1", "description": "شنل قرمزی به کلبه در میان گل‌ها می‌رسد", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene6_card2", "description": "شنل قرمزی به آرامی در چوبی را می‌زند", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene6_card3", "description": "گرگ با صدایی گرفته پاسخ می‌دهد و دخترک را به داخل دعوت می‌کند", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene6_card4", "description": "شنل قرمزی به آرامی در را باز می‌کند و با تعجب وارد می‌شود", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene6_card1",
+        "description": "شنل قرمزی به کلبه در میان گل‌ها می‌رسد",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene6_card2",
+        "description": "شنل قرمزی به آرامی در چوبی را می‌زند",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene6_card3",
+        "description": "گرگ با صدایی گرفته پاسخ می‌دهد و دخترک را به داخل دعوت می‌کند",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene6_card4",
+        "description": "شنل قرمزی به آرامی در را باز می‌کند و با تعجب وارد می‌شود",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتید: توجه به جزئیات غیرعادی (مانند صدای گرفته) یک سرنخ مهم است!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event6_reward",
     "rewardText": "فوق‌العاده! شما ورود او را به خوبی مرتب کردید! اکنون شنل قرمزی وارد اتاق شده و به رختخواب نزدیک است. بیایید ببینیم چه می‌شود!",
     "isLastEvent": false
   },
   {
     "id": 7,
     "bannerTitle": "صحنه ۷",
-    "introImageName": "3_3",
+    "introImageName": "event7_intro",
     "introText": "شنل قرمزی با مادربزرگش صحبت می‌کند و متوجه چیز بسیار عجیبی در ظاهر او می‌شود. کارت‌ها را مرتب کنید تا دست گرگ رو شود!",
     "cards": [
-      { "id": 0, "imageName": "scene7_card1", "description": "شنل قرمزی به رختخواب نزدیک می‌شود و متوجه گوش‌های بزرگ مادربزرگ می‌شود", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene7_card2", "description": "دخترک چشم‌های بزرگ را مشاهده می‌کند و سوال دیگری از گرگ می‌پرسد", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene7_card3", "description": "شنل قرمزی دندان‌های بلند و تیز را زیر کلاه خواب می‌بیند", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene7_card4", "description": "دخترک ترسیده بالاخره متوجه می‌شود که گرگ در رختخواب است", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "event7_card1",
+        "description": "به تخت نزدیک می‌شود",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "event7_card2",
+        "description": "گوش‌های بزرگ را می‌بیند",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "event7_card3",
+        "description": "چشم‌های بزرگ را می‌بیند",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "event7_card4",
+        "description": "دندان‌های بزرگ را می‌بیند",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتید: سوال پرسیدن و مشاهده دقیق حقیقت را آشکار می‌کند!",
-    "rewardImageName": "Fine 3",
+    "rewardImageName": "event7_reward",
     "rewardText": "شگفت‌انگیز! شما دیالوگ‌ها را عالی مرتب کردید! شنل قرمزی متوجه حقه گرگ شد و نیاز به کمک دارد. بیایید به صحنه آخر برویم!",
     "isLastEvent": false
   },
   {
     "id": 8,
     "bannerTitle": "صحنه ۸",
-    "introImageName": "Fine 3",
+    "introImageName": "event8_intro",
     "introText": "دست گرگ رو می‌شود، شنل قرمزی فریاد می‌زند و کمک می‌رسد تا گرگ را برای همیشه فراری دهد. کارت‌ها را برای پایان خوش داستان مرتب کنید!",
     "cards": [
-      { "id": 0, "imageName": "scene8_card1", "description": "شنل قرمزی به راهرو می‌دود و با صدای بلند فریاد می‌زند و کمک می‌خواهد", "correctPosition": 0 },
-      { "id": 1, "imageName": "scene8_card2", "description": "هیزم‌شکنان فریادها را می‌شنوند و برای نجات او به خانه می‌دوند", "correctPosition": 1 },
-      { "id": 2, "imageName": "scene8_card3", "description": "گرگ ترسیده از پنجره فرار می‌کند و به اعماق جنگل می‌گریزد", "correctPosition": 2 },
-      { "id": 3, "imageName": "scene8_card4", "description": "مادربزرگ از کمد خارج می‌شود و شنل قرمزی را در آغوش می‌گیرد، آنها بالاخره در امان هستند", "correctPosition": 3 }
+      {
+        "id": 0,
+        "imageName": "scene8_card1",
+        "description": "شنل قرمزی می‌ترسد و فریاد می‌زند",
+        "correctPosition": 0
+      },
+      {
+        "id": 1,
+        "imageName": "scene8_card2",
+        "description": "یک هیزم‌شکن به سمت خانه می‌دود",
+        "correctPosition": 1
+      },
+      {
+        "id": 2,
+        "imageName": "scene8_card3",
+        "description": "گرگ از هیزم‌شکن فرار می‌کند",
+        "correctPosition": 2
+      },
+      {
+        "id": 3,
+        "imageName": "scene8_card4",
+        "description": "مادربزرگ و شنل قرمزی روی مبل خوشحال هستند",
+        "correctPosition": 3
+      }
     ],
-    "correctOrder": [0, 1, 2, 3],
+    "correctOrder": [
+      0,
+      1,
+      2,
+      3
+    ],
     "learningOutcome": "یاد گرفتید: کمک به یکدیگر در مواقع سختی همیشه به یک پایان خوش منجر می‌شود!",
-    "rewardImageName": "Fine primo evento",
+    "rewardImageName": "event8_reward",
     "rewardText": "تبریک می‌گویم! شما داستان کامل شنل قرمزی را باز کردید!",
     "isLastEvent": false
   }
