@@ -11,8 +11,10 @@ enum AppTypography {
     static let dyslexiaBold = "OpenDyslexic-Bold"
     static let dyslexiaItalic = "OpenDyslexic-Italic"
 
-    static func fontName(for weight: Font.Weight) -> String {
-        if UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey) {
+    static func fontName(for weight: Font.Weight, dyslexiaEnabled: Bool? = nil) -> String {
+        let useDyslexia = dyslexiaEnabled ?? UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey)
+
+        if useDyslexia {
             switch weight {
             case .black, .heavy, .bold, .semibold:
                 return dyslexiaBold

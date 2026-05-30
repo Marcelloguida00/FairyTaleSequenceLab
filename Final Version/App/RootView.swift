@@ -18,6 +18,8 @@ struct RootView: View {
     }
 
     var body: some View {
+        let usesDyslexiaFont = fontSettings.dyslexiaFontEnabled
+
         ZStack {
             if gameStarted {
                 ContentView(
@@ -78,8 +80,12 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .font(.appBody)
-        .id(fontSettings.dyslexiaFontEnabled)
+        .font(Font.custom(
+            AppTypography.fontName(for: .regular, dyslexiaEnabled: usesDyslexiaFont),
+            size: 17,
+            relativeTo: .body
+        ))
+        .environment(\.dyslexiaFontEnabled, usesDyslexiaFont)
         .onAppear {
             BackgroundMusicPlayer.shared.start()
         }
