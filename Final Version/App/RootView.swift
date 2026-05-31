@@ -22,12 +22,7 @@ struct RootView: View {
 
         ZStack {
             if gameStarted {
-                ContentView(
-                    isGlobalTransitioning: isTransitioning,
-                    onReturnToMainMenu: {
-                        Task { await returnToMainMenu() }
-                    }
-                )
+                ContentView(isGlobalTransitioning: isTransitioning)
             }
 
             if !gameStarted {
@@ -108,25 +103,6 @@ struct RootView: View {
 
         menuCloudExitProgress = 0
         isTransitioning = false
-    }
-
-    /// Menu: nuvole coprono il gioco → passaggio al menu (senza seconda ondata di uscita).
-    @MainActor
-    private func returnToMainMenu() async {
-        guard !isTransitioning, gameStarted else { return }
-
-        isTransitioning = true
-        menuCloudExitProgress = 0
-
-        await CloudTransitionAnimator.runCoverTransition(
-            isActive: $isTransitioning,
-            enterProgress: $cloudEnterProgress,
-            whenCovered: {
-                menuCloudEnterProgress = 1
-                menuPanelResetID += 1
-                gameStarted = false
-            }
-        )
     }
 }
 

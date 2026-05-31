@@ -58,15 +58,10 @@ struct RedHoodARStoryView: View {
 
             Spacer()
 
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .black))
-                    .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
-                    .background(Circle().fill(.black.opacity(0.48)))
-                    .overlay(Circle().stroke(.white.opacity(0.52), lineWidth: 1))
+            GameCircleBackButton(size: 72) {
+                AppSettings.hapticImpact(.light)
+                onClose()
             }
-            .buttonStyle(.plain)
             .accessibilityLabel(lm.t("a11y.go_back"))
         }
         .padding(.horizontal, 16)

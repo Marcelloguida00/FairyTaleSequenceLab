@@ -1,9 +1,10 @@
 import SwiftUI
 
-private enum GameButtonStyle {
+enum GameButtonAppearance {
     static let glossTop = Color(hex: "#FDE549")
     static let glossMid = Color(hex: "#FCDB00")
     static let glossBottom = Color(hex: "#FCDB00")
+    static let border = Color(hex: "#430303")
     static let label = Color(red: 0.29, green: 0.12, blue: 0.08)
 
     static var glossGradient: LinearGradient {
@@ -27,6 +28,8 @@ private enum GameButtonStyle {
     }
 }
 
+private typealias GameButtonStyle = GameButtonAppearance
+
 /// Glossy yellow capsule button used across the app.
 struct GamePillButtonBackground: View {
     var body: some View {
@@ -41,7 +44,7 @@ struct GamePillButtonBackground: View {
             }
             .overlay {
                 Capsule()
-                    .stroke(Color(hex: "#430303"), lineWidth: 2)
+                    .stroke(GameButtonAppearance.border, lineWidth: 2)
             }
             .shadow(color: .black.opacity(0.28), radius: 5, y: 3)
     }
@@ -61,7 +64,7 @@ struct GameCircleButtonBackground: View {
             }
             .overlay {
                 Circle()
-                    .stroke(Color(hex: "#430303"), lineWidth: 2)
+                    .stroke(GameButtonAppearance.border, lineWidth: 2)
             }
             .shadow(color: .black.opacity(0.28), radius: 5, y: 3)
     }
@@ -177,6 +180,121 @@ struct GameCircleBackButton: View {
             iconWeight: .black,
             action: action
         )
+    }
+}
+
+struct GameCircleSettingsButton: View {
+    var size: CGFloat = 52
+    let action: () -> Void
+
+    var body: some View {
+        GameCircleButton(
+            systemImage: "gearshape.fill",
+            size: size,
+            iconSize: size * 0.38,
+            iconWeight: .black,
+            action: action
+        )
+    }
+}
+
+/// Downward map marker above the avatar — matches the glossy yellow back button.
+struct GameMapLocationMarker: View {
+    var width: CGFloat
+    var height: CGFloat
+    var cornerRadius: CGFloat? = nil
+
+    private var resolvedCornerRadius: CGFloat {
+        cornerRadius ?? min(width, height) * 0.22
+    }
+
+    var body: some View {
+        GameMapLocationMarkerShape(cornerRadius: resolvedCornerRadius)
+            .fill(GameButtonAppearance.glossGradient)
+            .overlay(alignment: .top) {
+                GameMapLocationMarkerShape(cornerRadius: resolvedCornerRadius)
+                    .fill(GameButtonAppearance.highlightGradient)
+                    .padding(.horizontal, width * 0.12)
+                    .padding(.top, height * 0.08)
+                    .frame(height: height * 0.42)
+            }
+            .overlay {
+                GameMapLocationMarkerShape(cornerRadius: resolvedCornerRadius)
+                    .stroke(GameButtonAppearance.border, lineWidth: max(1.5, width * 0.07))
+            }
+            .frame(width: width, height: height)
+            .shadow(color: .black.opacity(0.28), radius: 3, x: 0, y: 2)
+    }
+}
+
+struct GameMapLocationMarkerShape: Shape {
+    var cornerRadius: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        let points = [
+            CGPoint(x: rect.midX, y: rect.maxY),
+            CGPoint(x: rect.minX, y: rect.minY),
+            CGPoint(x: rect.maxX, y: rect.minY)
+        ]
+        return roundedPolygonPath(
+            points: points,
+            radius: min(cornerRadius, rect.width * 0.24, rect.height * 0.18)
+        )
+    }
+
+    private func roundedPolygonPath(points: [CGPoint], radius: CGFloat) -> Path {
+        guard points.count >= 3, radius > 0 else {
+            var path = Path()
+            path.addLines(points)
+            path.closeSubpath()
+            return path
+        }
+
+        var path = Path()
+        let count = points.count
+
+        for index in 0..<count {
+            let current = points[index]
+            let previous = points[(index - 1 + count) % count]
+            let next = points[(index + 1) % count]
+
+            let toPrevious = vector(from: current, to: previous)
+            let toNext = vector(from: current, to: next)
+
+            let previousDistance = distance(from: current, to: previous)
+            let nextDistance = distance(from: current, to: next)
+            let inset = min(radius, previousDistance * 0.45, nextDistance * 0.45)
+
+            let start = CGPoint(
+                x: current.x + toPrevious.x * inset,
+                y: current.y + toPrevious.y * inset
+            )
+            let end = CGPoint(
+                x: current.x + toNext.x * inset,
+                y: current.y + toNext.y * inset
+            )
+
+            if index == 0 {
+                path.move(to: start)
+            } else {
+                path.addLine(to: start)
+            }
+            path.addQuadCurve(to: end, control: current)
+        }
+
+        path.closeSubpath()
+        return path
+    }
+
+    private func vector(from origin: CGPoint, to destination: CGPoint) -> CGPoint {
+        let dx = destination.x - origin.x
+        let dy = destination.y - origin.y
+        let length = max(sqrt(dx * dx + dy * dy), 0.001)
+        return CGPoint(x: dx / length, y: dy / length)
+    }
+
+    private func distance(from a: CGPoint, to b: CGPoint) -> CGFloat {
+        sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2))
     }
 }
 

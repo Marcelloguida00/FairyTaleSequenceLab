@@ -52,9 +52,13 @@ private enum ActiveMap {
 
 }
 
+private enum MapOverlayMetrics {
+    static let chromeButtonSize: CGFloat = 72
+    static let bookButtonSize: CGFloat = 104
+}
+
 struct ContentView: View {
     let isGlobalTransitioning: Bool
-    let onReturnToMainMenu: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
 
@@ -76,6 +80,18 @@ struct ContentView: View {
     @State private var walkTask: Task<Void, Never>? = nil
     @State private var walkGeneration = 0
     @State private var isBookOpen = false
+    @State private var showSettings = false
+    @State private var isSettingsTransitionActive = false
+    @State private var showsSettingsCloudOverlay = false
+    @State private var settingsCloudEnterProgress: CGFloat = 0
+    @State private var settingsCloudExitProgress: CGFloat = 0
+    @State private var showAdvancedMathGate = false
+    @State private var advancedMathProblem = MathAdditionProblem.randomSimple()
+    @State private var advancedSettingsUnlocked = false
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private static let settingsFadeDuration: TimeInterval = 0.30
 
     private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
@@ -121,7 +137,13 @@ struct ContentView: View {
             }
 
             if activeMap == .redHood {
-                BackButton { handleBackButton() }
+                GameCircleBackButton(size: MapOverlayMetrics.chromeButtonSize) {
+                    AppSettings.hapticImpact(.light)
+                    handleBackButton()
+                }
+                .disabled(isMapNavigationBlocked)
+                .opacity(isMapNavigationBlocked ? 0.45 : 1)
+                .accessibilityLabel(lm.t("button.back"))
                     .padding(.top, 52)
                     .padding(.leading, 20)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -129,27 +151,27 @@ struct ContentView: View {
                     .transition(.opacity)
             }
 
-            if activeMap == .main {
-                MainMenuButton {
-                    onReturnToMainMenu()
+            if activeMap == .main || activeMap == .redHood {
+                GameCircleSettingsButton(size: MapOverlayMetrics.chromeButtonSize) {
+                    Task { await openSettings() }
                 }
-                .disabled(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil)
-                .opacity(isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil ? 0.45 : 1)
+                .disabled(isMapToolbarBlocked)
+                .opacity(isMapToolbarBlocked ? 0.45 : 1)
+                .accessibilityLabel(lm.t("a11y.settings_button"))
                 .padding(.top, 52)
                 .padding(.trailing, 20)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .zIndex(30)
+                .zIndex(31)
+                .transition(.opacity)
             }
 
-            if shouldShowRedHoodPlayButton,
-               let region = MapGraph.storyRegion(for: MapGraph.redRidingHoodBaseID) {
-                MapPlayCallout(title: lm.t(region.titleKey), accessibilityLabel: lm.t("a11y.play_red_hood")) {
+            if shouldShowRedHoodPlayButton {
+                MapPlayButton(accessibilityLabel: lm.t("a11y.play_red_hood")) {
                     Task {
                         await openRedHoodSubMap()
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 22)
+                .padding(.bottom, 28)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -158,15 +180,14 @@ struct ContentView: View {
             if activeMap == .redHood,
                activeRedHoodLevel == nil,
                let level = pendingRedHoodLevel {
-                MapPlayCallout(title: levelBannerTitle(for: level), accessibilityLabel: lm.t("a11y.start_event")) {
+                MapPlayButton(accessibilityLabel: lm.t("a11y.start_event")) {
                     let selectedLevel = level
                     withAnimation(.easeInOut(duration: 0.2)) {
                         pendingRedHoodLevel = nil
                         levelBannerLevel = selectedLevel
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 22)
+                .padding(.bottom, 28)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -198,6 +219,51 @@ struct ContentView: View {
                 })
                 .transition(.scale(scale: 0.1).combined(with: .opacity))
                 .zIndex(100)
+            }
+        }
+        .overlay {
+            if showsSettingsCloudOverlay {
+                CloudTransitionOverlay(
+                    enterProgress: settingsCloudEnterProgress,
+                    exitProgress: settingsCloudExitProgress
+                )
+                .allowsHitTesting(false)
+                .zIndex(110)
+            }
+
+            if showSettings {
+                SettingsFrameOverlay(
+                    onClose: { Task { await closeSettings() } },
+                    onAdvancedSettingsRequested: {
+                        advancedMathProblem = MathAdditionProblem.randomSimple()
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showAdvancedMathGate = true
+                        }
+                    },
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                )
+                .environmentObject(lm)
+                .transition(.opacity)
+                .zIndex(120)
+                .allowsHitTesting(!showAdvancedMathGate)
+            }
+
+            if showAdvancedMathGate {
+                AdvancedSettingsMathGate(
+                    problem: advancedMathProblem,
+                    onSuccess: {
+                        showAdvancedMathGate = false
+                        advancedSettingsUnlocked = true
+                    },
+                    onCancel: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showAdvancedMathGate = false
+                        }
+                    }
+                )
+                .environmentObject(lm)
+                .transition(.opacity)
+                .zIndex(130)
             }
         }
         .onReceive(spriteTimer) { _ in
@@ -303,8 +369,7 @@ struct ContentView: View {
                !MapGraph.comingSoonBaseIDs.contains(currentBaseID) {
                 StoryRegionPlaque(
                     title: lm.t(region.titleKey),
-                    width: titleWidth(for: mapSize),
-                    fontSize: titleFontSize(for: mapSize)
+                    mapScale: projection.scale
                 )
                 .position(projection.screenPoint(fromPixel: region.titlePoint))
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
@@ -313,12 +378,9 @@ struct ContentView: View {
             if activeMap == .main, !isWalking,
                MapGraph.comingSoonBaseIDs.contains(currentBaseID),
                let region = MapGraph.storyRegion(for: currentBaseID) {
-                ComingSoonBadge(
-                    width: titleWidth(for: mapSize),
-                    fontSize: titleFontSize(for: mapSize)
-                )
-                .position(projection.screenPoint(fromPixel: region.titlePoint))
-                .transition(.scale(scale: 0.92).combined(with: .opacity))
+                ComingSoonBadge(mapScale: projection.scale)
+                    .position(projection.screenPoint(fromPixel: region.titlePoint))
+                    .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
 
         }
@@ -335,14 +397,6 @@ struct ContentView: View {
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
         let multiplier: CGFloat = 0.11
         return min(mapSize.width, mapSize.height) * multiplier
-    }
-
-    private func titleWidth(for mapSize: CGSize) -> CGFloat {
-        min(mapSize.width * 0.28, max(190, mapSize.width * 0.18))
-    }
-
-    private func titleFontSize(for mapSize: CGSize) -> CGFloat {
-        min(26, max(17, mapSize.width * 0.022))
     }
 
     private func handleBackButton() {
@@ -569,8 +623,89 @@ struct ContentView: View {
         activeMap == .main || activeMap == .redHood
     }
 
+    private var isMapNavigationBlocked: Bool {
+        isMapTransitioning
+            || isGlobalTransitioning
+            || isWalking
+            || showSettings
+            || isSettingsTransitionActive
+            || isBookOpen
+    }
+
+    private var isMapToolbarBlocked: Bool {
+        isMapNavigationBlocked || activeRedHoodLevel != nil
+    }
+
     private var isBookInteractionBlocked: Bool {
-        isMapTransitioning || isGlobalTransitioning || isWalking || activeRedHoodLevel != nil
+        isMapToolbarBlocked
+    }
+
+    private var settingsFadeAnimation: Animation {
+        reduceMotion
+            ? .linear(duration: 0.01)
+            : .easeInOut(duration: Self.settingsFadeDuration)
+    }
+
+    private var settingsCloudEnterDuration: TimeInterval {
+        reduceMotion ? 0.01 : CloudTransitionAnimator.enterDuration
+    }
+
+    private var settingsCloudExitDuration: TimeInterval {
+        reduceMotion ? 0.01 : CloudTransitionAnimator.exitDuration
+    }
+
+    @MainActor
+    private func openSettings() async {
+        guard !isSettingsTransitionActive, !showSettings, !isMapToolbarBlocked else { return }
+
+        isSettingsTransitionActive = true
+        AppSettings.hapticImpact(.light)
+
+        showsSettingsCloudOverlay = true
+        settingsCloudExitProgress = 0
+        settingsCloudEnterProgress = 0
+
+        withAnimation(.easeInOut(duration: settingsCloudEnterDuration)) {
+            settingsCloudEnterProgress = 1
+        }
+
+        try? await Task.sleep(nanoseconds: UInt64(settingsCloudEnterDuration * 1_000_000_000))
+
+        withAnimation(settingsFadeAnimation) {
+            showSettings = true
+        }
+
+        if !reduceMotion {
+            try? await Task.sleep(nanoseconds: UInt64(Self.settingsFadeDuration * 1_000_000_000))
+        }
+
+        isSettingsTransitionActive = false
+    }
+
+    @MainActor
+    private func closeSettings() async {
+        guard showSettings, !isSettingsTransitionActive else { return }
+
+        isSettingsTransitionActive = true
+        AppSettings.hapticImpact(.light)
+
+        withAnimation(settingsFadeAnimation) {
+            showSettings = false
+            showAdvancedMathGate = false
+        }
+
+        try? await Task.sleep(nanoseconds: UInt64(Self.settingsFadeDuration * 1_000_000_000))
+
+        withAnimation(.easeInOut(duration: settingsCloudExitDuration)) {
+            settingsCloudExitProgress = 1
+        }
+
+        try? await Task.sleep(nanoseconds: UInt64(settingsCloudExitDuration * 1_000_000_000))
+
+        settingsCloudEnterProgress = 0
+        settingsCloudExitProgress = 0
+        showsSettingsCloudOverlay = false
+        isSettingsTransitionActive = false
     }
 
     private var shouldShowRedHoodPlayButton: Bool {
@@ -814,14 +949,10 @@ private struct AvatarWithMarker: View {
         ZStack {
             AvatarSprite(direction: direction, frame: frame, size: size)
 
-            LocationTriangle()
-                .fill(Color(red: 1.0, green: 0.78, blue: 0.16))
-                .overlay(
-                    LocationTriangle()
-                        .stroke(.white, lineWidth: max(1.5, size * 0.035))
-                )
-                .shadow(color: .black.opacity(0.32), radius: 3, x: 0, y: 2)
-                .frame(width: size * 0.30, height: size * 0.24)
+            GameMapLocationMarker(
+                width: size * 0.34,
+                height: size * 0.28
+            )
                 .offset(y: markerIsRaised ? -size * 0.76 : -size * 0.62)
         }
         .frame(width: size, height: size)
@@ -845,147 +976,144 @@ private struct AvatarSprite: View {
             .shadow(color: .black.opacity(0.35), radius: 5, x: 0, y: 5)
     }
 }
-
-private struct LocationTriangle: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.midX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        path.closeSubpath()
-        return path
-    }
-}
-
 private struct StoryRegion {
     let baseID: Int
     let titleKey: String
     let titlePoint: CGPoint
 }
 
+private enum IslandTitleFrameAsset {
+    static let pixelSize = CGSize(width: 721, height: 201)
+
+    static func frameSize(mapScale: CGFloat) -> CGSize {
+        CGSize(
+            width: pixelSize.width * mapScale,
+            height: pixelSize.height * mapScale
+        )
+    }
+
+    static func titleFontSize(mapScale: CGFloat) -> CGFloat {
+        46 * mapScale
+    }
+
+    static func secondaryFontSize(mapScale: CGFloat) -> CGFloat {
+        34 * mapScale
+    }
+}
+
 private struct StoryRegionPlaque: View {
     let title: String
-    let width: CGFloat
-    let fontSize: CGFloat
+    let mapScale: CGFloat
+
+    private var frameSize: CGSize {
+        IslandTitleFrameAsset.frameSize(mapScale: mapScale)
+    }
+
+    private var titleFontSize: CGFloat {
+        IslandTitleFrameAsset.titleFontSize(mapScale: mapScale)
+    }
 
     var body: some View {
-        Text(title)
-            .font(.app(size: fontSize, weight: .semibold))
-            .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
-            .multilineTextAlignment(.center)
-            .lineLimit(2)
-            .minimumScaleFactor(0.72)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 9)
-            .frame(width: width)
-            .background {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(red: 0.97, green: 0.86, blue: 0.58).opacity(0.94))
+        ZStack {
+            Image("IslandTitleFrame")
+                .resizable()
+                .renderingMode(.original)
+                .interpolation(.high)
+                .frame(width: frameSize.width, height: frameSize.height)
 
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(red: 0.55, green: 0.31, blue: 0.09), lineWidth: 2)
-                }
-            }
-            .shadow(color: .black.opacity(0.22), radius: 7, x: 0, y: 4)
+            Text(title)
+                .font(.app(size: titleFontSize, weight: .semibold))
+                .foregroundStyle(Color(hex: "#3D0000"))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.72)
+                .padding(.horizontal, frameSize.width * 0.14)
+                .frame(width: frameSize.width, height: frameSize.height * 0.68)
+        }
+        .frame(width: frameSize.width, height: frameSize.height)
+        .shadow(color: .black.opacity(0.22), radius: max(4, 7 * mapScale), x: 0, y: max(2, 4 * mapScale))
     }
 }
 
 private struct ComingSoonBadge: View {
-    let width: CGFloat
-    let fontSize: CGFloat
+    let mapScale: CGFloat
 
     @EnvironmentObject private var lm: LanguageManager
+
+    private var frameSize: CGSize {
+        IslandTitleFrameAsset.frameSize(mapScale: mapScale)
+    }
+
+    private var titleFontSize: CGFloat {
+        IslandTitleFrameAsset.titleFontSize(mapScale: mapScale)
+    }
+
+    private var dateFontSize: CGFloat {
+        IslandTitleFrameAsset.secondaryFontSize(mapScale: mapScale)
+    }
 
     private var releaseDateText: String {
         MapReleaseSchedule.formattedComingSoonDate(languageCode: lm.currentLanguage)
     }
 
     var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: "clock.fill")
-                .font(.app(size: fontSize * 0.85))
-                .foregroundStyle(Color(red: 0.72, green: 0.38, blue: 0.04))
-            Text(lm.t("map.coming_soon"))
-                .font(.app(size: fontSize, weight: .semibold))
-                .foregroundStyle(Color(red: 0.29, green: 0.15, blue: 0.05))
-                .multilineTextAlignment(.center)
-                .lineLimit(1)
-                .minimumScaleFactor(0.65)
-                .allowsTightening(true)
-            Text(releaseDateText)
-                .font(.app(size: fontSize * 0.72, weight: .regular))
-                .foregroundStyle(Color(red: 0.42, green: 0.22, blue: 0.08))
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.7)
-                .allowsTightening(true)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 9)
-        .frame(width: width)
-        .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(red: 0.97, green: 0.86, blue: 0.58).opacity(0.94))
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color(red: 0.55, green: 0.31, blue: 0.09), lineWidth: 2)
+        ZStack {
+            Image("IslandTitleFrame")
+                .resizable()
+                .renderingMode(.original)
+                .interpolation(.high)
+                .frame(width: frameSize.width, height: frameSize.height)
+
+            VStack(spacing: 4 * mapScale) {
+                Text(lm.t("map.coming_soon"))
+                    .font(.app(size: titleFontSize, weight: .semibold))
+                    .foregroundStyle(Color(hex: "#3D0000"))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Text(releaseDateText)
+                    .font(.app(size: dateFontSize, weight: .regular))
+                    .foregroundStyle(Color(hex: "#3D0000").opacity(0.82))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.78)
             }
+            .padding(.horizontal, frameSize.width * 0.12)
+            .frame(width: frameSize.width, height: frameSize.height * 0.72)
         }
-        .shadow(color: .black.opacity(0.22), radius: 7, x: 0, y: 4)
+        .frame(width: frameSize.width, height: frameSize.height)
+        .shadow(color: .black.opacity(0.22), radius: max(4, 7 * mapScale), x: 0, y: max(2, 4 * mapScale))
     }
 }
 
-private struct MapPlayCallout: View {
-    let title: String
+private struct MapPlayButton: View {
     let accessibilityLabel: String
     let action: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
-        HStack(spacing: 16) {
-            Text(title)
-                .font(.app(.headline))
-                .foregroundColor(Color.appPrimaryText)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .minimumScaleFactor(0.78)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            GamePillButton(
-                title: lm.t("button.play"),
-                fontSize: 15,
-                horizontalPadding: 20,
-                verticalPadding: 10,
-                minWidth: 118,
-                minHeight: 46,
-                leadingIcon: "play.fill",
-                action: action
-            )
-            .accessibilityLabel(accessibilityLabel)
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 12)
-        .frame(maxWidth: 460)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.appBackground.opacity(0.96))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.appBorder.opacity(0.70), lineWidth: 1.5)
-                )
-                .shadow(color: .black.opacity(0.24), radius: 16, y: 6)
+        GamePillButton(
+            title: lm.t("button.play"),
+            fontSize: 28,
+            horizontalPadding: 56,
+            verticalPadding: 18,
+            minWidth: 260,
+            minHeight: 68,
+            action: action
         )
+        .accessibilityLabel(accessibilityLabel)
     }
 }
 
 private struct BookIcon3D: View {
+    var size: CGFloat = MapOverlayMetrics.bookButtonSize
+
     var body: some View {
         Image("StoryBookButton")
             .resizable()
             .scaledToFit()
-            .frame(width: 92, height: 92)
+            .frame(width: size, height: size)
             .shadow(color: .black.opacity(0.32), radius: 8, x: 0, y: 5)
             .accessibilityHidden(true)
     }
@@ -1097,65 +1225,6 @@ private struct MainMapIslandDot: View {
                 pulse = true
             }
         }
-    }
-}
-
-private struct BackButton: View {
-    let action: () -> Void
-
-    @EnvironmentObject private var lm: LanguageManager
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 7) {
-                Image(systemName: "chevron.left")
-                    .font(.app(size: 16, weight: .bold))
-                Text(lm.t("button.back"))
-                    .font(.app(.subheadline))
-            }
-            .foregroundColor(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .frame(minWidth: 90, minHeight: 48)
-            .background(
-                Capsule()
-                    .fill(Color(red: 0.10, green: 0.06, blue: 0.02).opacity(0.82))
-                    .overlay(Capsule().stroke(Color.white.opacity(0.70), lineWidth: 2))
-            )
-            .shadow(color: .black.opacity(0.50), radius: 8, y: 4)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(lm.t("a11y.go_back"))
-    }
-}
-
-private struct MainMenuButton: View {
-    let action: () -> Void
-
-    @EnvironmentObject private var lm: LanguageManager
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 7) {
-                Image(systemName: "house.fill")
-                    .font(.app(size: 15, weight: .bold))
-                Text(lm.t("button.menu"))
-                    .font(.app(.subheadline))
-            }
-            .foregroundColor(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .frame(minWidth: 90, minHeight: 48)
-            .background(
-                Capsule()
-                    .fill(Color(red: 0.10, green: 0.06, blue: 0.02).opacity(0.82))
-                    .overlay(Capsule().stroke(Color.white.opacity(0.70), lineWidth: 2))
-            )
-            .shadow(color: .black.opacity(0.50), radius: 8, y: 4)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(lm.t("a11y.return_to_menu"))
-        .accessibilityHint(lm.t("a11y.menu_hint"))
     }
 }
 
@@ -1341,11 +1410,11 @@ private enum MapGraph {
     }
 
     static let storyRegions: [StoryRegion] = [
-        StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: WorldMapPixel.point(x: 520, y: 300)),
-        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: WorldMapPixel.point(x: 1041, y: 1390)),
-        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: WorldMapPixel.point(x: 1678, y: 1280)),
-        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: WorldMapPixel.point(x: 1788, y: 955)),
-        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: WorldMapPixel.point(x: 1454, y: 505))
+        StoryRegion(baseID: 0,  titleKey: "map.region.red_riding_hood", titlePoint: WorldMapPixel.point(x: 794, y: 341)),
+        StoryRegion(baseID: 7,  titleKey: "map.coming_soon",            titlePoint: WorldMapPixel.point(x: 1955, y: 341)),
+        StoryRegion(baseID: 14, titleKey: "map.region.beauty_beast",    titlePoint: WorldMapPixel.point(x: 1476, y: 772)),
+        StoryRegion(baseID: 22, titleKey: "map.region.princess_frog",   titlePoint: WorldMapPixel.point(x: 731, y: 1034)),
+        StoryRegion(baseID: 18, titleKey: "map.region.aladdin",         titlePoint: WorldMapPixel.point(x: 2145, y: 1132))
     ]
 
     static let waypoints: [MapWaypoint] = [
@@ -1563,6 +1632,6 @@ private extension CGPoint {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(isGlobalTransitioning: false, onReturnToMainMenu: {})
+        ContentView(isGlobalTransitioning: false)
     }
 }
