@@ -198,6 +198,45 @@ struct GameCircleSettingsButton: View {
     }
 }
 
+struct GameCircleTextButton: View {
+    let title: String
+    var size: CGFloat = 52
+    var fontSize: CGFloat? = nil
+    var isDisabled: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.app(size: fontSize ?? size * 0.46, weight: .black))
+                .foregroundStyle(GameButtonStyle.label)
+                .shadow(color: .black.opacity(0.14), radius: 0, x: 0, y: 1)
+                .frame(width: size, height: size)
+                .background(GameCircleButtonBackground())
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.55 : 1)
+    }
+}
+
+struct GameCircleCheckButton: View {
+    var size: CGFloat = 52
+    var isDisabled: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        GameCircleButton(
+            systemImage: "checkmark",
+            size: size,
+            iconSize: size * 0.34,
+            iconWeight: .black,
+            isDisabled: isDisabled,
+            action: action
+        )
+    }
+}
+
 /// Downward map marker above the avatar — matches the glossy yellow back button.
 struct GameMapLocationMarker: View {
     var width: CGFloat

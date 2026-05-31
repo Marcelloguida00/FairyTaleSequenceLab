@@ -620,7 +620,7 @@ struct ContentView: View {
     }
 
     private var showsStorybookButton: Bool {
-        activeMap == .main || activeMap == .redHood
+        (activeMap == .main || activeMap == .redHood) && activeRedHoodLevel == nil
     }
 
     private var isMapNavigationBlocked: Bool {
@@ -633,7 +633,7 @@ struct ContentView: View {
     }
 
     private var isMapToolbarBlocked: Bool {
-        isMapNavigationBlocked || activeRedHoodLevel != nil
+        isMapNavigationBlocked
     }
 
     private var isBookInteractionBlocked: Bool {
