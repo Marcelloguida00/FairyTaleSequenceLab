@@ -196,3 +196,9 @@
 /* Image placeholders */
 "Immagine di Introduzione" = "Introduction Image";
 "Immagine di Ricompensa" = "Reward Image";
+
+/* Review Popup */
+"review.popup.title" = "Enjoying Lumi?";
+"review.popup.message" = "If you're having fun with our fables, please leave a review! It helps us create new stories.";
+"review.popup.rate" = "Rate App";
+"review.popup.later" = "Later";

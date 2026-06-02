@@ -188,3 +188,9 @@
 /* Image placeholders */
 "Immagine di Introduzione" = "تصویر معرفی";
 "Immagine di Ricompensa" = "تصویر پاداش";
+
+/* Review Popup */
+"review.popup.title" = "از لومی لذت می‌بری؟";
+"review.popup.message" = "اگر از افسانه‌های ما لذت می‌بری، لطفاً نظر خود را بنویس! این به ما کمک می‌کند داستان‌های جدیدی بسازیم.";
+"review.popup.rate" = "امتیاز دادن به برنامه";
+"review.popup.later" = "بعداً";

@@ -5,6 +5,11 @@ struct EventFlowView: View {
     let onRewardReached: () -> Void
     let onComplete: () -> Void
 
+    @Environment(\.openURL) private var openURL
+    @EnvironmentObject var lm: LanguageManager
+    @AppStorage("hasAskedForReview") private var hasAskedForReview = false
+    @State private var showReviewAlert = false
+
     private enum Phase { case intro, activity }
     @State private var phase: Phase = .intro
     @State private var didNotifyRewardReached = false
@@ -54,10 +59,29 @@ struct EventFlowView: View {
             
             BackgroundMusicPlayer.shared.fadeOut()
             ForestAmbiencePlayer.shared.fadeIn()
+
+            if eventData.id == 3 && !hasAskedForReview {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    showReviewAlert = true
+                }
+            }
         }
         .onDisappear {
             ForestAmbiencePlayer.shared.fadeOutAndStop()
             BackgroundMusicPlayer.shared.fadeIn()
+        }
+        .alert(lm.t("review.popup.title"), isPresented: $showReviewAlert) {
+            Button(lm.t("review.popup.later"), role: .cancel) {
+                hasAskedForReview = true
+            }
+            Button(lm.t("review.popup.rate")) {
+                hasAskedForReview = true
+                if let url = URL(string: "https://apps.apple.com/app/id6773034104?action=write-review") {
+                    openURL(url)
+                }
+            }
+        } message: {
+            Text(lm.t("review.popup.message"))
         }
     }
 }

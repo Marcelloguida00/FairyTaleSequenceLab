@@ -637,10 +637,12 @@ struct SettingsView: View {
                     icon: "heart.fill",
                     title: lm.t("settings.rate_app"),
                     detail: nil,
-                    showsDisclosure: true,
+                    showsDisclosure: false,
                     largeStyle: usesFrameLayout
                 ) {
-                    openDetail(.rateApp, returningTo: .advanced)
+                    if let url = URL(string: "https://apps.apple.com/app/id6773034104?action=write-review") {
+                        openURL(url)
+                    }
                 }
 
                 settingsDivider(largeStyle: usesFrameLayout)
