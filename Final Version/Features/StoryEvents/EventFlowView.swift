@@ -8,6 +8,8 @@ struct EventFlowView: View {
     private enum Phase { case intro, activity }
     @State private var phase: Phase = .intro
     @State private var didNotifyRewardReached = false
+    @State private var isFirstTimeCompletion = false
+    @State private var showEnvelopeOpening = false
 
     var body: some View {
         Group {
@@ -18,13 +20,27 @@ struct EventFlowView: View {
                 }
             case .activity:
                 SequencingActivityView(event: eventData) { attemptCount, onDismiss in
-                    RewardView(
-                        event: eventData,
-                        attemptCount: attemptCount,
-                        onDismiss: onDismiss,
-                        onNext: onComplete
-                    )
+                    ZStack {
+                        if isFirstTimeCompletion && showEnvelopeOpening {
+                            EnvelopeOpeningView(event: eventData) {
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                    showEnvelopeOpening = false
+                                }
+                            }
+                        } else {
+                            RewardView(
+                                event: eventData,
+                                attemptCount: attemptCount,
+                                onDismiss: onDismiss,
+                                onNext: onComplete
+                            )
+                        }
+                    }
                     .onAppear {
+                        if isFirstTimeCompletion {
+                            showEnvelopeOpening = true
+                        }
+                        
                         guard !didNotifyRewardReached else { return }
                         didNotifyRewardReached = true
                         onRewardReached()
@@ -33,6 +49,9 @@ struct EventFlowView: View {
             }
         }
         .onAppear {
+            let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+            isFirstTimeCompletion = !completed.contains(eventData.id)
+            
             BackgroundMusicPlayer.shared.fadeOut()
             ForestAmbiencePlayer.shared.fadeIn()
         }
