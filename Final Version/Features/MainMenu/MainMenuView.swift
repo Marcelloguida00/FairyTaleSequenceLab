@@ -1,7 +1,6 @@
 import SwiftUI
 
 private let menuPanelAspectRatio: CGFloat = 600.0 / 1072.0
-private let settingsFrameAspectRatio: CGFloat = 997.0 / 1024.0
 
 struct MainMenuSceneView: View {
     @Binding var cloudEnterProgress: CGFloat
@@ -229,60 +228,6 @@ struct MainMenuPanelLayer: View {
     }
 }
 
-private struct SettingsFrameOverlay: View {
-    let onClose: () -> Void
-    let onAdvancedSettingsRequested: () -> Void
-    @Binding var advancedSettingsUnlocked: Bool
-
-    private let contentInset: CGFloat = 100
-
-    @EnvironmentObject private var lm: LanguageManager
-
-    var body: some View {
-        GeometryReader { proxy in
-            let frameSize = fittedSettingsFrameSize(in: proxy.size)
-
-            ZStack {
-                Image("framesettings")
-                    .renderingMode(.original)
-                    .resizable()
-                    .interpolation(.high)
-                    .scaledToFit()
-                    .frame(width: frameSize.width, height: frameSize.height)
-                    .shadow(color: .black.opacity(0.36), radius: 16, y: 10)
-                    .accessibilityHidden(true)
-
-                SettingsView(
-                    onClose: onClose,
-                    inFrameMode: true,
-                    onAdvancedSettingsRequested: onAdvancedSettingsRequested,
-                    advancedSettingsUnlocked: $advancedSettingsUnlocked
-                )
-                .padding(contentInset)
-                .frame(width: frameSize.width, height: frameSize.height)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .ignoresSafeArea()
-        .ignoresSafeArea(.keyboard)
-    }
-
-    private func fittedSettingsFrameSize(in container: CGSize) -> CGSize {
-        let maxHeight = container.height * 0.90
-        let maxWidth = container.width * 0.92
-        var height = maxHeight
-        var width = height * settingsFrameAspectRatio
-
-        if width > maxWidth {
-            width = maxWidth
-            height = width / settingsFrameAspectRatio
-        }
-
-        return CGSize(width: width, height: height)
-    }
-}
-
 private struct InfoFrameOverlay: View {
     let onClose: () -> Void
 
@@ -314,11 +259,11 @@ private struct InfoFrameOverlay: View {
         let maxHeight = container.height * 0.90
         let maxWidth = container.width * 0.92
         var height = maxHeight
-        var width = height * settingsFrameAspectRatio
+        var width = height * SettingsFrameLayout.aspectRatio
 
         if width > maxWidth {
             width = maxWidth
-            height = width / settingsFrameAspectRatio
+            height = width / SettingsFrameLayout.aspectRatio
         }
 
         return CGSize(width: width, height: height)

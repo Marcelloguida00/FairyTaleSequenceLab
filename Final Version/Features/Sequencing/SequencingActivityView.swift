@@ -367,6 +367,7 @@ struct SequencingActivityView<Reward: View>: View {
 
     private let cardGap: CGFloat = 14
     private let hPad: CGFloat = 28
+    private let chromeButtonSize: CGFloat = 72
     private var positionLabels: [String] {
         [lm.t("pos.1st"), lm.t("pos.2nd"), lm.t("pos.3rd"), lm.t("pos.4th")]
     }
@@ -467,12 +468,9 @@ struct SequencingActivityView<Reward: View>: View {
     private func sequencingStage(cardW: CGFloat, cardH: CGFloat) -> some View {
         ZStack {
             VStack(spacing: 10) {
-                topBar
-                    .padding(.horizontal, hPad)
-                    .padding(.top, 18)
-
                 storybookPanel(cardW: cardW, cardH: cardH)
                     .padding(.horizontal, hPad)
+                    .padding(.top, 18)
 
                 Spacer(minLength: 0)
 
@@ -541,86 +539,69 @@ struct SequencingActivityView<Reward: View>: View {
         let n         = CGFloat(event.cards.count)
         let totalGaps = cardGap * (n - 1)
         let framedHorizontalInset: CGFloat = 112
-        let maxByW    = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
+        let traySideInset: CGFloat = 16 + chromeButtonSize + 12
+        let maxByStorybookW = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
+        let maxByTrayW = (size.width - hPad * 2 - traySideInset * 2 - totalGaps) / n
+        let maxByW = min(maxByStorybookW, maxByTrayW)
 
-        // Constrain for the storybook frame, bottom tray, and top controls.
-        let topBarH: CGFloat = 72
+        // Constrain for the storybook frame, bottom tray, and top padding.
+        let topChrome: CGFloat = 18
         let storybookChrome: CGFloat = 78
         let trayChrome: CGFloat = 40
         let verticalBreathingRoom: CGFloat = 56
-        let availRowH = (size.height - topBarH - storybookChrome - trayChrome - verticalBreathingRoom) / 2
+        let availRowH = (size.height - topChrome - storybookChrome - trayChrome - verticalBreathingRoom) / 2
         let maxByH    = availRowH * 9 / 16
 
         return max(104, min(maxByW, maxByH))
     }
 
-    // MARK: - Top bar
+    // MARK: - Source tray
 
-    private var topBar: some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(event.bannerTitle)
-                    .font(.app(.caption, weight: .black))
-                    .foregroundColor(Color(red: 1.00, green: 0.83, blue: 0.38))
-                    .textCase(.uppercase)
-                    .shadow(color: .black.opacity(0.45), radius: 3, y: 1)
-
-                Text(lm.t("sequencing.instruction"))
-                    .font(.app(.title3, weight: .black))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
-            }
-
-            Spacer()
-
-            HStack(spacing: 10) {
-                Button(action: flipAllCards) {
-                    toolbarButtonLabel(
-                        title: lm.t("button.flip_all"),
-                        systemImage: "arrow.triangle.2.circlepath",
-                        fill: Color(.yellow)
+    private func sourceTray(cardW: CGFloat, cardH: CGFloat) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 28)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.94, green: 0.70, blue: 0.34),
+                            Color(red: 0.76, green: 0.42, blue: 0.16)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
-                }
-                .buttonStyle(.plain)
-                .frame(minWidth: 44, minHeight: 52)
-                .accessibilityLabel(lm.t("a11y.flip_all"))
-
-                Button(action: checkOrder) {
-                    toolbarButtonLabel(
-                        title: lm.t("button.check"),
-                        systemImage: "checkmark.circle.fill",
-                        fill: allSlotsFilled
-                        ? Color(.blue)
-                            : Color(red: 0.45, green: 0.39, blue: 0.32).opacity(0.72)
-                    )
-                }
-                .buttonStyle(.plain)
-                .disabled(!allSlotsFilled)
-                .frame(minWidth: 44, minHeight: 52)
-                .accessibilityLabel(lm.t("a11y.check_order"))
-                .modifier(ShakeModifier(amount: shakeAmount))
-            }
-        }
-    }
-
-    private func toolbarButtonLabel(title: String, systemImage: String, fill: Color) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: systemImage)
-            Text(title)
-                .font(.app(.headline, weight: .bold))
-        }
-        .foregroundColor(.white)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(fill)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.white.opacity(0.36), lineWidth: 1)
                 )
-                .shadow(color: .black.opacity(0.30), radius: 7, y: 4)
-        )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(Color(red: 0.25, green: 0.12, blue: 0.06), lineWidth: 5)
+                )
+                .shadow(color: .black.opacity(0.38), radius: 14, y: 7)
+
+            HStack(spacing: 12) {
+                if !showReward && !showCelebration {
+                    GameCircleTextButton(title: "i", size: chromeButtonSize, action: flipAllCards)
+                        .accessibilityLabel(lm.t("a11y.flip_all"))
+                } else {
+                    Color.clear
+                        .frame(width: chromeButtonSize, height: chromeButtonSize)
+                }
+
+                sourceRow(cardW: cardW, cardH: cardH)
+
+                if !showReward && !showCelebration {
+                    GameCircleCheckButton(size: chromeButtonSize, isDisabled: !allSlotsFilled, action: checkOrder)
+                        .modifier(ShakeModifier(amount: shakeAmount))
+                        .accessibilityLabel(lm.t("a11y.check_order"))
+                } else {
+                    Color.clear
+                        .frame(width: chromeButtonSize, height: chromeButtonSize)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 15)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: max(cardH + 42, chromeButtonSize + 30))
+        .accessibilityElement(children: .contain)
     }
 
     // MARK: - Storybook frame
@@ -701,73 +682,7 @@ struct SequencingActivityView<Reward: View>: View {
         .allowsHitTesting(false)
     }
 
-    private func sourceTray(cardW: CGFloat, cardH: CGFloat) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 28)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.94, green: 0.70, blue: 0.34),
-                            Color(red: 0.76, green: 0.42, blue: 0.16)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color(red: 0.25, green: 0.12, blue: 0.06), lineWidth: 5)
-                )
-                .shadow(color: .black.opacity(0.38), radius: 14, y: 7)
-
-            HStack(spacing: 0) {
-                scrollCap
-                sourceRow(cardW: cardW, cardH: cardH)
-                    .padding(.horizontal, 18)
-                scrollCap
-                    .scaleEffect(x: -1, y: 1)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 15)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: cardH + 42)
-        .accessibilityElement(children: .contain)
-    }
-
-    private var scrollCap: some View {
-        ZStack {
-            Capsule()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 1.00, green: 0.83, blue: 0.48),
-                            Color(red: 0.72, green: 0.38, blue: 0.12)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(width: 34)
-                .overlay(
-                    Capsule()
-                        .stroke(Color(red: 0.32, green: 0.14, blue: 0.07), lineWidth: 3)
-                )
-
-            Circle()
-                .fill(Color(red: 0.39, green: 0.17, blue: 0.08))
-                .frame(width: 14, height: 14)
-                .offset(y: -20)
-            Circle()
-                .fill(Color(red: 0.39, green: 0.17, blue: 0.08))
-                .frame(width: 14, height: 14)
-                .offset(y: 20)
-        }
-        .frame(width: 40)
-        .allowsHitTesting(false)
-    }
-
-    // MARK: - Slots row (top)
+    // MARK: - Storybook frame
 
     private func slotsRow(cardW: CGFloat, cardH: CGFloat) -> some View {
         LazyHStack(spacing: cardGap) {
