@@ -1,0 +1,304 @@
+{
+  "waypoints": [
+    {
+      "waypoint": 0,
+      "name": "Base del ponte",
+      "type": "Intro isola",
+      "view": "RedHoodLevel0View",
+      "introDialogue": [
+        {
+          "speaker": "Lumi",
+          "text": "Dove mi trovo?… Sei Cappuccetto Rosso? perché sei triste?"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Oh Lumi, sono tristissima! Il malvagio Lord Tempus ha mescolato tutta la mia storia. Aiutami a sistemarla!"
+        },
+        {
+          "speaker": "Lumi",
+          "text": "Non essere triste, ti aiuto io! Insieme rimetteremo ogni cosa al posto giusto."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Grazie, Lumi! Andiamo verso il sentiero cosi da poter riordinare gli eventi ad ogni tappa. Iniziamo!"
+        }
+      ]
+    },
+    {
+      "waypoint": 1,
+      "name": "Foresta bassa",
+      "type": "Evento 1 — il cestino",
+      "eventId": 1,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Siamo a casa della mamma che mi sta preparando un cestino con cibo e pane per la nonnina che è malata. Aiutami a mettere nel giusto ordine le mie azioni prima di partire!"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Fatto! Ora la mamma ti dà il cestino, indossi il mantello e infine esci di casa!"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Evviva Lumi, sei stato velocissimo! Ora posso partire. Ricordati che prima di uscire di casa bisogna sempre prepararsi per bene!"
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Fatto! Ora la mamma ti dà il cestino, indossi il mantello e infine esci di casa!"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Bravissimo Lumi, hai visto che riprovando ci sei riuscito? Ricordati che prima di uscire di casa bisogna sempre prepararsi per bene!"
+        }
+      ]
+    },
+    {
+      "waypoint": 2,
+      "name": "Bivio",
+      "type": "Evento 2 — fiori e distrazione",
+      "eventId": 2,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Mi incammino nel bosco. Il sole splende, ci sono fiori colorati, uccellini e farfalle. Però mi sono distratta a raccogliere i fiori... mi aiuti a riordinare i momenti di questa passeggiata?"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Ecco qui! Prima camminavi, poi hai visto i fiori, ti sei fermata a raccoglierli e ti sei allontanata."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Che super lavoro, tutto perfetto! Ho imparato che se ci si distrae si rischia di perdere la strada corretta."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Ecco qui! Prima camminavi, poi hai visto i fiori, ti sei fermata a raccoglierli e ti sei allontanata."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Ottimo lavoro Lumi, sei stato forte a riprovare! Ho imparato che se ci si distrae si rischia di perdere la strada corretta."
+        }
+      ]
+    },
+    {
+      "waypoint": 3,
+      "name": "Tana del lupo",
+      "type": "Evento 3 — incontro col lupo",
+      "eventId": 3,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Sul sentiero appare un lupo e inizia a parlare con me. Gli racconto che sto andando dalla mia nonnina malata. Il lupo sembra curioso, ma non fa paura. Mettiamo in ordine il nostro incontro?"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Tutto sistemato! Il lupo si avvicina, ti parla e scopre dove vive la nonna."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Che squadra che siamo! Bisogna stare in guardia dagli sconosciuti."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Tutto sistemato! Il lupo si avvicina, ti parla e scopre dove vive la nonna."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Insieme ce l'abbiamo fatta, bravissimo a insistere! Bisogna stare in guardia dagli sconosciuti."
+        }
+      ]
+    },
+    {
+      "waypoint": 4,
+      "name": "Casetta (sinistra)",
+      "type": "Evento 4 — il lupo corre dalla nonna",
+      "eventId": 4,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Il lupo corre nel bosco e arriva alla casa della nonnina prima di me. Vuole anticiparmi! Ordiniamo le sue azioni per vedere cosa fa!"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Gli eventi sono in ordine: il lupo corre tra gli alberi, vede la casetta e bussa alla porta."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Grandioso, sequenza perfetta! Il lupo è stato furbo, a volte le scorciatoie nascondono brutti scherzi."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Gli eventi sono in fila: il lupo corre tra gli alberi, vede la casetta e bussa alla porta."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Gara superata, fantastico averci riprovato! Il lupo è stato furbo, a volte le scorciatoie nascondono brutti scherzi."
+        }
+      ]
+    },
+    {
+      "waypoint": 5,
+      "name": "Casetta (cima)",
+      "type": "Evento 5 — travestimento",
+      "eventId": 5,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Il lupo entra in casa e si traveste da nonnina. Indossa la sua cuffietta e la camicia da notte, poi si mette nel letto e aspetta il mio arrivo. Aiutami Lumi!"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Tutto in ordine! Il lupo prende i vestiti, si mette la cuffietta e si infila sotto le coperte."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Sei grande Lumi! Ora so che le cose non sono sempre come sembrano a prima vista."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Tutto in ordine! Il lupo prende i vestiti, si mette la cuffietta e si infila sotto le coperte."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Magnifico arrendersi non è mai la soluzione, ce l'abbiamo fatta! Ora so che le cose non sono sempre come sembrano a prima vista."
+        }
+      ]
+    },
+    {
+      "waypoint": 6,
+      "name": "Mulino",
+      "type": "Evento 6 — arrivo di Cappuccetto",
+      "eventId": 6,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Finalmente arrivo alla casa della nonnina. Busso alla porta e sento dall'interno una voce strana che mi dice di entrare. Ordiniamo le azioni del mio ingresso?"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Ecco fatto: apri la porta, origli e cerchi di investigare e vai verso il letto."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Evviva, tutto giusto al primo colpo! Ho imparato che bisogna sempre ascoltare i propri sensi quando qualcosa sembra strano."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Ecco fatto: apri la porta, posi il cestino sul tavolo e vai verso il letto."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Fantastico sbagliando si imapra! e io ho imparato che bisogna sempre ascoltare i propri sensi quando qualcosa sembra strano."
+        }
+      ]
+    },
+    {
+      "waypoint": 7,
+      "name": "Casa della nonna",
+      "type": "Evento 7 — orecchie, occhi, denti",
+      "eventId": 7,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Mi avvicino al letto e guardo la nonnina, ma mi accorgo che qualcosa non torna. Sembra diversa dal solito… Aiutami a ordinare i momenti della mia scoperta!"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Ecco fatto! Prima guardi le orecchie enormi, poi gli occhi grandi e infine la bocca piena di denti!"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Che detective, Lumi! Fare domande è il modo migliore per scoprire la verità."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Guarda! Prima guardi le orecchie enormi, poi gli occhi grandi e infine la bocca piena di denti!"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Insieme siamo fortissimi, hai fatto bene a riprovare! Fare domande è il modo migliore per scoprire la verità."
+        }
+      ]
+    },
+    {
+      "waypoint": 8,
+      "name": "Villaggio",
+      "type": "Evento 8 — lieto fine",
+      "eventId": 8,
+      "introDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Ho molta paura, ma arriva un aiuto in tempo. Il lupo viene fermato e sia la nonnina che io siamo al sicuro. Mettiamo in ordine gli ultimi eventi?"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Gli eventi sono a posto: il cacciatore caccia il lupo, la nonna si salva e festeggiate!"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Che felicità, Lumi! Abbiamo vinto! Ricorda sempre che l'unione fa la forza e che insieme si supera ogni pericolo."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Gli eventi sono a posto: il cacciatore caccia il lupo, la nonna si salva e festeggiate!"
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Stupendo Lumi. Ci è voluto un tentativo in più! Ricorda sempre che l'unione fa la forza e che insieme si supera ogni pericolo."
+        }
+      ]
+    },
+    {
+      "waypoint": 9,
+      "name": "Belvedere del ponte",
+      "type": "Finale island",
+      "view": "RedHoodLevelFinalView",
+      "rewardDialogue": [
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Guarda il cielo, Lumi, brilla di nuovo! Tutti i ricordi sono al loro posto e l'incantesimo è svanito."
+        },
+        {
+          "speaker": "Lumi",
+          "text": "Ce l'abbiamo fatta! È stato bellissimo aiutarti a riordinare la tua storia."
+        },
+        {
+          "speaker": "Cappuccetto Rosso",
+          "text": "Sei un compagno fantastico, Lumi. Ora puoi leggere tutta la mia storia e ricordati che altri miei amici hanno bisogno del tuo aiuto ma grazie ancora e a presto!"
+        }
+      ]
+    }
+  ]
+}

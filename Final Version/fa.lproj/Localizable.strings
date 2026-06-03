@@ -41,6 +41,10 @@
 "level.adventure_begins" = "ماجراجویی شروع شد!";
 "level.new_scene"        = "صحنه جدید";
 
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "فصل در کتاب باز شد!";
+"book.chapter_unlocked.message" = "«%@» اکنون در کتاب قصه‌هاست. کتاب را روی نقشه باز کن تا بخوانی!";
+
 /* Map */
 "map.coming_soon"             = "به زودی";
 "map.region.red_riding_hood"  = "شنل قرمزی";

@@ -7,6 +7,17 @@ struct EventIntroductionView: View {
     @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
+        if let lines = RedHoodDialogueLoader.introLines(eventId: event.id, from: lm.bundle), !lines.isEmpty {
+            FairyTaleDialogueView(
+                lines: lines,
+                onComplete: onContinue
+            )
+        } else {
+            legacyIntroduction
+        }
+    }
+
+    private var legacyIntroduction: some View {
         GeometryReader { geometry in
             ZStack {
                 Color.appBackground.ignoresSafeArea()
@@ -25,16 +36,16 @@ struct EventIntroductionView: View {
                                 colors: [Color(red: 0.15, green: 0.08, blue: 0.05), Color(red: 0.25, green: 0.15, blue: 0.10)],
                                 startPoint: .top, endPoint: .bottom
                             )
-                            
+
                             VStack(spacing: 12) {
                                 Image(systemName: "photo.on.rectangle.angled")
                                     .font(.system(size: 44))
                                     .foregroundColor(Color(red: 0.8, green: 0.6, blue: 0.4))
-                                
+
                                 Text(event.bannerTitle)
                                     .font(.app(.title, weight: .bold))
                                     .foregroundColor(.white)
-                                
+
                                 Text("Placeholder: 16:9 Introduction Image")
                                     .font(.app(.body))
                                     .foregroundColor(Color(red: 0.8, green: 0.7, blue: 0.6))
@@ -74,5 +85,3 @@ struct EventIntroductionView: View {
         .ignoresSafeArea()
     }
 }
-
-

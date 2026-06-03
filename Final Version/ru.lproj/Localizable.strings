@@ -41,6 +41,10 @@
 "level.adventure_begins" = "Приключение начинается!";
 "level.new_scene"        = "Новая сцена";
 
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Глава разблокирована в книге!";
+"book.chapter_unlocked.message" = "«%@» теперь в книге сказок. Открой книгу на карте, чтобы прочитать!";
+
 /* Map */
 "map.coming_soon"             = "Скоро";
 "map.region.red_riding_hood"  = "Красная Шапочка";

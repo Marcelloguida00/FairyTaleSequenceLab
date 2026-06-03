@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "bannerTitle": "Scena 1",
+    "bannerTitle": "Capitolo 1: Il cestino",
     "introImageName": "Introduzione 1 evento",
     "introText": "La mamma dice a Cappuccetto Rosso che la nonna è malata. Devono preparare un cestino da portarle. Aiuta a mettere le scene della storia nell'ordine corretto!",
     "cards": [
@@ -18,7 +18,7 @@
   },
   {
     "id": 2,
-    "bannerTitle": "Scena 2",
+    "bannerTitle": "Capitolo 2: Una passeggiata nel bosco",
     "introImageName": "Introduzione 2 evento",
     "introText": "Cappuccetto Rosso parte da sola nel bosco profondo. Cammina tranquillamente lungo il sentiero, circondata da alberi alti. Riesci a mettere le scene della storia nell'ordine giusto?",
     "cards": [
@@ -35,7 +35,7 @@
   },
   {
     "id": 3,
-    "bannerTitle": "Scena 3",
+    "bannerTitle": "Capitolo 3: Un incontro strano",
     "introImageName": "event3_intro",
     "introText": "Il lupo ha visto Cappuccetto Rosso nel bosco. La osserva attentamente, pensando a un piano astuto. Cappuccetto Rosso non sa che il lupo la sta guardando... Aiuta a mettere le scene della storia nell'ordine corretto!",
     "cards": [
@@ -52,7 +52,7 @@
   },
   {
     "id": 4,
-    "bannerTitle": "Scena 4",
+    "bannerTitle": "Capitolo 4: Il lupo prepara un piano",
     "introImageName": "event4_intro",
     "introText": "Il lupo corre a tutta velocità verso la casa della nonna per arrivarci prima di Cappuccetto Rosso. Metti le carte nell'ordine corretto da sinistra a destra per vedere come arriva!",
     "cards": [
@@ -69,7 +69,7 @@
   },
   {
     "id": 5,
-    "bannerTitle": "Scena 5",
+    "bannerTitle": "Capitolo 5: Il lupo e la nonna",
     "introImageName": "event5_intro",
     "introText": "Il lupo è entrato nella casa della nonna e si prepara ad aspettare Cappuccetto Rosso travestito da nonnina. Metti le carte nell'ordine corretto da sinistra a destra per completare il suo travestimento!",
     "cards": [
@@ -86,7 +86,7 @@
   },
   {
     "id": 6,
-    "bannerTitle": "Scena 6",
+    "bannerTitle": "Capitolo 6: Cappuccetto Rosso arriva alla casetta",
     "introImageName": "event6_intro",
     "introText": "Dopo aver camminato nel bosco, Cappuccetto Rosso arriva alla casetta e bussa alla porta. Metti le carte nell'ordine corretto da sinistra a destra per farla entrare!",
     "cards": [
@@ -103,7 +103,7 @@
   },
   {
     "id": 7,
-    "bannerTitle": "Scena 7",
+    "bannerTitle": "Capitolo 7: Qualcosa non va",
     "introImageName": "event7_intro",
     "introText": "Cappuccetto Rosso parla con la nonna e nota che ha qualcosa di molto strano nel suo aspetto. Metti le carte nell'ordine corretto da sinistra a destra per scoprire il lupo!",
     "cards": [
@@ -120,7 +120,7 @@
   },
   {
     "id": 8,
-    "bannerTitle": "Scena 8",
+    "bannerTitle": "Capitolo 8: Arriva un aiuto",
     "introImageName": "event8_intro",
     "introText": "Il lupo viene scoperto, Cappuccetto Rosso grida e arrivano i soccorsi per cacciare via il lupo per sempre. Metti le carte nell'ordine corretto da sinistra a destra per il lieto fine!",
     "cards": [

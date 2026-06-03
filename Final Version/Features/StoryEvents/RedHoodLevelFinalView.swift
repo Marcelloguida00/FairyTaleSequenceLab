@@ -5,24 +5,35 @@ struct RedHoodLevelFinalView: View {
 
     @EnvironmentObject private var lm: LanguageManager
 
-    private var congratulatoryMessage: String {
-        let text = lm.t("redhood.final.mascot")
-        // If translation is not set, use Italian as primary per user's request
-        return text == "redhood.final.mascot" ? "Bravissimo, hai rimesso in ordine tutta la storia di Cappuccetto Rosso spezzando l'incantesimo." : text
-    }
-
     private var buttonText: String {
         let text = lm.t("redhood.final.button")
         return text == "redhood.final.button" ? "Evviva!" : text
     }
 
-    private var titleText: String {
-        let text = lm.t("redhood.final.title")
-        return text == "redhood.final.title" ? "Incantesimo Spezzato!" : text
+    var body: some View {
+        if let lines = RedHoodDialogueLoader.finalLines(from: lm.bundle), !lines.isEmpty {
+            FairyTaleDialogueView(
+                lines: lines,
+                onComplete: onComplete
+            )
+        } else {
+            legacyFinal
+        }
     }
 
-    var body: some View {
+    private var legacyFinal: some View {
         GeometryReader { geometry in
+            let congratulatoryMessage: String = {
+                let text = lm.t("redhood.final.mascot")
+                return text == "redhood.final.mascot"
+                    ? "Bravissimo, hai rimesso in ordine tutta la storia di Cappuccetto Rosso spezzando l'incantesimo."
+                    : text
+            }()
+            let titleText: String = {
+                let text = lm.t("redhood.final.title")
+                return text == "redhood.final.title" ? "Incantesimo Spezzato!" : text
+            }()
+
             ZStack {
                 Color.appBackground.ignoresSafeArea()
 

@@ -41,6 +41,10 @@
 "level.adventure_begins" = "L'avventura inizia!";
 "level.new_scene"        = "Nuova scena";
 
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Capitolo sbloccato nel libro!";
+"book.chapter_unlocked.message" = "«%@» è ora nel libro delle fiabe. Apri il libro sulla mappa per leggerlo!";
+
 /* Map */
 "map.coming_soon"             = "Prossimamente";
 "map.region.red_riding_hood"  = "Cappuccetto Rosso";

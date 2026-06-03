@@ -336,6 +336,7 @@ struct SequencingActivityView<Reward: View>: View {
     let event: EventData
     let showsReward: Bool
     let onSuccess: (() -> Void)?
+    let onSequencingComplete: ((Int) -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var lm: LanguageManager
@@ -371,11 +372,13 @@ struct SequencingActivityView<Reward: View>: View {
         event: EventData,
         showsReward: Bool = true,
         onSuccess: (() -> Void)? = nil,
+        onSequencingComplete: ((Int) -> Void)? = nil,
         @ViewBuilder makeReward: @escaping (Int, @escaping () -> Void) -> Reward
     ) {
         self.event = event
         self.showsReward = showsReward
         self.onSuccess = onSuccess
+        self.onSequencingComplete = onSequencingComplete
         self.makeReward = makeReward
         _shuffledStart = State(initialValue: event.makeShuffledStart())
         _slotContents  = State(initialValue: Array(repeating: nil, count: event.cards.count))
@@ -855,6 +858,10 @@ struct SequencingActivityView<Reward: View>: View {
 
         if let targetSlot = slot(at: location, excluding: originSlot) {
             let didMoveSlots = originSlot != targetSlot
+            guard didMoveSlots else { return }
+
+            let previousContents = slotContents
+            let isCorrect = event.correctOrder[targetSlot] == cardId
 
             withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
                 var nextContents = slotContents
@@ -869,9 +876,11 @@ struct SequencingActivityView<Reward: View>: View {
                 slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
             }
 
-            if didMoveSlots {
-                handlePlacementFeedback(forSlot: targetSlot, cardId: cardId)
+            if isCorrect {
+                handleCorrectPlacement(forSlot: targetSlot)
                 evaluateAutomaticCompletion()
+            } else {
+                handleIncorrectPlacement(forSlot: targetSlot, revertingTo: previousContents)
             }
             return
         }
@@ -913,18 +922,27 @@ struct SequencingActivityView<Reward: View>: View {
         hoveredSlot    = nil
     }
 
-    private func handlePlacementFeedback(forSlot slot: Int, cardId: Int) {
-        let isCorrect = event.correctOrder[slot] == cardId
+    private func handleCorrectPlacement(forSlot slot: Int) {
+        AppSettings.hapticImpact(.light)
+        PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
+        playCorrectPlacementAnimation(for: slot)
+    }
 
-        if isCorrect {
-            AppSettings.hapticImpact(.light)
-            PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
-            playCorrectPlacementAnimation(for: slot)
-        } else {
-            AppSettings.hapticImpact(.soft)
-            PianoChordPlayer.shared.playPlacementTone(.incorrect)
-            attemptCount += 1
-            playIncorrectPlacementAnimation(for: slot)
+    private func handleIncorrectPlacement(forSlot slot: Int, revertingTo previousContents: [Int?]) {
+        AppSettings.hapticImpact(.soft)
+        PianoChordPlayer.shared.playPlacementTone(.incorrect)
+        attemptCount += 1
+        playIncorrectPlacementAnimation(for: slot)
+
+        let revertDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
+        Task { @MainActor in
+            if revertDelayNs > 0 {
+                try? await Task.sleep(nanoseconds: revertDelayNs)
+            }
+            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
+                slotContents = previousContents
+            }
+            slotVisualStates[slot] = SlotPlacementVisualState()
         }
     }
 
@@ -1016,7 +1034,13 @@ struct SequencingActivityView<Reward: View>: View {
         AppSettings.hapticSuccess()
         UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
 
-        if showsReward {
+        if let onSequencingComplete {
+            withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
+                showCelebration = true
+            }
+            try? await Task.sleep(for: .seconds(1.5))
+            onSequencingComplete(attemptCount)
+        } else if showsReward {
             withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
                 showCelebration = true
             }

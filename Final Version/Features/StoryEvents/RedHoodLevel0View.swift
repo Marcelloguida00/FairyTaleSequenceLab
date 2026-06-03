@@ -6,6 +6,18 @@ struct RedHoodLevel0View: View {
     @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
+        if let lines = RedHoodDialogueLoader.introLines(waypoint: 0, from: lm.bundle), !lines.isEmpty {
+            FairyTaleDialogueView(
+                lines: lines,
+                waypointID: 0,
+                onComplete: onComplete
+            )
+        } else {
+            legacyIntro
+        }
+    }
+
+    private var legacyIntro: some View {
         GeometryReader { geometry in
             ZStack {
                 Color.appBackground.ignoresSafeArea()
