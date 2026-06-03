@@ -365,6 +365,7 @@ struct SequencingActivityView<Reward: View>: View {
     private let cardGap: CGFloat = 14
     private let hPad: CGFloat = 28
     private let chromeButtonSize: CGFloat = 72
+    private let flipAllButtonWidth: CGFloat = 144
 
     init(
         event: EventData,
@@ -509,7 +510,7 @@ struct SequencingActivityView<Reward: View>: View {
         let n         = CGFloat(event.cards.count)
         let totalGaps = cardGap * (n - 1)
         let framedHorizontalInset: CGFloat = 112
-        let traySideInset: CGFloat = 16 + chromeButtonSize + 12
+        let traySideInset: CGFloat = 16 + flipAllButtonWidth + 12
         let maxByStorybookW = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
         let maxByTrayW = (size.width - hPad * 2 - traySideInset * 2 - totalGaps) / n
         let maxByW = min(maxByStorybookW, maxByTrayW)
@@ -548,17 +549,17 @@ struct SequencingActivityView<Reward: View>: View {
 
             HStack(spacing: 12) {
                 if !showReward && !showCelebration {
-                    GameCircleTextButton(title: "i", size: chromeButtonSize, action: flipAllCards)
+                    flipAllButton
                         .accessibilityLabel(lm.t("a11y.flip_all"))
                 } else {
                     Color.clear
-                        .frame(width: chromeButtonSize, height: chromeButtonSize)
+                        .frame(width: flipAllButtonWidth, height: chromeButtonSize)
                 }
 
                 sourceRow(cardW: cardW, cardH: cardH)
 
                 Color.clear
-                    .frame(width: chromeButtonSize, height: chromeButtonSize)
+                    .frame(width: flipAllButtonWidth, height: chromeButtonSize)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 15)
@@ -577,6 +578,20 @@ struct SequencingActivityView<Reward: View>: View {
             }
         )
         .accessibilityElement(children: .contain)
+    }
+
+    private var flipAllButton: some View {
+        GamePillButton(
+            title: lm.t("button.flip_all"),
+            fontSize: 14,
+            horizontalPadding: 14,
+            verticalPadding: 10,
+            minWidth: flipAllButtonWidth,
+            minHeight: 54,
+            leadingIcon: "arrow.triangle.2.circlepath",
+            action: flipAllCards
+        )
+        .frame(width: flipAllButtonWidth, height: chromeButtonSize)
     }
 
     // MARK: - Storybook frame
