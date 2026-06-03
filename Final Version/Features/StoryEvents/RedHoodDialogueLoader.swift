@@ -83,7 +83,14 @@ enum DialogueSpeakerRole: Equatable {
             .lowercased()
         if normalized.contains("lumi") {
             self = .lumi
-        } else if normalized.contains("cappuccetto") || normalized.contains("red riding") {
+        } else if normalized.contains("cappuccetto")
+            || normalized.contains("red riding")
+            || normalized.contains("little red")
+            || normalized.contains("kesul")
+            || normalized.contains("kapele")
+            || normalized.contains("красн")
+            || normalized.contains("шапочк")
+            || normalized.contains("شنل") {
             self = .redRidingHood
         } else {
             self = .other(speakerName)
@@ -133,7 +140,12 @@ enum DialoguePortraitExpression {
 }
 
 enum DialoguePortraitAssets {
-    static func imageName(role: DialogueSpeakerRole, speaking: Bool, line: DialogueLine) -> String {
+    static func imageName(
+        role: DialogueSpeakerRole,
+        speaking: Bool,
+        line: DialogueLine,
+        waypointID: Int? = nil
+    ) -> String {
         switch role {
         case .lumi:
             if speaking {
@@ -151,6 +163,9 @@ enum DialoguePortraitAssets {
                 case .happy: return "Cap_happy"
                 default: return "Cap_talk"
                 }
+            }
+            if waypointID == 0 {
+                return "Cap_sad_cover"
             }
             return "Cap_listening_cover"
         case .other:

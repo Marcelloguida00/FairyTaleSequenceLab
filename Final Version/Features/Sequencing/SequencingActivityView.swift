@@ -843,6 +843,10 @@ struct SequencingActivityView<Reward: View>: View {
 
         if let targetSlot = slot(at: location, excluding: originSlot) {
             let didMoveSlots = originSlot != targetSlot
+            guard didMoveSlots else { return }
+
+            let previousContents = slotContents
+            let isCorrect = event.correctOrder[targetSlot] == cardId
 
             withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
                 var nextContents = slotContents
@@ -857,9 +861,11 @@ struct SequencingActivityView<Reward: View>: View {
                 slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
             }
 
-            if didMoveSlots {
-                handlePlacementFeedback(forSlot: targetSlot, cardId: cardId)
+            if isCorrect {
+                handleCorrectPlacement(forSlot: targetSlot)
                 evaluateAutomaticCompletion()
+            } else {
+                handleIncorrectPlacement(forSlot: targetSlot, revertingTo: previousContents)
             }
             return
         }
@@ -901,18 +907,27 @@ struct SequencingActivityView<Reward: View>: View {
         hoveredSlot    = nil
     }
 
-    private func handlePlacementFeedback(forSlot slot: Int, cardId: Int) {
-        let isCorrect = event.correctOrder[slot] == cardId
+    private func handleCorrectPlacement(forSlot slot: Int) {
+        AppSettings.hapticImpact(.light)
+        PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
+        playCorrectPlacementAnimation(for: slot)
+    }
 
-        if isCorrect {
-            AppSettings.hapticImpact(.light)
-            PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
-            playCorrectPlacementAnimation(for: slot)
-        } else {
-            AppSettings.hapticImpact(.soft)
-            PianoChordPlayer.shared.playPlacementTone(.incorrect)
-            attemptCount += 1
-            playIncorrectPlacementAnimation(for: slot)
+    private func handleIncorrectPlacement(forSlot slot: Int, revertingTo previousContents: [Int?]) {
+        AppSettings.hapticImpact(.soft)
+        PianoChordPlayer.shared.playPlacementTone(.incorrect)
+        attemptCount += 1
+        playIncorrectPlacementAnimation(for: slot)
+
+        let revertDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
+        Task { @MainActor in
+            if revertDelayNs > 0 {
+                try? await Task.sleep(nanoseconds: revertDelayNs)
+            }
+            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
+                slotContents = previousContents
+            }
+            slotVisualStates[slot] = SlotPlacementVisualState()
         }
     }
 

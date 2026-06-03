@@ -10,7 +10,6 @@ struct EventIntroductionView: View {
         if let lines = RedHoodDialogueLoader.introLines(eventId: event.id, from: lm.bundle), !lines.isEmpty {
             FairyTaleDialogueView(
                 lines: lines,
-                continueButtonTitle: lm.t("button.continue"),
                 onComplete: onContinue
             )
         } else {

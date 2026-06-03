@@ -29,6 +29,7 @@ struct RedHoodRewardPhaseView: View {
                 RewardView(
                     event: eventData,
                     attemptCount: attemptCount,
+                    showsBookChapterUnlock: isFirstTimeCompletion && (1...8).contains(eventData.id),
                     onDismiss: onReplay,
                     onNext: onComplete
                 )

@@ -41,6 +41,10 @@
 "level.adventure_begins" = "Aventura fillon!";
 "level.new_scene"        = "Skenë e re";
 
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Kapitulli u zhbllokua në libër!";
+"book.chapter_unlocked.message" = "«%@» është tani në librin e përrallave. Hape librin në hartë për ta lexuar!";
+
 /* Map */
 "map.coming_soon"             = "Së shpejti";
 "map.region.red_riding_hood"  = "Kapelja e Kuqe";
