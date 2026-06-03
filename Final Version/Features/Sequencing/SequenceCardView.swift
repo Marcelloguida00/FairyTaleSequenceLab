@@ -65,10 +65,6 @@ struct SequenceCardView: View {
         .aspectRatio(9 / 16, contentMode: .fit)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.white.opacity(0.90), lineWidth: 3)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
                 .stroke(Color(red: 0.36, green: 0.18, blue: 0.08).opacity(0.50), lineWidth: 1)
                 .padding(3)
         )
@@ -92,9 +88,6 @@ struct SequenceCardView: View {
                 )
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color(red: 0.45, green: 0.24, blue: 0.10), lineWidth: 2)
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.62), lineWidth: 2)
-                .padding(7)
 
             VStack(spacing: 14) {
                 Image(systemName: "book.pages")

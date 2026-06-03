@@ -131,10 +131,12 @@ struct CelebrationView: View {
     }
 }
 
-// MARK: - Check result
+// MARK: - Placement visuals
 
-enum SequenceCheckResult: Equatable {
-    case correct, incorrect
+private struct SlotPlacementVisualState {
+    var bounceScale: CGFloat = 1
+    var tiltDegrees: Double = 0
+    var waveScale: CGFloat = 1
 }
 
 // MARK: - Empty target slot
@@ -234,85 +236,80 @@ private struct SourceCardHintBorder: View {
 
 private struct StorybookPageShape: Shape {
     func path(in rect: CGRect) -> Path {
-        let corner = min(rect.width, rect.height) * 0.085
-        let topY = rect.minY + corner * 0.38
-        let bottomY = rect.maxY - corner * 0.34
-        let centerDip = corner * 0.44
-        let fold = min(rect.width * 0.07, 54)
+        let width = rect.width
+        let height = rect.height
+        let cornerRadius = min(width, height) * 0.065
+        let spineHalfWidth = min(width * 0.058, 42)
+        let spineTopDip = min(height * 0.026, 11)
+        let spineBottomDip = min(height * 0.022, 10)
+        let pageLift = min(width * 0.016, 12)
 
         var path = Path()
-        path.move(to: CGPoint(x: rect.minX + corner, y: topY))
+
+        path.move(to: CGPoint(x: rect.minX + cornerRadius, y: rect.minY))
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.midX - fold, y: rect.minY + corner * 0.18),
-            control: CGPoint(x: rect.midX * 0.56, y: rect.minY - corner * 0.30)
+            to: CGPoint(x: rect.midX - spineHalfWidth, y: rect.minY + spineTopDip),
+            control: CGPoint(x: rect.minX + width * 0.30, y: rect.minY - pageLift)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.midX, y: rect.minY + centerDip),
-            control: CGPoint(x: rect.midX - fold * 0.42, y: rect.minY + corner * 0.12)
+            to: CGPoint(x: rect.midX + spineHalfWidth, y: rect.minY + spineTopDip),
+            control: CGPoint(x: rect.midX, y: rect.minY + spineTopDip * 1.45)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.midX + fold, y: rect.minY + corner * 0.18),
-            control: CGPoint(x: rect.midX + fold * 0.42, y: rect.minY + corner * 0.12)
+            to: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY),
+            control: CGPoint(x: rect.maxX - width * 0.30, y: rect.minY - pageLift)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.maxX - corner, y: topY),
-            control: CGPoint(x: rect.midX + (rect.width * 0.28), y: rect.minY - corner * 0.30)
+            to: CGPoint(x: rect.maxX, y: rect.minY + cornerRadius),
+            control: CGPoint(x: rect.maxX, y: rect.minY)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.maxX - corner * 0.40, y: rect.minY + corner),
-            control: CGPoint(x: rect.maxX - corner * 0.12, y: rect.minY + corner * 0.18)
+            to: CGPoint(x: rect.maxX, y: rect.maxY - cornerRadius),
+            control: CGPoint(x: rect.maxX + pageLift * 0.85, y: rect.midY)
         )
-        path.addLine(to: CGPoint(x: rect.maxX - corner * 0.22, y: rect.maxY - corner))
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.maxX - corner, y: bottomY),
-            control: CGPoint(x: rect.maxX - corner * 0.10, y: rect.maxY - corner * 0.20)
+            to: CGPoint(x: rect.maxX - cornerRadius, y: rect.maxY),
+            control: CGPoint(x: rect.maxX, y: rect.maxY)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.midX + fold, y: rect.maxY - corner * 0.18),
-            control: CGPoint(x: rect.midX + (rect.width * 0.28), y: rect.maxY + corner * 0.28)
+            to: CGPoint(x: rect.midX + spineHalfWidth, y: rect.maxY - spineBottomDip),
+            control: CGPoint(x: rect.maxX - width * 0.30, y: rect.maxY + pageLift)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.midX, y: rect.maxY - centerDip * 0.86),
-            control: CGPoint(x: rect.midX + fold * 0.42, y: rect.maxY - corner * 0.08)
+            to: CGPoint(x: rect.midX - spineHalfWidth, y: rect.maxY - spineBottomDip),
+            control: CGPoint(x: rect.midX, y: rect.maxY - spineBottomDip * 1.45)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.midX - fold, y: rect.maxY - corner * 0.18),
-            control: CGPoint(x: rect.midX - fold * 0.42, y: rect.maxY - corner * 0.08)
+            to: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY),
+            control: CGPoint(x: rect.minX + width * 0.30, y: rect.maxY + pageLift)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.minX + corner, y: bottomY),
-            control: CGPoint(x: rect.midX * 0.56, y: rect.maxY + corner * 0.28)
+            to: CGPoint(x: rect.minX, y: rect.maxY - cornerRadius),
+            control: CGPoint(x: rect.minX, y: rect.maxY)
         )
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.minX + corner * 0.40, y: rect.maxY - corner),
-            control: CGPoint(x: rect.minX + corner * 0.10, y: rect.maxY - corner * 0.20)
+            to: CGPoint(x: rect.minX, y: rect.minY + cornerRadius),
+            control: CGPoint(x: rect.minX - pageLift * 0.85, y: rect.midY)
         )
-        path.addLine(to: CGPoint(x: rect.minX + corner * 0.22, y: rect.minY + corner))
+
         path.addQuadCurve(
-            to: CGPoint(x: rect.minX + corner, y: topY),
-            control: CGPoint(x: rect.minX + corner * 0.12, y: rect.minY + corner * 0.18)
+            to: CGPoint(x: rect.minX + cornerRadius, y: rect.minY),
+            control: CGPoint(x: rect.minX, y: rect.minY)
         )
+
         path.closeSubpath()
         return path
-    }
-}
-
-private struct VineColumn: View {
-    let flipped: Bool
-
-    var body: some View {
-        VStack(spacing: 9) {
-            ForEach(0..<5, id: \.self) { index in
-                Image(systemName: index.isMultiple(of: 2) ? "leaf.fill" : "sparkle")
-                    .font(.app(size: index.isMultiple(of: 2) ? 19 : 12, weight: .bold))
-                    .foregroundColor(index.isMultiple(of: 2)
-                                     ? Color(red: 0.23, green: 0.40, blue: 0.14)
-                                     : Color(red: 0.83, green: 0.58, blue: 0.18))
-                    .rotationEffect(.degrees(flipped ? Double(index * -18) : Double(index * 18)))
-                    .opacity(index == 4 ? 0.72 : 1)
-            }
-        }
-        .scaleEffect(x: flipped ? -1 : 1, y: 1)
     }
 }
 
@@ -350,27 +347,24 @@ struct SequencingActivityView<Reward: View>: View {
     // indexed by card id
     @State private var flippedStates: [Bool]
 
-    @State private var checkResult: SequenceCheckResult? = nil
     @State private var attemptCount = 0
-    @State private var shakeAmount: CGFloat = 0
     @State private var showCelebration = false
     @State private var dimForReward = false
     @State private var showReward = false
-    @State private var nextPlacementChordIndex = 0
+    @State private var slotVisualStates: [Int: SlotPlacementVisualState] = [:]
+    @State private var isRunningCompletionSequence = false
 
     // Drag state
     @State private var draggingCardId: Int? = nil
     @State private var dragOriginSlot: Int? = nil   // nil → dragged from source deck
     @State private var dragPosition: CGPoint = .zero
     @State private var slotFrames: [Int: CGRect] = [:]
+    @State private var sourceTrayFrame: CGRect = .zero
     @State private var hoveredSlot: Int? = nil
 
     private let cardGap: CGFloat = 14
     private let hPad: CGFloat = 28
     private let chromeButtonSize: CGFloat = 72
-    private var positionLabels: [String] {
-        [lm.t("pos.1st"), lm.t("pos.2nd"), lm.t("pos.3rd"), lm.t("pos.4th")]
-    }
 
     init(
         event: EventData,
@@ -389,38 +383,21 @@ struct SequencingActivityView<Reward: View>: View {
 
     private var allSlotsFilled: Bool { slotContents.allSatisfy { $0 != nil } }
 
+    private var allSlotsCorrect: Bool {
+        slotContents.enumerated().allSatisfy { index, cardId in
+            cardId == event.correctOrder[index]
+        }
+    }
+
     private var firstWrongSlot: Int? {
         slotContents.indices.first { i in slotContents[i] != event.correctOrder[i] }
     }
 
     private var guidedSourceCardID: Int? {
-        guard checkResult == .incorrect,
-              attemptCount >= 2,
+        guard attemptCount >= 2,
               let wrongSlot = firstWrongSlot else { return nil }
 
         return event.correctOrder[wrongSlot]
-    }
-
-    // ABA contextual hint
-    private func contextualHint(level: Int) -> String {
-        guard let wrongSlot = firstWrongSlot else { return lm.t("hint.tap_check") }
-        let correctCardId = event.correctOrder[wrongSlot]
-        let correctCard   = event.cards[correctCardId]
-        let posLabel      = positionLabels[min(wrongSlot, positionLabels.count - 1)]
-
-        if let wrongCardId = slotContents[wrongSlot] {
-            let wrongCard = event.cards[wrongCardId]
-            switch level {
-            case 1:  return String(format: lm.t("hint.wrong_1"), wrongCard.description, posLabel)
-            case 2:  return String(format: lm.t("hint.wrong_2"), posLabel, wrongCard.description)
-            default: return String(format: lm.t("hint.wrong_3"), posLabel, correctCard.description)
-            }
-        } else {
-            switch level {
-            case 1:  return String(format: lm.t("hint.empty_1"), wrongSlot + 1)
-            default: return String(format: lm.t("hint.empty_2"), posLabel, correctCard.description)
-            }
-        }
     }
 
     // MARK: - Body
@@ -491,12 +468,6 @@ struct SequencingActivityView<Reward: View>: View {
                 .zIndex(50)
             }
 
-            if checkResult == .incorrect {
-                feedbackBanner
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .allowsHitTesting(false)
-            }
-
             if showCelebration {
                 CelebrationView().allowsHitTesting(false)
             }
@@ -514,12 +485,11 @@ struct SequencingActivityView<Reward: View>: View {
                         showReward      = false
                         dimForReward    = false
                         showCelebration = false
-                        checkResult     = nil
                         attemptCount    = 0
                         shuffledStart   = event.makeShuffledStart()
                         slotContents    = Array(repeating: nil, count: event.cards.count)
                         flippedStates   = Array(repeating: false, count: event.cards.count)
-                        nextPlacementChordIndex = 0
+                        slotVisualStates = [:]
                     }
                 }
                 .transition(.asymmetric(
@@ -587,20 +557,25 @@ struct SequencingActivityView<Reward: View>: View {
 
                 sourceRow(cardW: cardW, cardH: cardH)
 
-                if !showReward && !showCelebration {
-                    GameCircleCheckButton(size: chromeButtonSize, isDisabled: !allSlotsFilled, action: checkOrder)
-                        .modifier(ShakeModifier(amount: shakeAmount))
-                        .accessibilityLabel(lm.t("a11y.check_order"))
-                } else {
-                    Color.clear
-                        .frame(width: chromeButtonSize, height: chromeButtonSize)
-                }
+                Color.clear
+                    .frame(width: chromeButtonSize, height: chromeButtonSize)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 15)
         }
         .frame(maxWidth: .infinity)
         .frame(height: max(cardH + 42, chromeButtonSize + 30))
+        .background(
+            GeometryReader { geometry in
+                Color.clear
+                    .onAppear {
+                        updateSourceTrayFrame(geometry.frame(in: .named("gameBoard")))
+                    }
+                    .onChange(of: geometry.frame(in: .named("gameBoard"))) { _, newFrame in
+                        updateSourceTrayFrame(newFrame)
+                    }
+            }
+        )
         .accessibilityElement(children: .contain)
     }
 
@@ -612,9 +587,9 @@ struct SequencingActivityView<Reward: View>: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color(red: 1.00, green: 0.88, blue: 0.55),
-                            Color(red: 0.95, green: 0.74, blue: 0.38),
-                            Color(red: 1.00, green: 0.90, blue: 0.62)
+                            Color(red: 0.98, green: 0.86, blue: 0.52),
+                            Color(red: 0.93, green: 0.72, blue: 0.36),
+                            Color(red: 0.88, green: 0.62, blue: 0.28)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -625,27 +600,6 @@ struct SequencingActivityView<Reward: View>: View {
                 .stroke(Color(red: 0.23, green: 0.10, blue: 0.06), lineWidth: 12)
                 .shadow(color: .black.opacity(0.42), radius: 16, y: 8)
 
-            StorybookPageShape()
-                .stroke(Color(red: 0.78, green: 0.48, blue: 0.14), lineWidth: 5)
-                .padding(9)
-
-            StorybookPageShape()
-                .stroke(Color.white.opacity(0.32), lineWidth: 2)
-                .padding(18)
-
-            parchmentTexture
-                .clipShape(StorybookPageShape())
-                .padding(18)
-
-            HStack {
-                VineColumn(flipped: false)
-                    .padding(.leading, 18)
-                Spacer()
-                VineColumn(flipped: true)
-                    .padding(.trailing, 18)
-            }
-            .padding(.vertical, 32)
-            .allowsHitTesting(false)
 
             slotsRow(cardW: cardW, cardH: cardH)
                 .padding(.horizontal, 58)
@@ -655,31 +609,6 @@ struct SequencingActivityView<Reward: View>: View {
         .frame(maxWidth: .infinity)
         .frame(height: cardH + 82)
         .accessibilityElement(children: .contain)
-    }
-
-    private var parchmentTexture: some View {
-        ZStack {
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.22),
-                    Color.clear,
-                    Color(red: 0.55, green: 0.31, blue: 0.12).opacity(0.13)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-
-            Image(systemName: "sparkles")
-                .font(.app(size: 42, weight: .light))
-                .foregroundColor(Color(red: 0.70, green: 0.42, blue: 0.15).opacity(0.13))
-                .offset(x: -190, y: -70)
-
-            Image(systemName: "sparkles")
-                .font(.app(size: 34, weight: .light))
-                .foregroundColor(Color(red: 0.70, green: 0.42, blue: 0.15).opacity(0.12))
-                .offset(x: 210, y: 76)
-        }
-        .allowsHitTesting(false)
     }
 
     // MARK: - Storybook frame
@@ -705,6 +634,8 @@ struct SequencingActivityView<Reward: View>: View {
 
             if let id = placedId {
                 placedCard(cardId: id, slot: slot, cardW: cardW, cardH: cardH)
+                    .scaleEffect(slotVisualScale(for: slot))
+                    .rotationEffect(.degrees(slotVisualTilt(for: slot)))
                     .opacity(isDraggingThis ? 0.001 : 1)
             } else {
                 emptySlot(slot: slot, cardW: cardW, cardH: cardH, hovered: isHovered)
@@ -747,8 +678,6 @@ struct SequencingActivityView<Reward: View>: View {
                     toggleCard(cardId)
                 }
             )
-            .overlay(borderOverlay(slot: slot, cardW: cardW, cardH: cardH), alignment: .center)
-            .overlay(removeButton(slot: slot), alignment: .topTrailing)
             .gesture(
                 DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
                     .onChanged { val in
@@ -760,38 +689,13 @@ struct SequencingActivityView<Reward: View>: View {
             )
     }
 
-    // Border feedback after Check
-    @ViewBuilder
-    private func borderOverlay(slot: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
-        if checkResult == .incorrect {
-            let isCorrectHere = slotContents[slot] == event.correctOrder[slot]
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    isCorrectHere ? Color(red: 0.15, green: 0.75, blue: 0.30) : Color.red,
-                    lineWidth: 4
-                )
-                .frame(width: cardW, height: cardH)
-                .allowsHitTesting(false)
-        }
+    private func slotVisualScale(for slot: Int) -> CGFloat {
+        let state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+        return state.bounceScale * state.waveScale
     }
 
-    // Small X button to return a card to the source deck
-    private func removeButton(slot: Int) -> some View {
-        Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                slotContents[slot] = nil
-                checkResult = nil
-            }
-        } label: {
-            Image(systemName: "xmark.circle.fill")
-                .font(.app(size: 20, weight: .bold))
-                .foregroundColor(.white)
-                .background(Circle().fill(Color.red.opacity(0.85)).padding(3))
-                .shadow(color: .black.opacity(0.3), radius: 3)
-        }
-        .buttonStyle(.plain)
-        .padding(6)
-        .accessibilityLabel("Remove card from slot \(slot + 1)")
+    private func slotVisualTilt(for slot: Int) -> Double {
+        slotVisualStates[slot]?.tiltDegrees ?? 0
     }
 
     // Dashed empty slot
@@ -902,7 +806,6 @@ struct SequencingActivityView<Reward: View>: View {
             if draggingCardId == nil {
                 draggingCardId = cardId
                 dragOriginSlot = originSlot
-                checkResult = nil
             }
             dragPosition = location
             if hoveredSlot != nextHoveredSlot {
@@ -922,36 +825,46 @@ struct SequencingActivityView<Reward: View>: View {
         slotFrames[slot] = frame
     }
 
+    private func updateSourceTrayFrame(_ frame: CGRect) {
+        guard sourceTrayFrame != frame else { return }
+        sourceTrayFrame = frame
+    }
+
+    private func isInSourceTray(_ location: CGPoint) -> Bool {
+        sourceTrayFrame.width > 0 && sourceTrayFrame.contains(location)
+    }
+
     private func finalizeDrop(at location: CGPoint, originSlot: Int?) {
         defer { clearDragState() }
         guard let cardId = draggingCardId else { return }
 
-        guard let targetSlot = slot(at: location) else {
-            // Dropped outside any slot → card returns to its origin (no state change needed)
+        if let targetSlot = slot(at: location, excluding: originSlot) {
+            let didMoveSlots = originSlot != targetSlot
+
+            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
+                var nextContents = slotContents
+                let displaced = nextContents[targetSlot]
+
+                nextContents[targetSlot] = cardId
+
+                if let origin = originSlot {
+                    nextContents[origin] = origin == targetSlot ? cardId : displaced
+                }
+
+                slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
+            }
+
+            if didMoveSlots {
+                handlePlacementFeedback(forSlot: targetSlot, cardId: cardId)
+                evaluateAutomaticCompletion()
+            }
             return
         }
 
-        let shouldPlayPlacementChord = originSlot != targetSlot
-
-        withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
-            var nextContents = slotContents
-            let displaced = nextContents[targetSlot]
-
-            nextContents[targetSlot] = cardId
-
-            if let origin = originSlot {
-                // Moved from one slot to another: swap displaced card into origin
-                nextContents[origin] = origin == targetSlot ? cardId : displaced
+        if let origin = originSlot, isInSourceTray(location) {
+            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
+                slotContents[origin] = nil
             }
-            // If from source deck and target had a card, that card returns to source
-            // (removing it from slotContents is enough because the source row is derived)
-
-            slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
-            checkResult = nil
-        }
-
-        if shouldPlayPlacementChord {
-            playNextPlacementChord()
         }
     }
 
@@ -985,83 +898,164 @@ struct SequencingActivityView<Reward: View>: View {
         hoveredSlot    = nil
     }
 
-    private func playNextPlacementChord() {
-        let chords = PianoChord.allCases
-        guard !chords.isEmpty else { return }
+    private func handlePlacementFeedback(forSlot slot: Int, cardId: Int) {
+        let isCorrect = event.correctOrder[slot] == cardId
 
-        PianoChordPlayer.shared.play(chords[nextPlacementChordIndex % chords.count])
-        nextPlacementChordIndex += 1
+        if isCorrect {
+            AppSettings.hapticImpact(.light)
+            PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
+            playCorrectPlacementAnimation(for: slot)
+        } else {
+            AppSettings.hapticImpact(.soft)
+            PianoChordPlayer.shared.playPlacementTone(.incorrect)
+            attemptCount += 1
+            playIncorrectPlacementAnimation(for: slot)
+        }
     }
 
-    // MARK: - Check
+    private func playCorrectPlacementAnimation(for slot: Int) {
+        guard !reduceMotion else { return }
 
-    private func checkOrder() {
-        guard allSlotsFilled else { return }
-        let correct = slotContents.enumerated().allSatisfy { i, id in id == event.correctOrder[i] }
-
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            checkResult = correct ? .correct : .incorrect
+        withAnimation(.spring(response: 0.36, dampingFraction: 0.58)) {
+            var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+            state.bounceScale = 1.06
+            state.tiltDegrees = 0
+            slotVisualStates[slot] = state
         }
 
-        if correct {
-            AppSettings.hapticSuccess()
-            UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(360))
+            withAnimation(.spring(response: 0.34, dampingFraction: 0.72)) {
+                var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+                state.bounceScale = 1
+                slotVisualStates[slot] = state
+            }
+        }
+    }
 
-            if showsReward {
-                withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
-                    showCelebration = true
+    private func playIncorrectPlacementAnimation(for slot: Int) {
+        guard !reduceMotion else { return }
+
+        animateSlotTilt(slot, degrees: -4.5, duration: 0.12)
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(120))
+            animateSlotTilt(slot, degrees: 4.5, duration: 0.16)
+            try? await Task.sleep(for: .milliseconds(160))
+            animateSlotTilt(slot, degrees: -2.2, duration: 0.14)
+            try? await Task.sleep(for: .milliseconds(140))
+            animateSlotTilt(slot, degrees: 0, duration: 0.18)
+        }
+    }
+
+    private func animateSlotTilt(_ slot: Int, degrees: Double, duration: TimeInterval) {
+        withAnimation(.easeInOut(duration: duration)) {
+            var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+            state.tiltDegrees = degrees
+            slotVisualStates[slot] = state
+        }
+    }
+
+    private func evaluateAutomaticCompletion() {
+        guard allSlotsFilled, allSlotsCorrect, !isRunningCompletionSequence, !showCelebration else { return }
+        Task { await runCompletionWaveAndCelebrate() }
+    }
+
+    @MainActor
+    private func runCompletionWaveAndCelebrate() async {
+        isRunningCompletionSequence = true
+
+        // Let the fourth card's Do (C5) ring briefly, then start the victory jingle.
+        try? await Task.sleep(for: .milliseconds(240))
+        PianoChordPlayer.shared.playPlacementTone(.victoryJingle)
+
+        if !reduceMotion {
+            for slot in event.cards.indices {
+                withAnimation(.spring(response: 0.40, dampingFraction: 0.66)) {
+                    var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+                    state.waveScale = 1.08
+                    state.bounceScale = 1
+                    state.tiltDegrees = 0
+                    slotVisualStates[slot] = state
                 }
-                Task { @MainActor in
-                    try? await Task.sleep(for: .seconds(1.5))
-                    withAnimation(.easeIn(duration: 0.4)) { dimForReward = true }
-                    try? await Task.sleep(for: .seconds(0.45))
-                    withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { showReward = true }
+
+                try? await Task.sleep(for: .milliseconds(210))
+
+                withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
+                    var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+                    state.waveScale = 1
+                    slotVisualStates[slot] = state
+                }
+            }
+
+            try? await Task.sleep(for: .milliseconds(650))
+        } else {
+            try? await Task.sleep(for: .milliseconds(1200))
+        }
+
+        await triggerCelebration()
+        isRunningCompletionSequence = false
+    }
+
+    @MainActor
+    private func triggerCelebration() async {
+        AppSettings.hapticSuccess()
+        UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
+
+        if showsReward {
+            withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
+                showCelebration = true
+            }
+            try? await Task.sleep(for: .seconds(1.5))
+            withAnimation(.easeIn(duration: 0.4)) { dimForReward = true }
+            try? await Task.sleep(for: .seconds(0.45))
+            withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { showReward = true }
+        } else {
+            onSuccess?()
+        }
+    }
+}
+
+// MARK: - Previews
+
+private struct SequencingActivityPreview: View {
+    let eventId: Int
+
+    init(eventId: Int) {
+        PreviewSetup.registerFontsIfNeeded()
+        self.eventId = eventId
+    }
+
+    private var event: EventData? {
+        EventLoader.event(id: eventId, from: .main)
+    }
+
+    var body: some View {
+        Group {
+            if let event {
+                SequencingActivityView(event: event) { _, _ in
+                    Color.black.opacity(0.55)
+                        .overlay {
+                            Text("Reward")
+                                .font(.app(.title, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
                 }
             } else {
-                onSuccess?()
-            }
-        } else {
-            attemptCount += 1
-            AppSettings.hapticError()
-            returnIncorrectCardsToSource()
-            UIAccessibility.post(notification: .announcement, argument: feedbackBannerText)
-            withAnimation(.linear(duration: 0.5)) { shakeAmount += 1 }
-        }
-    }
-
-    private func returnIncorrectCardsToSource() {
-        withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
-            slotContents = slotContents.enumerated().map { slot, cardId in
-                cardId == event.correctOrder[slot] ? cardId : nil
-            }
-            clearDragState()
-        }
-    }
-
-    // MARK: - Feedback banner
-
-    private var feedbackBannerText: String {
-        "\(lm.t("feedback.good_try")) \(contextualHint(level: attemptCount))"
-    }
-
-    private var feedbackBanner: some View {
-        VStack {
-            Spacer()
-            Text(feedbackBannerText)
-                .font(.app(.title3))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 18)
-                .background(
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Color(red: 0.80, green: 0.22, blue: 0.10))
-                        .shadow(color: .black.opacity(0.28), radius: 10, y: 4)
+                ContentUnavailableView(
+                    "Event \(eventId) not found",
+                    systemImage: "book.closed",
+                    description: Text("Check events.json in Resources/Data.")
                 )
-                .padding(.bottom, 32)
+            }
         }
-        .frame(maxWidth: .infinity)
-        .allowsHitTesting(false)
-        .accessibilityLabel(feedbackBannerText)
+        .environmentObject(LanguageManager())
     }
+}
+
+#Preview("Sequencing – Chapter 1", traits: .fixedLayout(width: 1194, height: 834)) {
+    SequencingActivityPreview(eventId: 1)
+}
+
+#Preview("Sequencing – Chapter 4", traits: .fixedLayout(width: 1194, height: 834)) {
+    SequencingActivityPreview(eventId: 4)
 }

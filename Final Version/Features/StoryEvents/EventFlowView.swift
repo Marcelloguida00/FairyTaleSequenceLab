@@ -42,3 +42,54 @@ struct EventFlowView: View {
         }
     }
 }
+
+// MARK: - Previews
+
+private struct EventFlowPreview: View {
+    let eventId: Int
+    var skipIntro = false
+
+    init(eventId: Int, skipIntro: Bool = false) {
+        PreviewSetup.registerFontsIfNeeded()
+        self.eventId = eventId
+        self.skipIntro = skipIntro
+    }
+
+    private var event: EventData? {
+        EventLoader.event(id: eventId, from: .main)
+    }
+
+    var body: some View {
+        Group {
+            if let event {
+                if skipIntro {
+                    SequencingActivityView(event: event) { _, _ in
+                        RewardView(
+                            event: event,
+                            attemptCount: 1,
+                            onDismiss: {},
+                            onNext: {}
+                        )
+                    }
+                } else {
+                    EventFlowView(
+                        eventData: event,
+                        onRewardReached: {},
+                        onComplete: {}
+                    )
+                }
+            } else {
+                ContentUnavailableView("Event not found", systemImage: "book.closed")
+            }
+        }
+        .environmentObject(LanguageManager())
+    }
+}
+
+#Preview("Chapter 1 – Intro + game", traits: .fixedLayout(width: 1194, height: 834)) {
+    EventFlowPreview(eventId: 1)
+}
+
+#Preview("Chapter 1 – Sequencing only", traits: .fixedLayout(width: 1194, height: 834)) {
+    EventFlowPreview(eventId: 1, skipIntro: true)
+}
