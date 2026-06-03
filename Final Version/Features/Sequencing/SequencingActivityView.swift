@@ -336,6 +336,7 @@ struct SequencingActivityView<Reward: View>: View {
     let event: EventData
     let showsReward: Bool
     let onSuccess: (() -> Void)?
+    let onSequencingComplete: ((Int) -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var lm: LanguageManager
@@ -370,11 +371,13 @@ struct SequencingActivityView<Reward: View>: View {
         event: EventData,
         showsReward: Bool = true,
         onSuccess: (() -> Void)? = nil,
+        onSequencingComplete: ((Int) -> Void)? = nil,
         @ViewBuilder makeReward: @escaping (Int, @escaping () -> Void) -> Reward
     ) {
         self.event = event
         self.showsReward = showsReward
         self.onSuccess = onSuccess
+        self.onSequencingComplete = onSequencingComplete
         self.makeReward = makeReward
         _shuffledStart = State(initialValue: event.makeShuffledStart())
         _slotContents  = State(initialValue: Array(repeating: nil, count: event.cards.count))
@@ -1001,7 +1004,13 @@ struct SequencingActivityView<Reward: View>: View {
         AppSettings.hapticSuccess()
         UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
 
-        if showsReward {
+        if let onSequencingComplete {
+            withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
+                showCelebration = true
+            }
+            try? await Task.sleep(for: .seconds(1.5))
+            onSequencingComplete(attemptCount)
+        } else if showsReward {
             withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
                 showCelebration = true
             }

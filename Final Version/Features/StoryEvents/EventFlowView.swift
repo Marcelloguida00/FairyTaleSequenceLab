@@ -1,7 +1,60 @@
 import SwiftUI
 
+enum RedHoodEventFlowPhase: Equatable {
+    case intro
+    case activity
+}
+
+struct RedHoodRewardPhaseView: View {
+    let eventData: EventData
+    let attemptCount: Int
+    let onRewardReached: () -> Void
+    let onReplay: () -> Void
+    let onComplete: () -> Void
+
+    @EnvironmentObject private var lm: LanguageManager
+    @State private var didNotifyRewardReached = false
+    @State private var isFirstTimeCompletion = false
+    @State private var showEnvelopeOpening = false
+
+    var body: some View {
+        ZStack {
+            if isFirstTimeCompletion && showEnvelopeOpening {
+                EnvelopeOpeningView(event: eventData) {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        showEnvelopeOpening = false
+                    }
+                }
+            } else {
+                RewardView(
+                    event: eventData,
+                    attemptCount: attemptCount,
+                    onDismiss: onReplay,
+                    onNext: onComplete
+                )
+            }
+        }
+        .ignoresSafeArea()
+        .onAppear {
+            let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+            isFirstTimeCompletion = !completed.contains(eventData.id)
+
+            if isFirstTimeCompletion {
+                showEnvelopeOpening = true
+            }
+
+            guard !didNotifyRewardReached else { return }
+            didNotifyRewardReached = true
+            onRewardReached()
+        }
+    }
+
+}
+
 struct EventFlowView: View {
     let eventData: EventData
+    let onPhaseChange: (RedHoodEventFlowPhase) -> Void
+    let onSequencingFinished: (Int) -> Void
     let onRewardReached: () -> Void
     let onComplete: () -> Void
 
@@ -10,11 +63,7 @@ struct EventFlowView: View {
     @AppStorage("hasAskedForReview") private var hasAskedForReview = false
     @State private var showReviewAlert = false
 
-    private enum Phase { case intro, activity }
-    @State private var phase: Phase = .intro
-    @State private var didNotifyRewardReached = false
-    @State private var isFirstTimeCompletion = false
-    @State private var showEnvelopeOpening = false
+    @State private var phase: RedHoodEventFlowPhase = .intro
 
     var body: some View {
         Group {
@@ -24,39 +73,22 @@ struct EventFlowView: View {
                     phase = .activity
                 }
             case .activity:
-                SequencingActivityView(event: eventData) { attemptCount, onDismiss in
-                    ZStack {
-                        if isFirstTimeCompletion && showEnvelopeOpening {
-                            EnvelopeOpeningView(event: eventData) {
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                                    showEnvelopeOpening = false
-                                }
-                            }
-                        } else {
-                            RewardView(
-                                event: eventData,
-                                attemptCount: attemptCount,
-                                onDismiss: onDismiss,
-                                onNext: onComplete
-                            )
-                        }
+                SequencingActivityView(
+                    event: eventData,
+                    showsReward: false,
+                    onSequencingComplete: { attemptCount in
+                        onSequencingFinished(attemptCount)
+                    },
+                    makeReward: { _, _ in
+                        Color.clear
                     }
-                    .onAppear {
-                        if isFirstTimeCompletion {
-                            showEnvelopeOpening = true
-                        }
-                        
-                        guard !didNotifyRewardReached else { return }
-                        didNotifyRewardReached = true
-                        onRewardReached()
-                    }
-                }
+                )
             }
         }
         .onAppear {
-            let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
-            isFirstTimeCompletion = !completed.contains(eventData.id)
-            
+            phase = .intro
+            onPhaseChange(.intro)
+
             BackgroundMusicPlayer.shared.fadeOut()
             ForestAmbiencePlayer.shared.fadeIn()
 
@@ -65,6 +97,9 @@ struct EventFlowView: View {
                     showReviewAlert = true
                 }
             }
+        }
+        .onChange(of: phase) { _, newPhase in
+            onPhaseChange(newPhase)
         }
         .onDisappear {
             ForestAmbiencePlayer.shared.fadeOutAndStop()
@@ -117,6 +152,8 @@ private struct EventFlowPreview: View {
                 } else {
                     EventFlowView(
                         eventData: event,
+                        onPhaseChange: { _ in },
+                        onSequencingFinished: { _ in },
                         onRewardReached: {},
                         onComplete: {}
                     )
