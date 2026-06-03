@@ -25,6 +25,24 @@ struct RewardView: View {
     }
 
     var body: some View {
+        if let lines = RedHoodDialogueLoader.rewardLines(
+            eventId: event.id,
+            attemptCount: attemptCount,
+            from: lm.bundle
+        ), !lines.isEmpty {
+            FairyTaleDialogueView(
+                lines: lines,
+                continueButtonTitle: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"),
+                secondaryButtonTitle: lm.t("button.play_again"),
+                onSecondary: onDismiss,
+                onComplete: onNext
+            )
+        } else {
+            legacyReward
+        }
+    }
+
+    private var legacyReward: some View {
         GeometryReader { geometry in
             let isLandscape = geometry.size.width > geometry.size.height
             let panelRatio = isLandscape ? 0.46 : 0.40
@@ -136,3 +154,4 @@ struct RewardView: View {
         .ignoresSafeArea()
     }
 }
+

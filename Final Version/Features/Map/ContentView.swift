@@ -75,6 +75,8 @@ struct ContentView: View {
     @State private var unlockedWorldBaseIDs: Set<Int> = [MapGraph.redRidingHoodBaseID]
     @State private var activeRedHoodLevel: Int? = nil
     @State private var pendingRedHoodLevel: Int? = nil
+    @State private var suppressesMapChromeForDialogue = true
+    @State private var redHoodPostSequenceReward: (level: Int, attemptCount: Int)? = nil
     @State private var levelBannerLevel: Int? = nil
     @State private var currentFrame = 0
     @State private var walkTask: Task<Void, Never>? = nil
@@ -114,9 +116,40 @@ struct ContentView: View {
                 .zIndex(50)
             }
 
+            if hidesMapChromeForActiveLevel {
+                mapChromeBlockerOverlay
+                    .zIndex(18)
+            }
+
+            if let reward = redHoodPostSequenceReward,
+               let eventData = EventLoader.event(id: reward.level, from: lm.bundle) {
+                RedHoodRewardPhaseView(
+                    eventData: eventData,
+                    attemptCount: reward.attemptCount,
+                    onRewardReached: {
+                        markRedHoodLevelCompleted(reward.level)
+                    },
+                    onReplay: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            redHoodPostSequenceReward = nil
+                            suppressesMapChromeForDialogue = false
+                            activeRedHoodLevel = reward.level
+                        }
+                    },
+                    onComplete: {
+                        finishRedHoodPostSequenceReward(for: reward.level)
+                    }
+                )
+                .ignoresSafeArea()
+                .background(Color.clear)
+                .zIndex(20)
+                .transition(.opacity.combined(with: .scale(scale: 0.96)))
+            }
+
             if let level = activeRedHoodLevel {
                 levelView(for: level)
                     .ignoresSafeArea()
+                    .background(Color.clear)
                     .zIndex(20)
                     .transition(.asymmetric(
                         insertion: .scale(scale: 0.94).combined(with: .opacity),
@@ -129,6 +162,8 @@ struct ContentView: View {
                     withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
                         levelBannerLevel = nil
                         activeRedHoodLevel = bannerLevel
+                        suppressesMapChromeForDialogue = true
+                        redHoodPostSequenceReward = nil
                     }
                 }
                 .ignoresSafeArea()
@@ -136,7 +171,7 @@ struct ContentView: View {
                 .transition(.opacity)
             }
 
-            if activeMap == .redHood {
+            if activeMap == .redHood, !hidesMapChromeForActiveLevel {
                 GameCircleBackButton(size: MapOverlayMetrics.chromeButtonSize) {
                     AppSettings.hapticImpact(.light)
                     handleBackButton()
@@ -151,7 +186,7 @@ struct ContentView: View {
                     .transition(.opacity)
             }
 
-            if activeMap == .main || activeMap == .redHood {
+            if (activeMap == .main || activeMap == .redHood), !hidesMapChromeForActiveLevel {
                 GameCircleSettingsButton(size: MapOverlayMetrics.chromeButtonSize) {
                     Task { await openSettings() }
                 }
@@ -400,11 +435,13 @@ struct ContentView: View {
     }
 
     private func handleBackButton() {
-        if activeRedHoodLevel != nil {
+        if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil {
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
+                redHoodPostSequenceReward = nil
                 levelBannerLevel = nil
                 pendingRedHoodLevel = nil
+                suppressesMapChromeForDialogue = true
             }
         } else if activeMap == .redHood {
             Task { await closeRedHoodSubMap() }
@@ -623,6 +660,26 @@ struct ContentView: View {
         (activeMap == .main || activeMap == .redHood) && activeRedHoodLevel == nil
     }
 
+    /// Hides map chrome during intro/reward dialogue; visible during sequencing and the map beat before reward.
+    private var hidesMapChromeForActiveLevel: Bool {
+        if redHoodPostSequenceReward != nil { return true }
+        guard activeRedHoodLevel != nil else { return false }
+        return suppressesMapChromeForDialogue
+    }
+
+    /// Blocks taps on the top map toolbar region if chrome is hidden but still hit-testable.
+    private var mapChromeBlockerOverlay: some View {
+        VStack(spacing: 0) {
+            Color.clear
+                .frame(height: MapOverlayMetrics.chromeButtonSize + 72)
+                .contentShape(Rectangle())
+            Spacer(minLength: 0)
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(true)
+        .accessibilityHidden(true)
+    }
+
     private var isMapNavigationBlocked: Bool {
         isMapTransitioning
             || isGlobalTransitioning
@@ -630,6 +687,8 @@ struct ContentView: View {
             || showSettings
             || isSettingsTransitionActive
             || isBookOpen
+            || (activeRedHoodLevel != nil && suppressesMapChromeForDialogue)
+            || redHoodPostSequenceReward != nil
     }
 
     private var isMapToolbarBlocked: Bool {
@@ -857,6 +916,12 @@ struct ContentView: View {
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(
                 eventData: eventData,
+                onPhaseChange: { flowPhase in
+                    suppressesMapChromeForDialogue = (flowPhase == .intro)
+                },
+                onSequencingFinished: { attemptCount in
+                    presentRewardAfterMapPause(level: level, attemptCount: attemptCount)
+                },
                 onRewardReached: {
                     markRedHoodLevelCompleted(level)
                 },
@@ -865,6 +930,34 @@ struct ContentView: View {
                 }
             )
         }
+    }
+
+    @MainActor
+    private func presentRewardAfterMapPause(level: Int, attemptCount: Int) {
+        withAnimation(.easeInOut(duration: 0.35)) {
+            activeRedHoodLevel = nil
+            suppressesMapChromeForDialogue = false
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 700_000_000)
+
+            guard activeRedHoodLevel == nil, redHoodPostSequenceReward == nil else { return }
+
+            withAnimation(.easeInOut(duration: 0.35)) {
+                suppressesMapChromeForDialogue = true
+                redHoodPostSequenceReward = (level, attemptCount)
+            }
+        }
+    }
+
+    @MainActor
+    private func finishRedHoodPostSequenceReward(for level: Int) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            redHoodPostSequenceReward = nil
+            suppressesMapChromeForDialogue = true
+        }
+        handleRedHoodChapterCompletion(level)
     }
 
     @MainActor
