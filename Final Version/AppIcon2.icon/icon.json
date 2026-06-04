@@ -1,0 +1,49 @@
+{
+  "fill" : {
+    "solid" : "display-p3:0.79608,0.90588,1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "hidden" : false,
+      "layers" : [
+        {
+          "image-name" : "app_ciao.svg",
+          "name" : "app_ciao",
+          "position" : {
+            "scale" : 0.15,
+            "translation-in-points" : [
+              11.546875,
+              328.703125
+            ]
+          }
+        },
+        {
+          "hidden" : false,
+          "image-name" : "castle.png",
+          "name" : "castle",
+          "position" : {
+            "scale" : 0.6,
+            "translation-in-points" : [
+              -21.970525418423826,
+              -0.18102162572960268
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : false,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

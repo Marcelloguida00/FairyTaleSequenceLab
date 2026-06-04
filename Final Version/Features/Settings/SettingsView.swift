@@ -41,6 +41,7 @@ struct SettingsView: View {
     @State private var returnRoute: SettingsRoute = .main
     @State private var showInternalAdvancedMathGate = false
     @State private var internalAdvancedMathProblem = MathAdditionProblem.randomSimple()
+    @State private var currentAppIcon: String? = UIApplication.shared.alternateIconName
 
     init(
         onClose: (() -> Void)? = nil,
@@ -695,6 +696,8 @@ struct SettingsView: View {
                         languageDetailCard
                     case .savedData:
                         savedDataDetailCard
+                    case .appIcon:
+                        appIconDetailCard
                     default:
                         EmptyView()
                     }
@@ -926,6 +929,79 @@ struct SettingsView: View {
             .buttonStyle(.plain)
             .gameMinimumTouchTarget()
         }
+    }
+
+    @State private var iconErrorAlertMessage: String? = nil
+
+    private var appIconDetailCard: some View {
+        settingsCard(largeStyle: usesFrameLayout) {
+            VStack(spacing: 0) {
+                appIconRow(title: lm.t("settings.app_icon.default") ?? "Default", iconName: nil, isUnlocked: true, isLast: false)
+                settingsDivider(largeStyle: usesFrameLayout)
+                
+                let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+                let isUnlocked = completed.contains(8)
+                
+                appIconRow(title: "Red Hood", iconName: "AppIcon2", isUnlocked: isUnlocked, isLast: true)
+            }
+        }
+        .alert("Errore Icona", isPresented: Binding(
+            get: { iconErrorAlertMessage != nil },
+            set: { if !$0 { iconErrorAlertMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(iconErrorAlertMessage ?? "")
+        }
+    }
+
+    private func appIconRow(title: String, iconName: String?, isUnlocked: Bool, isLast: Bool) -> some View {
+        let isSelected = currentAppIcon == iconName
+        
+        return Button {
+            if isUnlocked {
+                AppSettings.hapticImpact(.light)
+                UIApplication.shared.setAlternateIconName(iconName) { error in
+                    if let error = error {
+                        print("Error setting alternate icon: \(error.localizedDescription)")
+                        iconErrorAlertMessage = "L'icona '\(iconName ?? "Default")' non è configurata correttamente in Xcode. (Errore: \(error.localizedDescription))"
+                    } else {
+                        currentAppIcon = iconName
+                    }
+                }
+            } else {
+                AppSettings.hapticError()
+            }
+        } label: {
+            HStack(spacing: usesFrameLayout ? 18 : 14) {
+                Image(systemName: iconName == nil ? "app.dashed" : "app.gift.fill")
+                    .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                    .foregroundStyle(isUnlocked ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                    .frame(width: usesFrameLayout ? 36 : 28)
+                
+                Text(title)
+                    .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                    .foregroundStyle(isUnlocked ? (usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText) : SettingsTheme.secondaryText)
+                
+                Spacer()
+                
+                if !isUnlocked {
+                    Image(systemName: "lock.fill")
+                        .font(.app(size: usesFrameLayout ? 22 : 18, weight: .semibold))
+                        .foregroundStyle(SettingsTheme.secondaryText)
+                } else if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.app(size: usesFrameLayout ? 22 : 18, weight: .semibold))
+                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, usesFrameLayout ? 24 : 18)
+            .padding(.vertical, usesFrameLayout ? 20 : 16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 
     private var aboutDetailContent: some View {

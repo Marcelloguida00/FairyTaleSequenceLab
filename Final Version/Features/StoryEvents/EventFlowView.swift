@@ -15,34 +15,21 @@ struct RedHoodRewardPhaseView: View {
     @EnvironmentObject private var lm: LanguageManager
     @State private var didNotifyRewardReached = false
     @State private var isFirstTimeCompletion = false
-    @State private var showEnvelopeOpening = false
 
     var body: some View {
         ZStack {
-            if isFirstTimeCompletion && showEnvelopeOpening {
-                EnvelopeOpeningView(event: eventData) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        showEnvelopeOpening = false
-                    }
-                }
-            } else {
-                RewardView(
-                    event: eventData,
-                    attemptCount: attemptCount,
-                    showsBookChapterUnlock: isFirstTimeCompletion && (1...8).contains(eventData.id),
-                    onDismiss: onReplay,
-                    onNext: onComplete
-                )
-            }
+            RewardView(
+                event: eventData,
+                attemptCount: attemptCount,
+                showsBookChapterUnlock: isFirstTimeCompletion && (1...8).contains(eventData.id),
+                onDismiss: onReplay,
+                onNext: onComplete
+            )
         }
         .ignoresSafeArea()
         .onAppear {
             let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
             isFirstTimeCompletion = !completed.contains(eventData.id)
-
-            if isFirstTimeCompletion {
-                showEnvelopeOpening = true
-            }
 
             guard !didNotifyRewardReached else { return }
             didNotifyRewardReached = true
