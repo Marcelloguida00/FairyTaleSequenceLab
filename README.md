@@ -11,6 +11,7 @@ Backlog di funzionalità e miglioramenti pianificati per l’app.
 - **UI/UX sequence game**
 - **Aggiungere voce narrante per dialoghi**
 - **Aggiungere diversi rumori bianchi per la fase di gioco**
+- **Provare l'app su dimensioni diverse di ipad**
   
 
 ---
