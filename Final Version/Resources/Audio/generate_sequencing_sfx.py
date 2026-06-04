@@ -10,6 +10,7 @@ SR = 44100
 OUT = Path(__file__).resolve().parent
 
 C4, E4, G4, C5 = 261.625565, 329.627557, 391.995436, 523.251131
+D4 = 293.664768
 A3 = 220.0
 
 
@@ -134,6 +135,77 @@ def write_wav(path, samples):
         w.writeframes(b"".join(struct.pack("<h", s) for s in to_pcm(samples)))
 
 
+def card_flip(duration=0.15, volume=0.58):
+    """Short papery card flip: noise rustle + soft snap."""
+    import random
+
+    random.seed(7)
+    n = int(SR * duration)
+    samples = []
+    for i in range(n):
+        t = i / SR
+        noise = random.random() * 2.0 - 1.0
+        attack = 1.0 - math.exp(-200.0 * t)
+        decay = math.exp(-26.0 * t)
+        flutter = 0.22 * math.sin(2 * math.pi * 2400.0 * t) * math.exp(-38.0 * t)
+        snap = 0.12 * math.sin(2 * math.pi * 520.0 * t) * math.exp(-55.0 * t)
+        value = (noise * 0.62 + flutter + snap) * attack * decay * volume
+        samples.append(value)
+    return samples
+
+
+def toggle_click(duration=0.07, volume=0.52, seed=31, tone_hz=920.0):
+    """Short UI toggle click for Flip all."""
+    import random
+
+    random.seed(seed)
+    n = int(SR * duration)
+    samples = []
+    for i in range(n):
+        t = i / SR
+        noise = random.random() * 2.0 - 1.0
+        click = 0.35 * math.sin(2 * math.pi * tone_hz * t) * math.exp(-90.0 * t)
+        env = (1.0 - math.exp(-400.0 * t)) * math.exp(-48.0 * t)
+        value = (noise * 0.22 + click) * env * volume
+        samples.append(value)
+    return samples
+
+
+def card_pickup(duration=0.09, volume=0.44):
+    """Light lift from the deck: quick paper slide."""
+    import random
+
+    random.seed(11)
+    n = int(SR * duration)
+    samples = []
+    for i in range(n):
+        t = i / SR
+        noise = random.random() * 2.0 - 1.0
+        slide = 0.18 * math.sin(2 * math.pi * (900.0 + 1200.0 * t) * t)
+        env = (1.0 - math.exp(-240.0 * t)) * math.exp(-32.0 * t)
+        value = (noise * 0.48 + slide) * env * volume
+        samples.append(value)
+    return samples
+
+
+def card_place(duration=0.11, volume=0.50):
+    """Soft landing in a timeline slot: brief thud + paper settle."""
+    import random
+
+    random.seed(19)
+    n = int(SR * duration)
+    samples = []
+    for i in range(n):
+        t = i / SR
+        noise = random.random() * 2.0 - 1.0
+        thud = 0.28 * math.sin(2 * math.pi * 180.0 * t) * math.exp(-42.0 * t)
+        tap = 0.14 * math.sin(2 * math.pi * 680.0 * t) * math.exp(-70.0 * t)
+        env = (1.0 - math.exp(-320.0 * t)) * math.exp(-24.0 * t)
+        value = (noise * 0.40 + thud + tap) * env * volume
+        samples.append(value)
+    return samples
+
+
 def build_victory_jingle():
     arp_notes = [C4, E4, G4, C5]
     note_len = 0.16
@@ -169,8 +241,14 @@ def main():
     write_wav(OUT / "PianoNote_Mi.wav", felt_upright_piano(E4, duration=0.90, volume=0.53))
     write_wav(OUT / "PianoNote_Sol.wav", felt_upright_piano(G4, duration=0.86, volume=0.52))
     write_wav(OUT / "PianoNote_DoHigh.wav", felt_upright_piano(C5, duration=0.82, volume=0.50))
+    write_wav(OUT / "PianoNote_Re.wav", felt_upright_piano(D4, duration=0.78, volume=0.50))
     write_wav(OUT / "PianoNote_Grave.wav", felt_piano_low(A3))
     write_wav(OUT / "SequencingVictory_Jingle.wav", build_victory_jingle())
+    write_wav(OUT / "SequencingCardFlip.wav", card_flip())
+    write_wav(OUT / "SequencingFlipAll_1.wav", card_flip())
+    write_wav(OUT / "SequencingFlipAll_2.wav", toggle_click(tone_hz=780.0, seed=37))
+    write_wav(OUT / "SequencingCardPickup.wav", card_pickup())
+    write_wav(OUT / "SequencingCardPlace.wav", card_place())
     print("Felt / upright piano SFX generated in", OUT)
 
 

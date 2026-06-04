@@ -7,6 +7,16 @@ enum GameButtonAppearance {
     static let border = Color(hex: "#430303")
     static let label = Color(red: 0.29, green: 0.12, blue: 0.08)
 
+    /// Gloss strip on pill buttons (shorter = larger horizontal inset).
+    static let pillHighlightHorizontalInset: CGFloat = 13
+    static let pillHighlightTopInset: CGFloat = 2
+    static let pillHighlightHeight: CGFloat = 22
+
+    /// Gloss strip on circle buttons (smaller inset = wider highlight).
+    static let circleHighlightHorizontalInset: CGFloat = 1
+    static let circleHighlightTopInset: CGFloat = 2
+    static let circleHighlightHeight: CGFloat = 26
+
     static var glossGradient: LinearGradient {
         LinearGradient(
             colors: [glossTop, glossMid, glossBottom],
@@ -38,9 +48,9 @@ struct GamePillButtonBackground: View {
             .overlay(alignment: .top) {
                 Capsule()
                     .fill(GameButtonStyle.highlightGradient)
-                    .padding(.horizontal, 10)
-                    .padding(.top, 5)
-                    .frame(height: 18)
+                    .padding(.horizontal, GameButtonAppearance.pillHighlightHorizontalInset)
+                    .padding(.top, GameButtonAppearance.pillHighlightTopInset)
+                    .frame(height: GameButtonAppearance.pillHighlightHeight)
             }
             .overlay {
                 Capsule()
@@ -58,9 +68,9 @@ struct GameCircleButtonBackground: View {
             .overlay(alignment: .top) {
                 Circle()
                     .fill(GameButtonStyle.highlightGradient)
-                    .padding(.horizontal, 8)
-                    .padding(.top, 4)
-                    .frame(height: 22)
+                    .padding(.horizontal, GameButtonAppearance.circleHighlightHorizontalInset)
+                    .padding(.top, GameButtonAppearance.circleHighlightTopInset)
+                    .frame(height: GameButtonAppearance.circleHighlightHeight)
             }
             .overlay {
                 Circle()
@@ -77,6 +87,7 @@ struct GamePillLabel: View {
     var verticalPadding: CGFloat = 10
     var minWidth: CGFloat? = nil
     var minHeight: CGFloat? = nil
+    var boundsSize: CGSize? = nil
     var leadingIcon: String? = nil
     var trailingIcon: String? = nil
 
@@ -84,7 +95,7 @@ struct GamePillLabel: View {
         GameButtonStyle.label
     }
 
-    var body: some View {
+    private var labelContent: some View {
         HStack(spacing: 8) {
             if let leadingIcon {
                 Image(systemName: leadingIcon)
@@ -105,22 +116,92 @@ struct GamePillLabel: View {
         .shadow(color: .black.opacity(0.16), radius: 0, x: 0, y: 1)
         .padding(.horizontal, horizontalPadding)
         .padding(.vertical, verticalPadding)
-        .frame(minWidth: minWidth, minHeight: minHeight)
+    }
+
+    var body: some View {
+        Group {
+            if let boundsSize {
+                labelContent
+                    .frame(width: boundsSize.width, height: boundsSize.height, alignment: .center)
+            } else {
+                labelContent
+                    .frame(
+                        minWidth: minWidth,
+                        minHeight: minHeight ?? GameButtonMetrics.pillMinHeight
+                    )
+            }
+        }
         .background(GamePillButtonBackground())
+    }
+}
+
+/// Plain button with HIG minimum touch target — prefer over raw `Button` + `.plain`.
+struct GamePlainButton<Label: View>: View {
+    let action: () -> Void
+    @ViewBuilder let label: () -> Label
+
+    init(action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
+        self.action = action
+        self.label = label
+    }
+
+    var body: some View {
+        Button(action: action, label: label)
+            .buttonStyle(.plain)
+            .gameMinimumTouchTarget()
+    }
+}
+
+/// Secondary capsule (skip, play again, cancel text actions).
+struct GameCapsuleButton: View {
+    let title: String
+    var systemImage: String? = nil
+    var fontSize: CGFloat = GameButtonMetrics.pillFontSize - 1
+    var foregroundColor: Color = GameButtonAppearance.label.opacity(0.72)
+    var fillColor: Color = Color.white.opacity(0.88)
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if let systemImage {
+                    Image(systemName: systemImage)
+                        .font(.app(size: fontSize * 0.88, weight: .semibold))
+                }
+                Text(title)
+                    .font(.app(size: fontSize, weight: .semibold))
+            }
+            .foregroundStyle(foregroundColor)
+            .padding(.horizontal, GameButtonMetrics.pillHorizontalPadding - 6)
+            .padding(.vertical, GameButtonMetrics.pillVerticalPadding - 1)
+            .background(Capsule().fill(fillColor))
+        }
+        .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
     }
 }
 
 struct GamePillButton: View {
     let title: String
-    var fontSize: CGFloat = 15
-    var horizontalPadding: CGFloat = 22
-    var verticalPadding: CGFloat = 10
+    var fontSize: CGFloat = GameButtonMetrics.pillFontSize
+    var horizontalPadding: CGFloat = GameButtonMetrics.pillHorizontalPadding
+    var verticalPadding: CGFloat = GameButtonMetrics.pillVerticalPadding
     var minWidth: CGFloat? = nil
     var minHeight: CGFloat? = nil
+    /// When set, the glossy capsule stretches to this size (map/sequencing chrome).
+    var fixedSize: CGSize? = nil
     var leadingIcon: String? = nil
     var trailingIcon: String? = nil
     var isDisabled: Bool = false
     let action: () -> Void
+
+    private var boundsSize: CGSize? {
+        GameButtonMetrics.pillBoundsSize(
+            minWidth: minWidth,
+            minHeight: minHeight,
+            fixedSize: fixedSize
+        )
+    }
 
     var body: some View {
         Button(action: action) {
@@ -131,19 +212,53 @@ struct GamePillButton: View {
                 verticalPadding: verticalPadding,
                 minWidth: minWidth,
                 minHeight: minHeight,
+                boundsSize: boundsSize,
                 leadingIcon: leadingIcon,
                 trailingIcon: trailingIcon
             )
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget(
+            minWidth: max(boundsSize?.width ?? 0, GameButtonMetrics.minimumTouchTarget),
+            minHeight: max(boundsSize?.height ?? 0, GameButtonMetrics.minimumTouchTarget)
+        )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
     }
 }
 
+/// Large map / event CTA pill — fills primary bounds on iPad and iPhone.
+struct GamePrimaryPillButton: View {
+    let title: String
+    var trailingIcon: String? = nil
+    var isDisabled: Bool = false
+    let action: () -> Void
+
+    private var primarySize: CGSize {
+        CGSize(
+            width: GameButtonMetrics.primaryPillWidth,
+            height: GameButtonMetrics.primaryPillHeight
+        )
+    }
+
+    var body: some View {
+        GamePillButton(
+            title: title,
+            fontSize: GameButtonMetrics.primaryPillFontSize,
+            horizontalPadding: GameButtonMetrics.primaryPillHorizontalPadding,
+            verticalPadding: GameButtonMetrics.primaryPillVerticalPadding,
+            minWidth: primarySize.width,
+            minHeight: primarySize.height,
+            trailingIcon: trailingIcon,
+            isDisabled: isDisabled,
+            action: action
+        )
+    }
+}
+
 struct GameCircleButton: View {
     let systemImage: String
-    var size: CGFloat = 52
+    var size: CGFloat = GameButtonMetrics.standardCircleSize
     var iconSize: CGFloat? = nil
     var iconWeight: Font.Weight = .black
     var isDisabled: Bool = false
@@ -163,13 +278,17 @@ struct GameCircleButton: View {
                 .background(GameCircleButtonBackground())
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget(
+            minWidth: max(size, GameButtonMetrics.minimumTouchTarget),
+            minHeight: max(size, GameButtonMetrics.minimumTouchTarget)
+        )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
     }
 }
 
 struct GameCircleBackButton: View {
-    var size: CGFloat = 52
+    var size: CGFloat = GameButtonMetrics.chromeCircleSize
     let action: () -> Void
 
     var body: some View {
@@ -184,7 +303,7 @@ struct GameCircleBackButton: View {
 }
 
 struct GameCircleSettingsButton: View {
-    var size: CGFloat = 52
+    var size: CGFloat = GameButtonMetrics.chromeCircleSize
     let action: () -> Void
 
     var body: some View {
@@ -200,7 +319,7 @@ struct GameCircleSettingsButton: View {
 
 struct GameCircleTextButton: View {
     let title: String
-    var size: CGFloat = 52
+    var size: CGFloat = GameButtonMetrics.standardCircleSize
     var fontSize: CGFloat? = nil
     var isDisabled: Bool = false
     let action: () -> Void
@@ -215,13 +334,17 @@ struct GameCircleTextButton: View {
                 .background(GameCircleButtonBackground())
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget(
+            minWidth: max(size, GameButtonMetrics.minimumTouchTarget),
+            minHeight: max(size, GameButtonMetrics.minimumTouchTarget)
+        )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
     }
 }
 
 struct GameCircleCheckButton: View {
-    var size: CGFloat = 52
+    var size: CGFloat = GameButtonMetrics.standardCircleSize
     var isDisabled: Bool = false
     let action: () -> Void
 
@@ -337,26 +460,4 @@ struct GameMapLocationMarkerShape: Shape {
     }
 }
 
-#Preview("Circle back (Settings)") {
-    ZStack {
-        Color(red: 0.98, green: 0.95, blue: 0.86)
-        GameCircleBackButton(size: 52) {}
-    }
-    .frame(width: 200, height: 120)
-}
-
-#Preview("Circle button") {
-    ZStack {
-        Color(red: 0.98, green: 0.95, blue: 0.86)
-        GameCircleButton(systemImage: "chevron.left", size: 52) {}
-    }
-    .frame(width: 200, height: 120)
-}
-
-#Preview("Pill button (DONE / PLAY)") {
-    ZStack {
-        Color(red: 0.98, green: 0.95, blue: 0.86)
-        GamePillButton(title: "DONE", fontSize: 18, horizontalPadding: 34, verticalPadding: 12) {}
-    }
-    .frame(width: 260, height: 120)
-}
+// Canvas completo: `GameButtonTuningPreview.swift` → preview "Bottoni · tuning"

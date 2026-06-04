@@ -53,8 +53,9 @@ private enum ActiveMap {
 }
 
 private enum MapOverlayMetrics {
-    static let chromeButtonSize: CGFloat = 72
-    static let bookButtonSize: CGFloat = 104
+    static var chromeButtonSize: CGFloat { GameButtonMetrics.chromeCircleSize }
+    static var bookButtonSize: CGFloat { GameButtonMetrics.bookButtonSize }
+    static let defaultChromeHorizontalInset: CGFloat = 20
 }
 
 struct ContentView: View {
@@ -77,7 +78,6 @@ struct ContentView: View {
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var suppressesMapChromeForDialogue = true
     @State private var redHoodPostSequenceReward: (level: Int, attemptCount: Int)? = nil
-    @State private var levelBannerLevel: Int? = nil
     @State private var currentFrame = 0
     @State private var walkTask: Task<Void, Never>? = nil
     @State private var walkGeneration = 0
@@ -157,47 +157,10 @@ struct ContentView: View {
                     ))
             }
 
-            if let bannerLevel = levelBannerLevel {
-                LevelStartBanner(title: levelBannerTitle(for: bannerLevel)) {
-                    withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
-                        levelBannerLevel = nil
-                        activeRedHoodLevel = bannerLevel
-                        suppressesMapChromeForDialogue = true
-                        redHoodPostSequenceReward = nil
-                    }
-                }
-                .ignoresSafeArea()
-                .zIndex(25)
-                .transition(.opacity)
-            }
-
-            if activeMap == .redHood, !hidesMapChromeForActiveLevel {
-                GameCircleBackButton(size: MapOverlayMetrics.chromeButtonSize) {
-                    AppSettings.hapticImpact(.light)
-                    handleBackButton()
-                }
-                .disabled(isMapNavigationBlocked)
-                .opacity(isMapNavigationBlocked ? 0.45 : 1)
-                .accessibilityLabel(lm.t("button.back"))
-                    .padding(.top, 52)
-                    .padding(.leading, 20)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .zIndex(30)
+            if !hidesMapChromeForActiveLevel {
+                topChromeButtons
+                    .zIndex(31)
                     .transition(.opacity)
-            }
-
-            if (activeMap == .main || activeMap == .redHood), !hidesMapChromeForActiveLevel {
-                GameCircleSettingsButton(size: MapOverlayMetrics.chromeButtonSize) {
-                    Task { await openSettings() }
-                }
-                .disabled(isMapToolbarBlocked)
-                .opacity(isMapToolbarBlocked ? 0.45 : 1)
-                .accessibilityLabel(lm.t("a11y.settings_button"))
-                .padding(.top, 52)
-                .padding(.trailing, 20)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .zIndex(31)
-                .transition(.opacity)
             }
 
             if shouldShowRedHoodPlayButton {
@@ -216,11 +179,7 @@ struct ContentView: View {
                activeRedHoodLevel == nil,
                let level = pendingRedHoodLevel {
                 MapPlayButton(accessibilityLabel: lm.t("a11y.start_event")) {
-                    let selectedLevel = level
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        pendingRedHoodLevel = nil
-                        levelBannerLevel = selectedLevel
-                    }
+                    startRedHoodLevel(level)
                 }
                 .padding(.bottom, 28)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
@@ -235,6 +194,11 @@ struct ContentView: View {
                 }) {
                     BookIcon3D()
                 }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget(
+                    minWidth: GameButtonMetrics.bookButtonSize,
+                    minHeight: GameButtonMetrics.bookButtonSize
+                )
                 .padding(.bottom, 24)
                 .padding(.trailing, 24)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
@@ -311,24 +275,7 @@ struct ContentView: View {
                 markerIsRaised = true
             }
 
-            let savedCompletedRedHoodLevels = Set(
-                UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
-            )
-            completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: savedCompletedRedHoodLevels)
-
-            if completedRedHoodLevels != savedCompletedRedHoodLevels {
-                persistCompletedRedHoodLevels(completedRedHoodLevels)
-            }
-
-            loadWorldMapProgress()
-
-            if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
-               MapGraph.baseIDs.contains(savedID),
-               unlockedWorldBaseIDs.contains(savedID),
-               let wp = MapGraph.waypoint(id: savedID) {
-                currentBaseID = savedID
-                avatarPosition = wp.point
-            }
+            reloadAllProgress()
 
         }
         .onChange(of: completedRedHoodLevels) {
@@ -346,6 +293,80 @@ struct ContentView: View {
                 UserDefaults.standard.set(currentBaseID, forKey: "currentBaseID")
             }
         }
+    }
+
+    @ViewBuilder
+    private var topChromeButtons: some View {
+        if activeMap == .main || activeMap == .redHood {
+            GeometryReader { geometry in
+                let horizontalInset = topChromeHorizontalInset(for: geometry.size)
+
+                ZStack {
+                    if activeMap == .redHood {
+                        GameCircleBackButton(size: MapOverlayMetrics.chromeButtonSize) {
+                            AppSettings.hapticImpact(.light)
+                            handleBackButton()
+                        }
+                        .disabled(isMapNavigationBlocked)
+                        .opacity(isMapNavigationBlocked ? 0.45 : 1)
+                        .accessibilityLabel(lm.t("button.back"))
+                        .padding(.top, topChromeTopPadding(for: geometry.size))
+                        .padding(.leading, horizontalInset)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .zIndex(30)
+                        .transition(.opacity)
+                    }
+
+                    if showsRedHoodChapterTitleChrome {
+                        IslandTitlePlaque(
+                            title: redHoodChapterTitleChromeText,
+                            scale: redHoodChapterTitleChromeScale(for: geometry.size)
+                        )
+                        .padding(.top, 52)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .allowsHitTesting(false)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityAddTraits(.isHeader)
+                        .zIndex(29)
+                        .transition(.opacity.combined(with: .scale(scale: 0.94)))
+                    }
+
+                    GameCircleSettingsButton(size: MapOverlayMetrics.chromeButtonSize) {
+                        Task { await openSettings() }
+                    }
+                    .disabled(isMapToolbarBlocked)
+                    .opacity(isMapToolbarBlocked ? 0.45 : 1)
+                    .accessibilityLabel(lm.t("a11y.settings_button"))
+                        .padding(.top, topChromeTopPadding(for: geometry.size))
+                        .padding(.trailing, horizontalInset)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .zIndex(31)
+                    .transition(.opacity)
+                }
+            }
+            .ignoresSafeArea()
+        }
+    }
+
+    private func topChromeHorizontalInset(for screenSize: CGSize) -> CGFloat {
+        guard activeRedHoodLevel != nil else {
+            return MapOverlayMetrics.defaultChromeHorizontalInset
+        }
+
+        let stageSize = SequencingLayoutMetrics.stageSize(in: screenSize)
+        let outerInset = max((screenSize.width - stageSize.width) / 2, 0)
+        return max(
+            MapOverlayMetrics.defaultChromeHorizontalInset,
+            outerInset + SequencingLayoutMetrics.levelChromeHorizontalInset
+        )
+    }
+
+    private func topChromeTopPadding(for screenSize: CGSize) -> CGFloat {
+        guard activeRedHoodLevel != nil else { return 52 }
+        return SequencingLayoutMetrics.levelChromeTopPadding(
+            screenSize: screenSize,
+            chromeButtonSize: MapOverlayMetrics.chromeButtonSize
+        )
     }
 
     @ViewBuilder
@@ -439,7 +460,6 @@ struct ContentView: View {
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
                 redHoodPostSequenceReward = nil
-                levelBannerLevel = nil
                 pendingRedHoodLevel = nil
                 suppressesMapChromeForDialogue = true
             }
@@ -460,7 +480,6 @@ struct ContentView: View {
             activeMap = .main
             pendingRedHoodLevel = nil
             activeRedHoodLevel = nil
-            levelBannerLevel = nil
             avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point ?? MapGraph.initialWaypoint.point
             currentBaseID = MapGraph.redRidingHoodBaseID
             avatarDirection = .down
@@ -471,6 +490,16 @@ struct ContentView: View {
         if level == 0 { return lm.t("level.adventure_begins") }
         if level == 9 { return lm.t("redhood.final.title") == "redhood.final.title" ? "Incantesimo Spezzato!" : lm.t("redhood.final.title") }
         return EventLoader.event(id: level, from: lm.bundle)?.bannerTitle ?? lm.t("level.new_scene")
+    }
+
+    @MainActor
+    private func startRedHoodLevel(_ level: Int) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            pendingRedHoodLevel = nil
+            activeRedHoodLevel = level
+            suppressesMapChromeForDialogue = true
+            redHoodPostSequenceReward = nil
+        }
     }
 
     private func dotSize(for mapSize: CGSize) -> CGFloat {
@@ -533,12 +562,35 @@ struct ContentView: View {
         syncWorldUnlocksWithStoryProgress()
     }
 
+    private func reloadAllProgress() {
+        let savedCompletedRedHoodLevels = Set(
+            UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+        )
+        completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: savedCompletedRedHoodLevels)
+
+        if completedRedHoodLevels != savedCompletedRedHoodLevels {
+            persistCompletedRedHoodLevels(completedRedHoodLevels)
+        }
+
+        loadWorldMapProgress()
+
+        if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
+           MapGraph.baseIDs.contains(savedID),
+           unlockedWorldBaseIDs.contains(savedID),
+           let wp = MapGraph.waypoint(id: savedID) {
+            currentBaseID = savedID
+            avatarPosition = wp.point
+        } else {
+            currentBaseID = MapGraph.initialWaypoint.id
+            avatarPosition = MapGraph.initialWaypoint.point
+        }
+    }
+
     @MainActor
     private func returnToWorldMapAfterRedHoodCompletion() async {
         guard activeMap == .redHood else { return }
 
         pendingRedHoodLevel = nil
-        levelBannerLevel = nil
 
         await CloudTransitionAnimator.runSceneTransition(
             isActive: $isMapTransitioning,
@@ -562,7 +614,6 @@ struct ContentView: View {
             markRedHoodLevelCompleted(level)
             activeRedHoodLevel = nil
             pendingRedHoodLevel = nil
-            levelBannerLevel = nil
         }
 
         Task { @MainActor in
@@ -765,6 +816,8 @@ struct ContentView: View {
         settingsCloudExitProgress = 0
         showsSettingsCloudOverlay = false
         isSettingsTransitionActive = false
+        
+        reloadAllProgress()
     }
 
     private var shouldShowRedHoodPlayButton: Bool {
@@ -773,6 +826,31 @@ struct ContentView: View {
             !isWalking &&
             !isMapTransitioning &&
             !isGlobalTransitioning
+    }
+
+    private var showsRedHoodLevelPlayButton: Bool {
+        activeMap == .redHood &&
+            activeRedHoodLevel == nil &&
+            pendingRedHoodLevel != nil
+    }
+
+    /// Chapter title between back and settings on the Red Hood map only (not world map).
+    private var showsRedHoodChapterTitleChrome: Bool {
+        activeMap == .redHood && showsRedHoodLevelPlayButton
+    }
+
+    private var redHoodChapterTitleChromeText: String {
+        guard let level = pendingRedHoodLevel else { return "" }
+        return levelBannerTitle(for: level)
+    }
+
+    private func redHoodChapterTitleChromeScale(for screenSize: CGSize) -> CGFloat {
+        let buttonSize = MapOverlayMetrics.chromeButtonSize
+        let horizontalInset = topChromeHorizontalInset(for: screenSize)
+        let reservedForButtons = (horizontalInset * 2) + (buttonSize * 2) + 20
+        let availableWidth = max(160, screenSize.width - reservedForButtons)
+        let targetWidth = min(availableWidth, IslandTitleFrameAsset.pixelSize.width * 0.48)
+        return max(0.30, targetWidth / IslandTitleFrameAsset.pixelSize.width)
     }
 
     private func handleMapTap(_ location: CGPoint, projection: MapProjection) {
@@ -1094,16 +1172,16 @@ private enum IslandTitleFrameAsset {
     }
 }
 
-private struct StoryRegionPlaque: View {
+private struct IslandTitlePlaque: View {
     let title: String
-    let mapScale: CGFloat
+    let scale: CGFloat
 
     private var frameSize: CGSize {
-        IslandTitleFrameAsset.frameSize(mapScale: mapScale)
+        IslandTitleFrameAsset.frameSize(mapScale: scale)
     }
 
     private var titleFontSize: CGFloat {
-        IslandTitleFrameAsset.titleFontSize(mapScale: mapScale)
+        IslandTitleFrameAsset.titleFontSize(mapScale: scale)
     }
 
     var body: some View {
@@ -1124,7 +1202,16 @@ private struct StoryRegionPlaque: View {
                 .frame(width: frameSize.width, height: frameSize.height * 0.68)
         }
         .frame(width: frameSize.width, height: frameSize.height)
-        .shadow(color: .black.opacity(0.22), radius: max(4, 7 * mapScale), x: 0, y: max(2, 4 * mapScale))
+        .shadow(color: .black.opacity(0.22), radius: max(4, 7 * scale), x: 0, y: max(2, 4 * scale))
+    }
+}
+
+private struct StoryRegionPlaque: View {
+    let title: String
+    let mapScale: CGFloat
+
+    var body: some View {
+        IslandTitlePlaque(title: title, scale: mapScale)
     }
 }
 
@@ -1186,16 +1273,8 @@ private struct MapPlayButton: View {
     @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
-        GamePillButton(
-            title: lm.t("button.play"),
-            fontSize: 28,
-            horizontalPadding: 56,
-            verticalPadding: 18,
-            minWidth: 260,
-            minHeight: 68,
-            action: action
-        )
-        .accessibilityLabel(accessibilityLabel)
+        GamePrimaryPillButton(title: lm.t("button.play"), action: action)
+            .accessibilityLabel(accessibilityLabel)
     }
 }
 
@@ -1317,53 +1396,6 @@ private struct MainMapIslandDot: View {
             withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                 pulse = true
             }
-        }
-    }
-}
-
-private struct LevelStartBanner: View {
-    let title: String
-    let onFinish: () -> Void
-
-    @State private var isVisible = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.62)
-                .ignoresSafeArea()
-
-            VStack(spacing: 16) {
-                Image(systemName: "sparkles")
-                    .font(.app(size: 56))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [Color(red: 1, green: 0.88, blue: 0.1), Color(red: 1, green: 0.50, blue: 0.05)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .shadow(color: .orange.opacity(0.6), radius: 12)
-
-                Text(title)
-                    .font(.app(.largeTitle))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.45), radius: 6)
-            }
-            .scaleEffect(isVisible ? 1.0 : (reduceMotion ? 1.0 : 0.4))
-            .opacity(isVisible ? 1.0 : 0.0)
-        }
-        .opacity(isVisible ? 1.0 : 0.0)
-        .task {
-            withAnimation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.62)) {
-                isVisible = true
-            }
-            try? await Task.sleep(nanoseconds: 1_050_000_000)
-            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.38)) {
-                isVisible = false
-            }
-            try? await Task.sleep(nanoseconds: 400_000_000)
-            onFinish()
         }
     }
 }

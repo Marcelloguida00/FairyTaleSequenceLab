@@ -55,6 +55,7 @@ struct TutorialOverlayView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 34)
                     .padding(.vertical, 16)
+                    .gameMinimumTouchTarget()
                     .background(
                         Capsule()
                             .fill(Color.black.opacity(0.58))
@@ -140,9 +141,6 @@ struct TutorialOverlayView: View {
                     title: currentStep < steps.count - 1
                         ? lm.t("tutorial.next")
                         : lm.t("tutorial.done"),
-                    fontSize: 16,
-                    horizontalPadding: 24,
-                    verticalPadding: 11,
                     action: {
                         if currentStep < steps.count - 1 {
                             withAnimation(.easeInOut(duration: 0.25)) { currentStep += 1 }

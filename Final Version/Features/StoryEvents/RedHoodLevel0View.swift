@@ -9,7 +9,7 @@ struct RedHoodLevel0View: View {
         if let lines = RedHoodDialogueLoader.introLines(waypoint: 0, from: lm.bundle), !lines.isEmpty {
             FairyTaleDialogueView(
                 lines: lines,
-                continueButtonTitle: lm.t("redhood.intro.button"),
+                waypointID: 0,
                 onComplete: onComplete
             )
         } else {
@@ -62,6 +62,9 @@ struct RedHoodLevel0View: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .gameMinimumTouchTarget(
+                        minHeight: GameButtonMetrics.pillMinHeight(atLeast: 64)
+                    )
                     .accessibilityLabel(lm.t("redhood.intro.button"))
 
                     Spacer()

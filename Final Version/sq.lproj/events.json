@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "bannerTitle": "Skena 1",
+    "bannerTitle": "Kapitulli 1: Shporta",
     "introImageName": "Introduzione 1 evento",
     "introText": "Nëna i thotë Kapeles së Kuqe se gjyshja është e sëmurë. Duhet të përgatisin një shportë për t'ia çuar. Ndihmo të renditësh skenat e historisë saktë!",
     "cards": [
@@ -43,7 +43,7 @@
   },
   {
     "id": 2,
-    "bannerTitle": "Skena 2",
+    "bannerTitle": "Kapitulli 2: Një shëtitje në pyll",
     "introImageName": "Introduzione 2 evento",
     "introText": "Kapeleja e Kuqe niset vetëm në pyllin e thellë. Ecën qetësisht nëpër shteg, e rrethuar nga pemë të larta. A mund t'i renditësh skenat e historisë në rendin e duhur?",
     "cards": [
@@ -85,7 +85,7 @@
   },
   {
     "id": 3,
-    "bannerTitle": "Skena 3",
+    "bannerTitle": "Kapitulli 3: Një takim i çuditshëm",
     "introImageName": "event3_intro",
     "introText": "Ujku e ka vënë re Kapelen e Kuqe në pyll. E vëzhgon me kujdes, duke menduar një plan të zgjuar. Kapeleja e Kuqe nuk di fare që ujku po e shikon... Ndihmo të renditësh skenat e historisë saktë!",
     "cards": [
@@ -127,7 +127,7 @@
   },
   {
     "id": 4,
-    "bannerTitle": "Skena 4",
+    "bannerTitle": "Kapitulli 4: Ujku po përgatit një plan",
     "introImageName": "event4_intro",
     "introText": "Ujku vrapon me shpejtësi të madhe drejt shtëpisë së gjyshes për të mbërritur atje para Kësulëkuqes. Vendosni kartat në rendin e duhur nga e majta në të djathtë për të parë se si arrin ai!",
     "cards": [
@@ -169,7 +169,7 @@
   },
   {
     "id": 5,
-    "bannerTitle": "Skena 5",
+    "bannerTitle": "Kapitulli 5: Ujku dhe gjyshen",
     "introImageName": "event5_intro",
     "introText": "Ujku ka hyrë në shtëpinë e gjyshes dhe përgatitet të presë Kësulëkuqen i maskuar si gjyshe. Vendosni kartat në rendin e duhur për të përfunduar maskimin e tij!",
     "cards": [
@@ -211,7 +211,7 @@
   },
   {
     "id": 6,
-    "bannerTitle": "Skena 6",
+    "bannerTitle": "Kapitulli 6: Kapuçi i Kuq mbërrin te shtëpia",
     "introImageName": "event6_intro",
     "introText": "Pasi eci në pyll, Kësulëkuqja arrin te shtëpia dhe troket në derë. Vendosni kartat në rendin e duhur për ta lënë të hyjë!",
     "cards": [
@@ -253,7 +253,7 @@
   },
   {
     "id": 7,
-    "bannerTitle": "Skena 7",
+    "bannerTitle": "Kapitulli 7: Diçka nuk shkon",
     "introImageName": "event7_intro",
     "introText": "Kapeleja e Kuqe bisedon me gjyshen e saj dhe vëren diçka shumë të çuditshme në pamjen e saj. Vendosni kartat në rendin e duhur për të zbuluar ujkun!",
     "cards": [
@@ -295,7 +295,7 @@
   },
   {
     "id": 8,
-    "bannerTitle": "Skena 8",
+    "bannerTitle": "Kapitulli 8: Vjen ndihma",
     "introImageName": "event8_intro",
     "introText": "Ujku zbulohet, Kapeleja e Kuqe bërtet dhe ndihma arrin për të ndjekur ujkun përgjithmonë. Vendosni kartat në rendin e duhur për fundin e lumtur!",
     "cards": [

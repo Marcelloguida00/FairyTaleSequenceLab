@@ -10,7 +10,6 @@ struct EventIntroductionView: View {
         if let lines = RedHoodDialogueLoader.introLines(eventId: event.id, from: lm.bundle), !lines.isEmpty {
             FairyTaleDialogueView(
                 lines: lines,
-                continueButtonTitle: lm.t("button.continue"),
                 onComplete: onContinue
             )
         } else {
@@ -66,11 +65,8 @@ struct EventIntroductionView: View {
 
                             GamePillButton(
                                 title: lm.t("button.continue"),
-                                fontSize: 16,
-                                horizontalPadding: 22,
-                                verticalPadding: 14,
-                                minWidth: 60,
-                                minHeight: 60,
+                                minWidth: 120,
+                                minHeight: GameButtonMetrics.pillMinHeight(atLeast: 52),
                                 trailingIcon: "arrow.right",
                                 action: onContinue
                             )

@@ -160,6 +160,7 @@ struct OnboardingView: View {
                 .padding(.horizontal, 18)
                 .padding(.vertical, 10)
                 .background(Capsule().fill(Color.black.opacity(0.34)))
+                .gameMinimumTouchTarget()
                 .opacity(currentPage < pages.count - 1 ? 1 : 0)
                 .disabled(currentPage == pages.count - 1)
                 .frame(minWidth: 80, alignment: .leading)
@@ -210,6 +211,7 @@ struct OnboardingView: View {
                 )
             }
             .buttonStyle(.plain)
+            .gameMinimumTouchTarget()
             .frame(minWidth: 80, alignment: .trailing)
         }
     }

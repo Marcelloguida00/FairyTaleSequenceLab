@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "bannerTitle": "Scene 1",
+    "bannerTitle": "Chapter 1: The Basket",
     "introImageName": "Introduzione 1 evento",
     "introText": "Mother tells Little Red Riding Hood that Grandmother is sick. They must prepare a basket to bring to her. Help order the story scenes correctly!",
     "cards": [
@@ -43,7 +43,7 @@
   },
   {
     "id": 2,
-    "bannerTitle": "Scene 2",
+    "bannerTitle": "Chapter 2: A Walk in The Woods",
     "introImageName": "Introduzione 2 evento",
     "introText": "Little Red Riding Hood sets off alone into the deep forest. She walks peacefully along the path, surrounded by tall trees. Can you put the story scenes in the right order?",
     "cards": [
@@ -85,7 +85,7 @@
   },
   {
     "id": 3,
-    "bannerTitle": "Scene 3",
+    "bannerTitle": "Chapter 3: A Strange Encounter",
     "introImageName": "event3_intro",
     "introText": "The wolf has spotted Little Red Riding Hood in the forest. He watches her carefully, thinking of a clever plan. Little Red Riding Hood has no idea that the wolf is watching... Help order the story scenes correctly!",
     "cards": [
@@ -127,7 +127,7 @@
   },
   {
     "id": 4,
-    "bannerTitle": "Scene 4",
+    "bannerTitle": "Chapter 4: The Wolf is preparing a plan",
     "introImageName": "event4_intro",
     "introText": "The wolf runs at top speed to Grandmother's house to get there before Little Red Riding Hood. Put the cards in the correct order from left to right to see how he arrives!",
     "cards": [
@@ -169,7 +169,7 @@
   },
   {
     "id": 5,
-    "bannerTitle": "Scene 5",
+    "bannerTitle": "Chapter 5: The Wolf and The Grandmother",
     "introImageName": "event5_intro",
     "introText": "The wolf has entered Grandmother's house and prepares to wait for Little Red Riding Hood disguised as Grandma. Put the cards in the correct order from left to right to complete his disguise!",
     "cards": [
@@ -211,7 +211,7 @@
   },
   {
     "id": 6,
-    "bannerTitle": "Scene 6",
+    "bannerTitle": "Chapter 6: Littler Red Riding Hood Arrives at The Cottage",
     "introImageName": "event6_intro",
     "introText": "After walking in the forest, Little Red Riding Hood arrives at the cottage and knocks on the door. Put the cards in the correct order from left to right to let her in!",
     "cards": [
@@ -253,7 +253,7 @@
   },
   {
     "id": 7,
-    "bannerTitle": "Scene 7",
+    "bannerTitle": "Chapter 7: Something is Wrong",
     "introImageName": "event7_intro",
     "introText": "Little Red Riding Hood speaks with her grandmother and notices something very strange about her appearance. Put the cards in the correct order from left to right to uncover the wolf!",
     "cards": [
@@ -295,7 +295,7 @@
   },
   {
     "id": 8,
-    "bannerTitle": "Scene 8",
+    "bannerTitle": "Chapter 8: An Help Arrive",
     "introImageName": "event8_intro",
     "introText": "The wolf is discovered, Little Red Riding Hood screams, and help arrives to chase the wolf away forever. Put the cards in the correct order from left to right for the happy ending!",
     "cards": [

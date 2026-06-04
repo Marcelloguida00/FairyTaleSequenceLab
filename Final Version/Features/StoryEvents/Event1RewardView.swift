@@ -3,10 +3,12 @@ import SwiftUI
 struct RewardView: View {
     let event: EventData
     let attemptCount: Int
+    var showsBookChapterUnlock: Bool = false
     let onDismiss: () -> Void
     let onNext: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
+    @State private var showBookChapterUnlocked = false
 
     private var stars: String {
         switch attemptCount {
@@ -25,6 +27,28 @@ struct RewardView: View {
     }
 
     var body: some View {
+        ZStack {
+            rewardContent
+                .allowsHitTesting(!showBookChapterUnlocked)
+
+            if showBookChapterUnlocked {
+                BookChapterUnlockedBanner(
+                    chapterTitle: BookChapterTitles.title(for: event.id, lm: lm)
+                ) {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showBookChapterUnlocked = false
+                    }
+                    onNext()
+                }
+                .environmentObject(lm)
+                .transition(.opacity)
+                .zIndex(10)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var rewardContent: some View {
         if let lines = RedHoodDialogueLoader.rewardLines(
             eventId: event.id,
             attemptCount: attemptCount,
@@ -32,13 +56,20 @@ struct RewardView: View {
         ), !lines.isEmpty {
             FairyTaleDialogueView(
                 lines: lines,
-                continueButtonTitle: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"),
-                secondaryButtonTitle: lm.t("button.play_again"),
-                onSecondary: onDismiss,
-                onComplete: onNext
+                onComplete: finishRewardFlow
             )
         } else {
             legacyReward
+        }
+    }
+
+    private func finishRewardFlow() {
+        if showsBookChapterUnlock {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                showBookChapterUnlocked = true
+            }
+        } else {
+            onNext()
         }
     }
 
@@ -67,15 +98,15 @@ struct RewardView: View {
                                 colors: [Color(red: 0.1, green: 0.2, blue: 0.15), Color(red: 0.15, green: 0.3, blue: 0.22)],
                                 startPoint: .top, endPoint: .bottom
                             )
-                            
+
                             VStack(spacing: 12) {
                                 Image(systemName: "checkmark.circle.fill")
                                     .font(.system(size: 44))
                                     .foregroundColor(Color(red: 0.4, green: 0.9, blue: 0.5))
-                                
+
                                 Text(stars)
                                     .font(.app(.title))
-                                
+
                                 Text("Reward: 16:9 Image Placeholder")
                                     .font(.app(.body))
                                     .foregroundColor(Color(red: 0.8, green: 0.9, blue: 0.85))
@@ -116,32 +147,20 @@ struct RewardView: View {
                             VStack(spacing: 10) {
                                 GamePillButton(
                                     title: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"),
-                                    fontSize: 14,
-                                    horizontalPadding: 18,
-                                    verticalPadding: 12,
-                                    minWidth: 120,
-                                    minHeight: 48,
+                                    minWidth: GameButtonMetrics.isPad ? 200 : 160,
+                                    minHeight: GameButtonMetrics.pillMinHeight(atLeast: 52),
                                     trailingIcon: event.isLastEvent ? "map" : "arrow.right",
-                                    action: onNext
+                                    action: finishRewardFlow
                                 )
 
-                                Button(action: onDismiss) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "arrow.clockwise")
-                                            .font(.app(.caption))
-                                        Text(lm.t("button.play_again"))
-                                            .font(.app(.caption))
-                                            .fontWeight(.semibold)
-                                    }
-                                    .foregroundColor(Color.appSecondaryText)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        Capsule()
-                                            .fill(Color.appPanelBackground)
-                                    )
-                                }
-                                .buttonStyle(.plain)
+                                GameCapsuleButton(
+                                    title: lm.t("button.play_again"),
+                                    systemImage: "arrow.clockwise",
+                                    fontSize: GameButtonMetrics.pillFontSize - 2,
+                                    foregroundColor: Color.appSecondaryText,
+                                    fillColor: Color.appPanelBackground,
+                                    action: onDismiss
+                                )
                             }
                         }
                         .padding(.horizontal, compactText ? 28 : 32)
@@ -154,4 +173,3 @@ struct RewardView: View {
         .ignoresSafeArea()
     }
 }
-

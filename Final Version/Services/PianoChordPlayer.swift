@@ -10,11 +10,13 @@ enum PianoChord: String, CaseIterable {
 
 /// Warm felt / upright acoustic piano notes for the fairy-tale card sequencing game.
 /// Slot 0 → Do (C4), 1 → Mi (E4), 2 → Sol (G4), 3 → Do high (C5).
+/// Pickup drag → Re (D4), same Do-major colour as the placement notes.
 enum SequencingPianoNote: String {
     case do4 = "PianoNote_Do"
     case mi4 = "PianoNote_Mi"
     case sol4 = "PianoNote_Sol"
     case do5 = "PianoNote_DoHigh"
+    case re4 = "PianoNote_Re"
     case grave = "PianoNote_Grave"
     case victoryJingle = "SequencingVictory_Jingle"
 
@@ -61,6 +63,11 @@ final class PianoChordPlayer {
         case .victoryJingle:
             playNote(.victoryJingle, volumeScale: 1.0)
         }
+    }
+
+    /// Re₄ (D4) — pickup note; harmonizes with Do₄ Mi₄ Sol₄ Do₅ in C major.
+    func playCardPickupNote() {
+        playNote(.re4, volumeScale: 0.86)
     }
 
     private func playChord(_ chord: PianoChord, rate: Float, volumeScale: Float) {

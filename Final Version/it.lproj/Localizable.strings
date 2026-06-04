@@ -12,6 +12,11 @@
 "button.cancel"      = "Annulla";
 "button.settings"    = "IMPOSTAZIONI";
 
+/* Main menu */
+"menu.title.line1"    = "Lumi:";
+"menu.title.line2"    = "Un viaggio tra";
+"menu.title.line3"    = "le fiabe";
+
 /* Info */
 "info.title"          = "Info";
 "info.developers"     = "Sviluppatori";
@@ -40,6 +45,19 @@
 /* Level banners */
 "level.adventure_begins" = "L'avventura inizia!";
 "level.new_scene"        = "Nuova scena";
+
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Capitolo sbloccato nel libro!";
+"book.chapter_unlocked.message" = "«%@» è ora nel libro delle fiabe. Apri il libro sulla mappa per leggerlo!";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "Carte sbloccate in AR";
+"book.ar.body"                  = "Guarda nello spazio le carte degli eventi della storia che hai sbloccato.";
+"book.ar.turn_page"             = "Prossima carta";
+"book.ar.next_card"             = "Prossima carta";
+"book.ar.placeholder.title"     = "Nessuna carta";
+"book.ar.empty"                 = "Completa un evento per sbloccare le sue carte in AR.";
+"book.ar.unsupported"           = "Questo dispositivo non supporta la realtà aumentata.";
+"a11y.book_ar_button"           = "Mostra le carte della storia sbloccate in realtà aumentata";
 
 /* Map */
 "map.coming_soon"             = "Prossimamente";
@@ -205,3 +223,15 @@
 "review.popup.message" = "Se ti stai divertendo con le nostre fiabe, lasciaci una recensione! Ci aiuterà a creare nuove storie.";
 "review.popup.rate" = "Valuta l'app";
 "review.popup.later" = "Più tardi";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "Scansione Stanza...";
+"ar.scan.not_available" = "Muovi il dispositivo...";
+"ar.scan.limited" = "Continua a muoverti...";
+"ar.scan.extending" = "Mappatura in corso...";
+"ar.scan.mapped" = "Quasi pronto!";
+"ar.scan.find_card" = "Cerca la carta:";
+"ar.scan.congrats" = "Bravissimo!";
+"ar.scan.found_all" = "Hai trovato tutte le carte.";
+"ar.scan.correct" = "Esatto!";

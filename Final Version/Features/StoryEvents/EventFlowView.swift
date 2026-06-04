@@ -15,33 +15,21 @@ struct RedHoodRewardPhaseView: View {
     @EnvironmentObject private var lm: LanguageManager
     @State private var didNotifyRewardReached = false
     @State private var isFirstTimeCompletion = false
-    @State private var showEnvelopeOpening = false
 
     var body: some View {
         ZStack {
-            if isFirstTimeCompletion && showEnvelopeOpening {
-                EnvelopeOpeningView(event: eventData) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        showEnvelopeOpening = false
-                    }
-                }
-            } else {
-                RewardView(
-                    event: eventData,
-                    attemptCount: attemptCount,
-                    onDismiss: onReplay,
-                    onNext: onComplete
-                )
-            }
+            RewardView(
+                event: eventData,
+                attemptCount: attemptCount,
+                showsBookChapterUnlock: isFirstTimeCompletion && (1...8).contains(eventData.id),
+                onDismiss: onReplay,
+                onNext: onComplete
+            )
         }
         .ignoresSafeArea()
         .onAppear {
             let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
             isFirstTimeCompletion = !completed.contains(eventData.id)
-
-            if isFirstTimeCompletion {
-                showEnvelopeOpening = true
-            }
 
             guard !didNotifyRewardReached else { return }
             didNotifyRewardReached = true
@@ -59,11 +47,25 @@ struct EventFlowView: View {
     let onComplete: () -> Void
 
     @Environment(\.openURL) private var openURL
-    @EnvironmentObject var lm: LanguageManager
+    @EnvironmentObject private var lm: LanguageManager
     @AppStorage("hasAskedForReview") private var hasAskedForReview = false
     @State private var showReviewAlert = false
 
     @State private var phase: RedHoodEventFlowPhase = .intro
+
+    init(
+        eventData: EventData,
+        onPhaseChange: @escaping (RedHoodEventFlowPhase) -> Void,
+        onSequencingFinished: @escaping (Int) -> Void,
+        onRewardReached: @escaping () -> Void,
+        onComplete: @escaping () -> Void
+    ) {
+        self.eventData = eventData
+        self.onPhaseChange = onPhaseChange
+        self.onSequencingFinished = onSequencingFinished
+        self.onRewardReached = onRewardReached
+        self.onComplete = onComplete
+    }
 
     var body: some View {
         Group {
@@ -87,7 +89,7 @@ struct EventFlowView: View {
         }
         .onAppear {
             phase = .intro
-            onPhaseChange(.intro)
+            notifyPhaseChange(.intro)
 
             BackgroundMusicPlayer.shared.fadeOut()
             ForestAmbiencePlayer.shared.fadeIn()
@@ -99,7 +101,7 @@ struct EventFlowView: View {
             }
         }
         .onChange(of: phase) { _, newPhase in
-            onPhaseChange(newPhase)
+            notifyPhaseChange(newPhase)
         }
         .onDisappear {
             ForestAmbiencePlayer.shared.fadeOutAndStop()
@@ -117,6 +119,12 @@ struct EventFlowView: View {
             }
         } message: {
             Text(lm.t("review.popup.message"))
+        }
+    }
+
+    private func notifyPhaseChange(_ phase: RedHoodEventFlowPhase) {
+        DispatchQueue.main.async {
+            onPhaseChange(phase)
         }
     }
 }

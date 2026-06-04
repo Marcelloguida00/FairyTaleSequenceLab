@@ -14,7 +14,6 @@ struct RedHoodLevelFinalView: View {
         if let lines = RedHoodDialogueLoader.finalLines(from: lm.bundle), !lines.isEmpty {
             FairyTaleDialogueView(
                 lines: lines,
-                continueButtonTitle: buttonText,
                 onComplete: onComplete
             )
         } else {
@@ -78,6 +77,9 @@ struct RedHoodLevelFinalView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .gameMinimumTouchTarget(
+                        minHeight: GameButtonMetrics.pillMinHeight(atLeast: 64)
+                    )
                     .accessibilityLabel(buttonText)
 
                     Spacer()

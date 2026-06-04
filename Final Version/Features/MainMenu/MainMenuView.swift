@@ -355,9 +355,6 @@ private struct InfoView: View {
 
             GamePillButton(
                 title: lm.t("button.done"),
-                fontSize: 14,
-                horizontalPadding: 16,
-                verticalPadding: 8,
                 action: onClose
             )
             .accessibilityLabel(lm.t("a11y.info_close_button"))
@@ -430,9 +427,10 @@ private struct InfoView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .contentShape(Rectangle())
+            .gameSettingsRowTouchTarget()
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
         .accessibilityLabel(lm.t("a11y.info_email_button"))
     }
 
@@ -528,7 +526,7 @@ private struct MenuSettingsButton: View {
             horizontalPadding: width * 0.07,
             verticalPadding: width * 0.08,
             minWidth: width,
-            minHeight: width * 0.38,
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.38),
             isDisabled: isDisabled,
             action: action
         )
@@ -583,6 +581,10 @@ private struct MenuInfoButton: View {
                 .shadow(color: .black.opacity(0.30), radius: 7, y: 4)
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget(
+            minWidth: max(size, GameButtonMetrics.minimumTouchTarget),
+            minHeight: max(size, GameButtonMetrics.minimumTouchTarget)
+        )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
         .accessibilityLabel(lm.t("a11y.info_button"))
@@ -590,10 +592,12 @@ private struct MenuInfoButton: View {
     }
 }
 
-// MARK: - Titolo "World of Fables"
+// MARK: - Titolo menu principale
 
 private struct MenuTitleView: View {
     let panelWidth: CGFloat
+
+    @EnvironmentObject private var lm: LanguageManager
 
     private var titleGradient: LinearGradient {
         LinearGradient(
@@ -606,60 +610,48 @@ private struct MenuTitleView: View {
         )
     }
 
-    var body: some View {
-        VStack(spacing: panelWidth * 0.012) {
-            titleLine("World", size: panelWidth * 0.13)
-            ofRow
-            titleLine("Fables", size: panelWidth * 0.13)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isHeader)
-        .accessibilityLabel("World of Fables")
-    }
-
-    private var ofRow: some View {
-        HStack(spacing: panelWidth * 0.03) {
-            goldFlourish
-            Text("of")
-                .font(.app(size: panelWidth * 0.055, weight: .bold))
-                .foregroundStyle(titleGradient)
-                .shadow(color: outlineColor, radius: 0, x: 1, y: 1)
-                .shadow(color: outlineColor, radius: 0, x: -1, y: -1)
-            goldFlourish
-        }
-    }
-
-    private var goldFlourish: some View {
-        Capsule()
-            .fill(
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.75, green: 0.52, blue: 0.10),
-                        Color(red: 0.95, green: 0.78, blue: 0.28)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .frame(width: panelWidth * 0.10, height: max(2, panelWidth * 0.008))
-    }
-
     private var outlineColor: Color {
         Color(red: 0.35, green: 0.20, blue: 0.06)
     }
 
+    private var titleFontSize: CGFloat {
+        panelWidth * 0.13
+    }
+
+    private var titleLines: [String] {
+        [
+            lm.t("menu.title.line1"),
+            lm.t("menu.title.line2"),
+            lm.t("menu.title.line3")
+        ]
+    }
+
+    var body: some View {
+        VStack(spacing: panelWidth * 0.012) {
+            ForEach(titleLines, id: \.self) { line in
+                titleLine(line)
+            }
+        }
+        .padding(.horizontal, panelWidth * 0.04)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel(titleLines.joined(separator: " "))
+    }
+
     @ViewBuilder
-    private func titleLine(_ text: String, size: CGFloat) -> some View {
+    private func titleLine(_ text: String) -> some View {
         ZStack {
             Text(text)
-                .font(.app(size: size, weight: .black))
+                .font(.app(size: titleFontSize, weight: .black))
                 .foregroundStyle(outlineColor)
                 .offset(x: 1.5, y: 1.5)
 
             Text(text)
-                .font(.app(size: size, weight: .black))
+                .font(.app(size: titleFontSize, weight: .black))
                 .foregroundStyle(titleGradient)
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.55)
     }
 }
 
@@ -679,7 +671,7 @@ private struct MenuPlayButton: View {
             horizontalPadding: width * 0.07,
             verticalPadding: width * 0.08,
             minWidth: width,
-            minHeight: width * 0.38,
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.38),
             isDisabled: isDisabled,
             action: action
         )

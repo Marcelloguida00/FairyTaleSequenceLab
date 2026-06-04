@@ -12,6 +12,11 @@
 "button.cancel"      = "Cancel";
 "button.settings"    = "SETTINGS";
 
+/* Main menu */
+"menu.title.line1"    = "Lumi:";
+"menu.title.line2"    = "A journey through";
+"menu.title.line3"    = "fables";
+
 /* Info */
 "info.title"          = "Info";
 "info.developers"     = "Developers";
@@ -40,6 +45,19 @@
 /* Level banners */
 "level.adventure_begins" = "Adventure Begins!";
 "level.new_scene"        = "New Scene";
+
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Chapter unlocked in the book!";
+"book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book. Open the book on the map to read it!";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "Unlocked Cards in AR";
+"book.ar.body"                  = "Look around to see the story event cards you have unlocked.";
+"book.ar.turn_page"             = "Next card";
+"book.ar.next_card"             = "Next card";
+"book.ar.placeholder.title"     = "No cards yet";
+"book.ar.empty"                 = "Complete an event to unlock its cards in AR.";
+"book.ar.unsupported"           = "This device does not support augmented reality.";
+"a11y.book_ar_button"           = "Show unlocked story cards in augmented reality";
 
 /* Map */
 "map.coming_soon"             = "Coming Soon";
@@ -202,3 +220,15 @@
 "review.popup.message" = "If you're having fun with our fables, please leave a review! It helps us create new stories.";
 "review.popup.rate" = "Rate App";
 "review.popup.later" = "Later";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "Room Scan...";
+"ar.scan.not_available" = "Move the device to scan...";
+"ar.scan.limited" = "Keep moving...";
+"ar.scan.extending" = "Mapping in progress...";
+"ar.scan.mapped" = "Almost ready!";
+"ar.scan.find_card" = "Find the card:";
+"ar.scan.congrats" = "Great job!";
+"ar.scan.found_all" = "You found all the cards.";
+"ar.scan.correct" = "Correct!";
