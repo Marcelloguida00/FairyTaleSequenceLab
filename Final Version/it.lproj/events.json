@@ -56,7 +56,7 @@
     "introImageName": "event4_intro",
     "introText": "Il lupo corre a tutta velocità verso la casa della nonna per arrivarci prima di Cappuccetto Rosso. Metti le carte nell'ordine corretto da sinistra a destra per vedere come arriva!",
     "cards": [
-      { "id": 0, "imageName": "scene4_card1", "description": "Il lupo corre veloce tra gli alberi e le radici della foresta", "correctPosition": 0 },
+      { "id": 0, "imageName": "scene4_card1", "description": "Il lupo saluta Cappuccetto Rosso", "correctPosition": 0 },
       { "id": 1, "imageName": "scene4_card2", "description": "Il lupo segue una scorciatoia segreta per arrivare prima", "correctPosition": 1 },
       { "id": 2, "imageName": "scene4_card3", "description": "Il lupo arriva stanco ma felice davanti alla casetta della nonna", "correctPosition": 2 },
       { "id": 3, "imageName": "scene4_card4", "description": "Il lupo bussa alla porta della nonna fingendo di essere Cappuccetto Rosso", "correctPosition": 3 }

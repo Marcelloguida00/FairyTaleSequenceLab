@@ -1008,11 +1008,9 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: usesFrameLayout ? 24 : 18) {
             settingsCard(largeStyle: usesFrameLayout) {
                 VStack(alignment: .leading, spacing: usesFrameLayout ? 18 : 14) {
-                    Text(lm.t("settings.about.message"))
-                        .font(.app(size: usesFrameLayout ? 20 : 17, weight: .regular))
-                        .foregroundStyle(SettingsTheme.secondaryText)
-                        .lineSpacing(usesFrameLayout ? 6 : 5)
-                        .fixedSize(horizontal: false, vertical: true)
+                    AppMenuTitleView(panelWidth: aboutTitleLayoutWidth)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, usesFrameLayout ? 6 : 2)
 
                     SettingsTheme.divider
                         .frame(height: usesFrameLayout ? 1.5 : 1)
@@ -1043,7 +1041,7 @@ struct SettingsView: View {
     private func developerProfileCard(_ developer: DeveloperProfile) -> some View {
         settingsCard(largeStyle: usesFrameLayout) {
             HStack(spacing: usesFrameLayout ? 20 : 16) {
-                developerAvatar
+                developerAvatar(imageName: developer.imageName, name: developer.name)
 
                 VStack(alignment: .leading, spacing: usesFrameLayout ? 10 : 8) {
                     Text(developer.name)
@@ -1063,31 +1061,20 @@ struct SettingsView: View {
         }
     }
 
-    private var developerAvatar: some View {
-        ZStack {
-            Circle()
-                .fill(Color(red: 0.78, green: 0.78, blue: 0.78))
+    private func developerAvatar(imageName: String, name: String) -> some View {
+        let size: CGFloat = usesFrameLayout ? 96 : 86
 
-            VStack(spacing: 0) {
-                Circle()
-                    .fill(.white)
-                    .frame(width: 42, height: 42)
-
-                Circle()
-                    .fill(.white)
-                    .frame(width: 76, height: 76)
-                    .offset(y: -5)
-            }
-            .offset(y: 11)
-        }
-        .frame(width: 86, height: 86)
+        return Image(imageName)
+            .resizable()
+            .scaledToFill()
+        .frame(width: size, height: size)
         .clipShape(Circle())
         .overlay(
             Circle()
                 .stroke(SettingsTheme.panelBorder.opacity(0.65), lineWidth: 2)
         )
         .shadow(color: .black.opacity(0.16), radius: 4, y: 2)
-        .accessibilityHidden(true)
+        .accessibilityLabel(name)
     }
 
     private func developerLinkButton(title: String, icon: String, urlString: String) -> some View {
@@ -1268,6 +1255,10 @@ struct SettingsView: View {
         return components.url ?? URL(string: "mailto:mguida2604@gmail.com")!
     }
 
+    private var aboutTitleLayoutWidth: CGFloat {
+        usesFrameLayout ? 400 : 300
+    }
+
     private var appVersionText: String {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
@@ -1276,13 +1267,13 @@ struct SettingsView: View {
 
     private var developers: [DeveloperProfile] {
         [
-            DeveloperProfile(name: "Calisto Ciro", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Chiappetta Giulia", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "De Marco Francesca", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Guida Marcello", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Karameta Albi", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Toshpulatov Bobur", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Torcicollo Adolfo", linkedInURL: "", instagramURL: "")
+            DeveloperProfile(name: "Calisto Ciro", imageName: "developer_ciro_callisto", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(name: "Chiappetta Giulia", imageName: "developer_giulia_chiappetta", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(name: "Karameta Albi", imageName: "developer_albi_karameta", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(name: "Toshpulatov Bobur", imageName: "developer_bobur", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: "")
         ]
     }
 }
@@ -1290,6 +1281,7 @@ struct SettingsView: View {
 private struct DeveloperProfile: Identifiable {
     let id = UUID()
     let name: String
+    let imageName: String
     let linkedInURL: String
     let instagramURL: String
 }

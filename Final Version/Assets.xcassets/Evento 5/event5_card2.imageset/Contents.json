@@ -1,21 +1,21 @@
 {
-  "images": [
+  "images" : [
     {
-      "filename": "event5_card2.png",
-      "idiom": "universal",
-      "scale": "1x"
+      "filename" : "granny hide.png",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "idiom": "universal",
-      "scale": "2x"
+      "idiom" : "universal",
+      "scale" : "2x"
     },
     {
-      "idiom": "universal",
-      "scale": "3x"
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
-  "info": {
-    "author": "xcode",
-    "version": 1
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
   }
 }
