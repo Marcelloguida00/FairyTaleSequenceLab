@@ -291,24 +291,7 @@ struct ContentView: View {
                 markerIsRaised = true
             }
 
-            let savedCompletedRedHoodLevels = Set(
-                UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
-            )
-            completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: savedCompletedRedHoodLevels)
-
-            if completedRedHoodLevels != savedCompletedRedHoodLevels {
-                persistCompletedRedHoodLevels(completedRedHoodLevels)
-            }
-
-            loadWorldMapProgress()
-
-            if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
-               MapGraph.baseIDs.contains(savedID),
-               unlockedWorldBaseIDs.contains(savedID),
-               let wp = MapGraph.waypoint(id: savedID) {
-                currentBaseID = savedID
-                avatarPosition = wp.point
-            }
+            reloadAllProgress()
 
         }
         .onChange(of: completedRedHoodLevels) {
@@ -578,6 +561,30 @@ struct ContentView: View {
         syncWorldUnlocksWithStoryProgress()
     }
 
+    private func reloadAllProgress() {
+        let savedCompletedRedHoodLevels = Set(
+            UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+        )
+        completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: savedCompletedRedHoodLevels)
+
+        if completedRedHoodLevels != savedCompletedRedHoodLevels {
+            persistCompletedRedHoodLevels(completedRedHoodLevels)
+        }
+
+        loadWorldMapProgress()
+
+        if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
+           MapGraph.baseIDs.contains(savedID),
+           unlockedWorldBaseIDs.contains(savedID),
+           let wp = MapGraph.waypoint(id: savedID) {
+            currentBaseID = savedID
+            avatarPosition = wp.point
+        } else {
+            currentBaseID = MapGraph.initialWaypoint.id
+            avatarPosition = MapGraph.initialWaypoint.point
+        }
+    }
+
     @MainActor
     private func returnToWorldMapAfterRedHoodCompletion() async {
         guard activeMap == .redHood else { return }
@@ -810,6 +817,8 @@ struct ContentView: View {
         settingsCloudExitProgress = 0
         showsSettingsCloudOverlay = false
         isSettingsTransitionActive = false
+        
+        reloadAllProgress()
     }
 
     private var shouldShowRedHoodPlayButton: Bool {

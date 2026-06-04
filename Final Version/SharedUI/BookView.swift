@@ -276,6 +276,7 @@ struct BookView: View {
     @State private var bookPages: [AnyView] = []
     @State private var bookmarks: [FairyTaleBookmark] = []
     @State private var lastIsCompact: Bool? = nil
+    @State private var isARBookOpen = false
     
     var body: some View {
         GeometryReader { geom in
@@ -327,10 +328,29 @@ struct BookView: View {
                 .aspectRatio(1.5, contentMode: .fit)
                 .padding(isCompact ? 12 : 50)
                 
-                // Close Button
+                // Top actions
                 VStack {
                     HStack {
+                        Button {
+                            AppSettings.hapticImpact(.light)
+                            withAnimation(.easeInOut(duration: 0.24)) {
+                                isARBookOpen = true
+                            }
+                        } label: {
+                            GamePillLabel(
+                                title: lm.t("book.ar.button"),
+                                fontSize: isCompact ? 13 : 15,
+                                horizontalPadding: isCompact ? 14 : 18,
+                                verticalPadding: isCompact ? 8 : 10,
+                                leadingIcon: "arkit"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(lm.t("a11y.book_ar_button"))
+                        .padding(isCompact ? 12 : 20)
+
                         Spacer()
+
                         Button(action: onDismiss) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: isCompact ? 30 : 40))
@@ -340,6 +360,18 @@ struct BookView: View {
                     }
                     Spacer()
                 }
+
+                if isARBookOpen {
+                    ARBookView(cards: arStoryCards, chapterText: currentChapterText) {
+                        withAnimation(.easeInOut(duration: 0.24)) {
+                            isARBookOpen = false
+                        }
+                    }
+                    .environmentObject(lm)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .zIndex(100)
+                }
             }
             .onAppear {
                 let initialCompact = geom.size.width < 600
@@ -348,7 +380,7 @@ struct BookView: View {
             }
             .onChange(of: lm.currentLanguage) { _ in
                 if let isCompact = lastIsCompact {
-                    buildPagesAndBookmarks(isCompact: isCompact)
+                    loadCompletedEvents(isCompact: isCompact)
                 }
             }
             .onChange(of: geom.size.width) { _ in
@@ -359,6 +391,52 @@ struct BookView: View {
                 }
             }
         }
+    }
+
+    private func currentScene() -> StoryScene? {
+        let isDyslexiaEnabled = UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey)
+        let isCompact = lastIsCompact ?? false
+        let maxCompletedId = completedEvents.map(\.id).max() ?? 0
+        let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
+        
+        var pageIndex = 0
+        for scene in visibleScenes {
+            let startPage = pageIndex
+            pageIndex += 1 // intro page
+            
+            let fullText = lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
+            let textPages = paginateText(fullText, isDyslexiaEnabled: isDyslexiaEnabled, isCompact: isCompact)
+            
+            pageIndex += textPages.count
+            if textPages.count % 2 != 0 { pageIndex += 1 }
+            pageIndex += 1 // reward page
+            
+            if currentPage >= startPage && currentPage < pageIndex {
+                return scene
+            }
+        }
+        return visibleScenes.last
+    }
+
+    private var arStoryCards: [ARStoryCard] {
+        guard let scene = currentScene(), let event = completedEvents.first(where: { $0.id == scene.id }) else { return [] }
+        return event.cards
+            .sorted { $0.correctPosition < $1.correctPosition }
+            .map { card in
+                ARStoryCard(
+                    id: "\(event.id)-\(card.id)",
+                    eventID: event.id,
+                    sequenceNumber: card.correctPosition + 1,
+                    eventTitle: event.bannerTitle,
+                    imageName: card.imageName,
+                    description: card.description
+                )
+            }
+    }
+    
+    private var currentChapterText: String {
+        guard let scene = currentScene() else { return "" }
+        return lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
     }
     
     private func isBookmarkActive(_ bookmark: FairyTaleBookmark) -> Bool {

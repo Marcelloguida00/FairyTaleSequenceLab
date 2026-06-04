@@ -44,6 +44,15 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "فصل در کتاب باز شد!";
 "book.chapter_unlocked.message" = "«%@» اکنون در کتاب قصه‌هاست. کتاب را روی نقشه باز کن تا بخوانی!";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "کارت‌های بازشده در AR";
+"book.ar.body"                  = "اطراف را ببین و کارت‌های رویدادهای بازشده داستان را تماشا کن.";
+"book.ar.turn_page"             = "کارت بعدی";
+"book.ar.next_card"             = "کارت بعدی";
+"book.ar.placeholder.title"     = "هنوز کارتی نیست";
+"book.ar.empty"                 = "یک رویداد را کامل کن تا کارت‌های آن در AR باز شود.";
+"book.ar.unsupported"           = "این دستگاه از واقعیت افزوده پشتیبانی نمی‌کند.";
+"a11y.book_ar_button"           = "نمایش کارت‌های بازشده داستان در واقعیت افزوده";
 
 /* Map */
 "map.coming_soon"             = "به زودی";
@@ -198,3 +207,15 @@
 "review.popup.message" = "اگر از افسانه‌های ما لذت می‌بری، لطفاً نظر خود را بنویس! این به ما کمک می‌کند داستان‌های جدیدی بسازیم.";
 "review.popup.rate" = "امتیاز دادن به برنامه";
 "review.popup.later" = "بعداً";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "اسکن اتاق...";
+"ar.scan.not_available" = "دستگاه را حرکت دهید...";
+"ar.scan.limited" = "به حرکت ادامه دهید...";
+"ar.scan.extending" = "در حال نقشه‌برداری...";
+"ar.scan.mapped" = "تقریبا آماده است!";
+"ar.scan.find_card" = "کارت را پیدا کن:";
+"ar.scan.congrats" = "آفرین!";
+"ar.scan.found_all" = "شما همه کارت‌ها را پیدا کردید.";
+"ar.scan.correct" = "درست است!";

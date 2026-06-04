@@ -44,6 +44,15 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Kapitulli u zhbllokua në libër!";
 "book.chapter_unlocked.message" = "«%@» është tani në librin e përrallave. Hape librin në hartë për ta lexuar!";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "Kartat e hapura në AR";
+"book.ar.body"                  = "Shiko në hapësirë kartat e ngjarjeve të historisë që ke hapur.";
+"book.ar.turn_page"             = "Karta tjetër";
+"book.ar.next_card"             = "Karta tjetër";
+"book.ar.placeholder.title"     = "Asnjë kartë ende";
+"book.ar.empty"                 = "Përfundo një ngjarje për të hapur kartat e saj në AR.";
+"book.ar.unsupported"           = "Kjo pajisje nuk e mbështet realitetin e shtuar.";
+"a11y.book_ar_button"           = "Shfaq kartat e hapura të historisë në realitet të shtuar";
 
 /* Map */
 "map.coming_soon"             = "Së shpejti";
@@ -200,3 +209,15 @@
 /* Image placeholders */
 "Immagine di Introduzione" = "Imazhi i Hyrjes";
 "Immagine di Ricompensa" = "Imazhi i Shpërblimit";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "Skanimi i Dhomës...";
+"ar.scan.not_available" = "Lëvizni pajisjen...";
+"ar.scan.limited" = "Vazhdoni të lëvizni...";
+"ar.scan.extending" = "Hartëzimi në progres...";
+"ar.scan.mapped" = "Gati gati!";
+"ar.scan.find_card" = "Gjej kartën:";
+"ar.scan.congrats" = "Të lumtë!";
+"ar.scan.found_all" = "Ju i gjetët të gjitha kartat.";
+"ar.scan.correct" = "Saktë!";

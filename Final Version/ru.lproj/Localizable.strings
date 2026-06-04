@@ -44,6 +44,15 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Глава разблокирована в книге!";
 "book.chapter_unlocked.message" = "«%@» теперь в книге сказок. Открой книгу на карте, чтобы прочитать!";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "Открытые карточки в AR";
+"book.ar.body"                  = "Осмотрись и увидь карточки событий истории, которые ты открыл.";
+"book.ar.turn_page"             = "Следующая карточка";
+"book.ar.next_card"             = "Следующая карточка";
+"book.ar.placeholder.title"     = "Пока нет карточек";
+"book.ar.empty"                 = "Заверши событие, чтобы открыть его карточки в AR.";
+"book.ar.unsupported"           = "Это устройство не поддерживает дополненную реальность.";
+"a11y.book_ar_button"           = "Показать открытые карточки истории в дополненной реальности";
 
 /* Map */
 "map.coming_soon"             = "Скоро";
@@ -200,3 +209,15 @@
 /* Image placeholders */
 "Immagine di Introduzione" = "Вводное изображение";
 "Immagine di Ricompensa" = "Изображение награды";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "Сканирование комнаты...";
+"ar.scan.not_available" = "Перемещайте устройство...";
+"ar.scan.limited" = "Продолжайте движение...";
+"ar.scan.extending" = "Идет картирование...";
+"ar.scan.mapped" = "Почти готово!";
+"ar.scan.find_card" = "Найди карту:";
+"ar.scan.congrats" = "Молодец!";
+"ar.scan.found_all" = "Вы нашли все карты.";
+"ar.scan.correct" = "Правильно!";
