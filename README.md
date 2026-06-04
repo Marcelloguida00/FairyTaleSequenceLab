@@ -33,4 +33,3 @@ Backlog di funzionalità e miglioramenti pianificati per l’app.
 - Aggiungere possibilità di cambiare rumore bianco in accessibilità
 - Aggiungere cambio colore in accessibilità
 - Modificare stile della sezione About
-- Dare la reale possibilità di modificare l’app icon
