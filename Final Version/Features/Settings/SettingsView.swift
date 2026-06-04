@@ -129,7 +129,7 @@ struct SettingsView: View {
     // MARK: - Header
 
     private var headerCircleSize: CGFloat {
-        usesFrameLayout ? 52 : 40
+        GameButtonMetrics.chromeCircleSize
     }
 
     private var headerTitleSize: CGFloat {
@@ -280,9 +280,10 @@ struct SettingsView: View {
                     ? SettingsTheme.selectionFill
                     : Color.clear
             )
-            .contentShape(Rectangle())
+            .gameSettingsRowTouchTarget()
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
         if !isLast {
@@ -328,9 +329,10 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .contentShape(Rectangle())
+                    .gameSettingsRowTouchTarget()
                 }
                 .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
                 .accessibilityLabel(lm.t("settings.dyslexia_font"))
                 .accessibilityHint(lm.t("settings.dyslexia_font.description"))
                 .accessibilityAddTraits(fontSettings.dyslexiaFontEnabled ? [.isSelected] : [])
@@ -404,9 +406,10 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .contentShape(Rectangle())
+                    .gameSettingsRowTouchTarget()
                 }
                 .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
 
                 SettingsTheme.divider
                     .frame(height: 1)
@@ -491,9 +494,10 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, 18)
                     .padding(.vertical, 16)
-                    .contentShape(Rectangle())
+                    .gameSettingsRowTouchTarget()
                 }
                 .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
                 .accessibilityLabel(lm.t("settings.reset_progress"))
                 .accessibilityHint(lm.t("settings.reset_progress.description"))
             }
@@ -755,9 +759,10 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, usesFrameLayout ? 24 : 18)
                 .padding(.vertical, usesFrameLayout ? 20 : 16)
-                .contentShape(Rectangle())
+                .gameSettingsRowTouchTarget()
             }
             .buttonStyle(.plain)
+            .gameMinimumTouchTarget()
         }
     }
 
@@ -813,9 +818,10 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, usesFrameLayout ? 24 : 18)
                     .padding(.vertical, usesFrameLayout ? 20 : 16)
-                    .contentShape(Rectangle())
+                    .gameSettingsRowTouchTarget()
                 }
                 .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
 
                 settingsDivider()
 
@@ -862,9 +868,10 @@ struct SettingsView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
             .background(isSelected ? SettingsTheme.selectionFill : Color.clear)
-            .contentShape(Rectangle())
+            .gameSettingsRowTouchTarget()
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
         .accessibilityLabel(lm.t(theme.localizedNameKey))
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
@@ -914,9 +921,10 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, usesFrameLayout ? 24 : 18)
                 .padding(.vertical, usesFrameLayout ? 20 : 16)
-                .contentShape(Rectangle())
+                .gameSettingsRowTouchTarget()
             }
             .buttonStyle(.plain)
+            .gameMinimumTouchTarget()
         }
     }
 
@@ -1033,6 +1041,7 @@ struct SettingsView: View {
             )
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
         .disabled(urlString.isEmpty)
         .opacity(urlString.isEmpty ? 0.48 : 1)
         .accessibilityLabel(title)
@@ -1115,10 +1124,10 @@ struct SettingsView: View {
             .padding(.horizontal, largeStyle ? 24 : 18)
             .padding(.vertical, fillHeight ? 0 : (largeStyle ? 18 : 16))
             .frame(maxWidth: .infinity, maxHeight: fillHeight ? .infinity : nil, alignment: .leading)
-            .frame(minHeight: fillHeight ? 64 : nil)
-            .contentShape(Rectangle())
+            .gameSettingsRowTouchTarget(fillHeight: fillHeight)
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
         .frame(maxHeight: fillHeight ? .infinity : nil)
         .accessibilityLabel(title)
     }

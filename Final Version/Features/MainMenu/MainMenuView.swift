@@ -355,9 +355,6 @@ private struct InfoView: View {
 
             GamePillButton(
                 title: lm.t("button.done"),
-                fontSize: 14,
-                horizontalPadding: 16,
-                verticalPadding: 8,
                 action: onClose
             )
             .accessibilityLabel(lm.t("a11y.info_close_button"))
@@ -430,9 +427,10 @@ private struct InfoView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .contentShape(Rectangle())
+            .gameSettingsRowTouchTarget()
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
         .accessibilityLabel(lm.t("a11y.info_email_button"))
     }
 
@@ -528,7 +526,7 @@ private struct MenuSettingsButton: View {
             horizontalPadding: width * 0.07,
             verticalPadding: width * 0.08,
             minWidth: width,
-            minHeight: width * 0.38,
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.38),
             isDisabled: isDisabled,
             action: action
         )
@@ -583,6 +581,10 @@ private struct MenuInfoButton: View {
                 .shadow(color: .black.opacity(0.30), radius: 7, y: 4)
         }
         .buttonStyle(.plain)
+        .gameMinimumTouchTarget(
+            minWidth: max(size, GameButtonMetrics.minimumTouchTarget),
+            minHeight: max(size, GameButtonMetrics.minimumTouchTarget)
+        )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
         .accessibilityLabel(lm.t("a11y.info_button"))
@@ -679,7 +681,7 @@ private struct MenuPlayButton: View {
             horizontalPadding: width * 0.07,
             verticalPadding: width * 0.08,
             minWidth: width,
-            minHeight: width * 0.38,
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.38),
             isDisabled: isDisabled,
             action: action
         )

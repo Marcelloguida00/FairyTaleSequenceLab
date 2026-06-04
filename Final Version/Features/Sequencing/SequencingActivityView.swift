@@ -367,13 +367,13 @@ struct SequencingActivityView<Reward: View>: View {
 
     private let cardGap: CGFloat = 14
     private let hPad: CGFloat = 28
-    private let chromeButtonSize: CGFloat = 72
     private let touchedCardScale: CGFloat = 1.10
-    private let draggedCardScale: CGFloat = 1.14
-    /// Hold duration before pickup (Re₄ + scale). Tap alone only flips the card.
-    private let cardHoldDuration: Double = 0.18
+    private let draggedCardScale: CGFloat = 1.22
+    /// Static hold (no drag yet): Re₄ + scale. Drag pickup is immediate once the finger moves.
+    private let cardHoldDuration: Double = 0.05
     private let cardHoldMaxJitter: CGFloat = 22
-    private let flipAllButtonWidth: CGFloat = 144
+    private let cardDragPickupDistance: CGFloat = 8
+    private let tapToFlipMaxDistance: CGFloat = 8
 
     init(
         event: EventData,
@@ -604,7 +604,7 @@ struct SequencingActivityView<Reward: View>: View {
         let n = max(CGFloat(event.cards.count), 1)
         let totalGaps = cardGap * max(n - 1, 0)
         let framedHorizontalInset: CGFloat = 112
-        let traySideInset: CGFloat = 16 + flipAllButtonWidth + 12
+        let traySideInset: CGFloat = 16
         let maxByStorybookW = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
         let maxByTrayW = (size.width - hPad * 2 - traySideInset * 2 - totalGaps) / n
         let maxByW = min(maxByStorybookW, maxByTrayW)
@@ -641,25 +641,13 @@ struct SequencingActivityView<Reward: View>: View {
                 )
                 .shadow(color: .black.opacity(0.38), radius: 14, y: 7)
 
-            HStack(spacing: 12) {
-                if !showReward && !showCelebration {
-                    flipAllButton
-                        .accessibilityLabel(lm.t("a11y.flip_all"))
-                } else {
-                    Color.clear
-                        .frame(width: flipAllButtonWidth, height: chromeButtonSize)
-                }
-
-                sourceRow(cardW: cardW, cardH: cardH)
-
-                Color.clear
-                    .frame(width: flipAllButtonWidth, height: chromeButtonSize)
-            }
+            sourceRow(cardW: cardW, cardH: cardH)
+                .frame(maxWidth: .infinity)
             .padding(.horizontal, 16)
             .padding(.vertical, 15)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: max(cardH + 42, chromeButtonSize + 30))
+        .frame(height: cardH + 42)
         .background(
             GeometryReader { geometry in
                 Color.clear
@@ -672,20 +660,6 @@ struct SequencingActivityView<Reward: View>: View {
             }
         )
         .accessibilityElement(children: .contain)
-    }
-
-    private var flipAllButton: some View {
-        GamePillButton(
-            title: lm.t("button.flip_all"),
-            fontSize: 14,
-            horizontalPadding: 14,
-            verticalPadding: 10,
-            minWidth: flipAllButtonWidth,
-            minHeight: 54,
-            leadingIcon: "arrow.triangle.2.circlepath",
-            action: flipAllCards
-        )
-        .frame(width: flipAllButtonWidth, height: chromeButtonSize)
     }
 
     // MARK: - Storybook frame
@@ -883,13 +857,6 @@ struct SequencingActivityView<Reward: View>: View {
 
     // MARK: - Drop logic
 
-    private func flipAllCards() {
-        playFlipToggleSound()
-        withAnimation(flipAnimation) {
-            flippedStates = flippedStates.map { !$0 }
-        }
-    }
-
     private func toggleCard(_ cardId: Int) {
         guard let index = cardStateIndex(for: cardId) else { return }
         playFlipToggleSound()
@@ -925,9 +892,6 @@ struct SequencingActivityView<Reward: View>: View {
         originSlot: Int?
     ) -> some View {
         content
-            .simultaneousGesture(
-                TapGesture().onEnded { toggleCard(cardId) }
-            )
             .onLongPressGesture(
                 minimumDuration: cardHoldDuration,
                 maximumDistance: cardHoldMaxJitter,
@@ -938,7 +902,7 @@ struct SequencingActivityView<Reward: View>: View {
                 },
                 perform: { beginCardHold(cardId: cardId) }
             )
-            .simultaneousGesture(cardDragGesture(cardId: cardId, originSlot: originSlot))
+            .highPriorityGesture(cardDragGesture(cardId: cardId, originSlot: originSlot))
             .animation(cardTouchAnimation, value: pressedCardId)
             .animation(cardTouchAnimation, value: draggingCardId)
     }
@@ -946,13 +910,26 @@ struct SequencingActivityView<Reward: View>: View {
     private func cardDragGesture(cardId: Int, originSlot: Int?) -> some Gesture {
         DragGesture(minimumDistance: 0, coordinateSpace: .named("gameBoard"))
             .onChanged { value in
-                guard pressedCardId == cardId else { return }
+                let distance = hypot(value.translation.width, value.translation.height)
+                guard distance > cardDragPickupDistance else { return }
+                if pressedCardId != cardId {
+                    beginCardHold(cardId: cardId)
+                }
                 updateDrag(cardId: cardId, originSlot: originSlot, location: value.location)
             }
             .onEnded { value in
-                guard draggingCardId == cardId else { return }
-                finalizeDrop(at: value.location, originSlot: originSlot)
+                if draggingCardId == cardId {
+                    finalizeDrop(at: value.location, originSlot: originSlot)
+                } else if isTapToFlip(value), pressedCardId == nil {
+                    toggleCard(cardId)
+                } else {
+                    endCardTouch()
+                }
             }
+    }
+
+    private func isTapToFlip(_ value: DragGesture.Value) -> Bool {
+        hypot(value.translation.width, value.translation.height) <= tapToFlipMaxDistance
     }
 
     /// Pickup feedback after hold completes — not on finger-down (see long-press `pressing`).

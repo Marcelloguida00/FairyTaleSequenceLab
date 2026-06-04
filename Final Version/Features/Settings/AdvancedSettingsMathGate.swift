@@ -150,12 +150,10 @@ struct AdvancedSettingsMathGate: View {
                         .padding(.vertical, 12)
                 }
                 .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
 
                 GamePillButton(
                     title: lm.t("settings.advanced_gate.submit"),
-                    fontSize: 16,
-                    horizontalPadding: 24,
-                    verticalPadding: 11,
                     action: submitAnswer
                 )
             }

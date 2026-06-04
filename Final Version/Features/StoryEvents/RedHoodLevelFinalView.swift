@@ -77,6 +77,9 @@ struct RedHoodLevelFinalView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .gameMinimumTouchTarget(
+                        minHeight: GameButtonMetrics.pillMinHeight(atLeast: 64)
+                    )
                     .accessibilityLabel(buttonText)
 
                     Spacer()

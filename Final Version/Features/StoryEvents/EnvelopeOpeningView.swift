@@ -170,6 +170,11 @@ struct EnvelopeOpeningView: View {
                                         .shadow(color: Color(red: 1.00, green: 0.84, blue: 0.00).opacity(0.3), radius: 12, y: 6)
                                 )
                         }
+                        .buttonStyle(.plain)
+                        .gameMinimumTouchTarget(
+                            minWidth: GameButtonMetrics.minimumTouchTarget,
+                            minHeight: GameButtonMetrics.pillMinHeight(atLeast: 52)
+                        )
                         .disabled(isAnimating)
                         .opacity(isAnimating ? 0.6 : 1.0)
                         .scaleEffect(isAnimating ? 0.97 : 1.0)

@@ -147,32 +147,20 @@ struct RewardView: View {
                             VStack(spacing: 10) {
                                 GamePillButton(
                                     title: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"),
-                                    fontSize: 14,
-                                    horizontalPadding: 18,
-                                    verticalPadding: 12,
-                                    minWidth: 120,
-                                    minHeight: 48,
+                                    minWidth: GameButtonMetrics.isPad ? 200 : 160,
+                                    minHeight: GameButtonMetrics.pillMinHeight(atLeast: 52),
                                     trailingIcon: event.isLastEvent ? "map" : "arrow.right",
                                     action: finishRewardFlow
                                 )
 
-                                Button(action: onDismiss) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "arrow.clockwise")
-                                            .font(.app(.caption))
-                                        Text(lm.t("button.play_again"))
-                                            .font(.app(.caption))
-                                            .fontWeight(.semibold)
-                                    }
-                                    .foregroundColor(Color.appSecondaryText)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        Capsule()
-                                            .fill(Color.appPanelBackground)
-                                    )
-                                }
-                                .buttonStyle(.plain)
+                                GameCapsuleButton(
+                                    title: lm.t("button.play_again"),
+                                    systemImage: "arrow.clockwise",
+                                    fontSize: GameButtonMetrics.pillFontSize - 2,
+                                    foregroundColor: Color.appSecondaryText,
+                                    fillColor: Color.appPanelBackground,
+                                    action: onDismiss
+                                )
                             }
                         }
                         .padding(.horizontal, compactText ? 28 : 32)

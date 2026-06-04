@@ -58,7 +58,7 @@ struct RedHoodARStoryView: View {
 
             Spacer()
 
-            GameCircleBackButton(size: 72) {
+            GameCircleBackButton(size: GameButtonMetrics.chromeCircleSize) {
                 AppSettings.hapticImpact(.light)
                 onClose()
             }

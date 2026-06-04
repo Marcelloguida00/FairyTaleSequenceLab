@@ -318,6 +318,10 @@ struct BookView: View {
                                 }
                             }
                             .buttonStyle(.plain)
+                            .gameMinimumTouchTarget(
+                                minWidth: max(isCompact ? 24 : 40, GameButtonMetrics.minimumTouchTarget),
+                                minHeight: max(isCompact ? 32 : 50, GameButtonMetrics.minimumTouchTarget)
+                            )
                             .offset(x: isBookmarkActive(bookmark) ? (isCompact ? -12 : -20) : 0)
                             .animation(.spring(), value: currentPage)
                         }
@@ -337,6 +341,11 @@ struct BookView: View {
                                 .foregroundColor(.white)
                                 .padding(isCompact ? 12 : 20)
                         }
+                        .buttonStyle(.plain)
+                        .gameMinimumTouchTarget(
+                            minWidth: GameButtonMetrics.chromeCircleSize,
+                            minHeight: GameButtonMetrics.chromeCircleSize
+                        )
                     }
                     Spacer()
                 }
