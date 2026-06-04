@@ -354,6 +354,7 @@ struct SequencingActivityView<Reward: View>: View {
     @State private var showReward = false
     @State private var slotVisualStates: [Int: SlotPlacementVisualState] = [:]
     @State private var isRunningCompletionSequence = false
+    @State private var flipToggleUsesFirstSound = true
 
     // Drag state
     @State private var draggingCardId: Int? = nil
@@ -362,10 +363,16 @@ struct SequencingActivityView<Reward: View>: View {
     @State private var slotFrames: [Int: CGRect] = [:]
     @State private var sourceTrayFrame: CGRect = .zero
     @State private var hoveredSlot: Int? = nil
+    @State private var pressedCardId: Int? = nil
 
     private let cardGap: CGFloat = 14
     private let hPad: CGFloat = 28
     private let chromeButtonSize: CGFloat = 72
+    private let touchedCardScale: CGFloat = 1.10
+    private let draggedCardScale: CGFloat = 1.14
+    /// Hold duration before pickup (Re₄ + scale). Tap alone only flips the card.
+    private let cardHoldDuration: Double = 0.18
+    private let cardHoldMaxJitter: CGFloat = 22
     private let flipAllButtonWidth: CGFloat = 144
 
     init(
@@ -469,7 +476,9 @@ struct SequencingActivityView<Reward: View>: View {
         dragOriginSlot = nil
         dragPosition = .zero
         hoveredSlot = nil
+        pressedCardId = nil
         isRunningCompletionSequence = false
+        flipToggleUsesFirstSound = true
         showCelebration = false
         dimForReward = false
         showReward = false
@@ -547,6 +556,7 @@ struct SequencingActivityView<Reward: View>: View {
                     isFlipped: flippedState(for: cardId)
                 )
                 .frame(width: cardW, height: cardH)
+                .scaleEffect(draggedCardScale)
                 .shadow(color: .black.opacity(0.45), radius: 20, y: 10)
                 .position(dragPosition)
                 .allowsHitTesting(false)
@@ -733,9 +743,7 @@ struct SequencingActivityView<Reward: View>: View {
 
             if let id = placedId {
                 placedCard(cardId: id, slot: slot, cardW: cardW, cardH: cardH)
-                    .scaleEffect(slotVisualScale(for: slot))
-                    .rotationEffect(.degrees(slotVisualTilt(for: slot)))
-                    .opacity(isDraggingThis ? 0.001 : 1)
+                .opacity(isDraggingThis ? 0.001 : 1)
             } else {
                 emptySlot(slot: slot, cardW: cardW, cardH: cardH, hovered: isHovered)
             }
@@ -770,26 +778,22 @@ struct SequencingActivityView<Reward: View>: View {
     @ViewBuilder
     private func placedCard(cardId: Int, slot: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
         if let card = cardData(for: cardId) {
-            SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
-                .frame(width: cardW, height: cardH)
-                .contentShape(RoundedRectangle(cornerRadius: 16))
-                .simultaneousGesture(
-                    TapGesture().onEnded {
-                        toggleCard(cardId)
-                    }
-                )
-                .gesture(
-                    DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
-                        .onChanged { val in
-                            updateDrag(cardId: cardId, originSlot: slot, location: val.location)
-                        }
-                        .onEnded { val in
-                            finalizeDrop(at: val.location, originSlot: slot)
-                        }
-                )
+            cardInteractionGestures(
+                SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                    .frame(width: cardW, height: cardH)
+                    .scaleEffect(slotVisualScale(for: slot) * cardTouchScale(for: cardId))
+                    .rotationEffect(.degrees(slotVisualTilt(for: slot)))
+                    .contentShape(RoundedRectangle(cornerRadius: 16)),
+                cardId: cardId,
+                originSlot: slot
+            )
         } else {
             ghostCard(cardW: cardW, cardH: cardH)
         }
+    }
+
+    private var cardTouchAnimation: Animation? {
+        reduceMotion ? .linear(duration: 0.01) : .easeOut(duration: 0.12)
     }
 
     private func slotVisualScale(for slot: Int) -> CGFloat {
@@ -855,25 +859,16 @@ struct SequencingActivityView<Reward: View>: View {
     @ViewBuilder
     private func sourceCard(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
         if let card = cardData(for: cardId) {
-            SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
-                .frame(width: cardW, height: cardH)
-                .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
-                .contentShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(sourceCardHintOverlay(cardId: cardId, cardW: cardW, cardH: cardH))
-                .simultaneousGesture(
-                    TapGesture().onEnded {
-                        toggleCard(cardId)
-                    }
-                )
-                .gesture(
-                    DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
-                        .onChanged { val in
-                            updateDrag(cardId: cardId, originSlot: nil, location: val.location)
-                        }
-                        .onEnded { val in
-                            finalizeDrop(at: val.location, originSlot: nil)
-                        }
-                )
+            cardInteractionGestures(
+                SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                    .frame(width: cardW, height: cardH)
+                    .scaleEffect(cardTouchScale(for: cardId))
+                    .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
+                    .contentShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(sourceCardHintOverlay(cardId: cardId, cardW: cardW, cardH: cardH)),
+                cardId: cardId,
+                originSlot: nil
+            )
         } else {
             ghostCard(cardW: cardW, cardH: cardH)
         }
@@ -889,6 +884,7 @@ struct SequencingActivityView<Reward: View>: View {
     // MARK: - Drop logic
 
     private func flipAllCards() {
+        playFlipToggleSound()
         withAnimation(flipAnimation) {
             flippedStates = flippedStates.map { !$0 }
         }
@@ -896,13 +892,79 @@ struct SequencingActivityView<Reward: View>: View {
 
     private func toggleCard(_ cardId: Int) {
         guard let index = cardStateIndex(for: cardId) else { return }
+        playFlipToggleSound()
         withAnimation(flipAnimation) {
             flippedStates[index].toggle()
         }
     }
 
+    /// Alternates `SequencingFlipAll_1` / `SequencingFlipAll_2` for every flip (single card or flip all).
+    private func playFlipToggleSound() {
+        if flipToggleUsesFirstSound {
+            SequencingCardSFXPlayer.shared.play(.flipAll1)
+        } else {
+            SequencingCardSFXPlayer.shared.play(.flipAll2)
+        }
+        flipToggleUsesFirstSound.toggle()
+    }
+
     private var flipAnimation: Animation {
         reduceMotion ? .linear(duration: 0.01) : .easeInOut(duration: 0.42)
+    }
+
+    private func cardTouchScale(for cardId: Int) -> CGFloat {
+        if draggingCardId == cardId { return draggedCardScale }
+        if pressedCardId == cardId { return touchedCardScale }
+        return 1.0
+    }
+
+    @ViewBuilder
+    private func cardInteractionGestures<Content: View>(
+        _ content: Content,
+        cardId: Int,
+        originSlot: Int?
+    ) -> some View {
+        content
+            .simultaneousGesture(
+                TapGesture().onEnded { toggleCard(cardId) }
+            )
+            .onLongPressGesture(
+                minimumDuration: cardHoldDuration,
+                maximumDistance: cardHoldMaxJitter,
+                pressing: { isPressing in
+                    if !isPressing, draggingCardId == nil {
+                        endCardTouch()
+                    }
+                },
+                perform: { beginCardHold(cardId: cardId) }
+            )
+            .simultaneousGesture(cardDragGesture(cardId: cardId, originSlot: originSlot))
+            .animation(cardTouchAnimation, value: pressedCardId)
+            .animation(cardTouchAnimation, value: draggingCardId)
+    }
+
+    private func cardDragGesture(cardId: Int, originSlot: Int?) -> some Gesture {
+        DragGesture(minimumDistance: 0, coordinateSpace: .named("gameBoard"))
+            .onChanged { value in
+                guard pressedCardId == cardId else { return }
+                updateDrag(cardId: cardId, originSlot: originSlot, location: value.location)
+            }
+            .onEnded { value in
+                guard draggingCardId == cardId else { return }
+                finalizeDrop(at: value.location, originSlot: originSlot)
+            }
+    }
+
+    /// Pickup feedback after hold completes — not on finger-down (see long-press `pressing`).
+    private func beginCardHold(cardId: Int) {
+        guard pressedCardId != cardId else { return }
+        pressedCardId = cardId
+        AppSettings.hapticImpact(.light)
+        PianoChordPlayer.shared.playCardPickupNote()
+    }
+
+    private func endCardTouch() {
+        pressedCardId = nil
     }
 
     private func updateDrag(cardId: Int, originSlot: Int?, location: CGPoint) {
@@ -951,6 +1013,9 @@ struct SequencingActivityView<Reward: View>: View {
             let didMoveSlots = originSlot != targetSlot
             guard didMoveSlots else { return }
 
+            let previousContents = slotContents
+            let isCorrect = correctCardID(forSlot: targetSlot) == cardId
+
             var nextContents = slotContents
             let displaced = nextContents[targetSlot]
 
@@ -967,7 +1032,12 @@ struct SequencingActivityView<Reward: View>: View {
                 slotContents = normalizedContents
             }
 
-            evaluateCompletedBoardIfReady()
+            if isCorrect {
+                handleCorrectPlacement(forSlot: targetSlot)
+                evaluateCompletedBoardIfReady()
+            } else {
+                handleIncorrectPlacement(forSlot: targetSlot, revertingTo: previousContents)
+            }
             return
         }
 
@@ -1008,6 +1078,51 @@ struct SequencingActivityView<Reward: View>: View {
         dragOriginSlot = nil
         dragPosition   = .zero
         hoveredSlot    = nil
+        endCardTouch()
+    }
+
+    private func handleCorrectPlacement(forSlot slot: Int) {
+        AppSettings.hapticImpact(.light)
+        PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
+        playCorrectPlacementAnimation(for: slot)
+    }
+
+    private func handleIncorrectPlacement(forSlot slot: Int, revertingTo previousContents: [Int?]) {
+        AppSettings.hapticImpact(.soft)
+        PianoChordPlayer.shared.playPlacementTone(.incorrect)
+        attemptCount += 1
+        playIncorrectPlacementAnimation(for: slot)
+
+        let revertDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
+        Task { @MainActor in
+            if revertDelayNs > 0 {
+                try? await Task.sleep(nanoseconds: revertDelayNs)
+            }
+            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
+                slotContents = previousContents
+            }
+            slotVisualStates[slot] = SlotPlacementVisualState()
+        }
+    }
+
+    private func playCorrectPlacementAnimation(for slot: Int) {
+        guard !reduceMotion else { return }
+
+        withAnimation(.spring(response: 0.36, dampingFraction: 0.58)) {
+            var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+            state.bounceScale = 1.06
+            state.tiltDegrees = 0
+            slotVisualStates[slot] = state
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(360))
+            withAnimation(.spring(response: 0.34, dampingFraction: 0.72)) {
+                var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
+                state.bounceScale = 1
+                slotVisualStates[slot] = state
+            }
+        }
     }
 
     private func handleIncorrectCompletedBoard() {
