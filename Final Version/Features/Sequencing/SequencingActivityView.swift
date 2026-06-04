@@ -389,19 +389,95 @@ struct SequencingActivityView<Reward: View>: View {
 
     private var allSlotsCorrect: Bool {
         slotContents.enumerated().allSatisfy { index, cardId in
-            cardId == event.correctOrder[index]
+            guard let expectedCardId = correctCardID(forSlot: index) else { return false }
+            return cardId == expectedCardId
         }
     }
 
     private var firstWrongSlot: Int? {
-        slotContents.indices.first { i in slotContents[i] != event.correctOrder[i] }
+        slotContents.indices.first { slot in
+            guard let expectedCardId = correctCardID(forSlot: slot) else { return true }
+            return slotContents[slot] != expectedCardId
+        }
+    }
+
+    private var wrongFilledSlots: [Int] {
+        slotContents.indices.filter { slot in
+            guard let cardId = slotContents[slot],
+                  let expectedCardId = correctCardID(forSlot: slot) else { return true }
+            return cardId != expectedCardId
+        }
     }
 
     private var guidedSourceCardID: Int? {
         guard attemptCount >= 2,
               let wrongSlot = firstWrongSlot else { return nil }
 
-        return event.correctOrder[wrongSlot]
+        return correctCardID(forSlot: wrongSlot)
+    }
+
+    private func cardData(for cardId: Int) -> CardData? {
+        if event.cards.indices.contains(cardId), event.cards[cardId].id == cardId {
+            return event.cards[cardId]
+        }
+
+        return event.cards.first { $0.id == cardId }
+    }
+
+    private func cardStateIndex(for cardId: Int) -> Int? {
+        if flippedStates.indices.contains(cardId) {
+            return cardId
+        }
+
+        guard let cardIndex = event.cards.firstIndex(where: { $0.id == cardId }),
+              flippedStates.indices.contains(cardIndex) else { return nil }
+        return cardIndex
+    }
+
+    private func flippedState(for cardId: Int) -> Bool {
+        guard let index = cardStateIndex(for: cardId) else { return false }
+        return flippedStates[index]
+    }
+
+    private func correctCardID(forSlot slot: Int) -> Int? {
+        guard event.correctOrder.indices.contains(slot) else { return nil }
+        return event.correctOrder[slot]
+    }
+
+    private func correctCard(forSlot slot: Int) -> CardData? {
+        guard let cardId = correctCardID(forSlot: slot) else { return nil }
+        return cardData(for: cardId)
+    }
+
+    private var boardStateNeedsRepair: Bool {
+        slotContents.count != event.cards.count ||
+        flippedStates.count != event.cards.count ||
+        shuffledStart.count != event.cards.count ||
+        shuffledStart.contains { cardData(for: $0) == nil } ||
+        slotContents.contains { cardId in
+            guard let cardId else { return false }
+            return cardData(for: cardId) == nil
+        }
+    }
+
+    private func resetBoardState() {
+        shuffledStart = event.makeShuffledStart()
+        slotContents = Array(repeating: nil, count: event.cards.count)
+        flippedStates = Array(repeating: false, count: event.cards.count)
+        slotVisualStates = [:]
+        draggingCardId = nil
+        dragOriginSlot = nil
+        dragPosition = .zero
+        hoveredSlot = nil
+        isRunningCompletionSequence = false
+        showCelebration = false
+        dimForReward = false
+        showReward = false
+    }
+
+    private func repairBoardStateIfNeeded() {
+        guard boardStateNeedsRepair else { return }
+        resetBoardState()
     }
 
     // MARK: - Body
@@ -421,6 +497,10 @@ struct SequencingActivityView<Reward: View>: View {
             }
         }
         .ignoresSafeArea()
+        .onAppear(perform: repairBoardStateIfNeeded)
+        .onChange(of: event.id) { _, _ in
+            resetBoardState()
+        }
     }
 
     @ViewBuilder
@@ -460,10 +540,11 @@ struct SequencingActivityView<Reward: View>: View {
                     .padding(.bottom, 18)
             }
 
-            if let cardId = draggingCardId {
+            if let cardId = draggingCardId,
+               let card = cardData(for: cardId) {
                 SequenceCardView(
-                    card: event.cards[cardId],
-                    isFlipped: flippedStates[cardId]
+                    card: card,
+                    isFlipped: flippedState(for: cardId)
                 )
                 .frame(width: cardW, height: cardH)
                 .shadow(color: .black.opacity(0.45), radius: 20, y: 10)
@@ -510,8 +591,8 @@ struct SequencingActivityView<Reward: View>: View {
     // MARK: - Card sizing
 
     private func computeCardWidth(in size: CGSize) -> CGFloat {
-        let n         = CGFloat(event.cards.count)
-        let totalGaps = cardGap * (n - 1)
+        let n = max(CGFloat(event.cards.count), 1)
+        let totalGaps = cardGap * max(n - 1, 0)
         let framedHorizontalInset: CGFloat = 112
         let traySideInset: CGFloat = 16 + flipAllButtonWidth + 12
         let maxByStorybookW = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
@@ -633,7 +714,7 @@ struct SequencingActivityView<Reward: View>: View {
 
     private func slotsRow(cardW: CGFloat, cardH: CGFloat) -> some View {
         LazyHStack(spacing: cardGap) {
-            ForEach(0..<event.cards.count, id: \.self) { slot in
+            ForEach(slotContents.indices, id: \.self) { slot in
                 targetSlot(slot: slot, cardW: cardW, cardH: cardH)
             }
         }
@@ -688,23 +769,27 @@ struct SequencingActivityView<Reward: View>: View {
     // Card sitting in a slot: drag to move
     @ViewBuilder
     private func placedCard(cardId: Int, slot: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
-        SequenceCardView(card: event.cards[cardId], isFlipped: flippedStates[cardId])
-            .frame(width: cardW, height: cardH)
-            .contentShape(RoundedRectangle(cornerRadius: 16))
-            .simultaneousGesture(
-                TapGesture().onEnded {
-                    toggleCard(cardId)
-                }
-            )
-            .gesture(
-                DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
-                    .onChanged { val in
-                        updateDrag(cardId: cardId, originSlot: slot, location: val.location)
+        if let card = cardData(for: cardId) {
+            SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                .frame(width: cardW, height: cardH)
+                .contentShape(RoundedRectangle(cornerRadius: 16))
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        toggleCard(cardId)
                     }
-                    .onEnded { val in
-                        finalizeDrop(at: val.location, originSlot: slot)
-                    }
-            )
+                )
+                .gesture(
+                    DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
+                        .onChanged { val in
+                            updateDrag(cardId: cardId, originSlot: slot, location: val.location)
+                        }
+                        .onEnded { val in
+                            finalizeDrop(at: val.location, originSlot: slot)
+                        }
+                )
+        } else {
+            ghostCard(cardW: cardW, cardH: cardH)
+        }
     }
 
     private func slotVisualScale(for slot: Int) -> CGFloat {
@@ -718,9 +803,9 @@ struct SequencingActivityView<Reward: View>: View {
 
     // Dashed empty slot
     private func emptySlot(slot: Int, cardW: CGFloat, cardH: CGFloat, hovered: Bool) -> some View {
-        let correctCard = event.cards[event.correctOrder[slot]]
+        let correctDescription = correctCard(forSlot: slot)?.description ?? ""
         return EmptySequenceSlotView(
-            description: correctCard.description,
+            description: correctDescription,
             slot: slot,
             cardW: cardW,
             cardH: cardH,
@@ -745,7 +830,7 @@ struct SequencingActivityView<Reward: View>: View {
         let placedCardIds = Set(slotContents.compactMap { $0 })
 
         return LazyHStack(spacing: cardGap) {
-            ForEach(0..<event.cards.count, id: \.self) { position in
+            ForEach(shuffledStart.indices, id: \.self) { position in
                 let cardId    = shuffledStart[position]
                 let isPlaced  = placedCardIds.contains(cardId)
                 let isDragged = draggingCardId == cardId && dragOriginSlot == nil
@@ -767,26 +852,31 @@ struct SequencingActivityView<Reward: View>: View {
     }
 
     // Card in the source deck: drag to place
+    @ViewBuilder
     private func sourceCard(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
-        SequenceCardView(card: event.cards[cardId], isFlipped: flippedStates[cardId])
-            .frame(width: cardW, height: cardH)
-            .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
-            .contentShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(sourceCardHintOverlay(cardId: cardId, cardW: cardW, cardH: cardH))
-            .simultaneousGesture(
-                TapGesture().onEnded {
-                    toggleCard(cardId)
-                }
-            )
-            .gesture(
-                DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
-                    .onChanged { val in
-                        updateDrag(cardId: cardId, originSlot: nil, location: val.location)
+        if let card = cardData(for: cardId) {
+            SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                .frame(width: cardW, height: cardH)
+                .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
+                .contentShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(sourceCardHintOverlay(cardId: cardId, cardW: cardW, cardH: cardH))
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        toggleCard(cardId)
                     }
-                    .onEnded { val in
-                        finalizeDrop(at: val.location, originSlot: nil)
-                    }
-            )
+                )
+                .gesture(
+                    DragGesture(minimumDistance: 8, coordinateSpace: .named("gameBoard"))
+                        .onChanged { val in
+                            updateDrag(cardId: cardId, originSlot: nil, location: val.location)
+                        }
+                        .onEnded { val in
+                            finalizeDrop(at: val.location, originSlot: nil)
+                        }
+                )
+        } else {
+            ghostCard(cardW: cardW, cardH: cardH)
+        }
     }
 
     @ViewBuilder
@@ -805,9 +895,9 @@ struct SequencingActivityView<Reward: View>: View {
     }
 
     private func toggleCard(_ cardId: Int) {
-        guard flippedStates.indices.contains(cardId) else { return }
+        guard let index = cardStateIndex(for: cardId) else { return }
         withAnimation(flipAnimation) {
-            flippedStates[cardId].toggle()
+            flippedStates[index].toggle()
         }
     }
 
@@ -833,7 +923,7 @@ struct SequencingActivityView<Reward: View>: View {
     }
 
     private func slot(at location: CGPoint, excluding excludedSlot: Int? = nil) -> Int? {
-        event.cards.indices.first { slot in
+        slotContents.indices.first { slot in
             slot != excludedSlot && slotFrames[slot]?.contains(location) == true
         }
     }
@@ -854,38 +944,36 @@ struct SequencingActivityView<Reward: View>: View {
 
     private func finalizeDrop(at location: CGPoint, originSlot: Int?) {
         defer { clearDragState() }
-        guard let cardId = draggingCardId else { return }
+        guard let cardId = draggingCardId,
+              cardData(for: cardId) != nil else { return }
 
         if let targetSlot = slot(at: location, excluding: originSlot) {
             let didMoveSlots = originSlot != targetSlot
             guard didMoveSlots else { return }
 
-            let previousContents = slotContents
-            let isCorrect = event.correctOrder[targetSlot] == cardId
+            var nextContents = slotContents
+            let displaced = nextContents[targetSlot]
+
+            nextContents[targetSlot] = cardId
+
+            if let origin = originSlot {
+                guard nextContents.indices.contains(origin) else { return }
+                nextContents[origin] = origin == targetSlot ? cardId : displaced
+            }
+
+            let normalizedContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
 
             withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
-                var nextContents = slotContents
-                let displaced = nextContents[targetSlot]
-
-                nextContents[targetSlot] = cardId
-
-                if let origin = originSlot {
-                    nextContents[origin] = origin == targetSlot ? cardId : displaced
-                }
-
-                slotContents = normalizedSlotContents(nextContents, keeping: cardId, in: targetSlot)
+                slotContents = normalizedContents
             }
 
-            if isCorrect {
-                handleCorrectPlacement(forSlot: targetSlot)
-                evaluateAutomaticCompletion()
-            } else {
-                handleIncorrectPlacement(forSlot: targetSlot, revertingTo: previousContents)
-            }
+            evaluateCompletedBoardIfReady()
             return
         }
 
-        if let origin = originSlot, isInSourceTray(location) {
+        if let origin = originSlot,
+           slotContents.indices.contains(origin),
+           isInSourceTray(location) {
             withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
                 slotContents[origin] = nil
             }
@@ -903,7 +991,7 @@ struct SequencingActivityView<Reward: View>: View {
 
         for index in normalized.indices where index != keptSlot {
             guard let cardId = normalized[index],
-                  event.cards.indices.contains(cardId),
+                  cardData(for: cardId) != nil,
                   !seen.contains(cardId) else {
                 normalized[index] = nil
                 continue
@@ -922,46 +1010,38 @@ struct SequencingActivityView<Reward: View>: View {
         hoveredSlot    = nil
     }
 
-    private func handleCorrectPlacement(forSlot slot: Int) {
-        AppSettings.hapticImpact(.light)
-        PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
-        playCorrectPlacementAnimation(for: slot)
-    }
+    private func handleIncorrectCompletedBoard() {
+        let slots = wrongFilledSlots
+        guard !slots.isEmpty else { return }
+        let misplacedCards = slots.compactMap { slot -> (slot: Int, cardId: Int)? in
+            guard let cardId = slotContents[slot] else { return nil }
+            return (slot, cardId)
+        }
 
-    private func handleIncorrectPlacement(forSlot slot: Int, revertingTo previousContents: [Int?]) {
         AppSettings.hapticImpact(.soft)
         PianoChordPlayer.shared.playPlacementTone(.incorrect)
         attemptCount += 1
-        playIncorrectPlacementAnimation(for: slot)
 
-        let revertDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
+        for slot in slots {
+            playIncorrectPlacementAnimation(for: slot)
+        }
+
+        let returnDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
         Task { @MainActor in
-            if revertDelayNs > 0 {
-                try? await Task.sleep(nanoseconds: revertDelayNs)
+            if returnDelayNs > 0 {
+                try? await Task.sleep(nanoseconds: returnDelayNs)
             }
+
             withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
-                slotContents = previousContents
+                for misplacedCard in misplacedCards {
+                    guard slotContents.indices.contains(misplacedCard.slot),
+                          slotContents[misplacedCard.slot] == misplacedCard.cardId else { continue }
+                    slotContents[misplacedCard.slot] = nil
+                }
             }
-            slotVisualStates[slot] = SlotPlacementVisualState()
-        }
-    }
 
-    private func playCorrectPlacementAnimation(for slot: Int) {
-        guard !reduceMotion else { return }
-
-        withAnimation(.spring(response: 0.36, dampingFraction: 0.58)) {
-            var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
-            state.bounceScale = 1.06
-            state.tiltDegrees = 0
-            slotVisualStates[slot] = state
-        }
-
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(360))
-            withAnimation(.spring(response: 0.34, dampingFraction: 0.72)) {
-                var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
-                state.bounceScale = 1
-                slotVisualStates[slot] = state
+            for slot in slots {
+                slotVisualStates[slot] = SlotPlacementVisualState()
             }
         }
     }
@@ -988,9 +1068,14 @@ struct SequencingActivityView<Reward: View>: View {
         }
     }
 
-    private func evaluateAutomaticCompletion() {
-        guard allSlotsFilled, allSlotsCorrect, !isRunningCompletionSequence, !showCelebration else { return }
-        Task { await runCompletionWaveAndCelebrate() }
+    private func evaluateCompletedBoardIfReady() {
+        guard allSlotsFilled, !isRunningCompletionSequence, !showCelebration else { return }
+
+        if allSlotsCorrect {
+            Task { await runCompletionWaveAndCelebrate() }
+        } else {
+            handleIncorrectCompletedBoard()
+        }
     }
 
     @MainActor
@@ -1002,7 +1087,7 @@ struct SequencingActivityView<Reward: View>: View {
         PianoChordPlayer.shared.playPlacementTone(.victoryJingle)
 
         if !reduceMotion {
-            for slot in event.cards.indices {
+            for slot in slotContents.indices {
                 withAnimation(.spring(response: 0.40, dampingFraction: 0.66)) {
                     var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
                     state.waveScale = 1.08
