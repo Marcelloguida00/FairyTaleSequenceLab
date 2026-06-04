@@ -164,37 +164,37 @@
 "a11y.check_order"          = "Controlla l'ordine della storia";
 
 /* Italian Story Book Scenes */
-"story.redhood.scene1.title" = "Scena 1 — Il cestino per la nonna";
-"story.redhood.scene1.text1" = "Cappuccetto Rosso era a casa con la sua mamma. Era una mattina tranquilla, ma la mamma era un po’ preoccupata perché la nonna non si sentiva bene.\n\nAllora prese un cestino e cominciò a riempirlo con cose buone: pane morbido, frutta fresca, una piccola focaccia e qualcosa di caldo da portare alla nonna.";
-"story.redhood.scene1.text2" = "«Cappuccetto Rosso,» disse la mamma con dolcezza, «puoi portare questo cestino alla nonna? Le farà piacere ricevere una visita.»\n\nCappuccetto Rosso sorrise. Indossò il suo mantello rosso, prese il cestino con cura e salutò la mamma.\n\nPoi aprì la porta di casa e uscì, pronta a camminare verso la casa della nonna.";
+"story.redhood.scene1.title" = "Scena 1";
+"story.redhood.scene1.text1" = "Once upon a time, deep inside a thick forest, there was a small cottage where a lovely little girl lived. Everyone called her Little Red Riding Hood because her mother had made her a beautiful red cloak with a matching hood.";
+"story.redhood.scene1.text2" = "One morning, her mother said: \"Grandmother is sick in bed with a bad cold. Take her this basket of fresh cakes, but remember: stay on the main path and do not stop!\"\n\nThe little girl kissed her mother goodbye and promised: \"Don't worry, Mom! I will walk quickly and go straight to Grandmother's house.\"";
 
-"story.redhood.scene2.title" = "Scena 2 — Il cammino nella foresta";
-"story.redhood.scene2.text1" = "Cappuccetto Rosso entrò nella foresta seguendo il sentiero che conosceva bene. Camminava piano, tenendo stretto il cestino tra le mani.\n\nIntorno a lei c’erano alberi alti, foglie verdi e tanti piccoli suoni.";
-"story.redhood.scene2.text2" = "Gli uccellini cantavano sui rami e alcune farfalle volavano leggere tra i fiori.\n\nCappuccetto Rosso si fermò per un momento a guardare i fiori colorati vicino al sentiero. Erano belli e profumati.\n\nPoi si ricordò della nonna e riprese a camminare.\n\n«Devo arrivare presto,» pensò. «La nonna mi sta aspettando.»";
+"story.redhood.scene2.title" = "Scena 2";
+"story.redhood.scene2.text1" = "However, as soon as she entered the forest, she forgot her promise. She saw a patch of delicious wild strawberries and delicious flowers, so she put her basket down.";
+"story.redhood.scene2.text2" = "\"Grandmother will love these!\" she thought, running around to pick them.\n\nSuddenly, she realized how late it was, rushed back to grab her basket, and hurried along the trail.";
 
-"story.redhood.scene3.title" = "Scena 3 — L’incontro con il lupo";
-"story.redhood.scene3.text1" = "Mentre Cappuccetto Rosso camminava lungo il sentiero, da dietro un albero comparve un lupo.\n\nIl lupo la guardò e le parlò con voce gentile.\n\n«Buongiorno, bambina. Dove vai con quel bel cestino?»";
-"story.redhood.scene3.text2" = "Cappuccetto Rosso, che era educata, rispose: «Sto andando dalla mia nonna. Non si sente bene e le porto qualcosa da mangiare.»\n\nIl lupo ascoltò con attenzione. Poi fece un sorriso furbo.\n\n«Che brava bambina,» disse.\n\nMa dentro di sé il lupo stava già pensando a un piano per arrivare prima di lei alla casa della nonna.";
+"story.redhood.scene3.title" = "Scena 3";
+"story.redhood.scene3.text1" = "As the woods grew darker, a large, dark wolf stepped out from behind the trees. Little Red Riding Hood's heart began to race.\n\n\"Where are you going all alone, little girl?\" the wolf asked in a deep voice.";
+"story.redhood.scene3.text2" = "\"I'm going to my grandmother's cottage at the end of this path to bring her some cakes,\" she replied timidly.\n\nThe clever wolf hatched a quick plan. \"Have a safe trip!\" he said, and instantly vanished into the bushes.";
 
-"story.redhood.scene4.title" = "Scena 4 — Il lupo corre dalla nonna";
-"story.redhood.scene4.text1" = "Appena Cappuccetto Rosso riprese il cammino, il lupo corse via veloce attraverso la foresta.\n\nPassò tra gli alberi, saltò sopra le radici e seguì una scorciatoia nascosta.";
-"story.redhood.scene4.text2" = "In poco tempo arrivò davanti alla casa della nonna. La casetta era piccola e tranquilla, con una porta di legno e una finestra vicino al giardino.\n\nIl lupo si avvicinò alla porta e bussò.\n\nToc, toc, toc.\n\nDa dentro, la nonna chiese: «Chi è?»\n\nIl lupo cercò di fare una voce dolce e rispose: «Sono io, Cappuccetto Rosso.»";
+"story.redhood.scene4.title" = "Scena 4";
+"story.redhood.scene4.text1" = "The wolf ran as fast as he could, thinking only of his next meal. He arrived at the cottage and knocked gently on the door. Knock! Knock!";
+"story.redhood.scene4.text2" = "\"Who is it?\" asked the grandmother.\n\n\"It's me, Little Red Riding Hood!\" the wolf replied, disguising his voice.\n\n\"Come in, dear, the door is unlocked,\" said the old woman.";
 
-"story.redhood.scene5.title" = "Scena 5 — Il lupo finge di essere la nonna";
-"story.redhood.scene5.text1" = "Il lupo entrò nella casa della nonna. La nonna, capendo che qualcosa non andava, si nascose al sicuro in una piccola stanza.";
-"story.redhood.scene5.text2" = "Il lupo, invece, andò nella camera della nonna. Vide il suo letto, il suo cuscino e il suo berretto da notte.\n\nAllora si mise il berretto della nonna e si infilò sotto le coperte. Cercò di sembrare proprio come lei.\n\nPoi rimase fermo nel letto, aspettando Cappuccetto Rosso.\n\nLa stanza era silenziosa, ma il lupo teneva le orecchie ben aperte.";
+"story.redhood.scene5.title" = "Scena 5";
+"story.redhood.scene5.text1" = "The wolf burst into the room, but the clever grandmother quickly hid inside the closet to avoid being found.";
+"story.redhood.scene5.text2" = "Finding the room empty, the wolf put on her nightcap, climbed into her bed, and pulled up the covers.";
 
-"story.redhood.scene6.title" = "Scena 6 — Cappuccetto Rosso arriva alla casa";
-"story.redhood.scene6.text1" = "Dopo aver camminato ancora un po’, Cappuccetto Rosso arrivò finalmente alla casa della nonna.\n\nSi fermò davanti alla porta e bussò piano.\n\nToc, toc, toc.";
-"story.redhood.scene6.text2" = "Da dentro si sentì una voce strana, un po’ roca.\n\n«Entra pure, bambina mia.»\n\nCappuccetto Rosso rimase sorpresa. La voce della nonna sembrava diversa dal solito.\n\nAprì piano la porta, entrò nella casa e si avvicinò alla camera.";
+"story.redhood.scene6.title" = "Scena 6";
+"story.redhood.scene6.text1" = "Soon after, Little Red Riding Hood arrived and knocked.\n\n\"Come in, my sweet child,\" the wolf whispered, trying to sound sweet.";
+"story.redhood.scene6.text2" = "The girl stepped inside but noticed something was very strange.";
 
-"story.redhood.scene7.title" = "Scena 7 — Qualcosa non va";
-"story.redhood.scene7.text1" = "Cappuccetto Rosso entrò nella camera e vide la “nonna” sdraiata nel letto. Si avvicinò con attenzione.\n\nGuardò il viso sotto il berretto e capì subito che qualcosa era strano.\n\n«Nonna,» disse, «che orecchie grandi che hai!»\n\n«Sono per sentirti meglio,» rispose il lupo.";
-"story.redhood.scene7.text2" = "Cappuccetto Rosso fece un altro passo.\n\n«Nonna, che occhi grandi che hai!»\n\n«Sono per vederti meglio,» disse il lupo.\n\nPoi Cappuccetto Rosso vide i denti.\n\n«Nonna… che denti grandi che hai!»\n\nA quel punto capì che quella non era la sua nonna.";
+"story.redhood.scene7.title" = "Scena 7";
+"story.redhood.scene7.text1" = "\"Oh, Grandmother, what a deep voice you have!\"\n\n\"The better to speak to you, my dear.\"\n\n\"And what big eyes you have!\"\n\n\"The better to see you, my dear.\"";
+"story.redhood.scene7.text2" = "\"And what big hands you have!\"\n\n\"The better to hug you, my dear.\"\n\n\"But Grandmother... what a giant mouth you have!\" she gasped.\n\n\"The better to EAT YOU!\" the wolf roared.\n\nHe jumped out of bed and swallowed Little Red Riding Hood in an instant. Completely satisfied, the wolf fell fast asleep and began to snore loudly.";
 
-"story.redhood.scene8.title" = "Scena 8 — Il lieto finale";
-"story.redhood.scene8.text1" = "Cappuccetto Rosso si spaventò e chiamò subito aiuto.\n\n«Aiuto! Aiuto!»\n\nLa sua voce arrivò fuori dalla casa. Poco dopo, alcune persone che passavano vicino al sentiero sentirono il grido e corsero alla casetta della nonna.";
-"story.redhood.scene8.text2" = "Il lupo, vedendo arrivare aiuto, si spaventò a sua volta. Saltò giù dal letto e scappò via nella foresta, senza voltarsi indietro.\n\nLa nonna uscì dalla piccola stanza dove si era nascosta. Cappuccetto Rosso corse ad abbracciarla.\n\nFinalmente erano entrambe al sicuro.\n\nLa nonna sorrise e disse: «Grazie, bambina mia. Sei stata coraggiosa.»\n\nCappuccetto Rosso sorrise anche lei. Da quel giorno imparò che, quando si cammina da soli, bisogna sempre stare attenti e non fidarsi degli sconosciuti.";
+"story.redhood.scene8.title" = "Scena 8";
+"story.redhood.scene8.text1" = "A hunter passing by heard the unusual noise coming from the cottage. He peeked through the window and saw the notorious wolf sleeping on the bed.\n\n\"I've been tracking you for a long time!\" the hunter whispered. He carefully pointed his rifle and... BOOM! The wolf was dead.\n\nThe hunter then used a knife to open the beast's stomach, and to his absolute surprise, Little Red Riding Hood stepped out completely safe and sound. Hearing the noise, the grandmother finally came out of the closet.";
+"story.redhood.scene8.text2" = "\"Thank you! You saved us just in time,\" the grandmother cheered.\n\nAt sunset, the mother arrived at the cottage, terrified because her daughter was late. When she saw everyone safe, she wept with joy.\n\nAs Little Red Riding Hood and her mother walked back home together under the trees, the little girl held her mother's hand tightly and said: \"From now on, we will always stick to the path, without any distractions!\"";
 
 /* Image placeholders */
 "Immagine di Introduzione" = "Immagine di Introduzione";

@@ -201,6 +201,29 @@ struct StoryScene: Identifiable {
     let rewardImageName: String
 }
 
+enum PageLayoutType {
+    case fullText
+    case textTopImageBottom
+    case imageTopTextBottom
+    case textLeftImageRight
+    case imageLeftTextRight
+    case textTopImageCenterTextBottom
+    case imageTopLeftTextWrap
+    case imageTopRightTextWrap
+    case textTopImageBottomLeftTextWrap
+    case textTopImageBottomRightTextWrap
+    case poemCenterText
+    case gatheredBottomRight
+    case gatheredTopLeft
+}
+
+struct PageContent {
+    let layout: PageLayoutType
+    let textChunk1: String
+    let textChunk2: String?
+    let imageName: String?
+}
+
 struct BookView: View {
     static let redHoodScenes = [
         StoryScene(
@@ -323,23 +346,22 @@ struct BookView: View {
                         }
                     }
                     .offset(x: isCompact ? 15 : 30, y: isCompact ? 10 : 20)
-                }
-                .aspectRatio(1.5, contentMode: .fit)
-                .padding(isCompact ? 12 : 50)
-                
-                // Close Button
-                VStack {
+                    // Close Button inside the book on the top left
                     HStack {
-                        Spacer()
                         Button(action: onDismiss) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: isCompact ? 30 : 40))
-                                .foregroundColor(.white)
-                                .padding(isCompact ? 12 : 20)
+                                .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
+                                .background(Circle().fill(Color(red: 0.85, green: 0.8, blue: 0.65)))
                         }
+                        .padding(.top, isCompact ? 10 : 16)
+                        .padding(.leading, isCompact ? 16 : 24)
+                        
+                        Spacer()
                     }
-                    Spacer()
                 }
+                .aspectRatio(1.5, contentMode: .fit)
+                .padding(isCompact ? 12 : 50)
             }
             .onAppear {
                 let initialCompact = geom.size.width < 600
@@ -384,9 +406,8 @@ struct BookView: View {
     }
     
     private func paginateText(_ text: String, isDyslexiaEnabled: Bool, isCompact: Bool) -> [String] {
-        let paragraphs = text.components(separatedBy: "\n\n")
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
+        // Split by words to allow continuous flowing text without forcing double line breaks
+        let words = text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
         
         let maxChars = isCompact 
             ? (isDyslexiaEnabled ? 130 : 180) 
@@ -395,15 +416,24 @@ struct BookView: View {
         var pages: [String] = []
         var currentPage = ""
         
-        for paragraph in paragraphs {
-            if currentPage.isEmpty {
-                currentPage = paragraph
-            } else {
-                if currentPage.count + paragraph.count + 2 > maxChars {
+        for word in words {
+            // Respect intentional double line breaks if we added them to separate events
+            if word == "[EVENT_BREAK]" {
+                if !currentPage.isEmpty {
                     pages.append(currentPage)
-                    currentPage = paragraph
+                    currentPage = ""
+                }
+                continue
+            }
+            
+            if currentPage.isEmpty {
+                currentPage = word
+            } else {
+                if currentPage.count + word.count + 1 > maxChars {
+                    pages.append(currentPage)
+                    currentPage = word
                 } else {
-                    currentPage += "\n\n" + paragraph
+                    currentPage += " " + word
                 }
             }
         }
@@ -415,20 +445,165 @@ struct BookView: View {
         return pages
     }
     
+    private func generateEditorialPages(text: String, availableImages: [String], isDyslexiaEnabled: Bool, isCompact: Bool) -> [PageContent] {
+        let words = text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        var pages: [PageContent] = []
+        var currentImageIndex = 0
+        var currentWordIndex = 0
+        var pageIndex = 0
+        
+        let layouts: [PageLayoutType] = [
+            .imageTopLeftTextWrap,
+            .gatheredBottomRight,
+            .textTopImageBottomRightTextWrap,
+            .poemCenterText,
+            .imageTopRightTextWrap,
+            .gatheredTopLeft,
+            .textTopImageBottomLeftTextWrap,
+            .fullText
+        ]
+        
+        while currentWordIndex < words.count {
+            let layout = layouts[pageIndex % layouts.count]
+            pageIndex += 1
+            
+            var maxChars = 0
+            var targetChars1 = 0
+            var requiresTwoChunks = false
+            
+            switch layout {
+            case .fullText:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 180 : 300) : (isDyslexiaEnabled ? 300 : 500)
+                targetChars1 = maxChars
+            case .poemCenterText:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 100 : 140) : (isDyslexiaEnabled ? 160 : 250)
+                targetChars1 = maxChars
+            case .gatheredBottomRight, .gatheredTopLeft:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 80 : 110) : (isDyslexiaEnabled ? 130 : 200)
+                targetChars1 = maxChars
+            case .textTopImageBottom, .imageTopTextBottom:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 100 : 120) : (isDyslexiaEnabled ? 150 : 200)
+                targetChars1 = maxChars
+            case .textLeftImageRight, .imageLeftTextRight:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 80 : 100) : (isDyslexiaEnabled ? 120 : 180)
+                targetChars1 = maxChars
+            case .textTopImageCenterTextBottom:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 110 : 140) : (isDyslexiaEnabled ? 160 : 240)
+                targetChars1 = maxChars / 2
+                requiresTwoChunks = true
+            case .imageTopLeftTextWrap, .imageTopRightTextWrap:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 120 : 180) : (isDyslexiaEnabled ? 200 : 320)
+                targetChars1 = isCompact ? (isDyslexiaEnabled ? 40 : 70) : (isDyslexiaEnabled ? 90 : 130)
+                requiresTwoChunks = true
+            case .textTopImageBottomLeftTextWrap, .textTopImageBottomRightTextWrap:
+                maxChars = isCompact ? (isDyslexiaEnabled ? 120 : 180) : (isDyslexiaEnabled ? 200 : 320)
+                targetChars1 = isCompact ? (isDyslexiaEnabled ? 80 : 120) : (isDyslexiaEnabled ? 100 : 180)
+                requiresTwoChunks = true
+            }
+            
+            var remainingChars = 0
+            for i in currentWordIndex..<words.count {
+                remainingChars += words[i].count + 1
+            }
+            
+            // Orphan page prevention: if the remaining text is slightly larger than maxChars (up to ~100 characters, ~1-2 sentences),
+            // absorb it into the current page instead of leaving a standalone sentence on the next page.
+            if remainingChars > maxChars && remainingChars <= maxChars + 100 {
+                maxChars = remainingChars
+                if !requiresTwoChunks {
+                    targetChars1 = maxChars
+                }
+            }
+            
+            var chunk1 = ""
+            var chunk2: String? = nil
+            while currentWordIndex < words.count {
+                let word = words[currentWordIndex]
+                if chunk1.isEmpty {
+                    chunk1 = word
+                } else if chunk1.count + word.count + 1 <= targetChars1 {
+                    chunk1 += " " + word
+                } else {
+                    break
+                }
+                currentWordIndex += 1
+            }
+            
+            if requiresTwoChunks {
+                var chunk2Text = ""
+                let targetChars2 = maxChars - chunk1.count
+                while currentWordIndex < words.count {
+                    let word = words[currentWordIndex]
+                    if chunk2Text.isEmpty {
+                        chunk2Text = word
+                    } else if chunk2Text.count + word.count + 1 <= targetChars2 {
+                        chunk2Text += " " + word
+                    } else {
+                        break
+                    }
+                    currentWordIndex += 1
+                }
+                if !chunk2Text.isEmpty {
+                    chunk2 = chunk2Text
+                }
+            }
+            let layoutUsesImage: Bool
+            switch layout {
+            case .fullText, .poemCenterText, .gatheredBottomRight, .gatheredTopLeft:
+                layoutUsesImage = false
+            default:
+                layoutUsesImage = true
+            }
+            
+            var imageName: String? = nil
+            if layoutUsesImage && currentImageIndex < availableImages.count {
+                imageName = availableImages[currentImageIndex]
+                currentImageIndex += 1
+            }
+            
+            let finalLayout = (layoutUsesImage && imageName == nil) ? .fullText : layout
+            let finalChunk1 = (finalLayout == .fullText && chunk2 != nil) ? (chunk1 + " " + chunk2!) : chunk1
+            let finalChunk2 = (finalLayout == .fullText) ? nil : chunk2
+            
+            pages.append(PageContent(layout: finalLayout, textChunk1: finalChunk1, textChunk2: finalChunk2, imageName: imageName))
+        }
+        
+        return pages
+    }
+    
     private func buildPagesAndBookmarks(isCompact: Bool) {
         var newPages: [AnyView] = []
         var newBookmarks: [FairyTaleBookmark] = []
         
         let isDyslexiaEnabled = UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey)
-        let pagePadding: CGFloat = isCompact ? 16 : 40
-        let titleFont = isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)
-        let textFont = isCompact ? Font.app(.subheadline, weight: .regular) : Font.app(.title3, weight: .regular)
+        // Made padding smaller to make pages more compact
+        let pagePadding: CGFloat = isCompact ? 10 : 24
+        
+        let titleFont = isDyslexiaEnabled ? 
+            (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
+            (isCompact ? Font.custom("Alegreya", size: 24).weight(.bold) : Font.custom("Alegreya", size: 36).weight(.bold))
+            
+        let textFont = isDyslexiaEnabled ? 
+            (isCompact ? Font.app(.subheadline, weight: .regular) : Font.app(.title3, weight: .regular)) :
+            (isCompact ? Font.custom("Alegreya", size: 18) : Font.custom("Alegreya", size: 26))
+            
+        let dropCapFont = isDyslexiaEnabled ?
+            (isCompact ? Font.app(.largeTitle, weight: .bold) : Font.app(size: 48, weight: .bold)) :
+            (isCompact ? Font.custom("Alegreya", size: 40).weight(.bold) : Font.custom("Alegreya", size: 60).weight(.bold))
+            
         let lineSpacing: CGFloat = isCompact ? 3 : 6
         
-        func pageContainer<Content: View>(isLeft: Bool, @ViewBuilder content: () -> Content) -> AnyView {
+        func pageContainer<Content: View>(isLeft: Bool, pageNumber: Int? = nil, showVines: Bool = false, @ViewBuilder content: () -> Content) -> AnyView {
             AnyView(
                 ZStack {
-                    Color(red: 0.96, green: 0.92, blue: 0.82)
+                    // Color matching the page edges (stack)
+                    Color(red: 0.85, green: 0.8, blue: 0.65)
+                    
+                    PageBackgroundDecal(pageNumber: pageNumber ?? 1)
+                        .allowsHitTesting(false)
+                    
+                    FairyTaleFrame(isLeft: isLeft, pageNumber: pageNumber ?? 1, showVines: showVines)
+                        .allowsHitTesting(false)
                     
                     HStack(spacing: 0) {
                         if isLeft {
@@ -444,6 +619,20 @@ struct BookView: View {
                     
                     content()
                         .padding(pagePadding)
+                        
+                    if let pageNum = pageNumber {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Text("\(pageNum)")
+                                    .font(textFont)
+                                    .foregroundColor(Color(red: 0.4, green: 0.3, blue: 0.2))
+                                    .padding(.bottom, isCompact ? 16 : 24)
+                                Spacer()
+                            }
+                        }
+                    }
                 }
                 .clipped()
             )
@@ -456,7 +645,7 @@ struct BookView: View {
                         .font(.system(size: isCompact ? 30 : 60))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
                     Text(subtitle)
-                        .font(isCompact ? .app(.subheadline) : .app(.title3))
+                        .font(isDyslexiaEnabled ? .app(.subheadline) : Font.custom("Alegreya", size: isCompact ? 18 : 26))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
                         .multilineTextAlignment(.center)
                 }
@@ -464,7 +653,7 @@ struct BookView: View {
             let emptyRight = pageContainer(isLeft: false) {
                 VStack(alignment: .leading) {
                     Text(title)
-                        .font(isCompact ? .app(.headline) : .app(.title))
+                        .font(titleFont)
                         .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
                     Spacer()
                 }
@@ -490,149 +679,338 @@ struct BookView: View {
             if visibleScenes.isEmpty {
                 addPlaceholder(title: redRidingHood.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
             } else {
+                let textColors = Color(red: 0.25, green: 0.15, blue: 0.1) // Dark warm brown
+                let dropCapColor = Color(red: 0.6, green: 0.1, blue: 0.1) // Deep Red
+                
+                // --- Pagina Immagine (Sinistra) e Pagina Titolo (Destra) ---
+                let insideCover = pageContainer(isLeft: true, pageNumber: nil, showVines: true) {
+                    GeometryReader { geo in
+                        Image("FairytaleTitleLandscape")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geo.size.width, height: geo.size.height)
+                            .mask(
+                                Rectangle()
+                                    .fill(Color.black)
+                                    .padding(isCompact ? 20 : 40)
+                                    .blur(radius: isCompact ? 30 : 60)
+                            )
+                            .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                    }
+                    .padding(-pagePadding) // Annulla il padding per occupare tutta la pagina e sovrapporsi alla cornice
+                }
+                
+                let titleCover = pageContainer(isLeft: false, pageNumber: nil, showVines: true) {
+                    VStack {
+                        Spacer()
+                        Text(redRidingHood.title)
+                            .font(isCompact ? Font.custom("Alegreya", size: 50).italic() : Font.custom("Alegreya", size: 70).italic())
+                            .foregroundColor(.black)
+                            .kerning(isCompact ? 1 : 2)
+                            .shadow(color: .black.opacity(0.15), radius: 2, x: 1, y: 2)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                        Spacer()
+                    }
+                }
+                
+                newPages.append(insideCover)
+                newPages.append(titleCover)
+                // ------------------------------------------
+                
                 var pageIndex = newPages.count
+                
+                var fullContinuousText = ""
+                var availableImages: [String] = []
+                
                 for scene in visibleScenes {
-                    // Page 1: Chapter Title + Intro Image
-                    let introPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                        VStack(spacing: isCompact ? 10 : 20) {
-                            Text(lm.t(scene.titleKey))
-                                .font(titleFont)
-                                .foregroundColor(Color(red: 0.3, green: 0.15, blue: 0.1))
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, isCompact ? 10 : 20)
-
-                            Rectangle()
-                                .fill(Color(red: 0.55, green: 0.31, blue: 0.09).opacity(0.3))
-                                .frame(height: 1.5)
-                                .frame(width: isCompact ? 40 : 80)
-
-                            Spacer(minLength: 0)
-
-                            if UIImage(named: scene.introImageName) != nil {
-                                Image(scene.introImageName)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(isCompact ? 8 : 12)
-                                    .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
-                                    .padding(.horizontal, isCompact ? 10 : 20)
-                            } else {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                        .fill(LinearGradient(
-                                            colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
-                                            startPoint: .topLeading, endPoint: .bottomTrailing
-                                        ))
-
-                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                        .strokeBorder(
-                                            Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
-                                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
-                                        )
-
-                                    VStack(spacing: isCompact ? 4 : 8) {
-                                        Image(systemName: "photo.on.rectangle.angled")
-                                            .font(.system(size: isCompact ? 20 : 32))
-                                            .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
-                                        Text(lm.t("Immagine di Introduzione"))
-                                            .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
-                                            .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
+                    let sceneText1 = lm.t(scene.text1Key).trimmingCharacters(in: .whitespacesAndNewlines)
+                    let sceneText2 = lm.t(scene.text2Key).trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    if !sceneText1.isEmpty {
+                        fullContinuousText += (fullContinuousText.isEmpty ? "" : " ") + sceneText1
+                    }
+                    if !sceneText2.isEmpty {
+                        fullContinuousText += (fullContinuousText.isEmpty ? "" : " ") + sceneText2
+                    }
+                    
+                    if UIImage(named: scene.introImageName) != nil {
+                        availableImages.append(scene.introImageName)
+                    }
+                    if UIImage(named: scene.rewardImageName) != nil {
+                        availableImages.append(scene.rewardImageName)
+                    }
+                }
+                
+                let editorialPages = generateEditorialPages(
+                    text: fullContinuousText, 
+                    availableImages: availableImages, 
+                    isDyslexiaEnabled: isDyslexiaEnabled, 
+                    isCompact: isCompact
+                )
+                
+                for (i, pageContent) in editorialPages.enumerated() {
+                    let isFirstPage = (i == 0)
+                    let imgHeight: CGFloat = isCompact ? 160 : 280
+                    
+                    let page = pageContainer(isLeft: pageIndex % 2 == 0, pageNumber: pageIndex + 1) {
+                        VStack(alignment: .leading, spacing: isCompact ? 8 : 12) {
+                            
+                            switch pageContent.layout {
+                            case .fullText:
+                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.vertical, isCompact ? 10 : 15)
+                                Spacer(minLength: 0)
+                                
+                            case .poemCenterText:
+                                Spacer()
+                                HStack {
+                                    Spacer(minLength: isCompact ? 30 : 60)
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .center)
+                                        .multilineTextAlignment(.center)
+                                    Spacer(minLength: isCompact ? 30 : 60)
+                                }
+                                Spacer()
+                                
+                            case .gatheredBottomRight:
+                                Spacer()
+                                HStack {
+                                    Spacer(minLength: isCompact ? 60 : 120)
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .trailing)
+                                        .multilineTextAlignment(.trailing)
+                                }
+                                .padding(.bottom, isCompact ? 20 : 40)
+                                .padding(.trailing, isCompact ? 20 : 35)
+                                
+                            case .gatheredTopLeft:
+                                HStack {
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .leading)
+                                        .multilineTextAlignment(.leading)
+                                    Spacer(minLength: isCompact ? 60 : 120)
+                                }
+                                .padding(.top, isCompact ? 20 : 40)
+                                .padding(.leading, isCompact ? 20 : 35)
+                                Spacer()
+                                
+                            case .textTopImageBottom:
+                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.vertical, isCompact ? 10 : 15)
+                                Spacer(minLength: 10)
+                                if let imgName = pageContent.imageName {
+                                    editorialImage(imgName: imgName, height: imgHeight)
+                                }
+                                Spacer(minLength: 0)
+                                
+                            case .imageTopTextBottom:
+                                if let imgName = pageContent.imageName {
+                                    editorialImage(imgName: imgName, height: imgHeight)
+                                        .padding(.top, isCompact ? 10 : 20)
+                                }
+                                Spacer(minLength: 10)
+                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.vertical, isCompact ? 10 : 15)
+                                Spacer(minLength: 0)
+                                
+                            case .textLeftImageRight:
+                                HStack(alignment: .top, spacing: 15) {
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    if let imgName = pageContent.imageName {
+                                        Image(imgName)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: isCompact ? 120 : 200)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .accessibilityHidden(true)
                                     }
                                 }
-                                .aspectRatio(16/9, contentMode: .fit)
-                                .padding(.horizontal, isCompact ? 10 : 20)
-                            }
-
-                            Spacer(minLength: 0)
-                        }
-                        .padding(.vertical, isCompact ? 12 : 30)
-                    }
-                    newPages.append(introPage)
-                    pageIndex += 1
-
-                    // Text Pages
-                    let fullText = lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
-                    let textPages = paginateText(fullText, isDyslexiaEnabled: isDyslexiaEnabled, isCompact: isCompact)
-
-                    for chunk in textPages {
-                        let textPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                            VStack(alignment: .leading, spacing: isCompact ? 8 : 16) {
-                                Text(chunk)
-                                    .font(textFont)
-                                    .foregroundColor(Color(red: 0.2, green: 0.1, blue: 0.05))
-                                    .lineSpacing(lineSpacing)
-                                    .multilineTextAlignment(.leading)
-                                    .padding(.horizontal, isCompact ? 5 : 10)
-                            }
-                            .padding(.vertical, isCompact ? 10 : 20)
-                        }
-                        newPages.append(textPage)
-                        pageIndex += 1
-                    }
-
-                    // Filler Page (if total scene pages is odd, we balance to keep it double-sided)
-                    if textPages.count % 2 != 0 {
-                        let fillerPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                            VStack {
-                                Spacer()
-                                Text("🌸")
-                                    .font(.system(size: isCompact ? 18 : 30))
-                                    .opacity(0.3)
-                                Spacer()
-                            }
-                        }
-                        newPages.append(fillerPage)
-                        pageIndex += 1
-                    }
-
-                    // Reward Image Page
-                    let rewardPage = pageContainer(isLeft: pageIndex % 2 == 0) {
-                        VStack {
-                            Spacer()
-                            if UIImage(named: scene.rewardImageName) != nil {
-                                Image(scene.rewardImageName)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(isCompact ? 8 : 12)
-                                    .shadow(color: .black.opacity(0.15), radius: isCompact ? 3 : 6, x: 0, y: isCompact ? 2 : 4)
-                                    .padding(.horizontal, isCompact ? 10 : 20)
-                            } else {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                        .fill(LinearGradient(
-                                            colors: [Color(red: 0.98, green: 0.96, blue: 0.92), Color(red: 0.90, green: 0.85, blue: 0.75)],
-                                            startPoint: .topLeading, endPoint: .bottomTrailing
-                                        ))
-
-                                    RoundedRectangle(cornerRadius: isCompact ? 8 : 12)
-                                        .strokeBorder(
-                                            Color(red: 0.6, green: 0.4, blue: 0.2).opacity(0.5),
-                                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
-                                        )
-
-                                    VStack(spacing: isCompact ? 4 : 8) {
-                                        Image(systemName: "photo.on.rectangle")
-                                            .font(.system(size: isCompact ? 20 : 32))
-                                            .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.15))
-                                        Text(lm.t("Immagine di Ricompensa"))
-                                            .font(.app(isCompact ? .caption : .subheadline, weight: .bold))
-                                            .foregroundColor(Color(red: 0.4, green: 0.25, blue: 0.1))
+                                .padding(.horizontal, isCompact ? 20 : 35)
+                                .padding(.vertical, isCompact ? 10 : 15)
+                                Spacer(minLength: 0)
+                                
+                            case .imageLeftTextRight:
+                                HStack(alignment: .top, spacing: 15) {
+                                    if let imgName = pageContent.imageName {
+                                        Image(imgName)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: isCompact ? 120 : 200)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .accessibilityHidden(true)
                                     }
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                 }
-                                .aspectRatio(16/9, contentMode: .fit)
-                                .padding(.horizontal, isCompact ? 10 : 20)
+                                .padding(.horizontal, isCompact ? 20 : 35)
+                                .padding(.vertical, isCompact ? 10 : 15)
+                                Spacer(minLength: 0)
+                                
+                            case .textTopImageCenterTextBottom:
+                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.top, isCompact ? 10 : 15)
+                                Spacer(minLength: 5)
+                                if let imgName = pageContent.imageName {
+                                    editorialImage(imgName: imgName, height: imgHeight * 0.8)
+                                }
+                                Spacer(minLength: 5)
+                                if let chunk2 = pageContent.textChunk2 {
+                                    editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        .padding(.horizontal, isCompact ? 20 : 35)
+                                        .padding(.bottom, isCompact ? 10 : 15)
+                                }
+                                Spacer(minLength: 0)
+                                
+                            case .imageTopLeftTextWrap:
+                                VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
+                                    HStack(alignment: .top, spacing: 15) {
+                                        if let imgName = pageContent.imageName {
+                                            Image(imgName)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: isCompact ? 110 : 180)
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .accessibilityHidden(true)
+                                        }
+                                        editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    }
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.top, isCompact ? 10 : 15)
+                                    
+                                    if let chunk2 = pageContent.textChunk2 {
+                                        editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                            .padding(.horizontal, isCompact ? 20 : 35)
+                                            .padding(.bottom, isCompact ? 10 : 15)
+                                    }
+                                    Spacer(minLength: 0)
+                                }
+                                
+                            case .imageTopRightTextWrap:
+                                VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
+                                    HStack(alignment: .top, spacing: 15) {
+                                        editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        if let imgName = pageContent.imageName {
+                                            Image(imgName)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: isCompact ? 110 : 180)
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .accessibilityHidden(true)
+                                        }
+                                    }
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.top, isCompact ? 10 : 15)
+                                    
+                                    if let chunk2 = pageContent.textChunk2 {
+                                        editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                            .padding(.horizontal, isCompact ? 20 : 35)
+                                            .padding(.bottom, isCompact ? 10 : 15)
+                                    }
+                                    Spacer(minLength: 0)
+                                }
+                                
+                            case .textTopImageBottomLeftTextWrap:
+                                VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        .padding(.horizontal, isCompact ? 20 : 35)
+                                        .padding(.top, isCompact ? 10 : 15)
+                                        
+                                    HStack(alignment: .top, spacing: 15) {
+                                        if let imgName = pageContent.imageName {
+                                            Image(imgName)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: isCompact ? 110 : 180)
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .accessibilityHidden(true)
+                                        }
+                                        if let chunk2 = pageContent.textChunk2 {
+                                            editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        }
+                                    }
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.bottom, isCompact ? 10 : 15)
+                                    Spacer(minLength: 0)
+                                }
+                                
+                            case .textTopImageBottomRightTextWrap:
+                                VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
+                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        .padding(.horizontal, isCompact ? 20 : 35)
+                                        .padding(.top, isCompact ? 10 : 15)
+                                        
+                                    HStack(alignment: .top, spacing: 15) {
+                                        if let chunk2 = pageContent.textChunk2 {
+                                            editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        }
+                                        if let imgName = pageContent.imageName {
+                                            Image(imgName)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: isCompact ? 110 : 180)
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .accessibilityHidden(true)
+                                        }
+                                    }
+                                    .padding(.horizontal, isCompact ? 20 : 35)
+                                    .padding(.bottom, isCompact ? 10 : 15)
+                                    Spacer(minLength: 0)
+                                }
                             }
-                            Spacer()
                         }
-                        .padding(.vertical, isCompact ? 12 : 30)
+                        .padding(.vertical, isCompact ? 10 : 20)
                     }
-                    newPages.append(rewardPage)
+                    newPages.append(page)
                     pageIndex += 1
                 }
             }
         }
 
+        if newPages.count % 2 != 0 {
+            let emptyPage = pageContainer(isLeft: newPages.count % 2 == 0, pageNumber: newPages.count + 1) {
+                Spacer()
+            }
+            newPages.append(emptyPage)
+        }
+
         self.bookPages = newPages
         self.bookmarks = newBookmarks
+    }
+    
+    @ViewBuilder
+    private func editorialText(chunk: String, isFirst: Bool, textFont: Font, dropCapFont: Font, textColor: Color, dropCapColor: Color, lineSpacing: CGFloat, alignment: TextAlignment = .leading) -> some View {
+        VStack(alignment: alignment == .center ? .center : (alignment == .trailing ? .trailing : .leading)) {
+            if isFirst && !chunk.isEmpty {
+                let firstChar = String(chunk.prefix(1))
+                let restOfString = String(chunk.dropFirst())
+                (Text(firstChar).font(dropCapFont).foregroundColor(dropCapColor)
+                 + Text(restOfString).font(textFont).foregroundColor(textColor))
+                .lineSpacing(lineSpacing + 4)
+                .multilineTextAlignment(alignment)
+            } else if !chunk.isEmpty {
+                Text(chunk)
+                    .font(textFont)
+                    .foregroundColor(textColor)
+                    .lineSpacing(lineSpacing + 4)
+                    .multilineTextAlignment(alignment)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: alignment == .center ? .center : (alignment == .trailing ? .trailing : .leading))
+    }
+    
+    @ViewBuilder
+    private func editorialImage(imgName: String, height: CGFloat) -> some View {
+        HStack {
+            Spacer()
+            Image(imgName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: height)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .accessibilityHidden(true)
+            Spacer()
+        }
     }
 }
 
@@ -644,14 +1022,19 @@ private struct OpenBookBackground: View {
             let pw = w / 2
             
             ZStack {
-                // Leather Cover
+                // Leather Cover (Blue exterior)
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(LinearGradient(
-                        gradient: Gradient(colors: [Color(red: 0.25, green: 0.12, blue: 0.08), Color(red: 0.15, green: 0.06, blue: 0.04)]),
+                        gradient: Gradient(colors: [Color(red: 0.1, green: 0.25, blue: 0.5), Color(red: 0.05, green: 0.15, blue: 0.35)]),
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     ))
                     .frame(width: w + 40, height: h + 40)
                     .shadow(color: .black.opacity(0.8), radius: 20, x: 0, y: 15)
+                
+                // Inner Cover Lining (Blue interior)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color(red: 0.15, green: 0.3, blue: 0.55))
+                    .frame(width: w + 20, height: h + 20)
                 
                 // Left Page Stack
                 ForEach(1...6, id: \.self) { i in
@@ -684,6 +1067,360 @@ private struct OpenBookBackground: View {
                     .offset(y: 5)
             }
             .position(x: w / 2, y: h / 2)
+        }
+    }
+}
+
+struct OrganicBlobMask: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width
+        let h = rect.height
+        
+        path.move(to: CGPoint(x: w * 0.05, y: h * 0.1))
+        path.addCurve(to: CGPoint(x: w * 0.95, y: h * 0.08),
+                      control1: CGPoint(x: w * 0.4, y: h * -0.05),
+                      control2: CGPoint(x: w * 0.6, y: h * 0.02))
+        path.addCurve(to: CGPoint(x: w * 0.92, y: h * 0.92),
+                      control1: CGPoint(x: w * 1.05, y: h * 0.4),
+                      control2: CGPoint(x: w * 0.98, y: h * 0.7))
+        path.addCurve(to: CGPoint(x: w * 0.08, y: h * 0.95),
+                      control1: CGPoint(x: w * 0.7, y: h * 1.05),
+                      control2: CGPoint(x: w * 0.3, y: h * 0.9))
+        path.addCurve(to: CGPoint(x: w * 0.05, y: h * 0.1),
+                      control1: CGPoint(x: w * -0.05, y: h * 0.6),
+                      control2: CGPoint(x: w * 0.02, y: h * 0.3))
+        
+        return path
+    }
+}
+
+struct FairyTaleFrame: View {
+    let isLeft: Bool
+    let pageNumber: Int
+    var showVines: Bool = false
+    
+    var body: some View {
+        GeometryReader { geom in
+            let w = geom.size.width
+            let h = geom.size.height
+            let cornerRadius: CGFloat = 20
+            let inset: CGFloat = 12
+            
+            ZStack {
+                // Outer gold line
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(Color(red: 0.75, green: 0.65, blue: 0.4), lineWidth: 2)
+                    .padding(inset)
+                
+                // Inner gold line
+                RoundedRectangle(cornerRadius: cornerRadius - 4)
+                    .stroke(Color(red: 0.75, green: 0.65, blue: 0.4), lineWidth: 1)
+                    .padding(inset + 4)
+                    
+                if showVines {
+                    TangledVines(inset: inset, cornerRadius: cornerRadius)
+                }
+                
+                // Corner ornaments
+                let ornamentColor = Color(red: 0.75, green: 0.65, blue: 0.4)
+                
+                // Top Left
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(ornamentColor)
+                    .font(.system(size: 16))
+                    .rotationEffect(.degrees(135))
+                    .position(x: inset + 8, y: inset + 8)
+                
+                // Top Right
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(ornamentColor)
+                    .font(.system(size: 16))
+                    .rotationEffect(.degrees(-135))
+                    .position(x: w - inset - 8, y: inset + 8)
+                
+                // Bottom Left
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(ornamentColor)
+                    .font(.system(size: 16))
+                    .rotationEffect(.degrees(45))
+                    .position(x: inset + 8, y: h - inset - 8)
+                
+                // Bottom Right
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(ornamentColor)
+                    .font(.system(size: 16))
+                    .rotationEffect(.degrees(-45))
+                    .position(x: w - inset - 8, y: h - inset - 8)
+                    
+                // Climbing Vine decoration varying per page
+                ClimbingVine(pageNumber: pageNumber, w: w, h: h, inset: inset)
+            }
+            // Mask the side near the spine to make it look like a real page
+            .padding(.trailing, isLeft ? -20 : 0)
+            .padding(.leading, !isLeft ? -20 : 0)
+            .clipped()
+        }
+    }
+}
+
+struct ClimbingVine: View {
+    let pageNumber: Int
+    let w: CGFloat
+    let h: CGFloat
+    let inset: CGFloat
+    
+    var body: some View {
+        ZStack {
+            let vineColor = Color(red: 0.75, green: 0.65, blue: 0.4) // Same as frame
+            
+            // Left edge, climbing from bottom to top
+            if (pageNumber * 5) % 2 == 0 || pageNumber % 4 == 1 {
+                Path { p in
+                    p.move(to: CGPoint(x: inset, y: h - inset)) // Start at bottom left
+                    for i in 1...7 {
+                        let stepY = (h - 2 * inset) / 7
+                        let y = (h - inset) - stepY * CGFloat(i)
+                        let prevY = (h - inset) - stepY * CGFloat(i - 1)
+                        let midY = (y + prevY) / 2
+                        let offset: CGFloat = i % 2 == 0 ? 10 : -10
+                        p.addQuadCurve(to: CGPoint(x: inset, y: y), control: CGPoint(x: inset + offset, y: midY))
+                    }
+                }
+                .stroke(vineColor, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                
+                ForEach(0..<7, id: \.self) { i in
+                    let stepY = (h - 2 * inset) / 7
+                    let yPos = (h - inset) - stepY * CGFloat(i) - stepY / 2
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(vineColor)
+                        .font(.system(size: 16))
+                        .rotationEffect(.degrees(i % 2 == 0 ? -30 : 30))
+                        .position(x: inset + (i % 2 == 0 ? 8 : -8), y: yPos)
+                }
+            }
+            
+            // Right edge, climbing from bottom to top
+            if (pageNumber * 11) % 2 == 0 || pageNumber % 4 == 3 {
+                Path { p in
+                    p.move(to: CGPoint(x: w - inset, y: h - inset)) // Start at bottom right
+                    for i in 1...7 {
+                        let stepY = (h - 2 * inset) / 7
+                        let y = (h - inset) - stepY * CGFloat(i)
+                        let prevY = (h - inset) - stepY * CGFloat(i - 1)
+                        let midY = (y + prevY) / 2
+                        let offset: CGFloat = i % 2 == 0 ? 10 : -10
+                        p.addQuadCurve(to: CGPoint(x: w - inset, y: y), control: CGPoint(x: w - inset + offset, y: midY))
+                    }
+                }
+                .stroke(vineColor, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                
+                ForEach(0..<7, id: \.self) { i in
+                    let stepY = (h - 2 * inset) / 7
+                    let yPos = (h - inset) - stepY * CGFloat(i) - stepY / 2
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(vineColor)
+                        .font(.system(size: 16))
+                        .rotationEffect(.degrees(i % 2 == 0 ? -30 : 30))
+                        .position(x: w - inset + (i % 2 == 0 ? -8 : 8), y: yPos)
+                }
+            }
+        }
+    }
+}
+
+struct PageBackgroundDecal: View {
+    let pageNumber: Int
+    
+    var body: some View {
+        GeometryReader { geom in
+            let w = geom.size.width
+            let h = geom.size.height
+            let decalColor = Color(red: 0.75, green: 0.65, blue: 0.4).opacity(0.15)
+            
+            ZStack {
+                let seed = pageNumber % 6
+                if seed == 0 {
+                    // Branch from top right
+                    Path { p in
+                        p.move(to: CGPoint(x: w, y: h * 0.1))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.6, y: h * 0.3), control: CGPoint(x: w * 0.9, y: h * 0.3))
+                        p.move(to: CGPoint(x: w * 0.8, y: h * 0.22))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.7, y: h * 0.15), control: CGPoint(x: w * 0.75, y: h * 0.18))
+                    }
+                    .stroke(decalColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 40))
+                        .rotationEffect(.degrees(45))
+                        .position(x: w * 0.6, y: h * 0.3)
+                } else if seed == 1 {
+                    // Branch from bottom left
+                    Path { p in
+                        p.move(to: CGPoint(x: 0, y: h * 0.8))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.5, y: h * 0.6), control: CGPoint(x: w * 0.2, y: h * 0.6))
+                        p.move(to: CGPoint(x: w * 0.2, y: h * 0.68))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.4, y: h * 0.75), control: CGPoint(x: w * 0.3, y: h * 0.75))
+                    }
+                    .stroke(decalColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 45))
+                        .rotationEffect(.degrees(135))
+                        .position(x: w * 0.5, y: h * 0.6)
+                } else if seed == 2 {
+                    // Branch from top left
+                    Path { p in
+                        p.move(to: CGPoint(x: 0, y: h * 0.2))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.4, y: h * 0.4), control: CGPoint(x: w * 0.1, y: h * 0.4))
+                    }
+                    .stroke(decalColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 35))
+                        .rotationEffect(.degrees(-45))
+                        .position(x: w * 0.4, y: h * 0.4)
+                } else if seed == 3 {
+                    // Tree silhouette bottom right
+                    Path { p in
+                        p.move(to: CGPoint(x: w * 0.8, y: h))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.85, y: h * 0.75), control: CGPoint(x: w * 0.75, y: h * 0.85))
+                        p.move(to: CGPoint(x: w * 0.85, y: h * 0.8))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.7, y: h * 0.65), control: CGPoint(x: w * 0.8, y: h * 0.7))
+                        p.move(to: CGPoint(x: w * 0.85, y: h * 0.75))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.95, y: h * 0.6), control: CGPoint(x: w * 0.9, y: h * 0.7))
+                    }
+                    .stroke(decalColor, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 35))
+                        .rotationEffect(.degrees(15))
+                        .position(x: w * 0.7, y: h * 0.65)
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 40))
+                        .rotationEffect(.degrees(-20))
+                        .position(x: w * 0.95, y: h * 0.6)
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 45))
+                        .rotationEffect(.degrees(-5))
+                        .position(x: w * 0.85, y: h * 0.75)
+                } else if seed == 4 {
+                    // Flowers on bottom center/left
+                    Path { p in
+                        p.move(to: CGPoint(x: w * 0.3, y: h))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.25, y: h * 0.85), control: CGPoint(x: w * 0.2, y: h * 0.95))
+                        p.move(to: CGPoint(x: w * 0.35, y: h))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.45, y: h * 0.8), control: CGPoint(x: w * 0.45, y: h * 0.9))
+                    }
+                    .stroke(decalColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    
+                    Image(systemName: "rosette")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 30))
+                        .position(x: w * 0.25, y: h * 0.85)
+                    Image(systemName: "rosette")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 40))
+                        .position(x: w * 0.45, y: h * 0.8)
+                } else if seed == 5 {
+                    // Wildflowers on top center
+                    Path { p in
+                        p.move(to: CGPoint(x: w * 0.5, y: 0))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.6, y: h * 0.15), control: CGPoint(x: w * 0.5, y: h * 0.1))
+                        p.move(to: CGPoint(x: w * 0.4, y: 0))
+                        p.addQuadCurve(to: CGPoint(x: w * 0.3, y: h * 0.1), control: CGPoint(x: w * 0.4, y: h * 0.05))
+                    }
+                    .stroke(decalColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    
+                    Image(systemName: "rosette")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 25))
+                        .position(x: w * 0.6, y: h * 0.15)
+                    Image(systemName: "rosette")
+                        .foregroundColor(decalColor)
+                        .font(.system(size: 30))
+                        .position(x: w * 0.3, y: h * 0.1)
+                }
+            }
+        }
+    }
+}
+
+struct TangledVines: View {
+    let inset: CGFloat
+    let cornerRadius: CGFloat
+    let vineColor = Color(red: 0.18, green: 0.40, blue: 0.15) // Deep organic green
+    let flowerColor = Color(red: 0.8, green: 0.2, blue: 0.3) // Soft red/pink
+    
+    var body: some View {
+        GeometryReader { geom in
+            let w = geom.size.width - inset * 2
+            let h = geom.size.height - inset * 2
+            
+            ZStack {
+                // Tralci (linee intrecciate)
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(vineColor.opacity(0.8), style: StrokeStyle(lineWidth: 1.5, dash: [10, 8]))
+                    .rotationEffect(.degrees(0.3))
+                    .padding(inset)
+                
+                RoundedRectangle(cornerRadius: cornerRadius + 2)
+                    .stroke(vineColor.opacity(0.6), style: StrokeStyle(lineWidth: 1.0, dash: [6, 12]))
+                    .rotationEffect(.degrees(-0.4))
+                    .padding(inset - 2)
+                    
+                RoundedRectangle(cornerRadius: cornerRadius - 2)
+                    .stroke(vineColor.opacity(0.9), style: StrokeStyle(lineWidth: 2.0, dash: [15, 10]))
+                    .scaleEffect(1.005)
+                    .padding(inset + 2)
+                
+                // Foglie sparse
+                ForEach(0..<45, id: \.self) { i in
+                    let progress = Double(i) / 45.0
+                    let pos = pointOnRect(progress: progress, w: w, h: h)
+                    let rotation = Angle.degrees(Double.random(in: 0...360))
+                    let size = CGFloat.random(in: 8...16)
+                    
+                    Image(systemName: "leaf.fill")
+                        .foregroundColor(vineColor.opacity(Double.random(in: 0.7...1.0)))
+                        .font(.system(size: size))
+                        .rotationEffect(rotation)
+                        .position(x: pos.x + inset, y: pos.y + inset)
+                        .offset(x: CGFloat.random(in: -8...8), y: CGFloat.random(in: -8...8))
+                }
+                
+                // Fiori / Bacche incantate
+                ForEach(0..<12, id: \.self) { i in
+                    let progress = (Double(i) / 12.0) + 0.04
+                    let pos = pointOnRect(progress: progress.truncatingRemainder(dividingBy: 1.0), w: w, h: h)
+                    
+                    Circle()
+                        .fill(flowerColor)
+                        .frame(width: 5, height: 5)
+                        .position(x: pos.x + inset, y: pos.y + inset)
+                        .offset(x: CGFloat.random(in: -6...6), y: CGFloat.random(in: -6...6))
+                }
+            }
+        }
+    }
+    
+    func pointOnRect(progress: Double, w: CGFloat, h: CGFloat) -> CGPoint {
+        let perimeter = 2 * w + 2 * h
+        let distance = progress * perimeter
+        if distance < w {
+            return CGPoint(x: distance, y: 0)
+        } else if distance < w + h {
+            return CGPoint(x: w, y: distance - w)
+        } else if distance < 2 * w + h {
+            return CGPoint(x: w - (distance - (w + h)), y: h)
+        } else {
+            return CGPoint(x: 0, y: h - (distance - (2 * w + h)))
         }
     }
 }

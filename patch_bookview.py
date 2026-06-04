@@ -1,6 +1,62 @@
 import re
 
 swift_code = """
+        func pageContainer<Content: View>(isLeft: Bool, pageNumber: Int? = nil, @ViewBuilder content: @escaping () -> Content) -> AnyView {
+            AnyView(
+                GeometryReader { geom in
+                    ZStack {
+                        // Warmer, lighter cream color for classic book pages
+                        Color(red: 0.98, green: 0.96, blue: 0.90)
+                        
+                        // Forest image visible only at the outer corners
+                        Image("FairyTaleBackground")
+                            .resizable()
+                            .scaledToFill()
+                            .mask {
+                                GeometryReader { maskGeom in
+                                    let w = maskGeom.size.width
+                                    let h = maskGeom.size.height
+                                    let size: CGFloat = isCompact ? 250 : 400
+                                    
+                                    ZStack {
+                                        // Top outer corner
+                                        Circle()
+                                            .fill(Color.black)
+                                            .frame(width: size, height: size)
+                                            .position(x: isLeft ? 0 : w, y: 0)
+                                        
+                                        // Bottom outer corner
+                                        Circle()
+                                            .fill(Color.black)
+                                            .frame(width: size, height: size)
+                                            .position(x: isLeft ? 0 : w, y: h)
+                                    }
+                                    .blur(radius: isCompact ? 40 : 70)
+                                }
+                            }
+                            .clipped()
+                        
+                        HStack(spacing: 0) {
+                            if isLeft {
+                                Spacer(minLength: 0)
+                                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .trailing, endPoint: .leading)
+                                    .frame(width: isCompact ? 20 : 40)
+                            } else {
+                                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .leading, endPoint: .trailing)
+                                    .frame(width: isCompact ? 20 : 40)
+                                Spacer(minLength: 0)
+                            }
+                        }
+                        
+                        content()
+                            .padding(pagePadding)
+                            .frame(width: geom.size.width, height: geom.size.height, alignment: .center)
+                    }
+                    .clipped()
+                }
+            )
+        }
+        
         func addPlaceholder(title: String, subtitle: String) {
             let emptyLeft = pageContainer(isLeft: true) {
                 VStack(spacing: isCompact ? 10 : 20) {
@@ -46,11 +102,13 @@ swift_code = """
                 var allCardImages: [String] = []
                 
                 for scene in visibleScenes {
-                    if let img = scene.introImageName, !img.isEmpty { allCardImages.append(img) }
+                    let introImg = scene.introImageName
+                    if !introImg.isEmpty { allCardImages.append(introImg) }
                     let fullText = lm.t(scene.text1Key) + " " + lm.t(scene.text2Key)
                     let words = fullText.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
                     allWords.append(contentsOf: words)
-                    if let img = scene.rewardImageName, !img.isEmpty { allCardImages.append(img) }
+                    let rewardImg = scene.rewardImageName
+                    if !rewardImg.isEmpty { allCardImages.append(rewardImg) }
                 }
                 
                 let wordsPerImage = allCardImages.isEmpty ? allWords.count + 1 : max(1, allWords.count / allCardImages.count)
@@ -175,16 +233,47 @@ swift_code = """
         self.bookmarks = newBookmarks
     }
 }
+
+struct OrganicBlobMask: View {
+    var body: some View {
+        OrganicBlobShape()
+            .fill(Color.black)
+    }
+}
+
+struct OrganicBlobShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width
+        let h = rect.height
+        
+        path.move(to: CGPoint(x: w * 0.5, y: 0))
+        path.addCurve(to: CGPoint(x: w, y: h * 0.4),
+                      control1: CGPoint(x: w * 0.9, y: 0),
+                      control2: CGPoint(x: w * 1.1, y: h * 0.1))
+        path.addCurve(to: CGPoint(x: w * 0.6, y: h),
+                      control1: CGPoint(x: w * 0.9, y: h * 0.8),
+                      control2: CGPoint(x: w * 0.8, y: h * 1.05))
+        path.addCurve(to: CGPoint(x: 0, y: h * 0.6),
+                      control1: CGPoint(x: w * 0.3, y: h * 0.95),
+                      control2: CGPoint(x: -w * 0.1, y: h * 0.8))
+        path.addCurve(to: CGPoint(x: w * 0.5, y: 0),
+                      control1: CGPoint(x: w * 0.1, y: h * 0.3),
+                      control2: CGPoint(x: w * 0.1, y: 0))
+        
+        return path
+    }
+}
 """
 
 with open("Final Version/SharedUI/BookView.swift", "r") as f:
     content = f.read()
 
-# Replace everything from `func addPlaceholder` to `self.bookmarks = newBookmarks\n    }\n}`
-pattern = r"        func addPlaceholder\(title: String, subtitle: String\) \{.*?\n        self\.bookPages = newPages\n        self\.bookmarks = newBookmarks\n    \}\n\}"
+# Replace everything from `func pageContainer` to the end of the file!
+pattern = r"        func pageContainer<Content: View>\(isLeft: Bool, @ViewBuilder content: @escaping \(\) -> Content\) -> AnyView \{.*"
 match = re.search(pattern, content, re.DOTALL)
 if match:
-    new_content = content[:match.start()] + swift_code.strip() + content[match.end():]
+    new_content = content[:match.start()] + swift_code.strip() + "\n"
     with open("Final Version/SharedUI/BookView.swift", "w") as f:
         f.write(new_content)
     print("Replaced successfully")

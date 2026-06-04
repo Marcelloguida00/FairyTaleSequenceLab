@@ -1596,7 +1596,7 @@ private enum MapGraph {
             cursor = previousID
         }
 
-        return routeIDs.reversed().compactMap(waypoint)
+        return routeIDs.reversed().compactMap { waypoint(id: $0) }
     }
 }
 
@@ -1713,7 +1713,7 @@ private enum RedHoodMapGraph {
             cursor = previousID
         }
 
-        return routeIDs.reversed().compactMap(waypoint)
+        return routeIDs.reversed().compactMap { waypoint(id: $0) }
     }
 }
 
