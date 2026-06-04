@@ -12,6 +12,11 @@
 "button.cancel"      = "Annulla";
 "button.settings"    = "IMPOSTAZIONI";
 
+/* Main menu */
+"menu.title.line1"    = "Lumi:";
+"menu.title.line2"    = "Un viaggio tra";
+"menu.title.line3"    = "le fiabe";
+
 /* Info */
 "info.title"          = "Info";
 "info.developers"     = "Sviluppatori";

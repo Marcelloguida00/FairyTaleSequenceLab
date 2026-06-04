@@ -12,6 +12,11 @@
 "button.cancel"      = "Отмена";
 "button.settings"    = "НАСТРОЙКИ";
 
+/* Main menu */
+"menu.title.line1"    = "Lumi:";
+"menu.title.line2"    = "A journey through";
+"menu.title.line3"    = "fables";
+
 /* Info */
 "info.title"          = "Инфо";
 "info.developers"     = "Разработчики";

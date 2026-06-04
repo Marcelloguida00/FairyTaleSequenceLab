@@ -315,23 +315,6 @@ private struct StorybookPageShape: Shape {
 
 // MARK: - Main view
 
-private enum SequencingStageLayout {
-    static let aspectRatio: CGFloat = 4.0 / 3.0
-
-    static func stageSize(in container: CGSize) -> CGSize {
-        guard container.width > 0, container.height > 0 else { return .zero }
-
-        let containerAspectRatio = container.width / container.height
-        if containerAspectRatio > aspectRatio {
-            let height = container.height
-            return CGSize(width: height * aspectRatio, height: height)
-        }
-
-        let width = container.width
-        return CGSize(width: width, height: width / aspectRatio)
-    }
-}
-
 struct SequencingActivityView<Reward: View>: View {
     let event: EventData
     let showsReward: Bool
@@ -366,7 +349,7 @@ struct SequencingActivityView<Reward: View>: View {
     @State private var pressedCardId: Int? = nil
 
     private let cardGap: CGFloat = 14
-    private let hPad: CGFloat = 28
+    private var hPad: CGFloat { SequencingLayoutMetrics.stageHorizontalPad }
     private let touchedCardScale: CGFloat = 1.10
     private let draggedCardScale: CGFloat = 1.22
     /// Static hold (no drag yet): Re₄ + scale. Drag pickup is immediate once the finger moves.
@@ -493,7 +476,7 @@ struct SequencingActivityView<Reward: View>: View {
 
     var body: some View {
         GeometryReader { screenGeo in
-            let stageSize = SequencingStageLayout.stageSize(in: screenGeo.size)
+            let stageSize = SequencingLayoutMetrics.stageSize(in: screenGeo.size)
             let cardW = computeCardWidth(in: stageSize)
             let cardH = cardW * 16 / 9
 
@@ -540,13 +523,13 @@ struct SequencingActivityView<Reward: View>: View {
             VStack(spacing: 10) {
                 storybookPanel(cardW: cardW, cardH: cardH)
                     .padding(.horizontal, hPad)
-                    .padding(.top, 18)
+                    .padding(.top, SequencingLayoutMetrics.stageStorybookTopPad)
 
                 Spacer(minLength: 0)
 
                 sourceTray(cardW: cardW, cardH: cardH)
                     .padding(.horizontal, hPad)
-                    .padding(.bottom, 18)
+                    .padding(.bottom, SequencingLayoutMetrics.stageDeckBottomPad)
             }
 
             if let cardId = draggingCardId,
@@ -603,14 +586,14 @@ struct SequencingActivityView<Reward: View>: View {
     private func computeCardWidth(in size: CGSize) -> CGFloat {
         let n = max(CGFloat(event.cards.count), 1)
         let totalGaps = cardGap * max(n - 1, 0)
-        let framedHorizontalInset: CGFloat = 112
+        let framedHorizontalInset = SequencingLayoutMetrics.storybookSlotsHorizontalPad * 2
         let traySideInset: CGFloat = 16
         let maxByStorybookW = (size.width - hPad * 2 - framedHorizontalInset - totalGaps) / n
         let maxByTrayW = (size.width - hPad * 2 - traySideInset * 2 - totalGaps) / n
         let maxByW = min(maxByStorybookW, maxByTrayW)
 
         // Constrain for the storybook frame, bottom tray, and top padding.
-        let topChrome: CGFloat = 18
+        let topChrome = SequencingLayoutMetrics.stageStorybookTopPad
         let storybookChrome: CGFloat = 78
         let trayChrome: CGFloat = 40
         let verticalBreathingRoom: CGFloat = 56
@@ -685,9 +668,10 @@ struct SequencingActivityView<Reward: View>: View {
 
 
             slotsRow(cardW: cardW, cardH: cardH)
-                .padding(.horizontal, 58)
-                .padding(.top, 42)
-                .padding(.bottom, 34)
+                .padding(.horizontal, SequencingLayoutMetrics.storybookSlotsHorizontalPad)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, SequencingLayoutMetrics.storybookSlotsTopPad)
+                .padding(.bottom, SequencingLayoutMetrics.storybookSlotsBottomPad)
         }
         .frame(maxWidth: .infinity)
         .frame(height: cardH + 82)

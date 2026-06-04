@@ -56,8 +56,6 @@ private enum MapOverlayMetrics {
     static var chromeButtonSize: CGFloat { GameButtonMetrics.chromeCircleSize }
     static var bookButtonSize: CGFloat { GameButtonMetrics.bookButtonSize }
     static let defaultChromeHorizontalInset: CGFloat = 20
-    static let levelChromeInnerInset: CGFloat = 28
-    static let levelStageAspectRatio: CGFloat = 4.0 / 3.0
 }
 
 struct ContentView: View {
@@ -329,7 +327,7 @@ struct ContentView: View {
                         .disabled(isMapNavigationBlocked)
                         .opacity(isMapNavigationBlocked ? 0.45 : 1)
                         .accessibilityLabel(lm.t("button.back"))
-                        .padding(.top, 52)
+                        .padding(.top, topChromeTopPadding(for: geometry.size))
                         .padding(.leading, horizontalInset)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         .zIndex(30)
@@ -356,9 +354,9 @@ struct ContentView: View {
                     .disabled(isMapToolbarBlocked)
                     .opacity(isMapToolbarBlocked ? 0.45 : 1)
                     .accessibilityLabel(lm.t("a11y.settings_button"))
-                    .padding(.top, 52)
-                    .padding(.trailing, horizontalInset)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                        .padding(.top, topChromeTopPadding(for: geometry.size))
+                        .padding(.trailing, horizontalInset)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .zIndex(31)
                     .transition(.opacity)
                 }
@@ -372,25 +370,20 @@ struct ContentView: View {
             return MapOverlayMetrics.defaultChromeHorizontalInset
         }
 
-        let stageSize = levelStageSize(in: screenSize)
+        let stageSize = SequencingLayoutMetrics.stageSize(in: screenSize)
         let outerInset = max((screenSize.width - stageSize.width) / 2, 0)
         return max(
             MapOverlayMetrics.defaultChromeHorizontalInset,
-            outerInset + MapOverlayMetrics.levelChromeInnerInset
+            outerInset + SequencingLayoutMetrics.levelChromeHorizontalInset
         )
     }
 
-    private func levelStageSize(in container: CGSize) -> CGSize {
-        guard container.width > 0, container.height > 0 else { return .zero }
-
-        let containerAspectRatio = container.width / container.height
-        if containerAspectRatio > MapOverlayMetrics.levelStageAspectRatio {
-            let height = container.height
-            return CGSize(width: height * MapOverlayMetrics.levelStageAspectRatio, height: height)
-        }
-
-        let width = container.width
-        return CGSize(width: width, height: width / MapOverlayMetrics.levelStageAspectRatio)
+    private func topChromeTopPadding(for screenSize: CGSize) -> CGFloat {
+        guard activeRedHoodLevel != nil else { return 52 }
+        return SequencingLayoutMetrics.levelChromeTopPadding(
+            screenSize: screenSize,
+            chromeButtonSize: MapOverlayMetrics.chromeButtonSize
+        )
     }
 
     @ViewBuilder
