@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Titolo «Lumi: A journey through fables» (stesso stile del menu principale).
+/// Titolo «Lumi : World Of Fables» (menu principale e About).
 struct AppMenuTitleView: View {
     let panelWidth: CGFloat
 
@@ -28,8 +28,7 @@ struct AppMenuTitleView: View {
     private var titleLines: [String] {
         [
             lm.t("menu.title.line1"),
-            lm.t("menu.title.line2"),
-            lm.t("menu.title.line3")
+            lm.t("menu.title.line2")
         ]
     }
 

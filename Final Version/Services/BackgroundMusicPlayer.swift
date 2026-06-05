@@ -57,25 +57,35 @@ final class BackgroundMusicPlayer {
     // MARK: - Volume & Mute
 
     var isMuted: Bool {
-        UserDefaults.standard.object(forKey: "musicMuted") as? Bool ?? false
+        !AppAudioSettings.isMusicAudible
     }
 
     var savedVolume: Float {
-        let v = UserDefaults.standard.object(forKey: "musicVolume") as? Float
-        return v ?? 0.32
+        AppAudioSettings.volume
     }
 
     func setVolume(_ volume: Float) {
-        UserDefaults.standard.set(volume, forKey: "musicVolume")
-        if !isMuted {
+        AppAudioSettings.setVolume(volume)
+        if AppAudioSettings.isMusicAudible {
             player?.volume = volume
         }
     }
 
     func setMuted(_ muted: Bool) {
-        UserDefaults.standard.set(muted, forKey: "musicMuted")
+        AppAudioSettings.setMusicEnabled(!muted)
+        applyAudibleState()
+    }
+
+    func applyAudibleState() {
         fadeTask?.cancel()
-        player?.volume = muted ? 0 : savedVolume
+        player?.volume = AppAudioSettings.isMusicAudible ? savedVolume : 0
+        if !AppAudioSettings.isMusicAudible {
+            player?.pause()
+        }
+    }
+
+    func applyMasterState() {
+        applyAudibleState()
     }
 
     var selectedTheme: BackgroundMusicTheme {

@@ -323,21 +323,23 @@ private struct InfoView: View {
                             )
                     )
 
-                    sectionHeader(lm.t("info.collaborators"))
+                    if AppFeatureFlags.showsCollaboratorsInAbout {
+                        sectionHeader(lm.t("info.collaborators"))
 
-                    VStack(spacing: 0) {
-                        ForEach(Array(collaborators.enumerated()), id: \.offset) { index, collaborator in
-                            developerRow(collaborator, isLast: index == collaborators.count - 1)
+                        VStack(spacing: 0) {
+                            ForEach(Array(collaborators.enumerated()), id: \.offset) { index, collaborator in
+                                developerRow(collaborator, isLast: index == collaborators.count - 1)
+                            }
                         }
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(InfoTheme.panelFill)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
+                                )
+                        )
                     }
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(InfoTheme.panelFill)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
-                            )
-                    )
 
                     sectionHeader(lm.t("info.contacts"))
 

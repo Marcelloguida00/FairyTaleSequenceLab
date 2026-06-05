@@ -13,9 +13,8 @@
 "button.settings"    = "تنظیمات";
 
 /* Main menu */
-"menu.title.line1"    = "Lumi:";
-"menu.title.line2"    = "A journey through";
-"menu.title.line3"    = "fables";
+"menu.title.line1"    = "Lumi :";
+"menu.title.line2"    = "World Of Fables";
 
 /* Info */
 "info.title"          = "اطلاعات";
@@ -84,8 +83,15 @@
 "settings.dyslexia_font.enabled" = "OpenDyslexic روشن است";
 "settings.dyslexia_font.disabled" = "OpenDyslexic خاموش است";
 "settings.sound"          = "صدا";
-"settings.sound.description" = "صدای برنامه و موسیقی.";
-"settings.sound.message" = "موسیقی، صدا و جلوه‌های صوتی بازی توالی را تنظیم کن.";
+"settings.sound.description" = "صدا، موسیقی و جلوه‌های صوتی برنامه.";
+"settings.sound.message" = "صدای کلی، موسیقی پس‌زمینه و جلوه‌های صوتی بازی را جداگانه کنترل کن.";
+"settings.audio.master" = "صدای برنامه";
+"settings.audio.master.description" = "همه صداهای برنامه را روشن یا خاموش کن.";
+"settings.audio.music" = "موسیقی";
+"settings.audio.music.description" = "موسیقی پس‌زمینه و فضای صوتی.";
+"settings.audio.music_volume" = "بلندی موسیقی";
+"settings.audio.sfx" = "جلوه‌های صوتی";
+"settings.audio.sfx.description" = "صداهای تعامل و بازی توالی.";
 "settings.sequencing_sfx" = "صداهای کارت‌های توالی";
 "settings.sequencing_sfx.simplified" = "ساده";
 "settings.sequencing_sfx.orchestral" = "ارکسترال";

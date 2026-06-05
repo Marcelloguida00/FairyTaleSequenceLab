@@ -69,12 +69,11 @@ final class ForestAmbiencePlayer {
     }
 
     private var isMuted: Bool {
-        UserDefaults.standard.object(forKey: "musicMuted") as? Bool ?? false
+        !AppAudioSettings.isMusicAudible
     }
 
     private var savedVolume: Float {
-        let volume = UserDefaults.standard.object(forKey: "musicVolume") as? Float
-        return volume ?? 0.32
+        AppAudioSettings.volume
     }
 
     private func scheduleRestart() {

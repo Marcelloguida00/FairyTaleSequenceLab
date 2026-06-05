@@ -68,7 +68,7 @@ final class PianoChordPlayer {
     }
 
     private func playChord(_ chord: PianoChord, rate: Float, volumeScale: Float) {
-        guard !isMuted, AppSettings.enableSounds else { return }
+        guard AppAudioSettings.isSFXAudible else { return }
 
         let player = players[chord] ?? preparePlayer(named: chord.rawValue, cache: &players, key: chord)
         guard let player else { return }
@@ -81,7 +81,7 @@ final class PianoChordPlayer {
     }
 
     private func playNote(_ note: SequencingPianoNote, volumeScale: Float) {
-        guard !isMuted, AppSettings.enableSounds else { return }
+        guard AppAudioSettings.isSFXAudible else { return }
 
         let player = notePlayers[note.rawValue] ?? preparePlayer(named: note.rawValue, cache: &notePlayers, key: note.rawValue)
         guard let player else { return }
@@ -93,13 +93,8 @@ final class PianoChordPlayer {
         player.play()
     }
 
-    private var isMuted: Bool {
-        UserDefaults.standard.object(forKey: "musicMuted") as? Bool ?? false
-    }
-
     private var savedVolume: Float {
-        let volume = UserDefaults.standard.object(forKey: "musicVolume") as? Float
-        return volume ?? 0.32
+        AppAudioSettings.volume
     }
 
     private func preparePlayer<K>(

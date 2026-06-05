@@ -13,9 +13,8 @@
 "button.settings"    = "НАСТРОЙКИ";
 
 /* Main menu */
-"menu.title.line1"    = "Lumi:";
-"menu.title.line2"    = "A journey through";
-"menu.title.line3"    = "fables";
+"menu.title.line1"    = "Lumi :";
+"menu.title.line2"    = "World Of Fables";
 
 /* Info */
 "info.title"          = "Инфо";
@@ -84,8 +83,15 @@
 "settings.dyslexia_font.enabled" = "OpenDyslexic включён";
 "settings.dyslexia_font.disabled" = "OpenDyslexic выключен";
 "settings.sound"          = "Звук";
-"settings.sound.description" = "Громкость и музыка приложения.";
-"settings.sound.message" = "Настрой музыку, громкость и звуки игры с последовательностью.";
+"settings.sound.description" = "Звук приложения, музыка и эффекты.";
+"settings.sound.message" = "Отдельно управляй общим звуком, фоновой музыкой и звуковыми эффектами.";
+"settings.audio.master" = "Звук приложения";
+"settings.audio.master.description" = "Включить или выключить все звуки.";
+"settings.audio.music" = "Музыка";
+"settings.audio.music.description" = "Фоновая музыка и атмосфера.";
+"settings.audio.music_volume" = "Громкость музыки";
+"settings.audio.sfx" = "Звуковые эффекты";
+"settings.audio.sfx.description" = "Звуки игры и последовательности.";
 "settings.sequencing_sfx" = "Звуки карт последовательности";
 "settings.sequencing_sfx.simplified" = "Упрощённая";
 "settings.sequencing_sfx.orchestral" = "Оркестровая";

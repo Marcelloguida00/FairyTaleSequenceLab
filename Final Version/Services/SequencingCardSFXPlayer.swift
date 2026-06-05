@@ -18,7 +18,7 @@ final class SequencingCardSFXPlayer {
     private init() {}
 
     func play(_ sfx: SequencingCardSFX) {
-        guard !isMuted, AppSettings.enableSounds else { return }
+        guard AppAudioSettings.isSFXAudible else { return }
 
         let name = sfx.rawValue
         let player = players[name] ?? preparePlayer(named: name)
@@ -37,13 +37,8 @@ final class SequencingCardSFXPlayer {
         }
     }
 
-    private var isMuted: Bool {
-        UserDefaults.standard.object(forKey: "musicMuted") as? Bool ?? false
-    }
-
     private var savedVolume: Float {
-        let volume = UserDefaults.standard.object(forKey: "musicVolume") as? Float
-        return volume ?? 0.32
+        AppAudioSettings.volume
     }
 
     private func preparePlayer(named resource: String) -> AVAudioPlayer? {

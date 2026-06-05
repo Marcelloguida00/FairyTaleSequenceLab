@@ -18,7 +18,7 @@ final class OrchestralSequencingPlayer {
     }
 
     func startPickLoop(step: Int) {
-        guard !isMuted, (1...4).contains(step) else { return }
+        guard AppAudioSettings.isSFXAudible, (1...4).contains(step) else { return }
         stopPickLoop()
 
         guard let player = preparePlayer(named: "OrchestralPick_\(step)", loops: -1) else { return }
@@ -48,12 +48,8 @@ final class OrchestralSequencingPlayer {
         playOneShot(named: "OrchestralVictory_Jingle", volumeScale: 1.0)
     }
 
-    private var isMuted: Bool {
-        UserDefaults.standard.object(forKey: "musicMuted") as? Bool ?? false
-    }
-
     private var savedVolume: Float {
-        UserDefaults.standard.object(forKey: "musicVolume") as? Float ?? 0.32
+        AppAudioSettings.volume
     }
 
     private var pickVolume: Float {
@@ -61,7 +57,7 @@ final class OrchestralSequencingPlayer {
     }
 
     private func playOneShot(named resource: String, volumeScale: Float) {
-        guard !isMuted else { return }
+        guard AppAudioSettings.isSFXAudible else { return }
         guard let player = preparePlayer(named: resource, loops: 0) else { return }
         player.volume = min(savedVolume * 1.35 * volumeScale, 1)
         player.play()

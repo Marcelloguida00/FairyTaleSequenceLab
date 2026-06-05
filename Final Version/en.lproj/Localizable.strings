@@ -13,9 +13,8 @@
 "button.settings"    = "SETTINGS";
 
 /* Main menu */
-"menu.title.line1"    = "Lumi:";
-"menu.title.line2"    = "A journey through";
-"menu.title.line3"    = "fables";
+"menu.title.line1"    = "Lumi :";
+"menu.title.line2"    = "World Of Fables";
 
 /* Info */
 "info.title"          = "Info";
@@ -90,8 +89,15 @@
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";
 "settings.dyslexia_font.disabled" = "OpenDyslexic off";
 "settings.sound"          = "Sound";
-"settings.sound.description" = "App volume and music.";
-"settings.sound.message" = "Adjust the app music, volume, and sequencing sound effects.";
+"settings.sound.description" = "App audio, music, and sound effects.";
+"settings.sound.message" = "Control app audio, background music, and game sound effects separately.";
+"settings.audio.master" = "App audio";
+"settings.audio.master.description" = "Turn all app sounds on or off.";
+"settings.audio.music" = "Music";
+"settings.audio.music.description" = "Background music and ambience.";
+"settings.audio.music_volume" = "Music volume";
+"settings.audio.sfx" = "Sound effects";
+"settings.audio.sfx.description" = "Game interactions and sequencing sounds.";
 "settings.sequencing_sfx" = "Sequencing card sounds";
 "settings.sequencing_sfx.simplified" = "Simplified";
 "settings.sequencing_sfx.orchestral" = "Orchestral";

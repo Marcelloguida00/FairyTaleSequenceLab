@@ -12,6 +12,7 @@ private enum SettingsTheme {
     static let sliderTrack = Color(red: 0.910, green: 0.851, blue: 0.710)
     static let menuPanelFill = Color(red: 0.98, green: 0.95, blue: 0.86)
     static let menuRowText = Color(red: 0.18, green: 0.10, blue: 0.08)
+    static let toggleActiveFill = Color(red: 1.0, green: 233.0 / 255.0, blue: 88.0 / 255.0) // #FFE958
 }
 
 private enum SettingsRoute: Equatable {
@@ -32,6 +33,7 @@ struct SettingsView: View {
     @Binding var advancedSettingsUnlocked: Bool
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage(AppAudioSettings.masterKey) private var audioMasterEnabled = true
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
     @AppStorage("musicTheme") private var musicTheme: String = BackgroundMusicTheme.gardenGate.rawValue
@@ -489,20 +491,22 @@ struct SettingsView: View {
                     }
                 }
 
-                SettingsTheme.divider
-                    .frame(height: 1)
-                    .padding(.leading, 56)
+                if AppFeatureFlags.showsOrchestralSequencingSFX {
+                    SettingsTheme.divider
+                        .frame(height: 1)
+                        .padding(.leading, 56)
 
-                sequencingSFXSectionHeader(expanded: false)
+                    sequencingSFXSectionHeader(expanded: false)
 
-                VStack(spacing: 0) {
-                    ForEach(Array(SequencingSFXMode.allCases.enumerated()), id: \.element.id) { index, mode in
-                        sequencingSFXModeRow(
-                            mode,
-                            isFirst: false,
-                            isLast: index == SequencingSFXMode.allCases.count - 1,
-                            cornerRadius: settingsCompactPanelCornerRadius()
-                        )
+                    VStack(spacing: 0) {
+                        ForEach(Array(SequencingSFXMode.settingsVisibleCases.enumerated()), id: \.element.id) { index, mode in
+                            sequencingSFXModeRow(
+                                mode,
+                                isFirst: false,
+                                isLast: index == SequencingSFXMode.settingsVisibleCases.count - 1,
+                                cornerRadius: settingsCompactPanelCornerRadius()
+                            )
+                        }
                     }
                 }
             }
@@ -525,7 +529,7 @@ struct SettingsView: View {
         let knobOffset = expanded ? 12.0 : 10.0
 
         return RoundedRectangle(cornerRadius: trackHeight / 2, style: .continuous)
-            .fill(isOn ? Color(red: 0.18, green: 0.72, blue: 0.28) : SettingsTheme.controlFill)
+            .fill(isOn ? SettingsTheme.toggleActiveFill : SettingsTheme.controlFill)
             .overlay(
                 RoundedRectangle(cornerRadius: trackHeight / 2, style: .continuous)
                     .stroke(SettingsTheme.panelBorder.opacity(0.7), lineWidth: 1)
@@ -891,134 +895,177 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
                 
-                settingsDivider(largeStyle: usesFrameLayout)
-                
-                // Enable Sounds
-                Button {
-                    AppSettings.hapticImpact(.light)
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        enableSounds.toggle()
-                    }
-                } label: {
-                    HStack(spacing: usesFrameLayout ? 18 : 14) {
-                        Image(systemName: "speaker.wave.3.fill")
-                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                            .foregroundStyle(SettingsTheme.menuRowText)
-                            .frame(width: usesFrameLayout ? 36 : 28)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.enable_sounds"))
-                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
-                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-                            Text(lm.t("settings.enable_sounds.description"))
-                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
-                                .foregroundStyle(SettingsTheme.secondaryText)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        Spacer()
-
-                        settingsToggle(isOn: enableSounds, expanded: usesFrameLayout)
-                    }
-                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                    .padding(.vertical, usesFrameLayout ? 20 : 16)
-                    .gameSettingsRowTouchTarget()
-                }
-                .buttonStyle(.plain)
-                .gameMinimumTouchTarget()
             }
         }
+    }
+
+    private var musicEnabled: Bool {
+        !musicMuted
     }
 
     private var soundDetailCard: some View {
         settingsCard(largeStyle: usesFrameLayout) {
             VStack(spacing: 0) {
-                HStack(spacing: usesFrameLayout ? 18 : 14) {
-                    Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                        .foregroundStyle(SettingsTheme.menuRowText)
-                        .frame(width: usesFrameLayout ? 36 : 28)
-                        .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                soundCategoryToggleRow(
+                    icon: "speaker.wave.2.fill",
+                    titleKey: "settings.audio.master",
+                    descriptionKey: "settings.audio.master.description",
+                    isOn: $audioMasterEnabled,
+                    expanded: usesFrameLayout,
+                    onChange: { enabled in
+                        AppAudioSettings.setMasterEnabled(enabled)
+                        BackgroundMusicPlayer.shared.applyMasterState()
+                    }
+                )
 
-                    Slider(value: Binding(
-                        get: { musicMuted ? 0 : musicVolume },
-                        set: { newValue in
-                            musicVolume = newValue
-                            if musicMuted && newValue > 0 {
-                                musicMuted = false
-                                BackgroundMusicPlayer.shared.setMuted(false)
-                            }
-                            BackgroundMusicPlayer.shared.setVolume(Float(newValue))
+                settingsDivider(largeStyle: usesFrameLayout)
+
+                soundCategoryToggleRow(
+                    icon: "music.note",
+                    titleKey: "settings.audio.music",
+                    descriptionKey: "settings.audio.music.description",
+                    isOn: musicEnabledBinding,
+                    expanded: usesFrameLayout,
+                    disabled: !audioMasterEnabled,
+                    onChange: { enabled in
+                        BackgroundMusicPlayer.shared.setMuted(!enabled)
+                    }
+                )
+
+                if audioMasterEnabled && musicEnabled {
+                    musicVolumeSlider(expanded: usesFrameLayout)
+                    settingsDivider(largeStyle: usesFrameLayout)
+
+                    VStack(spacing: 0) {
+                        ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { _, theme in
+                            musicThemeRow(
+                                theme,
+                                isFirst: false,
+                                isLast: false,
+                                expanded: usesFrameLayout,
+                                cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
+                            )
                         }
-                    ), in: 0...1)
-                    .tint(SettingsTheme.menuRowText)
-                    .disabled(musicMuted)
-                    .opacity(musicMuted ? 0.45 : 1)
-                    .animation(.easeInOut(duration: 0.2), value: musicMuted)
-                }
-                .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                .padding(.vertical, usesFrameLayout ? 20 : 16)
-
-                settingsDivider(largeStyle: usesFrameLayout)
-
-                Button {
-                    AppSettings.hapticImpact(.light)
-                    musicMuted.toggle()
-                    BackgroundMusicPlayer.shared.setMuted(musicMuted)
-                } label: {
-                    HStack(spacing: usesFrameLayout ? 18 : 14) {
-                        Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.fill")
-                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                            .foregroundStyle(SettingsTheme.menuRowText)
-                            .frame(width: usesFrameLayout ? 36 : 28)
-
-                        Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
-                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
-                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-                        Spacer()
-
-                        settingsToggle(isOn: musicMuted, expanded: usesFrameLayout)
-                    }
-                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                    .padding(.vertical, usesFrameLayout ? 20 : 16)
-                    .gameSettingsRowTouchTarget()
-                }
-                .buttonStyle(.plain)
-                .gameMinimumTouchTarget()
-
-                settingsDivider()
-
-                VStack(spacing: 0) {
-                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { _, theme in
-                        musicThemeRow(
-                            theme,
-                            isFirst: false,
-                            isLast: false,
-                            expanded: usesFrameLayout,
-                            cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
-                        )
                     }
                 }
 
                 settingsDivider(largeStyle: usesFrameLayout)
 
-                sequencingSFXSectionHeader(expanded: usesFrameLayout)
+                soundCategoryToggleRow(
+                    icon: "waveform",
+                    titleKey: "settings.audio.sfx",
+                    descriptionKey: "settings.audio.sfx.description",
+                    isOn: $enableSounds,
+                    expanded: usesFrameLayout,
+                    disabled: !audioMasterEnabled,
+                    onChange: { enabled in
+                        AppAudioSettings.setSFXEnabled(enabled)
+                        if !enabled {
+                            SequencingSoundCoordinator.resetSession()
+                        }
+                    }
+                )
 
-                VStack(spacing: 0) {
-                    ForEach(Array(SequencingSFXMode.allCases.enumerated()), id: \.element.id) { index, mode in
-                        sequencingSFXModeRow(
-                            mode,
-                            isFirst: false,
-                            isLast: index == SequencingSFXMode.allCases.count - 1,
-                            expanded: usesFrameLayout,
-                            cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
-                        )
+                if audioMasterEnabled && enableSounds && AppFeatureFlags.showsOrchestralSequencingSFX {
+                    settingsDivider(largeStyle: usesFrameLayout)
+
+                    sequencingSFXSectionHeader(expanded: usesFrameLayout)
+
+                    VStack(spacing: 0) {
+                        ForEach(Array(SequencingSFXMode.settingsVisibleCases.enumerated()), id: \.element.id) { index, mode in
+                            sequencingSFXModeRow(
+                                mode,
+                                isFirst: false,
+                                isLast: index == SequencingSFXMode.settingsVisibleCases.count - 1,
+                                expanded: usesFrameLayout,
+                                cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+
+    private var musicEnabledBinding: Binding<Bool> {
+        Binding(
+            get: { !musicMuted },
+            set: { musicMuted = !$0 }
+        )
+    }
+
+    @ViewBuilder
+    private func soundCategoryToggleRow(
+        icon: String,
+        titleKey: String,
+        descriptionKey: String,
+        isOn: Binding<Bool>,
+        expanded: Bool,
+        disabled: Bool = false,
+        onChange: @escaping (Bool) -> Void
+    ) -> some View {
+        Button {
+            guard !disabled else { return }
+            AppSettings.hapticImpact(.light)
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isOn.wrappedValue.toggle()
+            }
+            onChange(isOn.wrappedValue)
+        } label: {
+            HStack(spacing: expanded ? 18 : 14) {
+                Image(systemName: icon)
+                    .font(.app(size: expanded ? 28 : 20, weight: .bold))
+                    .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                    .frame(width: expanded ? 36 : 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(lm.t(titleKey))
+                        .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                        .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                    Text(lm.t(descriptionKey))
+                        .font(.app(size: expanded ? 16 : 12, weight: .regular))
+                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+
+                settingsToggle(isOn: isOn.wrappedValue, expanded: expanded)
+            }
+            .padding(.horizontal, expanded ? 24 : 18)
+            .padding(.vertical, expanded ? 20 : 16)
+            .gameSettingsRowTouchTarget()
+            .opacity(disabled ? 0.45 : 1)
+        }
+        .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
+        .disabled(disabled)
+        .accessibilityLabel(lm.t(titleKey))
+        .accessibilityHint(lm.t(descriptionKey))
+        .accessibilityAddTraits(isOn.wrappedValue ? [.isSelected] : [])
+    }
+
+    @ViewBuilder
+    private func musicVolumeSlider(expanded: Bool) -> some View {
+        HStack(spacing: expanded ? 18 : 14) {
+            Image(systemName: "slider.horizontal.3")
+                .font(.app(size: expanded ? 24 : 20, weight: .semibold))
+                .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                .frame(width: expanded ? 36 : 28)
+
+            Slider(value: Binding(
+                get: { musicVolume },
+                set: { newValue in
+                    musicVolume = newValue
+                    BackgroundMusicPlayer.shared.setVolume(Float(newValue))
+                }
+            ), in: 0...1)
+            .tint(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+        }
+        .padding(.horizontal, expanded ? 24 : 18)
+        .padding(.vertical, expanded ? 16 : 14)
+        .accessibilityLabel(lm.t("settings.audio.music_volume"))
     }
 
     private func sequencingSFXSectionHeader(expanded: Bool) -> some View {
@@ -1314,11 +1361,13 @@ struct SettingsView: View {
                 }
             }
 
-            sectionHeader(lm.t("info.collaborators"))
+            if AppFeatureFlags.showsCollaboratorsInAbout {
+                sectionHeader(lm.t("info.collaborators"))
 
-            VStack(spacing: usesFrameLayout ? 18 : 14) {
-                ForEach(collaborators) { collaborator in
-                    teamProfileCard(collaborator)
+                VStack(spacing: usesFrameLayout ? 18 : 14) {
+                    ForEach(collaborators) { collaborator in
+                        teamProfileCard(collaborator)
+                    }
                 }
             }
         }

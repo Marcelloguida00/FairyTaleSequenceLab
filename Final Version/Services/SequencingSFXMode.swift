@@ -16,8 +16,16 @@ enum SequencingSFXMode: String, CaseIterable, Identifiable {
         }
     }
 
+    static var settingsVisibleCases: [SequencingSFXMode] {
+        AppFeatureFlags.showsOrchestralSequencingSFX ? allCases : [.simplified]
+    }
+
     static var current: SequencingSFXMode {
         let raw = UserDefaults.standard.string(forKey: storageKey) ?? SequencingSFXMode.simplified.rawValue
-        return SequencingSFXMode(rawValue: raw) ?? .simplified
+        let stored = SequencingSFXMode(rawValue: raw) ?? .simplified
+        if stored == .orchestral, !AppFeatureFlags.showsOrchestralSequencingSFX {
+            return .simplified
+        }
+        return stored
     }
 }

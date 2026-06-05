@@ -13,9 +13,8 @@
 "button.settings"    = "CILËSIMET";
 
 /* Main menu */
-"menu.title.line1"    = "Lumi:";
-"menu.title.line2"    = "A journey through";
-"menu.title.line3"    = "fables";
+"menu.title.line1"    = "Lumi :";
+"menu.title.line2"    = "World Of Fables";
 
 /* Info */
 "info.title"          = "Info";
@@ -84,8 +83,15 @@
 "settings.dyslexia_font.enabled" = "OpenDyslexic aktiv";
 "settings.dyslexia_font.disabled" = "OpenDyslexic joaktiv";
 "settings.sound"          = "Zëri";
-"settings.sound.description" = "Volumi dhe muzika e aplikacionit.";
-"settings.sound.message" = "Rregullo muzikën, volumin dhe efektet e lojës së sekuencës.";
+"settings.sound.description" = "Audio, muzika dhe efektet e aplikacionit.";
+"settings.sound.message" = "Kontrollo veçmas audion e përgjithshme, muzikën dhe efektet e lojës.";
+"settings.audio.master" = "Audio e aplikacionit";
+"settings.audio.master.description" = "Aktivizo ose çaktivizo të gjitha tingujt.";
+"settings.audio.music" = "Muzika";
+"settings.audio.music.description" = "Muzika e sfondit dhe atmosfera.";
+"settings.audio.music_volume" = "Volumi i muzikës";
+"settings.audio.sfx" = "Efektet zanore";
+"settings.audio.sfx.description" = "Tingujt e lojës dhe të sekuencës.";
 "settings.sequencing_sfx" = "Tingujt e kartave të sekuencës";
 "settings.sequencing_sfx.simplified" = "E thjeshtuar";
 "settings.sequencing_sfx.orchestral" = "Orkestrale";
