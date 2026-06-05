@@ -23,7 +23,6 @@ Backlog di funzionalità e miglioramenti pianificati per l’app.
 - Dare all'utente un carta speciale se completa un livello con 3 stelle
 - Creare un capitolo del libro dove ci sono tutte le carte speciale di ogni storia
 - Trovare un buon stile di gamedesign per il rating delle stelle (come fa l'utente a capire quali livelli ha fatto 3 stelle ? es.)
-- Mettere che quando sblocchi un capitolo del libro esce un obbiettivo sbloccato tipo playstation
 
 ---
 
@@ -35,3 +34,21 @@ Backlog di funzionalità e miglioramenti pianificati per l’app.
 - Aggiungere possibilità di cambiare rumore bianco in accessibilità
 - Aggiungere cambio colore in accessibilità
 - Modificare stile della sezione About
+
+---
+
+## TODO PER GIOCO SEQUENZE
+
+- Modificare testo presente sui placeholder delle carte
+
+---
+
+## TODO PER GIOCO SEQUENZE
+
+- Modificare testo presente sui placeholder delle carte
+
+---
+
+## TODO NOTIFICA CAPITOLO SBLOCCATO
+
+- Mettere un archievement tipo playstation per il capitolo sbloccato
