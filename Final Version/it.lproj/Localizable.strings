@@ -250,6 +250,7 @@
 "settings.enable_haptics.description" = "Attiva o disattiva il feedback tattile.";
 "settings.enable_animations" = "Riduci animazioni";
 "settings.enable_animations.description" = "Disattiva le transizioni e gli effetti visivi superflui.";
-"settings.enable_sounds" = "Effetti Sonori";
-"settings.enable_sounds.description" = "Attiva suoni di interazione e menu.";
-
+"settings.enable_sounds" = "Effetti sonori";
+"settings.enable_sounds.description" = "Attiva o disattiva i suoni dell'interfaccia e dei menu.";
+"settings.voice_over" = "Voice Over";
+"settings.voice_over.description" = "Attiva o disattiva la narrazione vocale.";
