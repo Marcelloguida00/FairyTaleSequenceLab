@@ -637,19 +637,21 @@ struct SettingsView: View {
                 openDetail(.appIcon, returningTo: .main)
             }
 
-            settingsDivider(largeStyle: usesFrameLayout)
+            if AppFeatureFlags.showsOnboarding {
+                settingsDivider(largeStyle: usesFrameLayout)
 
-            settingsActionRow(
-                icon: "rectangle.stack.badge.play",
-                title: lm.t("settings.show_onboarding_again"),
-                detail: nil,
-                showsDisclosure: false,
-                largeStyle: usesFrameLayout,
-                fillHeight: usesExpandedMainRows
-            ) {
-                AppSettings.hapticImpact(.light)
-                hasSeenOnboarding = false
-                closeSettings()
+                settingsActionRow(
+                    icon: "rectangle.stack.badge.play",
+                    title: lm.t("settings.show_onboarding_again"),
+                    detail: nil,
+                    showsDisclosure: false,
+                    largeStyle: usesFrameLayout,
+                    fillHeight: usesExpandedMainRows
+                ) {
+                    AppSettings.hapticImpact(.light)
+                    hasSeenOnboarding = false
+                    closeSettings()
+                }
             }
 
             settingsDivider(largeStyle: usesFrameLayout)

@@ -1032,6 +1032,9 @@ struct ContentView: View {
                 onPhaseChange: { flowPhase in
                     suppressesMapChromeForDialogue = (flowPhase == .intro)
                 },
+                onCelebrationZoomChange: { isZooming in
+                    suppressesMapChromeForDialogue = isZooming
+                },
                 onSequencingFinished: { attemptCount in
                     presentRewardAfterMapPause(level: level, attemptCount: attemptCount)
                 },

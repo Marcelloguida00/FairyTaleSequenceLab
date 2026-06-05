@@ -65,7 +65,7 @@ struct RootView: View {
             }
 
             // Onboarding: primo avvio assoluto
-            if !hasSeenOnboarding {
+            if AppFeatureFlags.showsOnboarding && !hasSeenOnboarding {
                 OnboardingView {
                     withAnimation(.easeInOut(duration: 0.5)) {
                         hasSeenOnboarding = true
@@ -82,6 +82,9 @@ struct RootView: View {
         ))
         .environment(\.dyslexiaFontEnabled, usesDyslexiaFont)
         .onAppear {
+            if !AppFeatureFlags.showsOnboarding {
+                hasSeenOnboarding = true
+            }
             BackgroundMusicPlayer.shared.start()
         }
     }

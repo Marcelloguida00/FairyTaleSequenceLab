@@ -217,6 +217,7 @@ struct SequencingActivityView<Reward: View>: View {
     let showsReward: Bool
     let onSuccess: (() -> Void)?
     let onSequencingComplete: ((Int) -> Void)?
+    let onCelebrationZoomChange: ((Bool) -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var lm: LanguageManager
@@ -255,18 +256,22 @@ struct SequencingActivityView<Reward: View>: View {
     private let cardHoldMaxJitter: CGFloat = 22
     private let cardDragPickupDistance: CGFloat = 8
     private let tapToFlipMaxDistance: CGFloat = 8
+    private let celebrationPostWaveTailCap: TimeInterval = 0.35
+    private let celebrationZoomAnimationDelay: TimeInterval = 0.12
 
     init(
         event: EventData,
         showsReward: Bool = true,
         onSuccess: (() -> Void)? = nil,
         onSequencingComplete: ((Int) -> Void)? = nil,
+        onCelebrationZoomChange: ((Bool) -> Void)? = nil,
         @ViewBuilder makeReward: @escaping (Int, @escaping () -> Void) -> Reward
     ) {
         self.event = event
         self.showsReward = showsReward
         self.onSuccess = onSuccess
         self.onSequencingComplete = onSequencingComplete
+        self.onCelebrationZoomChange = onCelebrationZoomChange
         self.makeReward = makeReward
         _shuffledStart = State(initialValue: event.makeShuffledStart())
         _slotContents  = State(initialValue: Array(repeating: nil, count: event.cards.count))
@@ -400,8 +405,12 @@ struct SequencingActivityView<Reward: View>: View {
         .onChange(of: event.id) { _, _ in
             resetBoardState()
         }
+        .onChange(of: isStorybookExpanded) { _, expanded in
+            onCelebrationZoomChange?(expanded)
+        }
         .onDisappear {
             SequencingSoundCoordinator.cardPickupEnded()
+            onCelebrationZoomChange?(false)
         }
     }
 
@@ -559,6 +568,21 @@ struct SequencingActivityView<Reward: View>: View {
     // MARK: - Storybook frame
 
     private func storybookPanel(cardW: CGFloat, cardH: CGFloat) -> some View {
+        Group {
+            if isStorybookExpanded {
+                expandedCelebrationPanel(cardW: cardW, cardH: cardH)
+            } else {
+                framedStorybookPanel(cardW: cardW, cardH: cardH)
+            }
+        }
+        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isStorybookExpanded)
+        .frame(maxWidth: .infinity)
+        .frame(maxHeight: isStorybookExpanded ? .infinity : nil)
+        .frame(height: isStorybookExpanded ? nil : cardH + 82)
+        .accessibilityElement(children: .contain)
+    }
+
+    private func framedStorybookPanel(cardW: CGFloat, cardH: CGFloat) -> some View {
         ZStack {
             StorybookPageShape()
                 .fill(
@@ -577,46 +601,54 @@ struct SequencingActivityView<Reward: View>: View {
                 .stroke(Color(red: 0.23, green: 0.10, blue: 0.06), lineWidth: 12)
                 .shadow(color: .black.opacity(0.42), radius: 16, y: 8)
 
-
             slotsRow(cardW: cardW, cardH: cardH)
-                .padding(.horizontal, isStorybookExpanded ? 32 : SequencingLayoutMetrics.storybookSlotsHorizontalPad)
+                .padding(.horizontal, SequencingLayoutMetrics.storybookSlotsHorizontalPad)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, SequencingLayoutMetrics.storybookSlotsTopPad)
-                .padding(.bottom, isStorybookExpanded ? 0 : SequencingLayoutMetrics.storybookSlotsBottomPad)
-                .scaleEffect(isStorybookExpanded ? 1.2 : 1.0)
-            
-            if isStorybookExpanded {
-                VStack(spacing: 24) {
-                    Spacer()
-                    
-                    Text(lm.t("celebration.title"))
-                        .font(.app(size: 48, weight: .black))
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
-                    
-                    Button(action: {
-                        onSequencingComplete?(attemptCount)
-                    }) {
-                        Text(event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"))
-                            .font(.app(.title3, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 16)
-                            .background(
-                                Capsule()
-                                    .fill(Color(red: 0.12, green: 0.64, blue: 0.92))
-                                    .shadow(color: .black.opacity(0.3), radius: 5, y: 2)
-                            )
-                    }
-                }
-                .padding(.bottom, 60)
-                .transition(.opacity)
-            }
+                .padding(.bottom, SequencingLayoutMetrics.storybookSlotsBottomPad)
         }
-        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isStorybookExpanded)
-        .frame(maxWidth: .infinity)
-        .frame(height: cardH + 82)
-        .accessibilityElement(children: .contain)
+    }
+
+    private func expandedCelebrationPanel(cardW: CGFloat, cardH: CGFloat) -> some View {
+        VStack(spacing: 28) {
+            Spacer(minLength: 0)
+
+            slotsRow(cardW: cardW, cardH: cardH)
+                .padding(.horizontal, 32)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .scaleEffect(1.2)
+
+            Text(lm.t("celebration.title"))
+                .font(.app(size: 48, weight: .black))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
+                .padding(.horizontal, hPad)
+
+            celebrationContinueButton
+
+            Spacer(minLength: 0)
+        }
+        .padding(.bottom, 48)
+        .transition(.opacity)
+    }
+
+    private var celebrationContinueButton: some View {
+        GamePillButton(
+            title: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event"),
+            minWidth: GameButtonMetrics.primaryPillWidth,
+            minHeight: GameButtonMetrics.primaryPillHeight,
+            trailingIcon: "arrow.right",
+            action: handleCelebrationContinue
+        )
+        .accessibilityLabel(
+            event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event")
+        )
+    }
+
+    private func handleCelebrationContinue() {
+        AppSettings.hapticImpact(.light)
+        onSequencingComplete?(attemptCount)
     }
 
     // MARK: - Storybook frame
@@ -1094,13 +1126,11 @@ struct SequencingActivityView<Reward: View>: View {
         let isOrchestral = SequencingSFXMode.current == .orchestral
 
         if isOrchestral {
-            // Brief beat after the last correct hit, then jingle + wave (overlap tail of correct clip).
             let correctLead = OrchestralAudioMetrics.correctClipDuration
-            try? await Task.sleep(for: .seconds(correctLead * 0.38))
+            try? await Task.sleep(for: .seconds(correctLead * 0.28))
         } else {
-            // Short breath after the 4th placement note, then jingle arpeggio + wave together.
             let beat = OrchestralAudioMetrics.simplifiedVictoryArpeggioBeat
-            try? await Task.sleep(for: .seconds(beat * 0.9))
+            try? await Task.sleep(for: .seconds(beat * 0.5))
         }
 
         SequencingSoundCoordinator.victoryJingle()
@@ -1155,7 +1185,8 @@ struct SequencingActivityView<Reward: View>: View {
             }
 
             let waveElapsed = (swellHold + settleHold) * Double(max(slotCount - 1, 0)) + swellHold
-            let tail = max(0.25, jingleDuration - waveElapsed)
+            let naturalTail = max(0.2, jingleDuration - waveElapsed)
+            let tail = min(naturalTail, celebrationPostWaveTailCap)
             try? await Task.sleep(for: .seconds(tail))
         } else {
             try? await Task.sleep(for: .seconds(jingleDuration))
@@ -1170,12 +1201,15 @@ struct SequencingActivityView<Reward: View>: View {
         AppSettings.hapticSuccess()
         UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
 
+        let zoomAnimation = Animation.spring(response: 0.6, dampingFraction: 0.8)
+            .delay(reduceMotion ? 0 : celebrationZoomAnimationDelay)
+
         if let onSequencingComplete {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4)) {
+            withAnimation(zoomAnimation) {
                 isStorybookExpanded = true
             }
         } else if showsReward {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4)) {
+            withAnimation(zoomAnimation) {
                 isStorybookExpanded = true
             }
             try? await Task.sleep(for: .seconds(2.5))

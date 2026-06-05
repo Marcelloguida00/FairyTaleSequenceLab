@@ -44,6 +44,7 @@ struct RedHoodRewardPhaseView: View {
 struct EventFlowView: View {
     let eventData: EventData
     let onPhaseChange: (RedHoodEventFlowPhase) -> Void
+    let onCelebrationZoomChange: (Bool) -> Void
     let onSequencingFinished: (Int) -> Void
     let onRewardReached: () -> Void
     let onComplete: () -> Void
@@ -69,6 +70,7 @@ struct EventFlowView: View {
                     onSequencingComplete: { attemptCount in
                         onSequencingFinished(attemptCount)
                     },
+                    onCelebrationZoomChange: onCelebrationZoomChange,
                     makeReward: { _, _ in
                         EmptyView()
                     }
@@ -149,6 +151,7 @@ private struct EventFlowPreview: View {
                     EventFlowView(
                         eventData: event,
                         onPhaseChange: { _ in },
+                        onCelebrationZoomChange: { _ in },
                         onSequencingFinished: { _ in },
                         onRewardReached: {},
                         onComplete: {}
