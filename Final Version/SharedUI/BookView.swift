@@ -231,15 +231,15 @@ struct BookView: View {
             titleKey: "story.redhood.scene1.title",
             text1Key: "story.redhood.scene1.text1",
             text2Key: "story.redhood.scene1.text2",
-            introImageName: "Introduzione 1 evento",
-            rewardImageName: "Fine primo evento"
+            introImageName: "MotherBasket",
+            rewardImageName: "RedHoodWalking"
         ),
         StoryScene(
             id: 2,
             titleKey: "story.redhood.scene2.title",
             text1Key: "story.redhood.scene2.text1",
             text2Key: "story.redhood.scene2.text2",
-            introImageName: "Introduzione 2 evento",
+            introImageName: "RedHoodWolf",
             rewardImageName: "Reward evento 2"
         ),
         StoryScene(
@@ -542,106 +542,133 @@ struct BookView: View {
     }
     
     private func generateEditorialPages(text: String, availableImages: [String], isDyslexiaEnabled: Bool, isCompact: Bool) -> [PageContent] {
-        let words = text.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        var sentences: [String] = []
+        text.enumerateSubstrings(in: text.startIndex..<text.endIndex, options: .bySentences) { substring, _, _, _ in
+            if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
+                sentences.append(s)
+            }
+        }
         var pages: [PageContent] = []
         var currentImageIndex = 0
-        var currentWordIndex = 0
+        var currentSentenceIndex = 0
         var pageIndex = 0
         
         let layouts: [PageLayoutType] = [
-            .imageTopLeftTextWrap,
+            .textTopImageBottom,
+            .imageTopTextBottom,
+            .fullText,
+            .imageTopTextBottom,
             .gatheredBottomRight,
-            .textTopImageBottomRightTextWrap,
+            .textTopImageBottom,
             .poemCenterText,
             .imageTopRightTextWrap,
-            .gatheredTopLeft,
-            .textTopImageBottomLeftTextWrap,
+            .textTopImageBottom,
+            .textTopImageBottom,
             .fullText
         ]
         
-        while currentWordIndex < words.count {
+        // Define relative capacity weights for each layout type
+        let layoutWeights: [PageLayoutType: Double] = [
+            .fullText: 1.0,
+            .poemCenterText: 0.5,
+            .gatheredBottomRight: 0.5,
+            .gatheredTopLeft: 0.5,
+            .textTopImageBottom: 0.4,
+            .imageTopTextBottom: 0.4,
+            .textLeftImageRight: 0.4,
+            .imageLeftTextRight: 0.4,
+            .textTopImageCenterTextBottom: 0.5,
+            .imageTopLeftTextWrap: 0.6,
+            .imageTopRightTextWrap: 0.6,
+            .textTopImageBottomLeftTextWrap: 0.6,
+            .textTopImageBottomRightTextWrap: 0.6
+        ]
+        
+        let totalWeight = layouts.reduce(0.0) { $0 + (layoutWeights[$1] ?? 1.0) }
+        let totalChars = sentences.reduce(0) { $0 + $1.count + 1 }
+        var remainingTotalChars = totalChars
+        var remainingWeight = totalWeight
+        
+        while currentSentenceIndex < sentences.count {
             let layout = layouts[pageIndex % layouts.count]
             pageIndex += 1
             
+            let currentWeight = layoutWeights[layout] ?? 1.0
+            
             var maxChars = 0
-            var targetChars1 = 0
+            if remainingWeight > 0 {
+                maxChars = Int((currentWeight / remainingWeight) * Double(remainingTotalChars))
+            } else {
+                maxChars = remainingTotalChars
+            }
+            
+            if maxChars < 50 { maxChars = 50 }
+            
+            var targetChars1 = maxChars
             var requiresTwoChunks = false
             
             switch layout {
-            case .fullText:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 180 : 300) : (isDyslexiaEnabled ? 300 : 500)
-                targetChars1 = maxChars
-            case .poemCenterText:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 100 : 140) : (isDyslexiaEnabled ? 160 : 250)
-                targetChars1 = maxChars
-            case .gatheredBottomRight, .gatheredTopLeft:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 80 : 110) : (isDyslexiaEnabled ? 130 : 200)
-                targetChars1 = maxChars
-            case .textTopImageBottom, .imageTopTextBottom:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 100 : 120) : (isDyslexiaEnabled ? 150 : 200)
-                targetChars1 = maxChars
-            case .textLeftImageRight, .imageLeftTextRight:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 80 : 100) : (isDyslexiaEnabled ? 120 : 180)
-                targetChars1 = maxChars
             case .textTopImageCenterTextBottom:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 110 : 140) : (isDyslexiaEnabled ? 160 : 240)
                 targetChars1 = maxChars / 2
                 requiresTwoChunks = true
             case .imageTopLeftTextWrap, .imageTopRightTextWrap:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 120 : 180) : (isDyslexiaEnabled ? 200 : 320)
-                targetChars1 = isCompact ? (isDyslexiaEnabled ? 40 : 70) : (isDyslexiaEnabled ? 90 : 130)
+                targetChars1 = Int(Double(maxChars) * 0.35)
                 requiresTwoChunks = true
             case .textTopImageBottomLeftTextWrap, .textTopImageBottomRightTextWrap:
-                maxChars = isCompact ? (isDyslexiaEnabled ? 120 : 180) : (isDyslexiaEnabled ? 200 : 320)
-                targetChars1 = isCompact ? (isDyslexiaEnabled ? 80 : 120) : (isDyslexiaEnabled ? 100 : 180)
+                targetChars1 = Int(Double(maxChars) * 0.5)
                 requiresTwoChunks = true
-            }
-            
-            var remainingChars = 0
-            for i in currentWordIndex..<words.count {
-                remainingChars += words[i].count + 1
-            }
-            
-            // Orphan page prevention: if the remaining text is slightly larger than maxChars (up to ~100 characters, ~1-2 sentences),
-            // absorb it into the current page instead of leaving a standalone sentence on the next page.
-            if remainingChars > maxChars && remainingChars <= maxChars + 100 {
-                maxChars = remainingChars
-                if !requiresTwoChunks {
-                    targetChars1 = maxChars
-                }
+            default:
+                break
             }
             
             var chunk1 = ""
             var chunk2: String? = nil
-            while currentWordIndex < words.count {
-                let word = words[currentWordIndex]
+            
+            while currentSentenceIndex < sentences.count {
+                let sentence = sentences[currentSentenceIndex]
                 if chunk1.isEmpty {
-                    chunk1 = word
-                } else if chunk1.count + word.count + 1 <= targetChars1 {
-                    chunk1 += " " + word
+                    chunk1 = sentence
+                } else if chunk1.count + sentence.count + 1 <= targetChars1 {
+                    chunk1 += " " + sentence
                 } else {
                     break
                 }
-                currentWordIndex += 1
+                currentSentenceIndex += 1
             }
             
             if requiresTwoChunks {
                 var chunk2Text = ""
                 let targetChars2 = maxChars - chunk1.count
-                while currentWordIndex < words.count {
-                    let word = words[currentWordIndex]
+                while currentSentenceIndex < sentences.count {
+                    let sentence = sentences[currentSentenceIndex]
                     if chunk2Text.isEmpty {
-                        chunk2Text = word
-                    } else if chunk2Text.count + word.count + 1 <= targetChars2 {
-                        chunk2Text += " " + word
+                        chunk2Text = sentence
+                    } else if chunk2Text.count + sentence.count + 1 <= targetChars2 {
+                        chunk2Text += " " + sentence
                     } else {
                         break
                     }
-                    currentWordIndex += 1
+                    currentSentenceIndex += 1
                 }
                 if !chunk2Text.isEmpty {
                     chunk2 = chunk2Text
                 }
+            }
+            
+            if pageIndex == layouts.count {
+                while currentSentenceIndex < sentences.count {
+                    let sentence = sentences[currentSentenceIndex]
+                    if requiresTwoChunks {
+                        chunk2 = (chunk2 ?? "") + (chunk2 == nil ? "" : " ") + sentence
+                    } else {
+                        chunk1 += " " + sentence
+                    }
+                    currentSentenceIndex += 1
+                }
+            } else {
+                let consumed = chunk1.count + (chunk2 == nil ? 0 : chunk2!.count + 1)
+                remainingTotalChars -= consumed
+                remainingWeight -= currentWeight
             }
             let layoutUsesImage: Bool
             switch layout {
@@ -652,7 +679,19 @@ struct BookView: View {
             }
             
             var imageName: String? = nil
-            if layoutUsesImage && currentImageIndex < availableImages.count {
+            if pageIndex == 3 {
+                imageName = "Sequenza 2 evento 3"
+            } else if pageIndex == 5 {
+                imageName = "event3_card4"
+            } else if pageIndex == 6 {
+                imageName = "scene4_card4"
+            } else if pageIndex == 9 {
+                imageName = "scene8_card1"
+            } else if pageIndex == 10 {
+                imageName = "scene8_card2"
+            } else if pageIndex == 11 {
+                imageName = "scene8_card3"
+            } else if layoutUsesImage && currentImageIndex < availableImages.count {
                 imageName = availableImages[currentImageIndex]
                 currentImageIndex += 1
             }
@@ -701,6 +740,9 @@ struct BookView: View {
                     FairyTaleFrame(isLeft: isLeft, pageNumber: pageNumber ?? 1, showVines: showVines)
                         .allowsHitTesting(false)
                     
+                    content()
+                        .padding(pagePadding)
+                    
                     HStack(spacing: 0) {
                         if isLeft {
                             Spacer(minLength: 0)
@@ -712,9 +754,7 @@ struct BookView: View {
                             Spacer(minLength: 0)
                         }
                     }
-                    
-                    content()
-                        .padding(pagePadding)
+                    .allowsHitTesting(false)
                         
                     if let pageNum = pageNumber {
                         VStack {
@@ -788,7 +828,12 @@ struct BookView: View {
                             .mask(
                                 Rectangle()
                                     .fill(Color.black)
-                                    .padding(isCompact ? 20 : 40)
+                                    .padding(EdgeInsets(
+                                        top: isCompact ? 20 : 40,
+                                        leading: isCompact ? 20 : 40,
+                                        bottom: isCompact ? 20 : 40,
+                                        trailing: -(isCompact ? 60 : 120)
+                                    ))
                                     .blur(radius: isCompact ? 30 : 60)
                             )
                             .position(x: geo.size.width / 2, y: geo.size.height / 2)
@@ -797,17 +842,39 @@ struct BookView: View {
                 }
                 
                 let titleCover = pageContainer(isLeft: false, pageNumber: nil, showVines: true) {
-                    VStack {
-                        Spacer()
-                        Text(redRidingHood.title)
-                            .font(isCompact ? Font.custom("Alegreya", size: 50, relativeTo: .largeTitle).italic() : Font.custom("Alegreya", size: 70, relativeTo: .largeTitle).italic())
-                            .foregroundColor(.black)
-                            .kerning(isCompact ? 1 : 2)
-                            .shadow(color: .black.opacity(0.15), radius: 2, x: 1, y: 2)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 20)
-                        Spacer()
+                    ZStack {
+                        GeometryReader { geo in
+                            Image("FairytaleTitleBackground")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: geo.size.width, height: geo.size.height)
+                                .mask(
+                                    Rectangle()
+                                        .fill(Color.black)
+                                        .padding(EdgeInsets(
+                                            top: isCompact ? 20 : 40,
+                                            leading: -(isCompact ? 60 : 120),
+                                            bottom: isCompact ? 20 : 40,
+                                            trailing: isCompact ? 20 : 40
+                                        ))
+                                        .blur(radius: isCompact ? 30 : 60)
+                                )
+                                .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                        }
+                        VStack {
+                            Spacer()
+                            Text(redRidingHood.title)
+                                .font(isCompact ? Font.custom("Alegreya", size: 50, relativeTo: .largeTitle).italic() : Font.custom("Alegreya", size: 70, relativeTo: .largeTitle).italic())
+                                .foregroundColor(.black)
+                                .kerning(isCompact ? 1 : 2)
+                                .shadow(color: .black.opacity(0.15), radius: 2, x: 1, y: 2)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 20)
+                            Spacer()
+                        }
                     }
+                    }
+                    .padding(-pagePadding)
                 }
                 
                 newPages.append(insideCover)
@@ -858,6 +925,11 @@ struct BookView: View {
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.vertical, isCompact ? 10 : 15)
                                 Spacer(minLength: 0)
+                                if let imgName = pageContent.imageName {
+                                    let pageNum = pageIndex + 1
+                                    let needsOffset = [3, 8, 11, 12, 13].contains(pageNum)
+                                    editorialImage(imgName: imgName, height: imgHeight, offsetY: needsOffset ? (isCompact ? 40 : 70) : 0)
+                                }
                                 
                             case .poemCenterText:
                                 Spacer()
@@ -870,6 +942,10 @@ struct BookView: View {
                                 Spacer()
                                 
                             case .gatheredBottomRight:
+                                if let imgName = pageContent.imageName {
+                                    editorialImage(imgName: imgName, height: imgHeight)
+                                        .padding(.top, isCompact ? 10 : 20)
+                                }
                                 Spacer()
                                 HStack {
                                     Spacer(minLength: isCompact ? 60 : 120)
@@ -895,7 +971,9 @@ struct BookView: View {
                                     .padding(.vertical, isCompact ? 10 : 15)
                                 Spacer(minLength: 10)
                                 if let imgName = pageContent.imageName {
-                                    editorialImage(imgName: imgName, height: imgHeight)
+                                    let pageNum = pageIndex + 1
+                                    let needsOffset = [3, 8, 11, 12, 13].contains(pageNum)
+                                    editorialImage(imgName: imgName, height: imgHeight, offsetY: needsOffset ? (isCompact ? 40 : 70) : 0)
                                 }
                                 Spacer(minLength: 0)
                                 
@@ -916,9 +994,13 @@ struct BookView: View {
                                     if let imgName = pageContent.imageName {
                                         Image(imgName)
                                             .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: isCompact ? 120 : 200)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: isCompact ? 120 : 200, height: isCompact ? 120 : 200)
+                                            .mask(
+                                                OrganicBlobMask()
+                                                    .padding(5)
+                                                    .blur(radius: 8)
+                                            )
                                             .accessibilityHidden(true)
                                     }
                                 }
@@ -931,9 +1013,13 @@ struct BookView: View {
                                     if let imgName = pageContent.imageName {
                                         Image(imgName)
                                             .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: isCompact ? 120 : 200)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: isCompact ? 120 : 200, height: isCompact ? 120 : 200)
+                                            .mask(
+                                                OrganicBlobMask()
+                                                    .padding(5)
+                                                    .blur(radius: 8)
+                                            )
                                             .accessibilityHidden(true)
                                     }
                                     editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
@@ -1016,9 +1102,13 @@ struct BookView: View {
                                         if let imgName = pageContent.imageName {
                                             Image(imgName)
                                                 .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: isCompact ? 110 : 180)
-                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: isCompact ? 110 : 180, height: isCompact ? 110 : 180)
+                                                .mask(
+                                                    OrganicBlobMask()
+                                                        .padding(5)
+                                                        .blur(radius: 8)
+                                                )
                                                 .accessibilityHidden(true)
                                         }
                                         if let chunk2 = pageContent.textChunk2 {
@@ -1043,9 +1133,13 @@ struct BookView: View {
                                         if let imgName = pageContent.imageName {
                                             Image(imgName)
                                                 .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: isCompact ? 110 : 180)
-                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: isCompact ? 110 : 180, height: isCompact ? 110 : 180)
+                                                .mask(
+                                                    OrganicBlobMask()
+                                                        .padding(5)
+                                                        .blur(radius: 8)
+                                                )
                                                 .accessibilityHidden(true)
                                         }
                                     }
@@ -1063,8 +1157,28 @@ struct BookView: View {
             }
         }
 
+        let finalPageNumber = newPages.count + 1
+        let isLeft = newPages.count % 2 == 0
+        let finalImagePage = pageContainer(isLeft: isLeft, pageNumber: finalPageNumber, showVines: true) {
+            GeometryReader { geo in
+                Image("FinalImage")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .mask(
+                        Rectangle()
+                            .fill(Color.black)
+                            .padding(isCompact ? 20 : 40)
+                            .blur(radius: isCompact ? 30 : 60)
+                    )
+                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
+            }
+            .padding(-pagePadding) // Annulla il padding per occupare tutta la pagina e sovrapporsi alla cornice
+        }
+        newPages.append(finalImagePage)
+        
         if newPages.count % 2 != 0 {
-            let emptyPage = pageContainer(isLeft: newPages.count % 2 == 0, pageNumber: newPages.count + 1) {
+            let emptyPage = pageContainer(isLeft: false, pageNumber: newPages.count + 1) {
                 Spacer()
             }
             newPages.append(emptyPage)
@@ -1096,14 +1210,19 @@ struct BookView: View {
     }
     
     @ViewBuilder
-    private func editorialImage(imgName: String, height: CGFloat) -> some View {
+    private func editorialImage(imgName: String, height: CGFloat, removeBlur: Bool = false, offsetY: CGFloat = 0) -> some View {
         HStack {
             Spacer()
             Image(imgName)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: height)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .aspectRatio(contentMode: .fill)
+                .offset(y: offsetY)
+                .frame(width: height * 1.5, height: height)
+                .mask(
+                    OrganicBlobMask()
+                        .padding(10)
+                        .blur(radius: removeBlur ? 0 : 15)
+                )
                 .accessibilityHidden(true)
             Spacer()
         }

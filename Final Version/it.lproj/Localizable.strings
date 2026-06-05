@@ -219,11 +219,11 @@
 
 "story.redhood.scene7.title" = "Scena 7";
 "story.redhood.scene7.text1" = "\"Oh, Grandmother, what a deep voice you have!\"\n\n\"The better to speak to you, my dear.\"\n\n\"And what big eyes you have!\"\n\n\"The better to see you, my dear.\"";
-"story.redhood.scene7.text2" = "\"And what big hands you have!\"\n\n\"The better to hug you, my dear.\"\n\n\"But Grandmother... what a giant mouth you have!\" she gasped.\n\n\"The better to EAT YOU!\" the wolf roared.\n\nHe jumped out of bed and swallowed Little Red Riding Hood in an instant. Completely satisfied, the wolf fell fast asleep and began to snore loudly.";
+"story.redhood.scene7.text2" = "\"And what big hands you have!\"\n\n\"The better to hug you, my dear.\"\n\n\"But Grandmother... what a giant mouth you have!\" she gasped.\n\n\"The better to EAT YOU!\" the wolf roared.\n\nHe jumped out of bed, but Little Red Riding Hood, terrified, started screaming as loud as she could!";
 
 "story.redhood.scene8.title" = "Scena 8";
-"story.redhood.scene8.text1" = "A hunter passing by heard the unusual noise coming from the cottage. He peeked through the window and saw the notorious wolf sleeping on the bed.\n\n\"I've been tracking you for a long time!\" the hunter whispered. He carefully pointed his rifle and... BOOM! The wolf was dead.\n\nThe hunter then used a knife to open the beast's stomach, and to his absolute surprise, Little Red Riding Hood stepped out completely safe and sound. Hearing the noise, the grandmother finally came out of the closet.";
-"story.redhood.scene8.text2" = "\"Thank you! You saved us just in time,\" the grandmother cheered.\n\nAt sunset, the mother arrived at the cottage, terrified because her daughter was late. When she saw everyone safe, she wept with joy.\n\nAs Little Red Riding Hood and her mother walked back home together under the trees, the little girl held her mother's hand tightly and said: \"From now on, we will always stick to the path, without any distractions!\"";
+"story.redhood.scene8.text1" = "A woodcutter passing by heard Little Red Riding Hood's loud screams coming from the cottage. He ran as fast as he could and burst through the door with a large wooden stick.\n\nSeeing the brave woodcutter, the cowardly wolf panicked, jumped out of the window, and ran deep into the forest, never to be seen again.";
+"story.redhood.scene8.text2" = "\"Thank you! You saved us just in time,\" the grandmother cheered.";
 
 /* Image placeholders */
 "Immagine di Introduzione" = "Immagine di Introduzione";
