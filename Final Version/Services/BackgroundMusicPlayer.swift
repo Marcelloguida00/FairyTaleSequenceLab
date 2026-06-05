@@ -103,7 +103,7 @@ final class BackgroundMusicPlayer {
         let resourceName = selectedTheme.resourceName
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension)
                 ?? Bundle.main.url(forResource: resourceName, withExtension: resourceExtension, subdirectory: "Resources/Audio") else {
-            assertionFailure("Missing background music resource: \(resourceName).\(resourceExtension)")
+            print("Warning: Missing background music resource: \(resourceName).\(resourceExtension)")
             return
         }
 
@@ -118,7 +118,7 @@ final class BackgroundMusicPlayer {
             newPlayer.prepareToPlay()
             player = newPlayer
         } catch {
-            assertionFailure("Unable to start background music: \(error.localizedDescription)")
+            print("Warning: Unable to start background music: \(error.localizedDescription)")
         }
     }
 

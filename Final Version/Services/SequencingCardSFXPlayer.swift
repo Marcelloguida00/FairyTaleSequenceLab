@@ -18,7 +18,7 @@ final class SequencingCardSFXPlayer {
     private init() {}
 
     func play(_ sfx: SequencingCardSFX) {
-        guard !isMuted else { return }
+        guard !isMuted, AppSettings.enableSounds else { return }
 
         let name = sfx.rawValue
         let player = players[name] ?? preparePlayer(named: name)
@@ -49,7 +49,7 @@ final class SequencingCardSFXPlayer {
     private func preparePlayer(named resource: String) -> AVAudioPlayer? {
         guard let url = Bundle.main.url(forResource: resource, withExtension: "wav")
             ?? Bundle.main.url(forResource: resource, withExtension: "wav", subdirectory: "Resources/Audio") else {
-            assertionFailure("Missing audio resource: \(resource).wav")
+            print("Warning: Missing audio resource: \(resource).wav")
             return nil
         }
 
@@ -62,7 +62,7 @@ final class SequencingCardSFXPlayer {
             player.prepareToPlay()
             return player
         } catch {
-            assertionFailure("Unable to play card SFX \(resource): \(error.localizedDescription)")
+            print("Warning: Unable to play card SFX \(resource): \(error.localizedDescription)")
             return nil
         }
     }

@@ -91,7 +91,9 @@ struct ContentView: View {
     @State private var advancedMathProblem = MathAdditionProblem.randomSimple()
     @State private var advancedSettingsUnlocked = false
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     private static let settingsFadeDuration: TimeInterval = 0.30
 
@@ -987,10 +989,12 @@ struct ContentView: View {
             RedHoodLevel0View {
                 handleRedHoodChapterCompletion(0)
             }
+            .environmentObject(lm)
         } else if level == 9 {
             RedHoodLevelFinalView {
                 handleRedHoodChapterCompletion(9)
             }
+            .environmentObject(lm)
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(
                 eventData: eventData,
@@ -1007,6 +1011,7 @@ struct ContentView: View {
                     handleRedHoodChapterCompletion(level)
                 }
             )
+            .environmentObject(lm)
         }
     }
 
@@ -1067,14 +1072,16 @@ struct ContentView: View {
             avatarDirection = WalkDirection(from: avatarPosition, to: nextPosition)
 
             let distance = normalizedMapDistance(from: avatarPosition, to: nextPosition)
-            let duration = max(0.18, min(1.1, distance * 4.6))
+            let duration = reduceMotion ? 0.0 : max(0.18, min(1.1, distance * 4.6))
 
-            withAnimation(.linear(duration: duration)) {
+            withAnimation(reduceMotion ? nil : .linear(duration: duration)) {
                 avatarPosition = nextPosition
             }
 
             do {
-                try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+                if duration > 0 {
+                    try await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+                }
             } catch {
                 if generation == walkGeneration {
                     isWalking = false
@@ -1090,7 +1097,7 @@ struct ContentView: View {
         }
 
         if let finalWaypoint = route.last, activeMap == .redHood || MapGraph.baseIDs.contains(finalWaypoint.id) {
-            withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.38, dampingFraction: 0.78)) {
                 currentBaseID = finalWaypoint.id
             }
         }
@@ -1299,7 +1306,9 @@ private struct WaypointDot: View {
     let size: CGFloat
 
     @State private var pulse = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     var body: some View {
         ZStack {
@@ -1368,7 +1377,9 @@ private struct MainMapIslandDot: View {
     let isPulsing: Bool
 
     @State private var pulse = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     private let dotColor = Color(red: 0.12, green: 0.64, blue: 0.92)
     private let borderColor = Color(red: 0.03, green: 0.36, blue: 0.68)

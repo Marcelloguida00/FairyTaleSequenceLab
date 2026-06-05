@@ -37,6 +37,9 @@ struct SettingsView: View {
     @AppStorage("musicTheme") private var musicTheme: String = BackgroundMusicTheme.gardenGate.rawValue
     @AppStorage(SequencingSFXMode.storageKey) private var sequencingSFXMode: String = SequencingSFXMode.simplified.rawValue
     @AppStorage("dyslexiaFontEnabled") private var dyslexiaFontEnabled = false
+    @AppStorage("enableHaptics") private var enableHaptics = true
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    @AppStorage("enableSounds") private var enableSounds = true
     @State private var showResetProgressConfirmation = false
     @State private var route: SettingsRoute = .main
     @State private var returnRoute: SettingsRoute = .main
@@ -522,7 +525,7 @@ struct SettingsView: View {
         let knobOffset = expanded ? 12.0 : 10.0
 
         return RoundedRectangle(cornerRadius: trackHeight / 2, style: .continuous)
-            .fill(SettingsTheme.controlFill)
+            .fill(isOn ? Color(red: 0.18, green: 0.72, blue: 0.28) : SettingsTheme.controlFill)
             .overlay(
                 RoundedRectangle(cornerRadius: trackHeight / 2, style: .continuous)
                     .stroke(SettingsTheme.panelBorder.opacity(0.7), lineWidth: 1)
@@ -815,39 +818,116 @@ struct SettingsView: View {
 
     private var accessibilityDetailCard: some View {
         settingsCard(largeStyle: usesFrameLayout) {
-            Button {
-                AppSettings.hapticImpact(.light)
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    fontSettings.dyslexiaFontEnabled.toggle()
-                }
-            } label: {
-                HStack(spacing: usesFrameLayout ? 18 : 14) {
-                    Image(systemName: "textformat")
-                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                        .foregroundStyle(SettingsTheme.menuRowText)
-                        .frame(width: usesFrameLayout ? 36 : 28)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(lm.t("settings.dyslexia_font"))
-                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
-                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-                        Text(lm.t("settings.dyslexia_font.description"))
-                            .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
-                            .foregroundStyle(SettingsTheme.secondaryText)
-                            .fixedSize(horizontal: false, vertical: true)
+            VStack(spacing: 0) {
+                // Dyslexia Font
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        fontSettings.dyslexiaFontEnabled.toggle()
                     }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "textformat")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
 
-                    Spacer()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.dyslexia_font"))
+                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
-                    settingsToggle(isOn: fontSettings.dyslexiaFontEnabled, expanded: usesFrameLayout)
+                            Text(lm.t("settings.dyslexia_font.description"))
+                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: fontSettings.dyslexiaFontEnabled, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
                 }
-                .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                .padding(.vertical, usesFrameLayout ? 20 : 16)
-                .gameSettingsRowTouchTarget()
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
+                
+
+                
+                // Enable Animations
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        reduceAnimations.toggle()
+                    }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "sparkles")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.enable_animations"))
+                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.enable_animations.description"))
+                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: reduceAnimations, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
+                }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
+                
+                settingsDivider(largeStyle: usesFrameLayout)
+                
+                // Enable Sounds
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        enableSounds.toggle()
+                    }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "speaker.wave.3.fill")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.enable_sounds"))
+                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.enable_sounds.description"))
+                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: enableSounds, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
+                }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
             }
-            .buttonStyle(.plain)
-            .gameMinimumTouchTarget()
         }
     }
 

@@ -3,6 +3,7 @@ import SwiftUI
 struct SequenceCardView: View {
     let card: CardData
     let isFlipped: Bool
+    @EnvironmentObject private var lm: LanguageManager
 
     var body: some View {
         ZStack {
@@ -14,8 +15,11 @@ struct SequenceCardView: View {
                 .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0, y: 1, z: 0), perspective: 0.3)
                 .opacity(isFlipped ? 1 : 0)
         }
-        .accessibilityLabel(isFlipped ? card.description : "Story scene card.")
-        .accessibilityHint("")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(isFlipped ? card.description : lm.t("a11y.story_scene_card"))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(lm.t("a11y.story_scene_card_hint"))
+        .gameMinimumTouchTarget()
     }
 
     // MARK: - Front (image)

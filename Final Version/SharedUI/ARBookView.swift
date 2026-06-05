@@ -19,8 +19,6 @@ struct ARBookView: View {
     let onClose: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
-    @State private var targetIndex = 0
-    @State private var showSuccessMessage = false
     @State private var isScanning = true
     @State private var mappingStatus: ARFrame.WorldMappingStatus = .notAvailable
 
@@ -30,8 +28,6 @@ struct ARBookView: View {
                 UnlockedCardsARSceneView(
                     cards: cards,
                     chapterText: chapterText,
-                    targetIndex: $targetIndex,
-                    showSuccessMessage: $showSuccessMessage,
                     isScanning: $isScanning,
                     mappingStatus: $mappingStatus
                 )
@@ -56,29 +52,8 @@ struct ARBookView: View {
                     if isScanning {
                         scanningBanner
                             .padding(.bottom, 26)
-                    } else if targetIndex < cards.count {
-                        targetBanner
-                            .padding(.bottom, 26)
-                    } else {
-                        completionBanner
-                            .padding(.bottom, 26)
                     }
                 }
-            }
-            
-            if showSuccessMessage {
-                VStack {
-                    Spacer()
-                    Text(lm.t("ar.scan.correct"))
-                        .font(.app(.title, weight: .black))
-                        .foregroundColor(.green)
-                        .padding()
-                        .background(Color.white.opacity(0.9))
-                        .cornerRadius(16)
-                        .padding(.bottom, 120)
-                }
-                .transition(.scale.combined(with: .opacity))
-                .zIndex(2)
             }
         }
     }
@@ -115,50 +90,6 @@ struct ARBookView: View {
         }
     }
 
-    private var targetBanner: some View {
-        let targetCard = cards[targetIndex]
-        return VStack(spacing: 4) {
-            Text(lm.t("ar.scan.find_card"))
-                .font(.app(.subheadline, weight: .bold))
-                .foregroundColor(.white.opacity(0.9))
-            Text("\(targetCard.eventID).\(targetCard.sequenceNumber) - \(targetCard.eventTitle)")
-                .font(.app(.headline, weight: .black))
-                .foregroundColor(.white)
-        }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.appAccent.opacity(0.9))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(.white.opacity(0.3), lineWidth: 2)
-                )
-        )
-        .shadow(color: .black.opacity(0.3), radius: 10, y: 5)
-    }
-    
-    private var completionBanner: some View {
-        VStack(spacing: 4) {
-            Text(lm.t("ar.scan.congrats"))
-                .font(.app(.title3, weight: .bold))
-                .foregroundColor(.white)
-            Text(lm.t("ar.scan.found_all"))
-                .font(.app(.subheadline, weight: .medium))
-                .foregroundColor(.white.opacity(0.9))
-        }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.green.opacity(0.9))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(.white.opacity(0.3), lineWidth: 2)
-                )
-        )
-        .shadow(color: .black.opacity(0.3), radius: 10, y: 5)
-    }
 
     private var header: some View {
         HStack(spacing: 12) {
@@ -242,8 +173,6 @@ struct ARBookView: View {
 private struct UnlockedCardsARSceneView: UIViewRepresentable {
     var cards: [ARStoryCard]
     var chapterText: String
-    @Binding var targetIndex: Int
-    @Binding var showSuccessMessage: Bool
     @Binding var isScanning: Bool
     @Binding var mappingStatus: ARFrame.WorldMappingStatus
 
@@ -255,8 +184,7 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
         sceneView.delegate = context.coordinator
         sceneView.session.delegate = context.coordinator
         
-        let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
-        sceneView.addGestureRecognizer(tapGesture)
+
         
         context.coordinator.sceneView = sceneView
         context.coordinator.setupMap()
@@ -265,8 +193,6 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
     }
 
     func updateUIView(_ sceneView: ARSCNView, context: Context) {
-        context.coordinator.targetIndexBinding = _targetIndex
-        context.coordinator.showSuccessMessageBinding = _showSuccessMessage
         context.coordinator.isScanningBinding = _isScanning
         context.coordinator.mappingStatusBinding = _mappingStatus
         
@@ -312,7 +238,7 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
         frame.position = SCNVector3(0, 0, -0.006)
         root.addChildNode(frame)
 
-        let imagePlane = SCNPlane(width: 0.30, height: 0.533)
+        let imagePlane = SCNPlane(width: 0.36, height: 0.64)
         imagePlane.cornerRadius = 0.017
         imagePlane.firstMaterial = makeImageMaterial(imageName: card.imageName)
 
@@ -320,33 +246,6 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
         cardImage.name = "card-image"
         cardImage.position = SCNVector3(0, 0, 0.004)
         root.addChildNode(cardImage)
-
-        let borderPlane = SCNPlane(width: 0.36, height: 0.64)
-        borderPlane.cornerRadius = 0.027
-        borderPlane.firstMaterial = makeOverlayMaterial(makeBorderTexture())
-
-        let border = SCNNode(geometry: borderPlane)
-        border.name = "card-border"
-        border.position = SCNVector3(0, 0, 0.008)
-        root.addChildNode(border)
-
-        let badgePlane = SCNPlane(width: 0.09, height: 0.036)
-        badgePlane.cornerRadius = 0.011
-        badgePlane.firstMaterial = makeMaterial(makeBadgeTexture(for: card))
-
-        let badge = SCNNode(geometry: badgePlane)
-        badge.name = "card-badge"
-        badge.position = SCNVector3(-0.105, 0.24, 0.012)
-        root.addChildNode(badge)
-
-        let labelPlane = SCNPlane(width: 0.42, height: 0.15)
-        labelPlane.cornerRadius = 0.018
-        labelPlane.firstMaterial = makeMaterial(makeLabelTexture(for: card))
-
-        let label = SCNNode(geometry: labelPlane)
-        label.name = "card-label"
-        label.position = SCNVector3(0, -0.43, 0.014)
-        root.addChildNode(label)
 
         return root
     }
@@ -370,9 +269,33 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
         let material = SCNMaterial()
 
         if let image = UIImage(named: imageName) {
-            material.diffuse.contents = image
+            let size = image.size
+            let format = UIGraphicsImageRendererFormat()
+            format.opaque = false
+            let renderer = UIGraphicsImageRenderer(size: size, format: format)
+            
+            let maskedImage = renderer.image { ctx in
+                let cgCtx = ctx.cgContext
+                let rect = CGRect(origin: .zero, size: size)
+                
+                // Draw elliptical radial gradient mask
+                cgCtx.saveGState()
+                cgCtx.translateBy(x: rect.midX, y: rect.midY)
+                cgCtx.scaleBy(x: 1.0, y: rect.height / rect.width)
+                
+                let colors = [UIColor.black.cgColor, UIColor.clear.cgColor]
+                let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: [0.65, 0.95])!
+                
+                cgCtx.drawRadialGradient(gradient, startCenter: .zero, startRadius: 0, endCenter: .zero, endRadius: rect.width / 2, options: [.drawsBeforeStartLocation])
+                cgCtx.restoreGState()
+                
+                // Blend image inside mask
+                cgCtx.setBlendMode(.sourceIn)
+                image.draw(in: rect)
+            }
+            material.diffuse.contents = maskedImage
         } else {
-            material.diffuse.contents = UIColor(red: 0.86, green: 0.78, blue: 0.58, alpha: 1)
+            material.diffuse.contents = UIColor.clear
         }
 
         material.diffuse.mipFilter = .none
@@ -513,17 +436,89 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
     final class Coordinator: NSObject, ARSCNViewDelegate, ARSessionDelegate {
         var parent: UnlockedCardsARSceneView
         var renderedCards: [ARStoryCard] = []
-        var targetIndexBinding: Binding<Int>?
-        var showSuccessMessageBinding: Binding<Bool>?
         var isScanningBinding: Binding<Bool>?
         var mappingStatusBinding: Binding<ARFrame.WorldMappingStatus>?
         weak var sceneView: ARSCNView?
         var cardNodes: [SCNNode] = []
         private var hasPlacedCards = false
 
+        var bookBackgroundImage: UIImage?
+        
         init(_ parent: UnlockedCardsARSceneView) {
             self.parent = parent
             super.init()
+            
+            // Generate a reliable book texture using CoreGraphics
+            let bgSize = CGSize(width: 1800, height: 1200)
+            let imgRenderer = UIGraphicsImageRenderer(size: bgSize)
+            self.bookBackgroundImage = imgRenderer.image { ctx in
+                let w = bgSize.width
+                let h = bgSize.height
+                let pw = w / 2
+                
+                let cgCtx = ctx.cgContext
+                
+                // Leather Cover Gradient
+                let coverRect = CGRect(x: 20, y: 20, width: w - 40, height: h - 40)
+                let coverPath = UIBezierPath(roundedRect: coverRect, cornerRadius: 30)
+                cgCtx.saveGState()
+                coverPath.addClip()
+                let coverColors = [UIColor(red: 0.1, green: 0.15, blue: 0.3, alpha: 1).cgColor,
+                                   UIColor(red: 0.05, green: 0.08, blue: 0.18, alpha: 1).cgColor]
+                let coverGrad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: coverColors as CFArray, locations: [0, 1])!
+                cgCtx.drawLinearGradient(coverGrad, start: CGPoint(x: 20, y: 20), end: CGPoint(x: w, y: h), options: [])
+                cgCtx.restoreGState()
+                
+                // Parchment Gradient
+                let parchmentColors = [UIColor(red: 0.98, green: 0.94, blue: 0.86, alpha: 1).cgColor,
+                                       UIColor(red: 0.85, green: 0.78, blue: 0.65, alpha: 1).cgColor]
+                let parchGrad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: parchmentColors as CFArray, locations: [0, 1])!
+                
+                // Left page stack
+                for i in 0...3 {
+                    let rect = CGRect(x: 40 - CGFloat(i*2), y: 40 + CGFloat(i*2), width: pw - 40, height: h - 80)
+                    let path = UIBezierPath(roundedRect: rect, cornerRadius: 8)
+                    
+                    cgCtx.saveGState()
+                    path.addClip()
+                    cgCtx.drawRadialGradient(parchGrad, startCenter: CGPoint(x: rect.midX, y: rect.midY), startRadius: 0, endCenter: CGPoint(x: rect.midX, y: rect.midY), endRadius: rect.width, options: [])
+                    if let watermark = UIImage(named: "FairyTaleBackground.jpg") ?? UIImage(named: "FairyTaleBackground") {
+                        watermark.draw(in: rect, blendMode: .multiply, alpha: 0.12)
+                    }
+                    drawCornerFlourishes(in: rect, ctx: cgCtx)
+                    cgCtx.restoreGState()
+                    
+                    UIColor.black.withAlphaComponent(0.15).setStroke()
+                    path.stroke()
+                }
+                
+                // Right page stack
+                for i in 0...3 {
+                    let rect = CGRect(x: pw + CGFloat(i*2), y: 40 + CGFloat(i*2), width: pw - 40, height: h - 80)
+                    let path = UIBezierPath(roundedRect: rect, cornerRadius: 8)
+                    
+                    cgCtx.saveGState()
+                    path.addClip()
+                    cgCtx.drawRadialGradient(parchGrad, startCenter: CGPoint(x: rect.midX, y: rect.midY), startRadius: 0, endCenter: CGPoint(x: rect.midX, y: rect.midY), endRadius: rect.width, options: [])
+                    if let watermark = UIImage(named: "FairyTaleBackground.jpg") ?? UIImage(named: "FairyTaleBackground") {
+                        watermark.draw(in: rect, blendMode: .multiply, alpha: 0.12)
+                    }
+                    drawCornerFlourishes(in: rect, ctx: cgCtx)
+                    cgCtx.restoreGState()
+                    
+                    UIColor.black.withAlphaComponent(0.15).setStroke()
+                    path.stroke()
+                }
+                
+                // Spine Shadow
+                let spineRect = CGRect(x: pw - 30, y: 30, width: 60, height: h - 60)
+                let spineColors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.6).cgColor, UIColor.clear.cgColor]
+                let spineGrad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: spineColors as CFArray, locations: [0, 0.5, 1])!
+                cgCtx.saveGState()
+                UIBezierPath(rect: spineRect).addClip()
+                cgCtx.drawLinearGradient(spineGrad, start: CGPoint(x: pw - 30, y: 0), end: CGPoint(x: pw + 30, y: 0), options: [])
+                cgCtx.restoreGState()
+            }
         }
 
         func setupMap() {
@@ -549,9 +544,8 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
             }
             
             if isScanningBinding?.wrappedValue == true, frame.camera.trackingState == .normal {
-                if frame.worldMappingStatus == .mapped || frame.worldMappingStatus == .extending {
-                    self.placeCardsIfNeeded(session: session)
-                }
+                // Spawn immediately when tracking is normal to avoid getting stuck scanning
+                self.placeCardsIfNeeded(session: session)
             }
         }
         
@@ -592,40 +586,128 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
             
             let containerNode = SCNNode()
             
-            // Layout 4 cards side by side
-            let cardWidth: Float = 0.36
-            let spacing: Float = 0.06
-            let totalCards = renderedCards.prefix(4).count
-            let totalWidth = Float(totalCards) * cardWidth + Float(totalCards - 1) * spacing
-            let startX = -totalWidth / 2.0 + cardWidth / 2.0
+            // --- 1. Book Background Plane ---
+            let bookWidth: Float = 1.8
+            let bookHeight: Float = 1.2
+            let bookPlane = SCNPlane(width: CGFloat(bookWidth), height: CGFloat(bookHeight))
+            bookPlane.cornerRadius = 0.05
             
-            for (index, card) in renderedCards.prefix(4).enumerated() {
-                let cardNode = parent.makeCardNode(card: card, index: index, total: totalCards)
-                // Orient cards to face the camera (which is +Z relative to the anchor)
-                // In SCNNode, local front is +Z. To face the camera (which is in +Z direction), they should have Y rotation 0
-                cardNode.position = SCNVector3(startX + Float(index) * (cardWidth + spacing), 0, 0)
-                containerNode.addChildNode(cardNode)
-                cardNodes.append(cardNode)
+            let bgMaterial = SCNMaterial()
+            if let bgImage = bookBackgroundImage {
+                bgMaterial.diffuse.contents = bgImage
+            }
+            bgMaterial.lightingModel = .constant
+            bgMaterial.isDoubleSided = true
+            bookPlane.firstMaterial = bgMaterial
+            
+            let bookNode = SCNNode(geometry: bookPlane)
+            // Tilt the book back slightly so it's readable
+            bookNode.eulerAngles = SCNVector3(-Float.pi / 8, 0, 0)
+            containerNode.addChildNode(bookNode)
+            
+            // --- 2. Left & Right Page: Checkerboard Layout ---
+            let leftPageCenterX: Float = -bookWidth / 4.0
+            let rightPageCenterX: Float = bookWidth / 4.0
+            let cards = Array(renderedCards.prefix(4))
+            
+            // Split chapter text into 4 chunks
+            let words = parent.chapterText.split(separator: " ")
+            let wordsPerChunk = Int(ceil(Double(words.count) / 4.0))
+            var textChunks: [String] = []
+            for i in 0..<4 {
+                let start = i * wordsPerChunk
+                let end = min((i + 1) * wordsPerChunk, words.count)
+                if start < words.count {
+                    textChunks.append(words[start..<end].joined(separator: " "))
+                } else {
+                    textChunks.append("")
+                }
             }
             
-            // Add Chapter Text below the cards
-            let textNode = makeChapterTextNode(text: parent.chapterText)
-            textNode.position = SCNVector3(0, -0.6, 0.05)
-            containerNode.addChildNode(textNode)
+            // Q1: Left Page, Top Left (Image 1)
+            // Q2: Left Page, Top Right (Text 1)
+            // Q3: Left Page, Bottom Left (Text 2)
+            // Q4: Left Page, Bottom Right (Image 2)
+            // Q5: Right Page, Top Left (Text 3)
+            // Q6: Right Page, Top Right (Image 3)
+            // Q7: Right Page, Bottom Left (Image 4)
+            // Q8: Right Page, Bottom Right (Text 4)
+            
+            let dx: Float = 0.20
+            let dy: Float = 0.28
+            
+            // Define positions for the 4 images and 4 texts
+            let positions: [(isImage: Bool, pos: SCNVector3)] = [
+                (true, SCNVector3(leftPageCenterX - dx, dy, 0.02)),  // Image 1
+                (false, SCNVector3(leftPageCenterX + dx, dy, 0.02)), // Text 1
+                (false, SCNVector3(leftPageCenterX - dx, -dy, 0.02)),// Text 2
+                (true, SCNVector3(leftPageCenterX + dx, -dy, 0.02)), // Image 2
+                (false, SCNVector3(rightPageCenterX - dx, dy, 0.02)),// Text 3
+                (true, SCNVector3(rightPageCenterX + dx, dy, 0.02)), // Image 3
+                (true, SCNVector3(rightPageCenterX - dx, -dy, 0.02)),// Image 4
+                (false, SCNVector3(rightPageCenterX + dx, -dy, 0.02))// Text 4
+            ]
+            
+            var cardIdx = 0
+            var textIdx = 0
+            
+            for item in positions {
+                if item.isImage {
+                    if cardIdx < cards.count {
+                        let cardNode = parent.makeCardNode(card: cards[cardIdx], index: cardIdx, total: 4)
+                        cardNode.scale = SCNVector3(0.85, 0.85, 0.85)
+                        cardNode.position = item.pos
+                        bookNode.addChildNode(cardNode)
+                        cardNodes.append(cardNode)
+                        cardIdx += 1
+                    }
+                } else {
+                    if textIdx < textChunks.count {
+                        let textNode = makeChapterTextNode(text: textChunks[textIdx])
+                        textNode.position = item.pos
+                        bookNode.addChildNode(textNode)
+                        textIdx += 1
+                    }
+                }
+            }
             
             return containerNode
+        }
+        
+        private func drawCornerFlourishes(in rect: CGRect, ctx: CGContext) {
+            let color = UIColor(red: 0.76, green: 0.6, blue: 0.3, alpha: 0.6).cgColor
+            let padding: CGFloat = 30
+            let size: CGFloat = 40
+            
+            ctx.setFillColor(color)
+            
+            // Helper to draw a decorative leaf/diamond in the corner
+            func drawLeaf(at point: CGPoint) {
+                let path = UIBezierPath()
+                path.move(to: CGPoint(x: point.x, y: point.y - size/2))
+                path.addQuadCurve(to: CGPoint(x: point.x + size/2, y: point.y), controlPoint: CGPoint(x: point.x + size/4, y: point.y - size/4))
+                path.addQuadCurve(to: CGPoint(x: point.x, y: point.y + size/2), controlPoint: CGPoint(x: point.x + size/4, y: point.y + size/4))
+                path.addQuadCurve(to: CGPoint(x: point.x - size/2, y: point.y), controlPoint: CGPoint(x: point.x - size/4, y: point.y + size/4))
+                path.addQuadCurve(to: CGPoint(x: point.x, y: point.y - size/2), controlPoint: CGPoint(x: point.x - size/4, y: point.y - size/4))
+                path.fill()
+            }
+            
+            drawLeaf(at: CGPoint(x: rect.minX + padding, y: rect.minY + padding))
+            drawLeaf(at: CGPoint(x: rect.maxX - padding, y: rect.minY + padding))
+            drawLeaf(at: CGPoint(x: rect.minX + padding, y: rect.maxY - padding))
+            drawLeaf(at: CGPoint(x: rect.maxX - padding, y: rect.maxY - padding))
         }
         
         private func makeChapterTextNode(text: String) -> SCNNode {
             let container = SCNNode()
             
-            let panelWidth: CGFloat = 1.6
-            let panelHeight: CGFloat = 0.5
+            let panelWidth: CGFloat = 0.38
+            let panelHeight: CGFloat = 0.52
             let panel = SCNPlane(width: panelWidth, height: panelHeight)
-            panel.cornerRadius = 0.05
+            panel.cornerRadius = 0.02
             
-            // Render text to a UIImage to avoid freezing SceneKit with complex SCNText geometry
-            let size = CGSize(width: 1600, height: 500)
+            // Render text to a UIImage
+            let size = CGSize(width: 400, height: 550)
             let format = UIGraphicsImageRendererFormat()
             format.opaque = false
             format.scale = 1
@@ -633,23 +715,21 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
             
             let image = renderer.image { _ in
                 let rect = CGRect(origin: .zero, size: size)
+                UIColor.clear.setFill()
+                UIBezierPath(rect: rect).fill()
                 
-                // Background
-                UIColor.black.withAlphaComponent(0.85).setFill()
-                UIBezierPath(roundedRect: rect, cornerRadius: 50).fill()
-                
-                let textRect = rect.insetBy(dx: 60, dy: 60)
+                let textRect = rect.insetBy(dx: 15, dy: 15)
                 
                 let paragraph = NSMutableParagraphStyle()
-                paragraph.alignment = .center
-                paragraph.lineSpacing = 12
+                paragraph.alignment = .left
+                paragraph.lineSpacing = 6
                 paragraph.lineBreakMode = .byWordWrapping
                 
                 let attributed = NSAttributedString(
                     string: text,
                     attributes: [
-                        .font: UIFont.systemFont(ofSize: 42, weight: .medium),
-                        .foregroundColor: UIColor.white,
+                        .font: UIFont.systemFont(ofSize: 26, weight: .semibold),
+                        .foregroundColor: UIColor(red: 0.3, green: 0.15, blue: 0.1, alpha: 1),
                         .paragraphStyle: paragraph
                     ]
                 )
@@ -668,54 +748,6 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
             container.addChildNode(panelNode)
             
             return container
-        }
-
-        @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-            guard let sceneView = sceneView,
-                  let targetIndex = targetIndexBinding?.wrappedValue,
-                  targetIndex < renderedCards.count else { return }
-
-            let location = gesture.location(in: sceneView)
-            let hitResults = sceneView.hitTest(location, options: [.boundingBoxOnly: true])
-            
-            for hit in hitResults {
-                var node: SCNNode? = hit.node
-                while let current = node {
-                    if let name = current.name, name.hasPrefix("unlocked-card-") {
-                        let cardId = name.replacingOccurrences(of: "unlocked-card-", with: "")
-                        let targetCard = renderedCards[targetIndex]
-                        
-                        if cardId == targetCard.id {
-                            targetIndexBinding?.wrappedValue += 1
-                            AppSettings.hapticImpact(.heavy)
-                            showSuccessFeedback()
-                            
-                            let scaleUp = SCNAction.scale(to: 1.3, duration: 0.2)
-                            let scaleDown = SCNAction.scale(to: 1.0, duration: 0.2)
-                            let seq = SCNAction.sequence([scaleUp, scaleDown, scaleUp, scaleDown])
-                            current.runAction(seq)
-                            return
-                        } else {
-                            AppSettings.hapticImpact(.light)
-                            let moveLeft = SCNAction.moveBy(x: -0.05, y: 0, z: 0, duration: 0.05)
-                            let moveRight = SCNAction.moveBy(x: 0.1, y: 0, z: 0, duration: 0.1)
-                            let moveCenter = SCNAction.moveBy(x: -0.05, y: 0, z: 0, duration: 0.05)
-                            current.runAction(.sequence([moveLeft, moveRight, moveCenter]))
-                            return
-                        }
-                    }
-                    node = current.parent
-                }
-            }
-        }
-        
-        private func showSuccessFeedback() {
-            showSuccessMessageBinding?.wrappedValue = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                withAnimation {
-                    self.showSuccessMessageBinding?.wrappedValue = false
-                }
-            }
         }
     }
 }

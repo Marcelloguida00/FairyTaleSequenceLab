@@ -335,13 +335,16 @@ struct BookView: View {
                                     .fill(LinearGradient(gradient: Gradient(colors: [bookmark.info.color.opacity(0.9), bookmark.info.color.opacity(0.7)]), startPoint: .leading, endPoint: .trailing))
                                     .frame(width: isCompact ? 24 : 40, height: isCompact ? 32 : 50)
                                     .shadow(color: .black.opacity(0.4), radius: 2, x: 2, y: 2)
+                                    .accessibilityHidden(true)
                                     
                                     Text(bookmark.info.emoji)
                                         .font(.system(size: isCompact ? 12 : 20))
                                         .offset(y: isCompact ? -3 : -5)
+                                        .accessibilityHidden(true)
                                 }
                             }
                             .buttonStyle(.plain)
+                            .accessibilityLabel(bookmark.info.title)
                             .gameMinimumTouchTarget(
                                 minWidth: max(isCompact ? 24 : 40, GameButtonMetrics.minimumTouchTarget),
                                 minHeight: max(isCompact ? 32 : 50, GameButtonMetrics.minimumTouchTarget)
@@ -358,6 +361,8 @@ struct BookView: View {
                 // Top actions
                 VStack {
                     HStack {
+                        // AR button temporarily disabled for delivery
+                        /*
                         Button {
                             AppSettings.hapticImpact(.light)
                             withAnimation(.easeInOut(duration: 0.24)) {
@@ -375,6 +380,7 @@ struct BookView: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel(lm.t("a11y.book_ar_button"))
                         .padding(isCompact ? 12 : 20)
+                        */
 
                         Spacer()
 
@@ -385,6 +391,7 @@ struct BookView: View {
                                 .background(Circle().fill(Color(red: 0.85, green: 0.8, blue: 0.65)))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel(lm.t("button.done"))
                         .gameMinimumTouchTarget(
                             minWidth: GameButtonMetrics.chromeCircleSize,
                             minHeight: GameButtonMetrics.chromeCircleSize
@@ -670,15 +677,15 @@ struct BookView: View {
         
         let titleFont = isDyslexiaEnabled ? 
             (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
-            (isCompact ? Font.custom("Alegreya", size: 24).weight(.bold) : Font.custom("Alegreya", size: 36).weight(.bold))
+            (isCompact ? Font.custom("Alegreya", size: 24, relativeTo: .title).weight(.bold) : Font.custom("Alegreya", size: 36, relativeTo: .title).weight(.bold))
             
         let textFont = isDyslexiaEnabled ? 
             (isCompact ? Font.app(.subheadline, weight: .regular) : Font.app(.title3, weight: .regular)) :
-            (isCompact ? Font.custom("Alegreya", size: 18) : Font.custom("Alegreya", size: 26))
+            (isCompact ? Font.custom("Alegreya", size: 18, relativeTo: .body) : Font.custom("Alegreya", size: 26, relativeTo: .body))
             
         let dropCapFont = isDyslexiaEnabled ?
             (isCompact ? Font.app(.largeTitle, weight: .bold) : Font.app(size: 48, weight: .bold)) :
-            (isCompact ? Font.custom("Alegreya", size: 40).weight(.bold) : Font.custom("Alegreya", size: 60).weight(.bold))
+            (isCompact ? Font.custom("Alegreya", size: 40, relativeTo: .largeTitle).weight(.bold) : Font.custom("Alegreya", size: 60, relativeTo: .largeTitle).weight(.bold))
             
         let lineSpacing: CGFloat = isCompact ? 3 : 6
         
@@ -734,7 +741,7 @@ struct BookView: View {
                         .font(.system(size: isCompact ? 30 : 60))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
                     Text(subtitle)
-                        .font(isDyslexiaEnabled ? .app(.subheadline) : Font.custom("Alegreya", size: isCompact ? 18 : 26))
+                        .font(isDyslexiaEnabled ? .app(.subheadline) : Font.custom("Alegreya", size: isCompact ? 18 : 26, relativeTo: .body))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
                         .multilineTextAlignment(.center)
                 }
@@ -793,7 +800,7 @@ struct BookView: View {
                     VStack {
                         Spacer()
                         Text(redRidingHood.title)
-                            .font(isCompact ? Font.custom("Alegreya", size: 50).italic() : Font.custom("Alegreya", size: 70).italic())
+                            .font(isCompact ? Font.custom("Alegreya", size: 50, relativeTo: .largeTitle).italic() : Font.custom("Alegreya", size: 70, relativeTo: .largeTitle).italic())
                             .foregroundColor(.black)
                             .kerning(isCompact ? 1 : 2)
                             .shadow(color: .black.opacity(0.15), radius: 2, x: 1, y: 2)
@@ -1103,7 +1110,7 @@ struct BookView: View {
     }
 }
 
-private struct OpenBookBackground: View {
+struct OpenBookBackground: View {
     var body: some View {
         GeometryReader { geometry in
             let w = geometry.size.width
@@ -1245,6 +1252,7 @@ struct FairyTaleFrame: View {
                 // Climbing Vine decoration varying per page
                 ClimbingVine(pageNumber: pageNumber, w: w, h: h, inset: inset)
             }
+            .accessibilityHidden(true)
             // Mask the side near the spine to make it look like a real page
             .padding(.trailing, isLeft ? -20 : 0)
             .padding(.leading, !isLeft ? -20 : 0)
@@ -1315,6 +1323,7 @@ struct ClimbingVine: View {
                 }
             }
         }
+        .accessibilityHidden(true)
     }
 }
 
@@ -1437,6 +1446,7 @@ struct PageBackgroundDecal: View {
                         .position(x: w * 0.3, y: h * 0.1)
                 }
             }
+            .accessibilityHidden(true)
         }
     }
 }

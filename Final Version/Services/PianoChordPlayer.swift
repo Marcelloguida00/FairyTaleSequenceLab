@@ -68,7 +68,7 @@ final class PianoChordPlayer {
     }
 
     private func playChord(_ chord: PianoChord, rate: Float, volumeScale: Float) {
-        guard !isMuted else { return }
+        guard !isMuted, AppSettings.enableSounds else { return }
 
         let player = players[chord] ?? preparePlayer(named: chord.rawValue, cache: &players, key: chord)
         guard let player else { return }
@@ -81,7 +81,7 @@ final class PianoChordPlayer {
     }
 
     private func playNote(_ note: SequencingPianoNote, volumeScale: Float) {
-        guard !isMuted else { return }
+        guard !isMuted, AppSettings.enableSounds else { return }
 
         let player = notePlayers[note.rawValue] ?? preparePlayer(named: note.rawValue, cache: &notePlayers, key: note.rawValue)
         guard let player else { return }
@@ -109,7 +109,7 @@ final class PianoChordPlayer {
     ) -> AVAudioPlayer? {
         guard let url = Bundle.main.url(forResource: resource, withExtension: "wav")
                 ?? Bundle.main.url(forResource: resource, withExtension: "wav", subdirectory: "Resources/Audio") else {
-            assertionFailure("Missing piano audio resource: \(resource).wav")
+            print("Warning: Missing piano audio resource: \(resource).wav")
             return nil
         }
 
@@ -123,7 +123,7 @@ final class PianoChordPlayer {
             cache[key] = player
             return player
         } catch {
-            assertionFailure("Unable to play piano audio: \(error.localizedDescription)")
+            print("Warning: Unable to play piano audio: \(error.localizedDescription)")
             return nil
         }
     }
