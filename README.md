@@ -12,6 +12,7 @@ Backlog di funzionalità e miglioramenti pianificati per l’app.
 - **Aggiungere voce narrante per dialoghi**
 - **Aggiungere diversi rumori bianchi per la fase di gioco**
 - **Provare l'app su dimensioni diverse di ipad**
+- **there is a bug with an animation with the card too much wrong card only one will put in the deck**
   
 
 ---
