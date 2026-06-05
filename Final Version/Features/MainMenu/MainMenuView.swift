@@ -292,7 +292,8 @@ private struct InfoView: View {
         "Guida Marcello",
         "Karameta Albi",
         "Toshpulatov Bobur",
-        "Torcicollo Adolfo"
+        "Torcicollo Adolfo",
+        "Razzino Alberto"
     ]
 
     var body: some View {

@@ -244,11 +244,8 @@ def main():
     write_wav(OUT / "PianoNote_Re.wav", felt_upright_piano(D4, duration=0.78, volume=0.50))
     write_wav(OUT / "PianoNote_Grave.wav", felt_piano_low(A3))
     write_wav(OUT / "SequencingVictory_Jingle.wav", build_victory_jingle())
-    write_wav(OUT / "SequencingCardFlip.wav", card_flip())
     write_wav(OUT / "SequencingFlipAll_1.wav", card_flip())
     write_wav(OUT / "SequencingFlipAll_2.wav", toggle_click(tone_hz=780.0, seed=37))
-    write_wav(OUT / "SequencingCardPickup.wav", card_pickup())
-    write_wav(OUT / "SequencingCardPlace.wav", card_place())
     print("Felt / upright piano SFX generated in", OUT)
 
 

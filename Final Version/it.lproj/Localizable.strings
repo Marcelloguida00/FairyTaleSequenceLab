@@ -20,6 +20,7 @@
 /* Info */
 "info.title"          = "Info";
 "info.developers"     = "Sviluppatori";
+"info.developer.role.audio_composer" = "Compositore audio";
 "info.contacts"       = "Contatti";
 "info.support_email_subject" = "Assistenza applicazione WORLD OF FABLES";
 
@@ -83,7 +84,10 @@
 "settings.dyslexia_font.disabled" = "OpenDyslexic disattivo";
 "settings.sound"          = "Suono";
 "settings.sound.description" = "Volume e musica dell'app.";
-"settings.sound.message" = "Regola la musica e il volume dell'app.";
+"settings.sound.message" = "Regola musica, volume ed effetti sonori del gioco sequenza.";
+"settings.sequencing_sfx" = "Suoni carte sequenza";
+"settings.sequencing_sfx.simplified" = "Semplificata";
+"settings.sequencing_sfx.orchestral" = "Orchestrale";
 "settings.music"          = "Musica";
 "settings.music.on"       = "Musica attiva";
 "settings.music.muted"    = "Musica silenziata";

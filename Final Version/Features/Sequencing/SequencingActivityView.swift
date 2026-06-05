@@ -391,6 +391,14 @@ struct SequencingActivityView<Reward: View>: View {
         }
     }
 
+    private var correctlyPlacedCount: Int {
+        slotContents.indices.reduce(into: 0) { count, slot in
+            guard let cardId = slotContents[slot],
+                  correctCardID(forSlot: slot) == cardId else { return }
+            count += 1
+        }
+    }
+
     private var wrongFilledSlots: [Int] {
         slotContents.indices.filter { slot in
             guard let cardId = slotContents[slot],
@@ -465,6 +473,7 @@ struct SequencingActivityView<Reward: View>: View {
         showCelebration = false
         dimForReward = false
         showReward = false
+        SequencingSoundCoordinator.resetSession()
     }
 
     private func repairBoardStateIfNeeded() {
@@ -492,6 +501,9 @@ struct SequencingActivityView<Reward: View>: View {
         .onAppear(perform: repairBoardStateIfNeeded)
         .onChange(of: event.id) { _, _ in
             resetBoardState()
+        }
+        .onDisappear {
+            SequencingSoundCoordinator.cardPickupEnded()
         }
     }
 
@@ -921,11 +933,12 @@ struct SequencingActivityView<Reward: View>: View {
         guard pressedCardId != cardId else { return }
         pressedCardId = cardId
         AppSettings.hapticImpact(.light)
-        PianoChordPlayer.shared.playCardPickupNote()
+        SequencingSoundCoordinator.cardPickupStarted(correctPlacements: correctlyPlacedCount)
     }
 
     private func endCardTouch() {
         pressedCardId = nil
+        SequencingSoundCoordinator.cardPickupEnded()
     }
 
     private func updateDrag(cardId: Int, originSlot: Int?, location: CGPoint) {
@@ -1044,17 +1057,20 @@ struct SequencingActivityView<Reward: View>: View {
 
     private func handleCorrectPlacement(forSlot slot: Int) {
         AppSettings.hapticImpact(.light)
-        PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
+        SequencingSoundCoordinator.correctPlacement(
+            slot: slot,
+            correctPlacementsAfter: correctlyPlacedCount
+        )
         playCorrectPlacementAnimation(for: slot)
     }
 
     private func handleIncorrectPlacement(forSlot slot: Int, revertingTo previousContents: [Int?]) {
         AppSettings.hapticImpact(.soft)
-        PianoChordPlayer.shared.playPlacementTone(.incorrect)
+        SequencingSoundCoordinator.incorrectPlacement()
         attemptCount += 1
         playIncorrectPlacementAnimation(for: slot)
 
-        let revertDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
+        let revertDelayNs = incorrectRevertDelayNanoseconds
         Task { @MainActor in
             if revertDelayNs > 0 {
                 try? await Task.sleep(nanoseconds: revertDelayNs)
@@ -1064,6 +1080,15 @@ struct SequencingActivityView<Reward: View>: View {
             }
             slotVisualStates[slot] = SlotPlacementVisualState()
         }
+    }
+
+    private var incorrectRevertDelayNanoseconds: UInt64 {
+        if reduceMotion { return 0 }
+        if SequencingSFXMode.current == .orchestral {
+            let clip = OrchestralAudioMetrics.wrongClipDuration
+            return UInt64(min(clip * 0.72, 1.45) * 1_000_000_000)
+        }
+        return 650_000_000
     }
 
     private func playCorrectPlacementAnimation(for slot: Int) {
@@ -1095,14 +1120,14 @@ struct SequencingActivityView<Reward: View>: View {
         }
 
         AppSettings.hapticImpact(.soft)
-        PianoChordPlayer.shared.playPlacementTone(.incorrect)
+        SequencingSoundCoordinator.incorrectPlacement()
         attemptCount += 1
 
         for slot in slots {
             playIncorrectPlacementAnimation(for: slot)
         }
 
-        let returnDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
+        let returnDelayNs = incorrectRevertDelayNanoseconds
         Task { @MainActor in
             if returnDelayNs > 0 {
                 try? await Task.sleep(nanoseconds: returnDelayNs)
@@ -1157,33 +1182,58 @@ struct SequencingActivityView<Reward: View>: View {
     @MainActor
     private func runCompletionWaveAndCelebrate() async {
         isRunningCompletionSequence = true
+        let isOrchestral = SequencingSFXMode.current == .orchestral
 
-        // Let the fourth card's Do (C5) ring briefly, then start the victory jingle.
-        try? await Task.sleep(for: .milliseconds(240))
-        PianoChordPlayer.shared.playPlacementTone(.victoryJingle)
+        if isOrchestral {
+            // Brief beat after the last correct hit, then jingle + wave (overlap tail of correct clip).
+            let correctLead = OrchestralAudioMetrics.correctClipDuration
+            try? await Task.sleep(for: .seconds(correctLead * 0.38))
+        } else {
+            try? await Task.sleep(for: .milliseconds(240))
+        }
+
+        SequencingSoundCoordinator.victoryJingle()
+
+        let jingleDuration = isOrchestral
+            ? OrchestralAudioMetrics.victoryJingleDuration
+            : 1.05
+        let slotCount = max(slotContents.count, 1)
 
         if !reduceMotion {
+            let pulseUp = isOrchestral ? 0.46 : 0.40
+            let pulseDown = isOrchestral ? 0.36 : 0.34
+            let waveWindow = isOrchestral ? jingleDuration * 0.88 : Double(slotCount) * 0.42
+            let slotCycle = waveWindow / Double(slotCount)
+            let swellHold = max(0.12, slotCycle * 0.42)
+            let settleHold = max(0.10, slotCycle * 0.38)
+
             for slot in slotContents.indices {
-                withAnimation(.spring(response: 0.40, dampingFraction: 0.66)) {
+                withAnimation(.spring(response: pulseUp, dampingFraction: 0.66)) {
                     var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
-                    state.waveScale = 1.08
+                    state.waveScale = isOrchestral ? 1.10 : 1.08
                     state.bounceScale = 1
                     state.tiltDegrees = 0
                     slotVisualStates[slot] = state
                 }
 
-                try? await Task.sleep(for: .milliseconds(210))
+                try? await Task.sleep(for: .seconds(swellHold))
 
-                withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
+                withAnimation(.spring(response: pulseDown, dampingFraction: 0.78)) {
                     var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
                     state.waveScale = 1
                     slotVisualStates[slot] = state
                 }
+
+                if slot < slotContents.count - 1 {
+                    try? await Task.sleep(for: .seconds(settleHold))
+                }
             }
 
-            try? await Task.sleep(for: .milliseconds(650))
+            let waveElapsed = (swellHold + settleHold) * Double(max(slotCount - 1, 0)) + swellHold
+            let tail = isOrchestral ? max(0.25, jingleDuration - waveElapsed) : 0.65
+            try? await Task.sleep(for: .seconds(tail))
         } else {
-            try? await Task.sleep(for: .milliseconds(1200))
+            try? await Task.sleep(for: .seconds(isOrchestral ? jingleDuration : 1.2))
         }
 
         await triggerCelebration()

@@ -20,6 +20,7 @@
 /* Info */
 "info.title"          = "اطلاعات";
 "info.developers"     = "توسعه‌دهندگان";
+"info.developer.role.audio_composer" = "آهنگساز صدا";
 "info.contacts"       = "تماس";
 "info.support_email_subject" = "پشتیبانی برنامه WORLD OF FABLES";
 
@@ -83,7 +84,10 @@
 "settings.dyslexia_font.disabled" = "OpenDyslexic خاموش است";
 "settings.sound"          = "صدا";
 "settings.sound.description" = "صدای برنامه و موسیقی.";
-"settings.sound.message" = "موسیقی و صدای برنامه را تنظیم کن.";
+"settings.sound.message" = "موسیقی، صدا و جلوه‌های صوتی بازی توالی را تنظیم کن.";
+"settings.sequencing_sfx" = "صداهای کارت‌های توالی";
+"settings.sequencing_sfx.simplified" = "ساده";
+"settings.sequencing_sfx.orchestral" = "ارکسترال";
 "settings.music"          = "موسیقی";
 "settings.music.on"       = "موسیقی روشن است";
 "settings.music.muted"    = "موسیقی بی‌صداست";

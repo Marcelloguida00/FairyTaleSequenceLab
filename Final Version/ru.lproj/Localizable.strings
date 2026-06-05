@@ -20,6 +20,7 @@
 /* Info */
 "info.title"          = "Инфо";
 "info.developers"     = "Разработчики";
+"info.developer.role.audio_composer" = "Аудиокомпозитор";
 "info.contacts"       = "Контакты";
 "info.support_email_subject" = "Поддержка приложения WORLD OF FABLES";
 
@@ -83,7 +84,10 @@
 "settings.dyslexia_font.disabled" = "OpenDyslexic выключен";
 "settings.sound"          = "Звук";
 "settings.sound.description" = "Громкость и музыка приложения.";
-"settings.sound.message" = "Настрой музыку и громкость приложения.";
+"settings.sound.message" = "Настрой музыку, громкость и звуки игры с последовательностью.";
+"settings.sequencing_sfx" = "Звуки карт последовательности";
+"settings.sequencing_sfx.simplified" = "Упрощённая";
+"settings.sequencing_sfx.orchestral" = "Оркестровая";
 "settings.music"          = "Музыка";
 "settings.music.on"       = "Музыка включена";
 "settings.music.muted"    = "Музыка выключена";

@@ -35,6 +35,7 @@ struct SettingsView: View {
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
     @AppStorage("musicTheme") private var musicTheme: String = BackgroundMusicTheme.gardenGate.rawValue
+    @AppStorage(SequencingSFXMode.storageKey) private var sequencingSFXMode: String = SequencingSFXMode.simplified.rawValue
     @AppStorage("dyslexiaFontEnabled") private var dyslexiaFontEnabled = false
     @State private var showResetProgressConfirmation = false
     @State private var route: SettingsRoute = .main
@@ -225,31 +226,85 @@ struct SettingsView: View {
             .frame(height: 1)
     }
 
+    // MARK: - Selectable list styling
+
+    private func settingsPanelCornerRadius(largeStyle: Bool) -> CGFloat {
+        largeStyle ? 24 : 18
+    }
+
+    private func settingsCompactPanelCornerRadius() -> CGFloat {
+        14
+    }
+
+    @ViewBuilder
+    private func settingsSelectableRowBackground(
+        isSelected: Bool,
+        isFirst: Bool,
+        isLast: Bool,
+        cornerRadius: CGFloat
+    ) -> some View {
+        if isSelected {
+            UnevenRoundedRectangle(
+                topLeadingRadius: isFirst ? cornerRadius : 0,
+                bottomLeadingRadius: isLast ? cornerRadius : 0,
+                bottomTrailingRadius: isLast ? cornerRadius : 0,
+                topTrailingRadius: isFirst ? cornerRadius : 0,
+                style: .continuous
+            )
+            .fill(SettingsTheme.selectionFill)
+        }
+    }
+
+    @ViewBuilder
+    private func settingsGroupedList<Content: View>(
+        cornerRadius: CGFloat,
+        borderWidth: CGFloat = 1.5,
+        fill: Color = SettingsTheme.panelFill,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(spacing: 0) {
+            content()
+        }
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .background(
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(fill)
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .stroke(SettingsTheme.panelBorder, lineWidth: borderWidth)
+                )
+        )
+    }
+
     // MARK: - Language section
 
     private var languageSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(lm.t("settings.language"))
 
-            VStack(spacing: 0) {
+            settingsGroupedList(cornerRadius: settingsCompactPanelCornerRadius()) {
                 ForEach(Array(LanguageManager.supported.enumerated()), id: \.element.code) { index, lang in
-                    languageRow(lang: lang, isLast: index == LanguageManager.supported.count - 1)
+                    languageRow(
+                        lang: lang,
+                        isFirst: index == 0,
+                        isLast: index == LanguageManager.supported.count - 1,
+                        cornerRadius: settingsCompactPanelCornerRadius()
+                    )
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(SettingsTheme.panelFill)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
-                    )
-            )
         }
     }
 
     @ViewBuilder
-    private func languageRow(lang: LanguageManager.Language, isLast: Bool, expanded: Bool = false) -> some View {
+    private func languageRow(
+        lang: LanguageManager.Language,
+        isFirst: Bool,
+        isLast: Bool,
+        expanded: Bool = false,
+        cornerRadius: CGFloat? = nil
+    ) -> some View {
         let isSelected = lm.currentLanguage == lang.code
+        let panelRadius = cornerRadius ?? (expanded ? settingsPanelCornerRadius(largeStyle: true) : settingsCompactPanelCornerRadius())
 
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -277,9 +332,12 @@ struct SettingsView: View {
             .padding(.horizontal, expanded ? 24 : 16)
             .padding(.vertical, expanded ? 18 : 12)
             .background(
-                isSelected
-                    ? SettingsTheme.selectionFill
-                    : Color.clear
+                settingsSelectableRowBackground(
+                    isSelected: isSelected,
+                    isFirst: isFirst,
+                    isLast: isLast,
+                    cornerRadius: panelRadius
+                )
             )
             .gameSettingsRowTouchTarget()
         }
@@ -339,13 +397,14 @@ struct SettingsView: View {
                 .accessibilityAddTraits(fontSettings.dyslexiaFontEnabled ? [.isSelected] : [])
             }
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: settingsCompactPanelCornerRadius(), style: .continuous)
                     .fill(SettingsTheme.panelFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        RoundedRectangle(cornerRadius: settingsCompactPanelCornerRadius(), style: .continuous)
                             .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
                     )
             )
+            .clipShape(RoundedRectangle(cornerRadius: settingsCompactPanelCornerRadius(), style: .continuous))
         }
     }
 
@@ -417,16 +476,39 @@ struct SettingsView: View {
                     .padding(.leading, 56)
 
                 VStack(spacing: 0) {
-                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { index, theme in
-                        musicThemeRow(theme, isLast: index == BackgroundMusicTheme.allCases.count - 1)
+                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { _, theme in
+                        musicThemeRow(
+                            theme,
+                            isFirst: false,
+                            isLast: false,
+                            cornerRadius: settingsCompactPanelCornerRadius()
+                        )
+                    }
+                }
+
+                SettingsTheme.divider
+                    .frame(height: 1)
+                    .padding(.leading, 56)
+
+                sequencingSFXSectionHeader(expanded: false)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(SequencingSFXMode.allCases.enumerated()), id: \.element.id) { index, mode in
+                        sequencingSFXModeRow(
+                            mode,
+                            isFirst: false,
+                            isLast: index == SequencingSFXMode.allCases.count - 1,
+                            cornerRadius: settingsCompactPanelCornerRadius()
+                        )
                     }
                 }
             }
+            .clipShape(RoundedRectangle(cornerRadius: settingsCompactPanelCornerRadius(), style: .continuous))
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: settingsCompactPanelCornerRadius(), style: .continuous)
                     .fill(SettingsTheme.panelFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        RoundedRectangle(cornerRadius: settingsCompactPanelCornerRadius(), style: .continuous)
                             .stroke(SettingsTheme.panelBorder, lineWidth: 1.5)
                     )
             )
@@ -829,17 +911,124 @@ struct SettingsView: View {
                 settingsDivider()
 
                 VStack(spacing: 0) {
-                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { index, theme in
-                        musicThemeRow(theme, isLast: index == BackgroundMusicTheme.allCases.count - 1)
+                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { _, theme in
+                        musicThemeRow(
+                            theme,
+                            isFirst: false,
+                            isLast: false,
+                            expanded: usesFrameLayout,
+                            cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
+                        )
+                    }
+                }
+
+                settingsDivider(largeStyle: usesFrameLayout)
+
+                sequencingSFXSectionHeader(expanded: usesFrameLayout)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(SequencingSFXMode.allCases.enumerated()), id: \.element.id) { index, mode in
+                        sequencingSFXModeRow(
+                            mode,
+                            isFirst: false,
+                            isLast: index == SequencingSFXMode.allCases.count - 1,
+                            expanded: usesFrameLayout,
+                            cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
+                        )
                     }
                 }
             }
         }
     }
 
+    private func sequencingSFXSectionHeader(expanded: Bool) -> some View {
+        HStack(spacing: expanded ? 18 : 14) {
+            Image(systemName: "square.stack.3d.up.fill")
+                .font(.app(size: expanded ? 24 : 20, weight: .semibold))
+                .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                .frame(width: expanded ? 36 : 28)
+
+            Text(lm.t("settings.sequencing_sfx"))
+                .font(.app(size: expanded ? 22 : 17, weight: .semibold))
+                .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, expanded ? 24 : 18)
+        .padding(.vertical, expanded ? 16 : 12)
+        .accessibilityAddTraits(.isHeader)
+    }
+
     @ViewBuilder
-    private func musicThemeRow(_ theme: BackgroundMusicTheme, isLast: Bool) -> some View {
+    private func sequencingSFXModeRow(
+        _ mode: SequencingSFXMode,
+        isFirst: Bool,
+        isLast: Bool,
+        expanded: Bool = false,
+        cornerRadius: CGFloat? = nil
+    ) -> some View {
+        let isSelected = sequencingSFXMode == mode.rawValue
+        let panelRadius = cornerRadius ?? (expanded ? settingsPanelCornerRadius(largeStyle: true) : settingsCompactPanelCornerRadius())
+
+        Button {
+            AppSettings.hapticImpact(.light)
+            withAnimation(.easeInOut(duration: 0.2)) {
+                sequencingSFXMode = mode.rawValue
+            }
+            SequencingSoundCoordinator.resetSession()
+        } label: {
+            HStack(spacing: expanded ? 18 : 14) {
+                Image(systemName: mode == .orchestral ? "hifispeaker.2.fill" : "pianokeys")
+                    .font(.app(size: expanded ? 24 : 20, weight: .semibold))
+                    .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                    .frame(width: expanded ? 36 : 28)
+
+                Text(lm.t(mode.localizedNameKey))
+                    .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                    .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.app(size: expanded ? 24 : 20, weight: .semibold))
+                        .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, expanded ? 24 : 18)
+            .padding(.vertical, expanded ? 18 : 14)
+            .background(
+                settingsSelectableRowBackground(
+                    isSelected: isSelected,
+                    isFirst: isFirst,
+                    isLast: isLast,
+                    cornerRadius: panelRadius
+                )
+            )
+            .gameSettingsRowTouchTarget()
+        }
+        .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
+        .accessibilityLabel(lm.t(mode.localizedNameKey))
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+
+        if !isLast {
+            settingsDivider(largeStyle: expanded)
+        }
+    }
+
+    @ViewBuilder
+    private func musicThemeRow(
+        _ theme: BackgroundMusicTheme,
+        isFirst: Bool,
+        isLast: Bool,
+        expanded: Bool = false,
+        cornerRadius: CGFloat? = nil
+    ) -> some View {
         let isSelected = musicTheme == theme.rawValue
+        let panelRadius = cornerRadius ?? (expanded ? settingsPanelCornerRadius(largeStyle: true) : settingsCompactPanelCornerRadius())
 
         Button {
             AppSettings.hapticImpact(.light)
@@ -848,29 +1037,36 @@ struct SettingsView: View {
                 musicTheme = theme.rawValue
             }
         } label: {
-            HStack(spacing: 14) {
+            HStack(spacing: expanded ? 18 : 14) {
                 Image(systemName: "music.note")
-                    .font(.app(size: 20, weight: .semibold))
-                    .foregroundStyle(SettingsTheme.secondaryText)
-                    .frame(width: 28)
+                    .font(.app(size: expanded ? 24 : 20, weight: .semibold))
+                    .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
+                    .frame(width: expanded ? 36 : 28)
 
                 Text(lm.t(theme.localizedNameKey))
-                    .font(.app(.body))
-                    .foregroundStyle(SettingsTheme.primaryText)
+                    .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                    .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Spacer()
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.app(size: 20, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .font(.app(size: expanded ? 24 : 20, weight: .semibold))
+                        .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 14)
-            .background(isSelected ? SettingsTheme.selectionFill : Color.clear)
+            .padding(.horizontal, expanded ? 24 : 18)
+            .padding(.vertical, expanded ? 18 : 14)
+            .background(
+                settingsSelectableRowBackground(
+                    isSelected: isSelected,
+                    isFirst: isFirst,
+                    isLast: isLast,
+                    cornerRadius: panelRadius
+                )
+            )
             .gameSettingsRowTouchTarget()
         }
         .buttonStyle(.plain)
@@ -879,7 +1075,7 @@ struct SettingsView: View {
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
         if !isLast {
-            settingsDivider()
+            settingsDivider(largeStyle: expanded)
         }
     }
 
@@ -889,8 +1085,10 @@ struct SettingsView: View {
                 ForEach(Array(LanguageManager.supported.enumerated()), id: \.element.code) { index, lang in
                     languageRow(
                         lang: lang,
+                        isFirst: index == 0,
                         isLast: index == LanguageManager.supported.count - 1,
-                        expanded: usesFrameLayout
+                        expanded: usesFrameLayout,
+                        cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
                     )
                 }
             }
@@ -1049,6 +1247,13 @@ struct SettingsView: View {
                         .foregroundStyle(SettingsTheme.menuRowText)
                         .fixedSize(horizontal: false, vertical: true)
 
+                    if let roleKey = developer.roleKey {
+                        Text(lm.t(roleKey))
+                            .font(.app(size: usesFrameLayout ? 16 : 14, weight: .medium))
+                            .foregroundStyle(SettingsTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
                     HStack(spacing: usesFrameLayout ? 14 : 12) {
                         developerLinkButton(title: "LinkedIn", icon: "link", urlString: developer.linkedInURL)
                         developerLinkButton(title: "Instagram", icon: "camera.fill", urlString: developer.instagramURL)
@@ -1116,15 +1321,18 @@ struct SettingsView: View {
         fillAvailableHeight: Bool = false,
         @ViewBuilder content: () -> Content
     ) -> some View {
+        let cornerRadius = settingsPanelCornerRadius(largeStyle: largeStyle)
+
         VStack(alignment: .leading, spacing: 0) {
             content()
         }
         .frame(maxWidth: .infinity, maxHeight: fillAvailableHeight ? .infinity : nil, alignment: .top)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
         .background(
-            RoundedRectangle(cornerRadius: largeStyle ? 24 : 18, style: .continuous)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .fill(SettingsTheme.menuPanelFill)
                 .overlay(
-                    RoundedRectangle(cornerRadius: largeStyle ? 24 : 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .stroke(SettingsTheme.panelBorder, lineWidth: largeStyle ? 2.5 : 2)
                 )
         )
@@ -1273,7 +1481,14 @@ struct SettingsView: View {
             DeveloperProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "", instagramURL: ""),
             DeveloperProfile(name: "Karameta Albi", imageName: "developer_albi_karameta", linkedInURL: "", instagramURL: ""),
             DeveloperProfile(name: "Toshpulatov Bobur", imageName: "developer_bobur", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: "")
+            DeveloperProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: ""),
+            DeveloperProfile(
+                name: "Razzino Alberto",
+                imageName: "developer_alberto_razzino",
+                roleKey: "info.developer.role.audio_composer",
+                linkedInURL: "",
+                instagramURL: ""
+            )
         ]
     }
 }
@@ -1282,6 +1497,7 @@ private struct DeveloperProfile: Identifiable {
     let id = UUID()
     let name: String
     let imageName: String
+    var roleKey: String? = nil
     let linkedInURL: String
     let instagramURL: String
 }

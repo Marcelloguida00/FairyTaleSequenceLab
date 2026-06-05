@@ -1,11 +1,8 @@
 import AVFoundation
 import Foundation
 
-enum PianoChord: String, CaseIterable {
+enum PianoChord: String {
     case cMajor = "PianoChord_CMajor"
-    case aMinor = "PianoChord_AMinor"
-    case dMinor = "PianoChord_DMinor"
-    case gMajor = "PianoChord_GMajor"
 }
 
 /// Warm felt / upright acoustic piano notes for the fairy-tale card sequencing game.
