@@ -358,6 +358,8 @@ struct BookView: View {
                 // Top actions
                 VStack {
                     HStack {
+                        // AR button temporarily disabled for delivery
+                        /*
                         Button {
                             AppSettings.hapticImpact(.light)
                             withAnimation(.easeInOut(duration: 0.24)) {
@@ -375,6 +377,7 @@ struct BookView: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel(lm.t("a11y.book_ar_button"))
                         .padding(isCompact ? 12 : 20)
+                        */
 
                         Spacer()
 
@@ -1103,7 +1106,7 @@ struct BookView: View {
     }
 }
 
-private struct OpenBookBackground: View {
+struct OpenBookBackground: View {
     var body: some View {
         GeometryReader { geometry in
             let w = geometry.size.width
