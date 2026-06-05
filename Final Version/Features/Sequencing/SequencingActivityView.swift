@@ -209,7 +209,9 @@ private struct SourceCardHintBorder: View {
     let cardH: CGFloat
 
     @State private var pulse = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     var body: some View {
         RoundedRectangle(cornerRadius: 16)
@@ -321,7 +323,9 @@ struct SequencingActivityView<Reward: View>: View {
     let onSuccess: (() -> Void)?
     let onSequencingComplete: ((Int) -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
     @EnvironmentObject private var lm: LanguageManager
 
     // card ids in source row order (randomized at activity start)
@@ -751,7 +755,7 @@ struct SequencingActivityView<Reward: View>: View {
     }
 
     private var cardTouchAnimation: Animation? {
-        reduceMotion ? .linear(duration: 0.01) : .easeOut(duration: 0.12)
+        reduceMotion ? nil : .easeOut(duration: 0.12)
     }
 
     private func slotVisualScale(for slot: Int) -> CGFloat {
@@ -860,7 +864,7 @@ struct SequencingActivityView<Reward: View>: View {
     }
 
     private var flipAnimation: Animation {
-        reduceMotion ? .linear(duration: 0.01) : .easeInOut(duration: 0.42)
+        reduceMotion ? .linear(duration: 0.2) : .easeInOut(duration: 0.42)
     }
 
     private func cardTouchScale(for cardId: Int) -> CGFloat {
@@ -974,9 +978,6 @@ struct SequencingActivityView<Reward: View>: View {
             let didMoveSlots = originSlot != targetSlot
             guard didMoveSlots else { return }
 
-            let previousContents = slotContents
-            let isCorrect = correctCardID(forSlot: targetSlot) == cardId
-
             var nextContents = slotContents
             let displaced = nextContents[targetSlot]
 
@@ -993,12 +994,8 @@ struct SequencingActivityView<Reward: View>: View {
                 slotContents = normalizedContents
             }
 
-            if isCorrect {
-                handleCorrectPlacement(forSlot: targetSlot)
-                evaluateCompletedBoardIfReady()
-            } else {
-                handleIncorrectPlacement(forSlot: targetSlot, revertingTo: previousContents)
-            }
+            handlePlacement(forSlot: targetSlot)
+            evaluateCompletedBoardIfReady()
             return
         }
 
@@ -1042,31 +1039,13 @@ struct SequencingActivityView<Reward: View>: View {
         endCardTouch()
     }
 
-    private func handleCorrectPlacement(forSlot slot: Int) {
+    private func handlePlacement(forSlot slot: Int) {
         AppSettings.hapticImpact(.light)
         PianoChordPlayer.shared.playPlacementTone(.correct(slot: slot))
-        playCorrectPlacementAnimation(for: slot)
+        playPlacementAnimation(for: slot)
     }
 
-    private func handleIncorrectPlacement(forSlot slot: Int, revertingTo previousContents: [Int?]) {
-        AppSettings.hapticImpact(.soft)
-        PianoChordPlayer.shared.playPlacementTone(.incorrect)
-        attemptCount += 1
-        playIncorrectPlacementAnimation(for: slot)
-
-        let revertDelayNs: UInt64 = reduceMotion ? 0 : 650_000_000
-        Task { @MainActor in
-            if revertDelayNs > 0 {
-                try? await Task.sleep(nanoseconds: revertDelayNs)
-            }
-            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
-                slotContents = previousContents
-            }
-            slotVisualStates[slot] = SlotPlacementVisualState()
-        }
-    }
-
-    private func playCorrectPlacementAnimation(for slot: Int) {
+    private func playPlacementAnimation(for slot: Int) {
         guard !reduceMotion else { return }
 
         withAnimation(.spring(response: 0.36, dampingFraction: 0.58)) {
@@ -1108,7 +1087,7 @@ struct SequencingActivityView<Reward: View>: View {
                 try? await Task.sleep(nanoseconds: returnDelayNs)
             }
 
-            withAnimation(.spring(response: 0.30, dampingFraction: 0.75)) {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.30, dampingFraction: 0.75)) {
                 for misplacedCard in misplacedCards {
                     guard slotContents.indices.contains(misplacedCard.slot),
                           slotContents[misplacedCard.slot] == misplacedCard.cardId else { continue }
@@ -1159,12 +1138,12 @@ struct SequencingActivityView<Reward: View>: View {
         isRunningCompletionSequence = true
 
         // Let the fourth card's Do (C5) ring briefly, then start the victory jingle.
-        try? await Task.sleep(for: .milliseconds(240))
+        try? await Task.sleep(for: .milliseconds(120))
         PianoChordPlayer.shared.playPlacementTone(.victoryJingle)
 
         if !reduceMotion {
             for slot in slotContents.indices {
-                withAnimation(.spring(response: 0.40, dampingFraction: 0.66)) {
+                withAnimation(.spring(response: 0.30, dampingFraction: 0.60)) {
                     var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
                     state.waveScale = 1.08
                     state.bounceScale = 1
@@ -1172,18 +1151,16 @@ struct SequencingActivityView<Reward: View>: View {
                     slotVisualStates[slot] = state
                 }
 
-                try? await Task.sleep(for: .milliseconds(210))
+                try? await Task.sleep(for: .milliseconds(120))
 
-                withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
+                withAnimation(.spring(response: 0.30, dampingFraction: 0.70)) {
                     var state = slotVisualStates[slot] ?? SlotPlacementVisualState()
                     state.waveScale = 1
                     slotVisualStates[slot] = state
                 }
             }
 
-            try? await Task.sleep(for: .milliseconds(650))
-        } else {
-            try? await Task.sleep(for: .milliseconds(1200))
+            try? await Task.sleep(for: .milliseconds(200))
         }
 
         await triggerCelebration()
@@ -1196,16 +1173,16 @@ struct SequencingActivityView<Reward: View>: View {
         UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
 
         if let onSequencingComplete {
-            withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
+            withAnimation(.easeIn(duration: 0.2).delay(0.2)) {
                 showCelebration = true
             }
-            try? await Task.sleep(for: .seconds(1.5))
+            try? await Task.sleep(for: .seconds(1.0))
             onSequencingComplete(attemptCount)
         } else if showsReward {
-            withAnimation(.easeIn(duration: 0.3).delay(0.4)) {
+            withAnimation(.easeIn(duration: 0.2).delay(0.2)) {
                 showCelebration = true
             }
-            try? await Task.sleep(for: .seconds(1.5))
+            try? await Task.sleep(for: .seconds(1.0))
             withAnimation(.easeIn(duration: 0.4)) { dimForReward = true }
             try? await Task.sleep(for: .seconds(0.45))
             withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { showReward = true }

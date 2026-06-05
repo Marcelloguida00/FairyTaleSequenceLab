@@ -53,19 +53,6 @@ struct EventFlowView: View {
 
     @State private var phase: RedHoodEventFlowPhase = .intro
 
-    init(
-        eventData: EventData,
-        onPhaseChange: @escaping (RedHoodEventFlowPhase) -> Void,
-        onSequencingFinished: @escaping (Int) -> Void,
-        onRewardReached: @escaping () -> Void,
-        onComplete: @escaping () -> Void
-    ) {
-        self.eventData = eventData
-        self.onPhaseChange = onPhaseChange
-        self.onSequencingFinished = onSequencingFinished
-        self.onRewardReached = onRewardReached
-        self.onComplete = onComplete
-    }
 
     var body: some View {
         Group {

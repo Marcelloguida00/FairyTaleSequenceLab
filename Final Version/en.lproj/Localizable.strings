@@ -77,6 +77,12 @@
 "settings.accessibility"  = "Accessibility";
 "settings.accessibility.description" = "Readable font and reading preferences.";
 "settings.accessibility.message" = "Manage options that make text easier to read and the app more accessible.";
+"settings.enable_haptics" = "Haptics";
+"settings.enable_haptics.description" = "Turn tactile feedback on or off.";
+"settings.enable_animations" = "Reduce animations";
+"settings.enable_animations.description" = "Turn off visual effects and transitions.";
+"settings.enable_sounds" = "Sound Effects";
+"settings.enable_sounds.description" = "Turn interaction and menu sounds on or off.";
 "settings.dyslexia_font"  = "Dyslexia font";
 "settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";
@@ -177,6 +183,8 @@
 "a11y.continue_sequencing"  = "Continue to the sequencing activity";
 "a11y.check_order"          = "Check your story order";
 "a11y.flip_all"             = "Flip all cards";
+"a11y.story_scene_card"     = "Story scene card";
+"a11y.story_scene_card_hint" = "Double tap to flip and read a hint.";
 
 /* English Story Book Scenes */
 "story.redhood.scene1.title" = "Scene 1";

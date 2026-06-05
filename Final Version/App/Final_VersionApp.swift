@@ -11,6 +11,7 @@ import SwiftUI
 struct Final_VersionApp: App {
     @StateObject private var languageManager = LanguageManager()
     @State private var fontSettings = AppFontSettings()
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
 
     init() {
         AppTypography.registerCustomFonts()

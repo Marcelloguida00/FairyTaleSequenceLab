@@ -6,8 +6,11 @@ enum AppSettings {
     static var enableHaptics: Bool {
         UserDefaults.standard.object(forKey: "enableHaptics") as? Bool ?? true
     }
-    static var enableAnimations: Bool {
-        UserDefaults.standard.object(forKey: "enableAnimations") as? Bool ?? true
+    static var reduceAnimations: Bool {
+        UserDefaults.standard.object(forKey: "reduceAnimations") as? Bool ?? false
+    }
+    static var enableSounds: Bool {
+        UserDefaults.standard.object(forKey: "enableSounds") as? Bool ?? true
     }
 
     static func hapticSuccess() {

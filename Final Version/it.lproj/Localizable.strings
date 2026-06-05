@@ -177,9 +177,8 @@
 "a11y.continue_sequencing"  = "Continua all'attività di sequenza";
 "a11y.check_order"          = "Controlla l'ordine della storia";
 "a11y.flip_all"             = "Gira tutte le carte";
-"a11y.celebration"          = "Complimenti! Ce l'hai fatta!";
-"a11y.continue_sequencing"  = "Continua all'attività di sequenza";
-"a11y.check_order"          = "Controlla l'ordine della storia";
+"a11y.story_scene_card"     = "Carta scena della storia";
+"a11y.story_scene_card_hint" = "Fai doppio tap per girare la carta e leggere un indizio.";
 
 /* Italian Story Book Scenes */
 "story.redhood.scene1.title" = "Scena 1";
@@ -235,3 +234,11 @@
 "ar.scan.congrats" = "Bravissimo!";
 "ar.scan.found_all" = "Hai trovato tutte le carte.";
 "ar.scan.correct" = "Esatto!";
+
+"settings.enable_haptics" = "Vibrazioni";
+"settings.enable_haptics.description" = "Attiva o disattiva il feedback tattile.";
+"settings.enable_animations" = "Riduci animazioni";
+"settings.enable_animations.description" = "Disattiva le transizioni e gli effetti visivi superflui.";
+"settings.enable_sounds" = "Effetti Sonori";
+"settings.enable_sounds.description" = "Attiva suoni di interazione e menu.";
+

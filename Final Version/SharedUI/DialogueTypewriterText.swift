@@ -10,6 +10,10 @@ struct DialogueTypewriterText: View {
 
     @State private var visibleCount = 0
 
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
+
     private static let characterDelayNs: UInt64 = 60_000_000
 
     private var visibleText: String {
@@ -42,6 +46,12 @@ struct DialogueTypewriterText: View {
         visibleCount = 0
 
         guard !fullText.isEmpty else {
+            isFullyShown = true
+            return
+        }
+
+        if reduceMotion {
+            visibleCount = fullText.count
             isFullyShown = true
             return
         }
