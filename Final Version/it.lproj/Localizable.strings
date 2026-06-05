@@ -233,6 +233,9 @@
 "Immagine di Introduzione" = "Immagine di Introduzione";
 "Immagine di Ricompensa" = "Immagine di Ricompensa";
 
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Gioca per sbloccare altre scene!";
+
 /* Review Popup */
 "review.popup.title" = "Ti piace Lumi?";
 "review.popup.message" = "Se ti stai divertendo con le nostre fiabe, lasciaci una recensione! Ci aiuterà a creare nuove storie.";

@@ -233,6 +233,9 @@
 "Immagine di Introduzione" = "Imazhi i Hyrjes";
 "Immagine di Ricompensa" = "Imazhi i Shpërblimit";
 
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Luaj për të zhbllokuar skena të tjera!";
+
 
 /* AR Scan Strings */
 "ar.scan.title" = "Skanimi i Dhomës...";

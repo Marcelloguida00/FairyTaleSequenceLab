@@ -241,6 +241,9 @@
 "Immagine di Introduzione" = "Introduction Image";
 "Immagine di Ricompensa" = "Reward Image";
 
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Play to unlock more scenes";
+
 /* Review Popup */
 "review.popup.title" = "Enjoying Lumi?";
 "review.popup.message" = "If you're having fun with our fables, please leave a review! It helps us create new stories.";
@@ -258,3 +261,4 @@
 "ar.scan.congrats" = "Great job!";
 "ar.scan.found_all" = "You found all the cards.";
 "ar.scan.correct" = "Correct!";
+
