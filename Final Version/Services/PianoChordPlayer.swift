@@ -112,7 +112,7 @@ final class PianoChordPlayer {
     ) -> AVAudioPlayer? {
         guard let url = Bundle.main.url(forResource: resource, withExtension: "wav")
                 ?? Bundle.main.url(forResource: resource, withExtension: "wav", subdirectory: "Resources/Audio") else {
-            assertionFailure("Missing piano audio resource: \(resource).wav")
+            print("Warning: Missing piano audio resource: \(resource).wav")
             return nil
         }
 
@@ -126,7 +126,7 @@ final class PianoChordPlayer {
             cache[key] = player
             return player
         } catch {
-            assertionFailure("Unable to play piano audio: \(error.localizedDescription)")
+            print("Warning: Unable to play piano audio: \(error.localizedDescription)")
             return nil
         }
     }

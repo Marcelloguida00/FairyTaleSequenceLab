@@ -55,13 +55,12 @@ struct EventFlowView: View {
 
 
     var body: some View {
-        Group {
-            switch phase {
-            case .intro:
+        ZStack {
+            if phase == .intro {
                 EventIntroductionView(event: eventData) {
                     phase = .activity
                 }
-            case .activity:
+            } else {
                 SequencingActivityView(
                     event: eventData,
                     showsReward: false,
@@ -69,7 +68,7 @@ struct EventFlowView: View {
                         onSequencingFinished(attemptCount)
                     },
                     makeReward: { _, _ in
-                        Color.clear
+                        EmptyView()
                     }
                 )
             }

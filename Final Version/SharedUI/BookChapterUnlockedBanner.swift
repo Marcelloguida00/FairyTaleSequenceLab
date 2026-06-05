@@ -35,30 +35,44 @@ struct BookChapterUnlockedBanner: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.62)
-                .ignoresSafeArea()
-
-            VStack(spacing: 20) {
+        VStack {
+            HStack(spacing: 16) {
                 bookIcon
+                    .frame(width: 48, height: 48)
 
-                Text(headline)
-                    .font(.app(.largeTitle, weight: .bold))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-
-                Text(message)
-                    .font(.app(.title3, weight: .medium))
-                    .foregroundColor(.white.opacity(0.92))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(headline)
+                        .font(.app(.subheadline, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    
+                    Text(message)
+                        .font(.app(.footnote, weight: .regular))
+                        .foregroundColor(.white.opacity(0.85))
+                        .lineLimit(2)
+                }
             }
-            .padding(.horizontal, 24)
-            .scaleEffect(isVisible ? 1.0 : (reduceMotion ? 1.0 : 0.88))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(white: 0.15))
+                    .shadow(color: .black.opacity(0.6), radius: 10, y: 5)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color(white: 0.3), lineWidth: 1)
+                    )
+            )
+            .padding(.top, 40)
+            .padding(.trailing, 24)
+            .offset(y: isVisible ? 0 : -100)
             .opacity(isVisible ? 1.0 : 0.0)
+            
+            Spacer()
         }
-        .opacity(isVisible ? 1.0 : 0.0)
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(headline). \(message)")
         .task {
@@ -81,11 +95,10 @@ struct BookChapterUnlockedBanner: View {
             Image("StoryBookButton")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 88, height: 88)
-                .shadow(color: .black.opacity(0.35), radius: 10, y: 4)
+                .shadow(color: .black.opacity(0.35), radius: 4, y: 2)
         } else {
             Image(systemName: "book.closed.fill")
-                .font(.app(size: 56))
+                .font(.app(size: 32))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [
@@ -96,7 +109,7 @@ struct BookChapterUnlockedBanner: View {
                         endPoint: .bottom
                     )
                 )
-                .shadow(color: .orange.opacity(0.5), radius: 12)
+                .shadow(color: .orange.opacity(0.5), radius: 4)
         }
     }
 }

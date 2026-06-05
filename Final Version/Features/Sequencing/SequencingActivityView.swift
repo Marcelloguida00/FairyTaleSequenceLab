@@ -26,110 +26,7 @@ struct ShakeModifier: ViewModifier, Animatable {
     }
 }
 
-// MARK: - Celebration overlay
 
-struct CelebrationView: View {
-    @EnvironmentObject private var lm: LanguageManager
-
-    private struct Piece: Identifiable {
-        let id: Int
-        let xFraction: CGFloat
-        let size: CGFloat
-        let color: Color
-        let startRotation: Double
-        let duration: Double
-        let delay: Double
-        let isRect: Bool
-    }
-
-    private let pieces: [Piece]
-
-    init() {
-        let palette: [Color] = [
-            Color(red: 0.98, green: 0.82, blue: 0.10),
-            Color(red: 0.93, green: 0.18, blue: 0.18),
-            Color(red: 0.12, green: 0.76, blue: 0.38),
-            Color(red: 0.22, green: 0.52, blue: 0.96),
-            Color(red: 0.95, green: 0.40, blue: 0.65),
-            Color(red: 0.97, green: 0.55, blue: 0.10),
-            Color(red: 0.65, green: 0.25, blue: 0.88),
-        ]
-        pieces = (0..<60).map { i in
-            let f = Double(i)
-            let x   = CGFloat((sin(f * 6.17 + 1.3) * 0.5 + 0.5) * 0.88 + 0.06)
-            let sz  = CGFloat(10 + (sin(f * 4.33) * 0.5 + 0.5) * 9)
-            let dur = 1.2 + (sin(f * 3.71) * 0.5 + 0.5) * 1.1
-            let del = (sin(f * 2.61 + 0.5) * 0.5 + 0.5) * 0.85
-            return Piece(id: i, xFraction: x, size: sz,
-                         color: palette[i % palette.count],
-                         startRotation: f * 43.7,
-                         duration: dur, delay: del,
-                         isRect: i % 3 == 0)
-        }
-    }
-
-    @State private var fall = false
-    @State private var burstScale: CGFloat = 0.05
-    @State private var burstOpacity: Double = 0
-    @Environment(\.accessibilityReduceMotion) var reduceMotion
-
-    var body: some View {
-        if reduceMotion {
-            VStack(spacing: 12) {
-                Text("🎉").font(.app(size: 72))
-                Text(lm.t("celebration.title"))
-                    .font(.app(.largeTitle))
-                    .foregroundColor(.appPrimaryText)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.appBackground.opacity(0.88))
-            .accessibilityLabel(lm.t("a11y.celebration"))
-            .accessibilityAddTraits(.isStaticText)
-        } else {
-            GeometryReader { geo in
-                ZStack {
-                    ForEach(pieces) { p in
-                        Group {
-                            if p.isRect {
-                                RoundedRectangle(cornerRadius: 2)
-                                    .fill(p.color)
-                                    .frame(width: p.size * 0.5, height: p.size * 2.0)
-                            } else {
-                                Circle()
-                                    .fill(p.color)
-                                    .frame(width: p.size, height: p.size)
-                            }
-                        }
-                        .position(x: geo.size.width * p.xFraction,
-                                  y: fall ? geo.size.height + 40 : -40)
-                        .rotationEffect(.degrees(fall ? p.startRotation + 600 : p.startRotation))
-                        .animation(.linear(duration: p.duration).delay(p.delay), value: fall)
-                    }
-
-                    VStack(spacing: 10) {
-                        Text("🎉").font(.app(size: 80))
-                        Text(lm.t("celebration.title"))
-                            .font(.app(.largeTitle))
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.4), radius: 6, y: 3)
-                    }
-                    .scaleEffect(burstScale)
-                    .opacity(burstOpacity)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            }
-            .onAppear {
-                fall = true
-                withAnimation(.spring(response: 0.42, dampingFraction: 0.52)) {
-                    burstScale   = 1.0
-                    burstOpacity = 1.0
-                }
-            }
-            .accessibilityLabel(lm.t("a11y.celebration"))
-            .accessibilityAddTraits(.isStaticText)
-        }
-    }
-}
 
 // MARK: - Placement visuals
 
@@ -336,12 +233,12 @@ struct SequencingActivityView<Reward: View>: View {
     @State private var flippedStates: [Bool]
 
     @State private var attemptCount = 0
-    @State private var showCelebration = false
     @State private var dimForReward = false
     @State private var showReward = false
     @State private var slotVisualStates: [Int: SlotPlacementVisualState] = [:]
     @State private var isRunningCompletionSequence = false
     @State private var flipToggleUsesFirstSound = true
+    @State private var isStorybookExpanded = false
 
     // Drag state
     @State private var draggingCardId: Int? = nil
@@ -466,7 +363,7 @@ struct SequencingActivityView<Reward: View>: View {
         pressedCardId = nil
         isRunningCompletionSequence = false
         flipToggleUsesFirstSound = true
-        showCelebration = false
+        isStorybookExpanded = false
         dimForReward = false
         showReward = false
     }
@@ -526,14 +423,19 @@ struct SequencingActivityView<Reward: View>: View {
         ZStack {
             VStack(spacing: 10) {
                 storybookPanel(cardW: cardW, cardH: cardH)
-                    .padding(.horizontal, hPad)
-                    .padding(.top, SequencingLayoutMetrics.stageStorybookTopPad)
+                    .padding(.horizontal, isStorybookExpanded ? 0 : hPad)
+                    .padding(.top, isStorybookExpanded ? 0 : SequencingLayoutMetrics.stageStorybookTopPad)
+                    .frame(maxWidth: .infinity, maxHeight: isStorybookExpanded ? .infinity : nil)
+                    .zIndex(100)
 
-                Spacer(minLength: 0)
+                if !isStorybookExpanded {
+                    Spacer(minLength: 0)
 
-                sourceTray(cardW: cardW, cardH: cardH)
-                    .padding(.horizontal, hPad)
-                    .padding(.bottom, SequencingLayoutMetrics.stageDeckBottomPad)
+                    sourceTray(cardW: cardW, cardH: cardH)
+                        .padding(.horizontal, hPad)
+                        .padding(.bottom, SequencingLayoutMetrics.stageDeckBottomPad)
+                        .transition(.opacity)
+                }
             }
 
             if let cardId = draggingCardId,
@@ -550,9 +452,7 @@ struct SequencingActivityView<Reward: View>: View {
                 .zIndex(50)
             }
 
-            if showCelebration {
-                CelebrationView().allowsHitTesting(false)
-            }
+
 
             if dimForReward {
                 Color.black.opacity(0.55)
@@ -566,7 +466,7 @@ struct SequencingActivityView<Reward: View>: View {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
                         showReward      = false
                         dimForReward    = false
-                        showCelebration = false
+                        isStorybookExpanded = false
                         attemptCount    = 0
                         shuffledStart   = event.makeShuffledStart()
                         slotContents    = Array(repeating: nil, count: event.cards.count)
@@ -672,13 +572,53 @@ struct SequencingActivityView<Reward: View>: View {
 
 
             slotsRow(cardW: cardW, cardH: cardH)
-                .padding(.horizontal, SequencingLayoutMetrics.storybookSlotsHorizontalPad)
+                .padding(.horizontal, isStorybookExpanded ? 32 : SequencingLayoutMetrics.storybookSlotsHorizontalPad)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, SequencingLayoutMetrics.storybookSlotsTopPad)
-                .padding(.bottom, SequencingLayoutMetrics.storybookSlotsBottomPad)
+                .padding(.bottom, isStorybookExpanded ? 0 : SequencingLayoutMetrics.storybookSlotsBottomPad)
+                .scaleEffect(isStorybookExpanded ? 1.2 : 1.0)
+                .offset(y: isStorybookExpanded ? -80 : 0)
+                .disabled(isStorybookExpanded)
+            
+            if isStorybookExpanded {
+                VStack(spacing: 24) {
+                    Spacer()
+                    
+                    ZStack {
+                        Image("IslandTitleFrame")
+                            .resizable()
+                            .renderingMode(.original)
+                            .interpolation(.high)
+                            .frame(width: 460, height: 128)
+                        
+                        Text(lm.t("celebration.title"))
+                            .font(.app(size: 28, weight: .semibold))
+                            .foregroundStyle(Color(hex: "#3D0000"))
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .padding(.horizontal, 44)
+                            .frame(width: 460, height: 128 * 0.68)
+                    }
+                    .shadow(color: .black.opacity(0.22), radius: 8, x: 0, y: 4)
+                    
+                    GamePillButton(
+                        title: event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.continue"),
+                        minWidth: 180,
+                        minHeight: GameButtonMetrics.pillMinHeight(atLeast: 56),
+                        trailingIcon: "arrow.right",
+                        action: {
+                            onSequencingComplete?(attemptCount)
+                        }
+                    )
+                }
+                .padding(.bottom, 60)
+                .transition(.opacity)
+            }
         }
+        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isStorybookExpanded)
         .frame(maxWidth: .infinity)
-        .frame(height: cardH + 82)
+        .frame(height: isStorybookExpanded ? nil : cardH + 82)
+        .frame(maxHeight: isStorybookExpanded ? .infinity : nil)
         .accessibilityElement(children: .contain)
     }
 
@@ -1124,7 +1064,7 @@ struct SequencingActivityView<Reward: View>: View {
     }
 
     private func evaluateCompletedBoardIfReady() {
-        guard allSlotsFilled, !isRunningCompletionSequence, !showCelebration else { return }
+        guard allSlotsFilled, !isRunningCompletionSequence else { return }
 
         if allSlotsCorrect {
             Task { await runCompletionWaveAndCelebrate() }
@@ -1172,22 +1112,8 @@ struct SequencingActivityView<Reward: View>: View {
         AppSettings.hapticSuccess()
         UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
 
-        if let onSequencingComplete {
-            withAnimation(.easeIn(duration: 0.2).delay(0.2)) {
-                showCelebration = true
-            }
-            try? await Task.sleep(for: .seconds(1.0))
-            onSequencingComplete(attemptCount)
-        } else if showsReward {
-            withAnimation(.easeIn(duration: 0.2).delay(0.2)) {
-                showCelebration = true
-            }
-            try? await Task.sleep(for: .seconds(1.0))
-            withAnimation(.easeIn(duration: 0.4)) { dimForReward = true }
-            try? await Task.sleep(for: .seconds(0.45))
-            withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { showReward = true }
-        } else {
-            onSuccess?()
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+            isStorybookExpanded = true
         }
     }
 }

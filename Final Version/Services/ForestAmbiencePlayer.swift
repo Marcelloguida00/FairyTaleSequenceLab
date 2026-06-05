@@ -99,7 +99,7 @@ final class ForestAmbiencePlayer {
     private func preparePlayer() {
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension)
                 ?? Bundle.main.url(forResource: resourceName, withExtension: resourceExtension, subdirectory: "Resources/Audio") else {
-            assertionFailure("Missing forest ambience resource: \(resourceName).\(resourceExtension)")
+            print("Warning: Missing forest ambience resource: \(resourceName).\(resourceExtension)")
             return
         }
 
@@ -114,7 +114,7 @@ final class ForestAmbiencePlayer {
             newPlayer.prepareToPlay()
             player = newPlayer
         } catch {
-            assertionFailure("Unable to start forest ambience: \(error.localizedDescription)")
+            print("Warning: Unable to start forest ambience: \(error.localizedDescription)")
         }
     }
 
