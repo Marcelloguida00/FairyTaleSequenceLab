@@ -361,27 +361,6 @@ struct BookView: View {
                 // Top actions
                 VStack {
                     HStack {
-                        // AR button temporarily disabled for delivery
-                        /*
-                        Button {
-                            AppSettings.hapticImpact(.light)
-                            withAnimation(.easeInOut(duration: 0.24)) {
-                                isARBookOpen = true
-                            }
-                        } label: {
-                            GamePillLabel(
-                                title: lm.t("book.ar.button"),
-                                fontSize: isCompact ? 13 : 15,
-                                horizontalPadding: isCompact ? 14 : 18,
-                                verticalPadding: isCompact ? 8 : 10,
-                                leadingIcon: "arkit"
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(lm.t("a11y.book_ar_button"))
-                        .padding(isCompact ? 12 : 20)
-                        */
-
                         Spacer()
 
                         GameCircleButton(

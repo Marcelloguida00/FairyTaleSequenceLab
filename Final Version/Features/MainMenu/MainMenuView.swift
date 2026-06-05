@@ -490,7 +490,7 @@ private struct MenuPanelView: View {
                     .accessibilityHidden(true)
 
                 VStack(spacing: panelSize.height * 0.04) {
-                    AppMenuTitleView(panelWidth: panelSize.width)
+                    AppMenuTitleView(panelWidth: panelSize.width, style: .mainMenu)
 
                     Spacer(minLength: panelSize.height * 0.02)
 
