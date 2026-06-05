@@ -83,6 +83,8 @@
 "settings.dyslexia_font.description" = "Përdor OpenDyslexic për të gjitha tekstet.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic aktiv";
 "settings.dyslexia_font.disabled" = "OpenDyslexic joaktiv";
+"settings.voice_over" = "Voice Over";
+"settings.voice_over.description" = "Aktivizo ose çaktivizo narracionin zanor.";
 "settings.sound"          = "Zëri";
 "settings.sound.description" = "Audio, muzika dhe efektet e aplikacionit.";
 "settings.sound.message" = "Kontrollo veçmas audion e përgjithshme, muzikën dhe efektet e lojës.";

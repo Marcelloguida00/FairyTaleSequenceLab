@@ -115,6 +115,10 @@
 "settings.app" = "برنامه";
 "settings.app_icon" = "آیکون برنامه";
 "settings.app_icon.message" = "این گزینه برای انتخاب آیکون‌های جایگزین آماده است، وقتی که در دسترس باشند.";
+"settings.enable_animations" = "کاهش انیمیشن‌ها";
+"settings.enable_animations.description" = "جلوه‌های بصری و ترنزیشن‌ها را خاموش می‌کند.";
+"settings.voice_over" = "Voice Over";
+"settings.voice_over.description" = "Turn voice narration on or off.";
 "settings.change_language" = "تغییر زبان";
 "settings.change_language.description" = "زبان برنامه را انتخاب کن.";
 "settings.change_language.message" = "زبانی را که می‌خواهی در برنامه استفاده کنی انتخاب کن.";

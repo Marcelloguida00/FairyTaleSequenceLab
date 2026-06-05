@@ -96,6 +96,8 @@
 "settings.sequencing_sfx" = "Звуки карт последовательности";
 "settings.sequencing_sfx.simplified" = "Упрощённая";
 "settings.sequencing_sfx.orchestral" = "Оркестровая";
+"settings.voice_over" = "Voice Over";
+"settings.voice_over.description" = "Включить или выключить голосовое сопровождение.";
 "settings.music"          = "Музыка";
 "settings.music.on"       = "Музыка включена";
 "settings.music.muted"    = "Музыка выключена";

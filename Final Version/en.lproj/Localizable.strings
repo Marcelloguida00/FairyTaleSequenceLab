@@ -85,6 +85,8 @@
 "settings.enable_animations.description" = "Turn off visual effects and transitions.";
 "settings.enable_sounds" = "Sound Effects";
 "settings.enable_sounds.description" = "Turn interaction and menu sounds on or off.";
+"settings.voice_over" = "Voice Over";
+"settings.voice_over.description" = "Turn voice narration on or off.";
 "settings.dyslexia_font"  = "Dyslexia font";
 "settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";

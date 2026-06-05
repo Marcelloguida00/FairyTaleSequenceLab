@@ -42,6 +42,7 @@ struct SettingsView: View {
     @AppStorage("enableHaptics") private var enableHaptics = true
     @AppStorage("reduceAnimations") private var reduceAnimations = false
     @AppStorage("enableSounds") private var enableSounds = true
+    @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
     @State private var showResetProgressConfirmation = false
     @State private var route: SettingsRoute = .main
     @State private var returnRoute: SettingsRoute = .main
@@ -895,6 +896,42 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
                 
+                settingsDivider(largeStyle: usesFrameLayout)
+                
+                // Voice Over
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        voiceOverEnabled.toggle()
+                    }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "waveform")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.voice_over"))
+                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.voice_over.description"))
+                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: voiceOverEnabled, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
+                }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
             }
         }
     }
