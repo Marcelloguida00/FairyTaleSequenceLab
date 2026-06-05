@@ -10,6 +10,7 @@ struct FairyTaleDialogueView: View {
     @State private var lineIndex = 0
     @State private var dialogueChunkIndex = 0
     @State private var isDialogueTextFullyShown = false
+    @EnvironmentObject private var lm: LanguageManager
 
     private static let frameAspectRatio: CGFloat = DialogueFrameMetrics.frameAspectRatio
     /// Frame altezza ≈ personaggi × questo fattore (leggermente più alto).
@@ -92,9 +93,16 @@ struct FairyTaleDialogueView: View {
         }
         .ignoresSafeArea()
         .accessibilityElement(children: .contain)
+        .onAppear {
+            speakCurrentLine()
+        }
+        .onDisappear {
+            AppSpeechSynthesizer.shared.stop()
+        }
         .onChange(of: lineIndex) { _, _ in
             dialogueChunkIndex = 0
             isDialogueTextFullyShown = false
+            speakCurrentLine()
         }
         .onChange(of: dialogueChunkIndex) { _, _ in
             isDialogueTextFullyShown = false
@@ -229,6 +237,11 @@ struct FairyTaleDialogueView: View {
             onComplete()
         }
     }
+
+    private func speakCurrentLine() {
+        guard let line = currentLine else { return }
+        AppSpeechSynthesizer.shared.speak("\(line.speaker). \(line.text)", languageCode: lm.currentLanguage)
+    }
 }
 
 // MARK: - Dialogue frame (name plate + body text)
@@ -343,6 +356,7 @@ private struct DialogueFramePanel: View {
                     .multilineTextAlignment(.center)
                     .frame(width: nameWidth, height: nameHeight, alignment: .center)
                     .position(x: nameCenterX, y: nameCenterY)
+                    .accessibilityHidden(true)
 
                 // Area dialogo 1297×254; max 3 righe, effetto digitato (tap gestito dal parent)
                 DialogueTypewriterText(
@@ -352,6 +366,7 @@ private struct DialogueFramePanel: View {
                     lineLimit: DialogueFrameMetrics.dialogueLineLimit,
                     isFullyShown: $isDialogueTextFullyShown
                 )
+                .accessibilityHidden(true)
                 .padding(.horizontal, dialogueHorizontalInset)
                 .frame(width: dialogueRect.width, height: dialogueRect.height, alignment: .center)
                 .position(x: dialogueRect.midX, y: dialogueRect.midY)

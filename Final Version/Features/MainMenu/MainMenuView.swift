@@ -495,13 +495,13 @@ private struct MenuPanelView: View {
                     Spacer(minLength: panelSize.height * 0.02)
 
                     MenuPlayButton(
-                        width: panelSize.width * 0.62,
+                        width: panelSize.width * 0.72,
                         isDisabled: isDisabled,
                         action: onPlay
                     )
 
                     MenuSettingsButton(
-                        width: panelSize.width * 0.62,
+                        width: panelSize.width * 0.72,
                         isDisabled: isDisabled,
                         action: onSettings
                     )
@@ -544,11 +544,11 @@ private struct MenuSettingsButton: View {
     var body: some View {
         GamePillButton(
             title: lm.t("button.settings"),
-            fontSize: width * 0.14,
-            horizontalPadding: width * 0.07,
+            fontSize: width * 0.105,
+            horizontalPadding: width * 0.05,
             verticalPadding: width * 0.08,
             minWidth: width,
-            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.38),
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.32),
             isDisabled: isDisabled,
             action: action
         )
@@ -626,11 +626,11 @@ private struct MenuPlayButton: View {
     var body: some View {
         GamePillButton(
             title: lm.t("button.play"),
-            fontSize: width * 0.14,
-            horizontalPadding: width * 0.07,
+            fontSize: width * 0.115,
+            horizontalPadding: width * 0.05,
             verticalPadding: width * 0.08,
             minWidth: width,
-            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.38),
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.32),
             isDisabled: isDisabled,
             action: action
         )

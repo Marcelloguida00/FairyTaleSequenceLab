@@ -51,6 +51,7 @@
 "book.chapter_unlocked.title"   = "Chapter unlocked in the book!";
 "book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book. Open the book on the map to read it!";
 "book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
+"a11y.storybook_button"          = "Open storybook";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Unlocked Cards in AR";
 "book.ar.body"                  = "Look around to see the story event cards you have unlocked.";

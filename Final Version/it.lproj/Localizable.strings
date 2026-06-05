@@ -51,6 +51,7 @@
 "book.chapter_unlocked.title"   = "Capitolo sbloccato nel libro!";
 "book.chapter_unlocked.message" = "«%@» è ora nel libro delle fiabe. Apri il libro sulla mappa per leggerlo!";
 "book.chapter_unlocked.open_hint" = "Tocca due volte per aprire il libro delle fiabe.";
+"a11y.storybook_button"          = "Apri il libro delle fiabe";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Carte sbloccate in AR";
 "book.ar.body"                  = "Guarda nello spazio le carte degli eventi della storia che hai sbloccato.";

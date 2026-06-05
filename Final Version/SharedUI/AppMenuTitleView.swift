@@ -9,8 +9,8 @@ struct AppMenuTitleView: View {
     private var titleGradient: LinearGradient {
         LinearGradient(
             colors: [
-                Color(red: 1.0, green: 0.92, blue: 0.35),
-                Color(red: 0.98, green: 0.62, blue: 0.12)
+                Color(red: 0.63, green: 0.25, blue: 0.03),
+                Color(red: 0.35, green: 0.10, blue: 0.01)
             ],
             startPoint: .top,
             endPoint: .bottom
@@ -18,7 +18,7 @@ struct AppMenuTitleView: View {
     }
 
     private var outlineColor: Color {
-        Color(red: 0.35, green: 0.20, blue: 0.06)
+        Color(red: 1.0, green: 0.86, blue: 0.34)
     }
 
     private var titleFontSize: CGFloat {
@@ -38,8 +38,10 @@ struct AppMenuTitleView: View {
                 titleLine(line)
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, panelWidth * 0.04)
-        .accessibilityElement(children: .combine)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .ignore)
         .accessibilityAddTraits(.isHeader)
         .accessibilityLabel(titleLines.joined(separator: " "))
     }
@@ -47,16 +49,25 @@ struct AppMenuTitleView: View {
     @ViewBuilder
     private func titleLine(_ text: String) -> some View {
         ZStack {
+            // Outline decorativo — nascosto dall'accessibilità per evitare
+            // warning di contrasto (giallo-su-giallo: ratio 1.29 < 3.0)
             Text(text)
-                .font(.app(size: titleFontSize, weight: .black))
+                .font(.app(size: titleFontSize, weight: .black, relativeTo: .largeTitle))
                 .foregroundStyle(outlineColor)
                 .offset(x: 1.5, y: 1.5)
+                .accessibilityHidden(true)
 
+            // Testo principale con gradiente — nascosto dall'accessibilità
+            // perché il VStack padre fornisce l'accessibilityLabel combinato
             Text(text)
-                .font(.app(size: titleFontSize, weight: .black))
+                .font(.app(size: titleFontSize, weight: .black, relativeTo: .largeTitle))
                 .foregroundStyle(titleGradient)
+                .accessibilityHidden(true)
         }
-        .lineLimit(1)
-        .minimumScaleFactor(0.55)
+        .lineLimit(2)
+        .minimumScaleFactor(0.5)
+        .allowsTightening(true)
+        .accessibilityHidden(true)
     }
 }
+

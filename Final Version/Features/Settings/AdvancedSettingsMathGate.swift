@@ -21,6 +21,7 @@ struct AdvancedSettingsMathGate: View {
     let onCancel: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var userAnswer = ""
     @State private var showWrongAnswer = false
@@ -30,8 +31,8 @@ struct AdvancedSettingsMathGate: View {
 
     private var promptText: Text {
         Text(lm.t("settings.advanced_gate.placeholder"))
-            .font(.app(size: 28, weight: .bold))
-            .foregroundStyle(SettingsGateTheme.secondaryText.opacity(0.55))
+            .font(.app(.title3, weight: .bold))
+            .foregroundStyle(SettingsGateTheme.secondaryText)
     }
 
     var body: some View {
@@ -46,7 +47,7 @@ struct AdvancedSettingsMathGate: View {
                     }
 
                 modalCard
-                    .frame(maxWidth: min(proxy.size.width - 80, 420))
+                    .frame(maxWidth: min(proxy.size.width - 32, dynamicTypeSize.isAccessibilitySize ? 560 : 440))
                     .position(
                         x: proxy.size.width * 0.5,
                         y: modalCenterY(totalHeight: proxy.size.height)
@@ -81,84 +82,35 @@ struct AdvancedSettingsMathGate: View {
     }
 
     private var modalCard: some View {
-        VStack(spacing: 22) {
-            Text(lm.t("settings.advanced_gate.title"))
-                .font(.app(size: 26, weight: .bold))
-                .foregroundStyle(SettingsGateTheme.rowText)
-                .multilineTextAlignment(.center)
-
-            Text(lm.t("settings.advanced_gate.message"))
-                .font(.app(size: 18, weight: .regular))
-                .foregroundStyle(SettingsGateTheme.secondaryText)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-
-            HStack(spacing: 12) {
-                Text("\(problem.first) + \(problem.second) =")
-                    .font(.app(size: 36, weight: .bold))
-                    .foregroundStyle(SettingsGateTheme.rowText)
-
-                TextField("", text: $userAnswer, prompt: promptText)
-                    .font(.app(size: 28, weight: .bold))
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 22) {
+                Text(lm.t("settings.advanced_gate.title"))
+                    .font(.app(.title, weight: .bold))
                     .foregroundStyle(SettingsGateTheme.rowText)
                     .multilineTextAlignment(.center)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .textContentType(.oneTimeCode)
-                    .frame(width: 100, height: 44)
-                    .padding(.horizontal, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(SettingsGateTheme.fieldFill)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(
-                                        showWrongAnswer
-                                            ? Color.red.opacity(0.75)
-                                            : SettingsGateTheme.panelBorder,
-                                        lineWidth: 2
-                                    )
-                            )
-                    )
-                    .focused($answerFocused)
-                    .onChange(of: userAnswer) { _, newValue in
-                        showWrongAnswer = false
-                        let sanitized = sanitizeDigits(newValue)
-                        if sanitized != newValue {
-                            userAnswer = sanitized
-                        }
-                    }
-                    .onSubmit(submitAnswer)
-            }
+                    .fixedSize(horizontal: false, vertical: true)
 
-            if showWrongAnswer {
-                Text(lm.t("settings.advanced_gate.wrong"))
-                    .font(.app(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.red)
+                Text(lm.t("settings.advanced_gate.message"))
+                    .font(.app(.body))
+                    .foregroundStyle(SettingsGateTheme.secondaryText)
                     .multilineTextAlignment(.center)
-            }
+                    .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 16) {
-                Button {
-                    answerFocused = false
-                    onCancel()
-                } label: {
-                    Text(lm.t("button.cancel"))
-                        .font(.app(size: 18, weight: .semibold))
-                        .foregroundStyle(SettingsGateTheme.secondaryText)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                equationEntry
+
+                if showWrongAnswer {
+                    Text(lm.t("settings.advanced_gate.wrong"))
+                        .font(.app(.callout, weight: .semibold))
+                        .foregroundStyle(Color.red)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .buttonStyle(.plain)
-                .gameMinimumTouchTarget()
 
-                GamePillButton(
-                    title: lm.t("settings.advanced_gate.submit"),
-                    action: submitAnswer
-                )
+                actionButtons
             }
+            .padding(dynamicTypeSize.isAccessibilitySize ? 24 : 28)
         }
-        .padding(28)
+        .scrollBounceBehavior(.basedOnSize)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(SettingsGateTheme.panelFill)
@@ -168,6 +120,114 @@ struct AdvancedSettingsMathGate: View {
                 )
         )
         .shadow(color: .black.opacity(0.22), radius: 18, y: 10)
+    }
+
+    private var equationEntry: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 14) {
+                equationText
+                answerField
+            }
+
+            VStack(spacing: 12) {
+                equationText
+                answerField
+            }
+        }
+    }
+
+    private var equationText: some View {
+        Text("\(problem.first) + \(problem.second) =")
+            .font(.app(.largeTitle, weight: .bold))
+            .foregroundStyle(SettingsGateTheme.rowText)
+            .lineLimit(1)
+            .minimumScaleFactor(0.78)
+            .accessibilityLabel("\(problem.first) plus \(problem.second) equals")
+    }
+
+    private var answerField: some View {
+        TextField("", text: $userAnswer, prompt: promptText)
+            .font(.app(.title3, weight: .bold))
+            .foregroundStyle(SettingsGateTheme.rowText)
+            .multilineTextAlignment(.center)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .textContentType(.oneTimeCode)
+            .frame(minWidth: 112, minHeight: 52)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(SettingsGateTheme.fieldFill)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(
+                                showWrongAnswer
+                                    ? Color.red.opacity(0.75)
+                                    : SettingsGateTheme.panelBorder,
+                                lineWidth: 2
+                            )
+                    )
+            )
+            .focused($answerFocused)
+            .onChange(of: userAnswer) { _, newValue in
+                showWrongAnswer = false
+                let sanitized = sanitizeDigits(newValue)
+                if sanitized != newValue {
+                    userAnswer = sanitized
+                }
+            }
+            .onSubmit(submitAnswer)
+            .accessibilityLabel(lm.t("settings.advanced_gate.placeholder"))
+    }
+
+    private var actionButtons: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 16) {
+                cancelButton
+                submitButton
+            }
+
+            VStack(spacing: 12) {
+                submitButton
+                cancelButton
+            }
+        }
+    }
+
+    private var cancelButton: some View {
+        Button {
+            answerFocused = false
+            onCancel()
+        } label: {
+            Text(lm.t("button.cancel"))
+                .font(.app(.headline, weight: .semibold))
+                .foregroundStyle(SettingsGateTheme.secondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+                .padding(.horizontal, 22)
+                .padding(.vertical, 12)
+                .frame(minWidth: 124, minHeight: GameButtonMetrics.minimumTouchTarget)
+        }
+        .buttonStyle(.plain)
+        .gameMinimumTouchTarget()
+        .accessibilityLabel(lm.t("button.cancel"))
+    }
+
+    private var submitButton: some View {
+        Button(action: submitAnswer) {
+            Text(lm.t("settings.advanced_gate.submit").uppercased())
+                .font(.app(.headline, weight: .bold))
+                .foregroundStyle(GameButtonAppearance.label)
+                .lineLimit(1)
+                .minimumScaleFactor(0.76)
+                .padding(.horizontal, 26)
+                .padding(.vertical, 13)
+                .frame(minWidth: 156, minHeight: 52)
+                .background(GamePillButtonBackground())
+        }
+        .buttonStyle(.plain)
+        .gameMinimumTouchTarget(minWidth: 156, minHeight: 52)
+        .accessibilityLabel(lm.t("settings.advanced_gate.submit"))
     }
 
     private func sanitizeDigits(_ value: String) -> String {
