@@ -232,6 +232,7 @@
 /* Image placeholders */
 "Immagine di Introduzione" = "Вводное изображение";
 "Immagine di Ricompensa" = "Изображение награды";
+"book.placeholder.play_to_unlock" = "Играйте, чтобы открыть другие сцены!";
 
 
 /* AR Scan Strings */
