@@ -93,7 +93,7 @@ struct SettingsView: View {
                     case .advanced:
                         ScrollView(.vertical, showsIndicators: false) {
                             advancedSettingsSection
-                                .padding(.horizontal, usesFrameLayout ? 0 : 28)
+                                .padding(.horizontal, settingsNestedHorizontalPadding)
                                 .padding(.bottom, usesFrameLayout ? 0 : 32)
                         }
                         .frame(maxHeight: usesFrameLayout ? .infinity : nil)
@@ -240,6 +240,11 @@ struct SettingsView: View {
 
     private func settingsCompactPanelCornerRadius() -> CGFloat {
         14
+    }
+
+    /// Inset for nested pages so card borders and shadows are not clipped by the scroll view.
+    private var settingsNestedHorizontalPadding: CGFloat {
+        usesFrameLayout ? 10 : (inFrameMode ? 0 : 28)
     }
 
     @ViewBuilder
@@ -793,7 +798,7 @@ struct SettingsView: View {
                     }
                 }
             }
-            .padding(.horizontal, usesFrameLayout ? 0 : (inFrameMode ? 0 : 28))
+            .padding(.horizontal, settingsNestedHorizontalPadding)
             .padding(.bottom, usesFrameLayout ? 0 : (inFrameMode ? 0 : 32))
         }
     }
