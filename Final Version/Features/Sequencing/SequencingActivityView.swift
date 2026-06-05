@@ -1098,8 +1098,9 @@ struct SequencingActivityView<Reward: View>: View {
             let correctLead = OrchestralAudioMetrics.correctClipDuration
             try? await Task.sleep(for: .seconds(correctLead * 0.38))
         } else {
-            let correctLead = OrchestralAudioMetrics.simplifiedCorrectNoteDuration
-            try? await Task.sleep(for: .seconds(correctLead * 0.32))
+            // Short breath after the 4th placement note, then jingle arpeggio + wave together.
+            let beat = OrchestralAudioMetrics.simplifiedVictoryArpeggioBeat
+            try? await Task.sleep(for: .seconds(beat * 0.9))
         }
 
         SequencingSoundCoordinator.victoryJingle()
@@ -1110,12 +1111,26 @@ struct SequencingActivityView<Reward: View>: View {
         let slotCount = max(slotContents.count, 1)
 
         if !reduceMotion {
-            let pulseUp = isOrchestral ? 0.46 : 0.40
-            let pulseDown = isOrchestral ? 0.36 : 0.34
-            let waveWindow = jingleDuration * 0.88
-            let slotCycle = waveWindow / Double(slotCount)
-            let swellHold = max(0.12, slotCycle * 0.42)
-            let settleHold = max(0.10, slotCycle * 0.38)
+            let pulseUp: Double
+            let pulseDown: Double
+            let swellHold: TimeInterval
+            let settleHold: TimeInterval
+
+            if isOrchestral {
+                let waveWindow = jingleDuration * 0.88
+                let slotCycle = waveWindow / Double(slotCount)
+                pulseUp = 0.46
+                pulseDown = 0.36
+                swellHold = max(0.12, slotCycle * 0.42)
+                settleHold = max(0.10, slotCycle * 0.38)
+            } else {
+                // Match the four quick arpeggio hits in SequencingVictory_Jingle (~0.20 s apart).
+                let beat = OrchestralAudioMetrics.simplifiedVictoryArpeggioBeat
+                pulseUp = 0.26
+                pulseDown = 0.22
+                swellHold = beat * 0.52
+                settleHold = beat * 0.48
+            }
 
             for slot in slotContents.indices {
                 withAnimation(.spring(response: pulseUp, dampingFraction: 0.66)) {

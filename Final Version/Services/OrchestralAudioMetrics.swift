@@ -29,6 +29,9 @@ enum OrchestralAudioMetrics {
         duration(named: "PianoNote_DoHigh", fallback: 0.82)
     }
 
+    /// Spacing between the four arpeggio hits at the start of `SequencingVictory_Jingle` (note + gap).
+    static let simplifiedVictoryArpeggioBeat: TimeInterval = 0.20
+
     static func duration(named resource: String, fallback: TimeInterval) -> TimeInterval {
         if let cached = cache[resource] {
             return cached
