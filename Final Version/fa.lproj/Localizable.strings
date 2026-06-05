@@ -50,6 +50,7 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "فصل در کتاب باز شد!";
 "book.chapter_unlocked.message" = "«%@» اکنون در کتاب قصه‌هاست. کتاب را روی نقشه باز کن تا بخوانی!";
+"book.chapter_unlocked.open_hint" = "برای باز کردن کتاب قصه‌ها دو بار ضربه بزنید.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "کارت‌های بازشده در AR";
 "book.ar.body"                  = "اطراف را ببین و کارت‌های رویدادهای بازشده داستان را تماشا کن.";
@@ -86,12 +87,12 @@
 "settings.sound.description" = "صدا، موسیقی و جلوه‌های صوتی برنامه.";
 "settings.sound.message" = "صدای کلی، موسیقی پس‌زمینه و جلوه‌های صوتی بازی را جداگانه کنترل کن.";
 "settings.audio.master" = "صدای برنامه";
-"settings.audio.master.description" = "همه صداهای برنامه را روشن یا خاموش کن.";
+"settings.audio.master.description" = "همه صداهای برنامه را خاموش می‌کند: موسیقی و جلوه‌های صوتی.";
 "settings.audio.music" = "موسیقی";
-"settings.audio.music.description" = "موسیقی پس‌زمینه و فضای صوتی.";
+"settings.audio.music.description" = "موسیقی پس‌زمینه و فضای صوتی در کل بازی. روی صداهای کارت‌ها اثر ندارد.";
 "settings.audio.music_volume" = "بلندی موسیقی";
-"settings.audio.sfx" = "جلوه‌های صوتی";
-"settings.audio.sfx.description" = "صداهای تعامل و بازی توالی.";
+"settings.audio.sfx" = "جلوه‌های کارت";
+"settings.audio.sfx.description" = "فقط صداهای بازی کارت‌ها (توالی): نت‌ها، برگرداندن کارت و جینگل پیروزی.";
 "settings.sequencing_sfx" = "صداهای کارت‌های توالی";
 "settings.sequencing_sfx.simplified" = "ساده";
 "settings.sequencing_sfx.orchestral" = "ارکسترال";

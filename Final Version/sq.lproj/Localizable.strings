@@ -50,6 +50,7 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Kapitulli u zhbllokua në libër!";
 "book.chapter_unlocked.message" = "«%@» është tani në librin e përrallave. Hape librin në hartë për ta lexuar!";
+"book.chapter_unlocked.open_hint" = "Prek dy herë për të hapur librin e përrallave.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Kartat e hapura në AR";
 "book.ar.body"                  = "Shiko në hapësirë kartat e ngjarjeve të historisë që ke hapur.";
@@ -86,12 +87,12 @@
 "settings.sound.description" = "Audio, muzika dhe efektet e aplikacionit.";
 "settings.sound.message" = "Kontrollo veçmas audion e përgjithshme, muzikën dhe efektet e lojës.";
 "settings.audio.master" = "Audio e aplikacionit";
-"settings.audio.master.description" = "Aktivizo ose çaktivizo të gjitha tingujt.";
+"settings.audio.master.description" = "Çaktivizon të gjithë audion në aplikacion: muzikë dhe efekte.";
 "settings.audio.music" = "Muzika";
-"settings.audio.music.description" = "Muzika e sfondit dhe atmosfera.";
+"settings.audio.music.description" = "Muzika e sfondit dhe atmosfera në gjithë lojën. Nuk ndikon te tingujt e kartave.";
 "settings.audio.music_volume" = "Volumi i muzikës";
-"settings.audio.sfx" = "Efektet zanore";
-"settings.audio.sfx.description" = "Tingujt e lojës dhe të sekuencës.";
+"settings.audio.sfx" = "Efektet e kartave";
+"settings.audio.sfx.description" = "Vetëm tingujt e lojës me karta (sekuencë): nota, flip dhe jingle fitoreje.";
 "settings.sequencing_sfx" = "Tingujt e kartave të sekuencës";
 "settings.sequencing_sfx.simplified" = "E thjeshtuar";
 "settings.sequencing_sfx.orchestral" = "Orkestrale";

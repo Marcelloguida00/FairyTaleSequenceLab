@@ -76,12 +76,28 @@ final class BackgroundMusicPlayer {
         applyAudibleState()
     }
 
+    var shouldBePlaying: Bool {
+        player?.isPlaying == true
+    }
+
+    func resumeIfNeeded() {
+        guard AppAudioSettings.isMusicAudible else { return }
+        if player == nil {
+            preparePlayer()
+        }
+        player?.volume = savedVolume
+        player?.play()
+    }
+
     func applyAudibleState() {
         fadeTask?.cancel()
-        player?.volume = AppAudioSettings.isMusicAudible ? savedVolume : 0
-        if !AppAudioSettings.isMusicAudible {
+        guard AppAudioSettings.isMusicAudible else {
+            player?.volume = 0
             player?.pause()
+            return
         }
+
+        player?.volume = savedVolume
     }
 
     func applyMasterState() {

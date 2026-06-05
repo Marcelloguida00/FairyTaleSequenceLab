@@ -1,6 +1,9 @@
 import Foundation
 
-/// Central audio preferences: master switch, music, and sound effects.
+/// Central audio preferences:
+/// - Master: all app audio
+/// - Music: background themes + forest ambience (+ musical stingers outside sequencing)
+/// - SFX: card sequencing game only (notes, flips, victory jingle)
 enum AppAudioSettings {
     static let masterKey = "audioMasterEnabled"
     static let musicMutedKey = "musicMuted"
@@ -19,11 +22,13 @@ enum AppAudioSettings {
         UserDefaults.standard.object(forKey: sfxEnabledKey) as? Bool ?? true
     }
 
+    /// Background music and ambience across the whole game.
     static var isMusicAudible: Bool {
         isMasterEnabled && isMusicEnabled
     }
 
-    static var isSFXAudible: Bool {
+    /// Sequencing card-game sounds only.
+    static var isSequencingSFXAudible: Bool {
         isMasterEnabled && isSFXEnabled
     }
 
@@ -46,5 +51,19 @@ enum AppAudioSettings {
 
     static func setVolume(_ volume: Float) {
         UserDefaults.standard.set(volume, forKey: volumeKey)
+    }
+
+    @MainActor
+    static func applyPlaybackState() {
+        if isMusicAudible {
+            BackgroundMusicPlayer.shared.resumeIfNeeded()
+        } else {
+            BackgroundMusicPlayer.shared.applyAudibleState()
+            ForestAmbiencePlayer.shared.stop()
+        }
+
+        if !isSequencingSFXAudible {
+            SequencingSoundCoordinator.resetSession()
+        }
     }
 }

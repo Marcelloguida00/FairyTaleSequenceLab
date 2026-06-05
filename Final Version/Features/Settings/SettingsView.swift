@@ -780,7 +780,7 @@ struct SettingsView: View {
                     case .accessibility:
                         accessibilityDetailCard
                     case .sound:
-                        soundDetailCard
+                        soundDetailContent
                     case .changeLanguage:
                         languageDetailCard
                     case .savedData:
@@ -903,23 +903,32 @@ struct SettingsView: View {
         !musicMuted
     }
 
-    private var soundDetailCard: some View {
+    private var soundDetailContent: some View {
+        VStack(alignment: .leading, spacing: usesFrameLayout ? 24 : 18) {
+            soundMasterDetailCard
+            soundMusicDetailCard
+            soundSFXDetailCard
+        }
+    }
+
+    private var soundMasterDetailCard: some View {
+        settingsCard(largeStyle: usesFrameLayout) {
+            soundCategoryToggleRow(
+                icon: "speaker.wave.2.fill",
+                titleKey: "settings.audio.master",
+                descriptionKey: "settings.audio.master.description",
+                isOn: $audioMasterEnabled,
+                expanded: usesFrameLayout,
+                onChange: { _ in
+                    AppAudioSettings.applyPlaybackState()
+                }
+            )
+        }
+    }
+
+    private var soundMusicDetailCard: some View {
         settingsCard(largeStyle: usesFrameLayout) {
             VStack(spacing: 0) {
-                soundCategoryToggleRow(
-                    icon: "speaker.wave.2.fill",
-                    titleKey: "settings.audio.master",
-                    descriptionKey: "settings.audio.master.description",
-                    isOn: $audioMasterEnabled,
-                    expanded: usesFrameLayout,
-                    onChange: { enabled in
-                        AppAudioSettings.setMasterEnabled(enabled)
-                        BackgroundMusicPlayer.shared.applyMasterState()
-                    }
-                )
-
-                settingsDivider(largeStyle: usesFrameLayout)
-
                 soundCategoryToggleRow(
                     icon: "music.note",
                     titleKey: "settings.audio.music",
@@ -927,30 +936,36 @@ struct SettingsView: View {
                     isOn: musicEnabledBinding,
                     expanded: usesFrameLayout,
                     disabled: !audioMasterEnabled,
-                    onChange: { enabled in
-                        BackgroundMusicPlayer.shared.setMuted(!enabled)
+                    onChange: { _ in
+                        AppAudioSettings.applyPlaybackState()
                     }
                 )
 
                 if audioMasterEnabled && musicEnabled {
+                    settingsDivider(largeStyle: usesFrameLayout)
                     musicVolumeSlider(expanded: usesFrameLayout)
                     settingsDivider(largeStyle: usesFrameLayout)
 
-                    VStack(spacing: 0) {
-                        ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { _, theme in
-                            musicThemeRow(
-                                theme,
-                                isFirst: false,
-                                isLast: false,
-                                expanded: usesFrameLayout,
-                                cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
-                            )
-                        }
+                    ForEach(Array(BackgroundMusicTheme.allCases.enumerated()), id: \.element.id) { index, theme in
+                        musicThemeRow(
+                            theme,
+                            isFirst: false,
+                            isLast: index == BackgroundMusicTheme.allCases.count - 1,
+                            expanded: usesFrameLayout,
+                            cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
+                        )
                     }
                 }
+            }
+        }
+        .opacity(audioMasterEnabled ? 1 : 0.55)
+        .animation(.easeInOut(duration: 0.2), value: audioMasterEnabled)
+        .animation(.easeInOut(duration: 0.2), value: musicEnabled)
+    }
 
-                settingsDivider(largeStyle: usesFrameLayout)
-
+    private var soundSFXDetailCard: some View {
+        settingsCard(largeStyle: usesFrameLayout) {
+            VStack(spacing: 0) {
                 soundCategoryToggleRow(
                     icon: "waveform",
                     titleKey: "settings.audio.sfx",
@@ -958,33 +973,30 @@ struct SettingsView: View {
                     isOn: $enableSounds,
                     expanded: usesFrameLayout,
                     disabled: !audioMasterEnabled,
-                    onChange: { enabled in
-                        AppAudioSettings.setSFXEnabled(enabled)
-                        if !enabled {
-                            SequencingSoundCoordinator.resetSession()
-                        }
+                    onChange: { _ in
+                        AppAudioSettings.applyPlaybackState()
                     }
                 )
 
                 if audioMasterEnabled && enableSounds && AppFeatureFlags.showsOrchestralSequencingSFX {
                     settingsDivider(largeStyle: usesFrameLayout)
-
                     sequencingSFXSectionHeader(expanded: usesFrameLayout)
 
-                    VStack(spacing: 0) {
-                        ForEach(Array(SequencingSFXMode.settingsVisibleCases.enumerated()), id: \.element.id) { index, mode in
-                            sequencingSFXModeRow(
-                                mode,
-                                isFirst: false,
-                                isLast: index == SequencingSFXMode.settingsVisibleCases.count - 1,
-                                expanded: usesFrameLayout,
-                                cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
-                            )
-                        }
+                    ForEach(Array(SequencingSFXMode.settingsVisibleCases.enumerated()), id: \.element.id) { index, mode in
+                        sequencingSFXModeRow(
+                            mode,
+                            isFirst: false,
+                            isLast: index == SequencingSFXMode.settingsVisibleCases.count - 1,
+                            expanded: usesFrameLayout,
+                            cornerRadius: settingsPanelCornerRadius(largeStyle: usesFrameLayout)
+                        )
                     }
                 }
             }
         }
+        .opacity(audioMasterEnabled ? 1 : 0.55)
+        .animation(.easeInOut(duration: 0.2), value: audioMasterEnabled)
+        .animation(.easeInOut(duration: 0.2), value: enableSounds)
     }
 
     private var musicEnabledBinding: Binding<Bool> {

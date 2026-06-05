@@ -13,14 +13,21 @@ enum BookChapterTitles {
     }
 }
 
-/// Brief overlay after reward dialogue (waypoints 1–8, first completion) when the storybook chapter unlocks.
+/// Slides down from the top center and docks under the map chrome; tap opens the storybook.
 struct BookChapterUnlockedBanner: View {
     let chapterTitle: String
     let onFinish: () -> Void
+    let onOpenStorybook: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
     @State private var isVisible = false
+    @State private var didDismiss = false
+    @State private var autoDismissTask: Task<Void, Never>?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private let dockedTopPadding: CGFloat = 52
+    private let slideDistance: CGFloat = 96
+    private let autoDismissDelay: Duration = .seconds(4.5)
 
     private var headline: String {
         lm.t("book.chapter_unlocked.title")
@@ -34,58 +41,70 @@ struct BookChapterUnlockedBanner: View {
         return format
     }
 
-    var body: some View {
-        VStack {
-            HStack(spacing: 16) {
-                bookIcon
-                    .frame(width: 48, height: 48)
+    private var openHint: String {
+        lm.t("book.chapter_unlocked.open_hint")
+    }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(headline)
-                        .font(.app(.subheadline, weight: .bold))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                    
-                    Text(message)
-                        .font(.app(.footnote, weight: .regular))
-                        .foregroundColor(.white.opacity(0.85))
-                        .lineLimit(2)
+    var body: some View {
+        VStack(spacing: 0) {
+            Button {
+                dismiss(openingStorybook: true)
+            } label: {
+                HStack(spacing: 12) {
+                    bookIcon
+                        .frame(width: 40, height: 40)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(headline)
+                            .font(.app(.subheadline, weight: .bold))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+
+                        Text(message)
+                            .font(.app(.caption, weight: .regular))
+                            .foregroundColor(.white.opacity(0.85))
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                    }
+
+                    Spacer(minLength: 4)
+
+                    Image(systemName: "chevron.right")
+                        .font(.app(.footnote, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.55))
                 }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .frame(maxWidth: 520)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(Color(white: 0.15))
+                        .shadow(color: .black.opacity(0.55), radius: 12, y: 6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(Color(white: 0.32), lineWidth: 1)
+                        )
+                )
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color(white: 0.15))
-                    .shadow(color: .black.opacity(0.6), radius: 10, y: 5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color(white: 0.3), lineWidth: 1)
-                    )
-            )
-            .padding(.top, 40)
-            .padding(.trailing, 24)
-            .offset(y: isVisible ? 0 : -100)
-            .opacity(isVisible ? 1.0 : 0.0)
-            
-            Spacer()
+            .buttonStyle(.plain)
+            .padding(.horizontal, 20)
+            .padding(.top, dockedTopPadding)
+            .offset(y: isVisible ? 0 : -slideDistance)
+            .opacity(isVisible ? 1 : 0)
+
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .ignoresSafeArea()
-        .allowsHitTesting(false)
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
         .accessibilityLabel("\(headline). \(message)")
-        .task {
-            AppSettings.hapticSuccess()
-            withAnimation(reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.68)) {
-                isVisible = true
-            }
-            try? await Task.sleep(nanoseconds: 2_200_000_000)
-            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.35)) {
-                isVisible = false
-            }
-            try? await Task.sleep(nanoseconds: 380_000_000)
-            onFinish()
+        .accessibilityHint(openHint)
+        .onAppear {
+            present()
+        }
+        .onDisappear {
+            autoDismissTask?.cancel()
         }
     }
 
@@ -98,7 +117,7 @@ struct BookChapterUnlockedBanner: View {
                 .shadow(color: .black.opacity(0.35), radius: 4, y: 2)
         } else {
             Image(systemName: "book.closed.fill")
-                .font(.app(size: 32))
+                .font(.app(size: 28))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [
@@ -110,6 +129,43 @@ struct BookChapterUnlockedBanner: View {
                     )
                 )
                 .shadow(color: .orange.opacity(0.5), radius: 4)
+        }
+    }
+
+    private func present() {
+        AppSettings.hapticSuccess()
+        withAnimation(reduceMotion ? nil : .spring(response: 0.46, dampingFraction: 0.78)) {
+            isVisible = true
+        }
+
+        autoDismissTask?.cancel()
+        autoDismissTask = Task { @MainActor in
+            try? await Task.sleep(for: autoDismissDelay)
+            guard !Task.isCancelled, !didDismiss else { return }
+            dismiss(openingStorybook: false)
+        }
+    }
+
+    private func dismiss(openingStorybook: Bool) {
+        guard !didDismiss else { return }
+        didDismiss = true
+        autoDismissTask?.cancel()
+
+        if openingStorybook {
+            AppSettings.hapticImpact(.light)
+        }
+
+        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.32)) {
+            isVisible = false
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 320_000_000)
+            if openingStorybook {
+                onOpenStorybook()
+            } else {
+                onFinish()
+            }
         }
     }
 }

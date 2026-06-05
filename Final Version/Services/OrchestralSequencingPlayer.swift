@@ -18,7 +18,7 @@ final class OrchestralSequencingPlayer {
     }
 
     func startPickLoop(step: Int) {
-        guard AppAudioSettings.isSFXAudible, (1...4).contains(step) else { return }
+        guard AppAudioSettings.isSequencingSFXAudible, (1...4).contains(step) else { return }
         stopPickLoop()
 
         guard let player = preparePlayer(named: "OrchestralPick_\(step)", loops: -1) else { return }
@@ -57,7 +57,7 @@ final class OrchestralSequencingPlayer {
     }
 
     private func playOneShot(named resource: String, volumeScale: Float) {
-        guard AppAudioSettings.isSFXAudible else { return }
+        guard AppAudioSettings.isSequencingSFXAudible else { return }
         guard let player = preparePlayer(named: resource, loops: 0) else { return }
         player.volume = min(savedVolume * 1.35 * volumeScale, 1)
         player.play()

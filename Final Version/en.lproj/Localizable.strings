@@ -50,6 +50,7 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Chapter unlocked in the book!";
 "book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book. Open the book on the map to read it!";
+"book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Unlocked Cards in AR";
 "book.ar.body"                  = "Look around to see the story event cards you have unlocked.";
@@ -92,12 +93,12 @@
 "settings.sound.description" = "App audio, music, and sound effects.";
 "settings.sound.message" = "Control app audio, background music, and game sound effects separately.";
 "settings.audio.master" = "App audio";
-"settings.audio.master.description" = "Turn all app sounds on or off.";
+"settings.audio.master.description" = "Turns off all audio in the app: music and sound effects.";
 "settings.audio.music" = "Music";
-"settings.audio.music.description" = "Background music and ambience.";
+"settings.audio.music.description" = "Background music and ambience throughout the game. Does not affect card-game sounds.";
 "settings.audio.music_volume" = "Music volume";
-"settings.audio.sfx" = "Sound effects";
-"settings.audio.sfx.description" = "Game interactions and sequencing sounds.";
+"settings.audio.sfx" = "Card game effects";
+"settings.audio.sfx.description" = "Sounds in the card sequencing activity only: notes, flips, and victory jingle.";
 "settings.sequencing_sfx" = "Sequencing card sounds";
 "settings.sequencing_sfx.simplified" = "Simplified";
 "settings.sequencing_sfx.orchestral" = "Orchestral";
