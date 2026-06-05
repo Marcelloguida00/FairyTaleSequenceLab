@@ -120,9 +120,13 @@
 "settings.reset_progress.confirm.title" = "Reset progress?";
 "settings.reset_progress.confirm.message" = "This will remove saved progress and return you to the start of the adventure.";
 "settings.reset_progress.confirm.action" = "Reset";
+"settings.reset_progress.success" = "Data cleared successfully";
 "settings.app" = "App";
 "settings.app_icon" = "App Icon";
-"settings.app_icon.message" = "This option is ready for alternate app icons when they become available.";
+"settings.app_icon.default" = "Default";
+"settings.app_icon.message" = "Choose an alternate icon to customize your application.";
+"settings.app_icon.error.title" = "Icon Error";
+"settings.app_icon.error.not_configured" = "The icon \"%@\" is not configured correctly in Xcode.";
 "settings.change_language" = "Change Language";
 "settings.change_language.description" = "Choose the app language.";
 "settings.change_language.message" = "Select the language you want to use in the app.";
@@ -135,7 +139,7 @@
 "settings.advanced_gate.wrong" = "That's not right. Try again!";
 "settings.support" = "Support";
 "settings.whats_new" = "What's New";
-"settings.whats_new.message" = "Release notes will be added here.";
+"settings.whats_new.message" = "What's New in Version 1.0.1:\n\n• Redesigned the graphic design of the storybook\n• Modified the game design of the card sequencing activity\n• Updated the images for the card sequencing activity\n• Refined the button UI/UX\n• Updated the game title to \"Lumi: A Journey Through Fables\"\n• Improved the card sequencing game interface\n• Added narrative dialogues to chapter introductions\n• Updated chapter rewards to unlock chapters in the storybook\n• Redesigned the map chapter banners\n• Introduced AR storytelling card scanner mode (disabled in this version)\n• Added new accessibility options (dyslexia font, animations, and sound effects toggles)\n• Added confirmation pop-up when resetting data\n• Added visual app icon previews with lock/unlock status in settings\n• Fixed Xcode debugger crash when entering story events\n• Fixed avatar positioning offset bugs on map reload";
 "settings.contact_me" = "Contact me";
 "settings.rate_app" = "Rate the app";
 "settings.rate_app.message" = "The rating link will be available when the app is published.";

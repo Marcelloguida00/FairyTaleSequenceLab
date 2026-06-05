@@ -44,6 +44,7 @@ struct SettingsView: View {
     @AppStorage("enableSounds") private var enableSounds = true
     @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
     @State private var showResetProgressConfirmation = false
+    @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
     @State private var returnRoute: SettingsRoute = .main
     @State private var showInternalAdvancedMathGate = false
@@ -131,6 +132,11 @@ struct SettingsView: View {
             }
         } message: {
             Text(lm.t("settings.reset_progress.confirm.message"))
+        }
+        .alert(lm.t("settings.reset_progress"), isPresented: $showResetSuccessAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(lm.t("settings.reset_progress.success"))
         }
     }
 
@@ -1317,7 +1323,7 @@ struct SettingsView: View {
     private var appIconDetailCard: some View {
         settingsCard(largeStyle: usesFrameLayout) {
             VStack(spacing: 0) {
-                appIconRow(title: lm.t("settings.app_icon.default") ?? "Default", iconName: nil, isUnlocked: true, isLast: false)
+                appIconRow(title: lm.t("settings.app_icon.default"), iconName: nil, isUnlocked: true, isLast: false)
                 settingsDivider(largeStyle: usesFrameLayout)
                 
                 let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
@@ -1326,7 +1332,7 @@ struct SettingsView: View {
                 appIconRow(title: "Red Hood", iconName: "AppIcon2", isUnlocked: isUnlocked, isLast: true)
             }
         }
-        .alert("Errore Icona", isPresented: Binding(
+        .alert(lm.t("settings.app_icon.error.title"), isPresented: Binding(
             get: { iconErrorAlertMessage != nil },
             set: { if !$0 { iconErrorAlertMessage = nil } }
         )) {
@@ -1345,7 +1351,9 @@ struct SettingsView: View {
                 UIApplication.shared.setAlternateIconName(iconName) { error in
                     if let error = error {
                         print("Error setting alternate icon: \(error.localizedDescription)")
-                        iconErrorAlertMessage = "L'icona '\(iconName ?? "Default")' non è configurata correttamente in Xcode. (Errore: \(error.localizedDescription))"
+                        let localizedIconName = iconName == nil ? lm.t("settings.app_icon.default") : (iconName ?? "")
+                        let rawMessage = lm.t("settings.app_icon.error.not_configured")
+                        iconErrorAlertMessage = String(format: rawMessage, localizedIconName)
                     } else {
                         currentAppIcon = iconName
                     }
@@ -1354,31 +1362,47 @@ struct SettingsView: View {
                 AppSettings.hapticError()
             }
         } label: {
-            HStack(spacing: usesFrameLayout ? 18 : 14) {
-                Image(systemName: iconName == nil ? "app.dashed" : "app.gift.fill")
-                    .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                    .foregroundStyle(isUnlocked ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
-                    .frame(width: usesFrameLayout ? 36 : 28)
+            HStack(spacing: usesFrameLayout ? 20 : 16) {
+                // App Icon Preview
+                ZStack {
+                    Image(iconName == nil ? "appicon_1" : "appicon_2")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: usesFrameLayout ? 72 : 56, height: usesFrameLayout ? 72 : 56)
+                        .clipShape(RoundedRectangle(cornerRadius: usesFrameLayout ? 16 : 12, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: usesFrameLayout ? 16 : 12, style: .continuous)
+                                .stroke(SettingsTheme.panelBorder.opacity(0.4), lineWidth: 1.5)
+                        )
+                        .opacity(isUnlocked ? 1.0 : 0.35)
+                        .blur(radius: isUnlocked ? 0 : 2)
+                    
+                    if !isUnlocked {
+                        Image(systemName: "lock.fill")
+                            .font(.app(size: usesFrameLayout ? 22 : 18, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .shadow(color: .white.opacity(0.8), radius: 3)
+                    }
+                }
+                .frame(width: usesFrameLayout ? 72 : 56, height: usesFrameLayout ? 72 : 56)
                 
-                Text(title)
-                    .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
-                    .foregroundStyle(isUnlocked ? (usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText) : SettingsTheme.secondaryText)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .bold))
+                        .foregroundStyle(isUnlocked ? (usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText) : SettingsTheme.secondaryText)
+                }
                 
                 Spacer()
                 
-                if !isUnlocked {
-                    Image(systemName: "lock.fill")
-                        .font(.app(size: usesFrameLayout ? 22 : 18, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
-                } else if isSelected {
+                if isUnlocked && isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.app(size: usesFrameLayout ? 22 : 18, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .font(.app(size: usesFrameLayout ? 24 : 20, weight: .semibold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
             .padding(.horizontal, usesFrameLayout ? 24 : 18)
-            .padding(.vertical, usesFrameLayout ? 20 : 16)
+            .padding(.vertical, usesFrameLayout ? 16 : 12)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -1601,6 +1625,7 @@ struct SettingsView: View {
         UserDefaults.standard.removeObject(forKey: "currentBaseID")
         UserDefaults.standard.removeObject(forKey: "unlockedWorldBaseIDs")
         AppSettings.hapticSuccess()
+        showResetSuccessAlert = true
     }
 
     private func requestAdvancedSettingsAccess() {

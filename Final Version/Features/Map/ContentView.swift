@@ -607,12 +607,27 @@ struct ContentView: View {
 
         loadWorldMapProgress()
 
-        if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int,
-           MapGraph.baseIDs.contains(savedID),
-           unlockedWorldBaseIDs.contains(savedID),
-           let wp = MapGraph.waypoint(id: savedID) {
-            currentBaseID = savedID
-            avatarPosition = wp.point
+        if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int {
+            if activeMap == .redHood {
+                if let wp = RedHoodMapGraph.waypoint(id: savedID) {
+                    currentBaseID = savedID
+                    avatarPosition = wp.point
+                    return
+                }
+            } else {
+                if MapGraph.baseIDs.contains(savedID),
+                   unlockedWorldBaseIDs.contains(savedID),
+                   let wp = MapGraph.waypoint(id: savedID) {
+                    currentBaseID = savedID
+                    avatarPosition = wp.point
+                    return
+                }
+            }
+        }
+
+        if activeMap == .redHood {
+            currentBaseID = RedHoodMapGraph.initialWaypoint.id
+            avatarPosition = RedHoodMapGraph.initialWaypoint.point
         } else {
             currentBaseID = MapGraph.initialWaypoint.id
             avatarPosition = MapGraph.initialWaypoint.point
@@ -1030,10 +1045,15 @@ struct ContentView: View {
             EventFlowView(
                 eventData: eventData,
                 onPhaseChange: { flowPhase in
-                    suppressesMapChromeForDialogue = (flowPhase == .intro)
+                    let shouldSuppress = (flowPhase == .intro)
+                    if suppressesMapChromeForDialogue != shouldSuppress {
+                        suppressesMapChromeForDialogue = shouldSuppress
+                    }
                 },
                 onCelebrationZoomChange: { isZooming in
-                    suppressesMapChromeForDialogue = isZooming
+                    if suppressesMapChromeForDialogue != isZooming {
+                        suppressesMapChromeForDialogue = isZooming
+                    }
                 },
                 onSequencingFinished: { attemptCount in
                     presentRewardAfterMapPause(level: level, attemptCount: attemptCount)

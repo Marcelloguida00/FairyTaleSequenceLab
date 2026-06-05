@@ -261,7 +261,7 @@ struct CloudTransitionOverlay: View {
 
 enum CloudTransitionAnimator {
     /// Apertura sipario dal Main Menu (solo uscita nuvole).
-    static let playOpenDuration: TimeInterval = 0.8
+    nonisolated static let playOpenDuration: TimeInterval = 0.8
 
     // Timeline (totale ~2.55s):
     // 0.0s        → overlay attivo

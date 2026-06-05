@@ -550,7 +550,7 @@ private struct UnlockedCardsARSceneView: UIViewRepresentable {
         }
         
         private func placeCardsIfNeeded(session: ARSession) {
-            guard !hasPlacedCards, let sceneView = sceneView else { return }
+            guard !hasPlacedCards, sceneView != nil else { return }
             hasPlacedCards = true
             DispatchQueue.main.async {
                 self.isScanningBinding?.wrappedValue = false

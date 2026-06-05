@@ -14,7 +14,6 @@ final class LanguageManager: ObservableObject {
         Language(code: "it", nativeName: "Italiano",  flag: "🇮🇹"),
         Language(code: "sq", nativeName: "Shqip",     flag: "🇦🇱"),
         Language(code: "ru", nativeName: "Русский",   flag: "🇷🇺"),
-        Language(code: "fa", nativeName: "فارسی",     flag: "🇮🇷"),
     ]
 
     @Published var currentLanguage: String {

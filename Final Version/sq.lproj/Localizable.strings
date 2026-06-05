@@ -114,9 +114,13 @@
 "settings.reset_progress.confirm.title" = "Të rivendoset progresi?";
 "settings.reset_progress.confirm.message" = "Kjo do të fshijë progresin e ruajtur dhe do të të kthejë në fillim të aventurës.";
 "settings.reset_progress.confirm.action" = "Rivendos";
+"settings.reset_progress.success" = "Të dhënat u fshinë me sukses";
 "settings.app" = "Aplikacioni";
 "settings.app_icon" = "Ikona e aplikacionit";
-"settings.app_icon.message" = "Ky opsion është gati për ikona alternative kur të jenë të disponueshme.";
+"settings.app_icon.default" = "Parazgjedhur";
+"settings.app_icon.message" = "Zgjidhni një ikonë alternative për të personalizuar aplikacionin tuaj.";
+"settings.app_icon.error.title" = "Gabim i ikonës";
+"settings.app_icon.error.not_configured" = "Ikona \"%@\" nuk është konfiguruar saktë në Xcode.";
 "settings.change_language" = "Ndrysho gjuhën";
 "settings.change_language.description" = "Zgjidh gjuhën e aplikacionit.";
 "settings.change_language.message" = "Zgjidh gjuhën që dëshiron të përdorësh në aplikacion.";
@@ -129,7 +133,7 @@
 "settings.advanced_gate.wrong" = "Nuk është e saktë. Provo përsëri!";
 "settings.support" = "Mbështetje";
 "settings.whats_new" = "Çfarë ka të re";
-"settings.whats_new.message" = "Shënimet e versionit do të shtohen këtu.";
+"settings.whats_new.message" = "Çfarë ka të re në versionin 1.0.1:\n\n• Ndryshuar dizajni grafik i librit të përrallave\n• Ndryshuar dizajni i lojës së sekuencave të kartave\n• Përditësuar imazhet për lojën e sekuencave të kartave\n• Përmirësuar UI/UX i butonave\n• Përditësuar titulli i lojës në \"Lumi: A Journey Through Fables\"\n• Përmirësuar ndërfaqja e lojës së sekuencave të kartave\n• Ndryshuar hyrja e kapitujve duke prezantuar dialogët\n• Përditësuar shpërblimi i kapitujve për të zhbllokuar kapitullin në librin e përrallave\n• Ridizenjuar banerat e kapitujve në hartë\n• Prezantuar shikimi i librit në realitetin e shtuar (AR), i çaktivizuar në këtë version\n• Prezantuar cilësime të reja të aksesueshmërisë\n• Shtuar një dritare konfirmimi kur fshihen të dhënat\n• Shtuar pamjet paraprake të ikonave të aplikacionit me statusin e kyçjes/zhbllokimit në cilësime\n• Rregulluar rrëzimi i aplikacionit në Xcode kur hyni në evente\n• Rregulluar gabimi i pozicionimit të avatarit pas ngarkimit të hartës";
 "settings.contact_me" = "Më kontakto";
 "settings.rate_app" = "Vlerëso aplikacionin";
 "settings.rate_app.message" = "Lidhja për vlerësim do të jetë e disponueshme kur aplikacioni të publikohet.";
@@ -240,3 +244,19 @@
 "ar.scan.congrats" = "Të lumtë!";
 "ar.scan.found_all" = "Ju i gjetët të gjitha kartat.";
 "ar.scan.correct" = "Saktë!";
+
+/* Review Popup */
+"review.popup.title" = "Po të pëlqen Lumi?";
+"review.popup.message" = "Nëse po argëtohesh me përrallat tona, të lutem na lejo një rishikim! Kjo na ndihmon të krijojmë histori të reja.";
+"review.popup.rate" = "Vlerëso Aplikacionin";
+"review.popup.later" = "Më Vonë";
+
+/* Accessibility & Settings */
+"a11y.story_scene_card" = "Kartë me skenë nga historia";
+"a11y.story_scene_card_hint" = "Trokit dy herë për ta kthyer dhe për të lexuar një sugjerim.";
+"settings.enable_haptics" = "Dridhjet";
+"settings.enable_haptics.description" = "Aktivizoni ose çaktivizoni dridhjet.";
+"settings.enable_animations" = "Zvogëlo animacionet";
+"settings.enable_animations.description" = "Çaktivizoni efektet vizuale dhe kalimet.";
+"settings.enable_sounds" = "Efektet e Zërit";
+"settings.enable_sounds.description" = "Aktivizoni ose çaktivizoni tingujt e ndërveprimit dhe menysë.";

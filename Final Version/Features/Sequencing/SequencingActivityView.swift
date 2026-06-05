@@ -948,8 +948,6 @@ struct SequencingActivityView<Reward: View>: View {
             let didMoveSlots = originSlot != targetSlot
             guard didMoveSlots else { return }
 
-            let previousContents = slotContents
-            let isCorrect = correctCardID(forSlot: targetSlot) == cardId
 
             var nextContents = slotContents
             let displaced = nextContents[targetSlot]
@@ -1204,7 +1202,7 @@ struct SequencingActivityView<Reward: View>: View {
         let zoomAnimation = Animation.spring(response: 0.6, dampingFraction: 0.8)
             .delay(reduceMotion ? 0 : celebrationZoomAnimationDelay)
 
-        if let onSequencingComplete {
+        if onSequencingComplete != nil {
             withAnimation(zoomAnimation) {
                 isStorybookExpanded = true
             }

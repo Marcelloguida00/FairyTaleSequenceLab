@@ -79,10 +79,11 @@ final class ForestAmbiencePlayer {
     private func scheduleRestart() {
         restartTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(loopDuration))
+                guard let self else { return }
+                try? await Task.sleep(for: .seconds(self.loopDuration))
                 guard !Task.isCancelled else { return }
                 await MainActor.run {
-                    guard let self, let player = self.player else { return }
+                    guard let player = self.player else { return }
                     guard !self.isMuted else {
                         self.stop()
                         return

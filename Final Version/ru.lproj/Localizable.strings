@@ -114,9 +114,13 @@
 "settings.reset_progress.confirm.title" = "Сбросить прогресс?";
 "settings.reset_progress.confirm.message" = "Это удалит сохранённый прогресс и вернёт тебя к началу приключения.";
 "settings.reset_progress.confirm.action" = "Сбросить";
+"settings.reset_progress.success" = "Данные успешно удалены";
 "settings.app" = "Приложение";
 "settings.app_icon" = "Иконка приложения";
-"settings.app_icon.message" = "Этот пункт готов для выбора альтернативных иконок, когда они станут доступны.";
+"settings.app_icon.default" = "По умолчанию";
+"settings.app_icon.message" = "Выберите альтернативную иконку для настройки вашего приложения.";
+"settings.app_icon.error.title" = "Ошибка иконки";
+"settings.app_icon.error.not_configured" = "Иконка \"%@\" настроена некорректно в Xcode.";
 "settings.change_language" = "Изменить язык";
 "settings.change_language.description" = "Выбери язык приложения.";
 "settings.change_language.message" = "Выбери язык, который хочешь использовать в приложении.";
@@ -129,7 +133,7 @@
 "settings.advanced_gate.wrong" = "Неверно. Попробуйте ещё раз!";
 "settings.support" = "Поддержка";
 "settings.whats_new" = "Что нового";
-"settings.whats_new.message" = "Заметки о версии будут добавлены здесь.";
+"settings.whats_new.message" = "Что нового в версии 1.0.1:\n\n• Изменён графический дизайн книги сказок\n• Изменён геймдизайн игры по упорядочиванию карточек\n• Обновлены изображения для игры по упорядочиванию карточек\n• Улучшен UI/UX кнопок\n• Игра переименована в «Lumi: A Journey Through Fables»\n• Изменён UI/UX игры по упорядочиванию карточек\n• Добавлены диалоги в интро глав\n• Обновлена награда за главы — теперь разблокируется книга сказок\n• Обновлены баннеры глав на карте\n• Добавлен режим дополненной реальности (AR) для просмотра книги (отключён в этой версии)\n• Добавлены новые настройки доступности\n• Добавлено окно подтверждения при сбросе данных\n• Добавлено визуальное превью иконок приложения со статусом блокировки в настройках\n• Исправлен вылет в отладчике Xcode при входе в события истории\n• Исправлен баг со смещением позиции аватара при перезагрузке карты";
 "settings.contact_me" = "Связаться";
 "settings.rate_app" = "Оценить приложение";
 "settings.rate_app.message" = "Ссылка для оценки появится, когда приложение будет опубликовано.";
@@ -240,3 +244,19 @@
 "ar.scan.congrats" = "Молодец!";
 "ar.scan.found_all" = "Вы нашли все карты.";
 "ar.scan.correct" = "Правильно!";
+
+/* Review Popup */
+"review.popup.title" = "Нравится Lumi?";
+"review.popup.message" = "Если вам нравятся наши сказки, пожалуйста, оставьте отзыв! Это поможет нам создавать новые истории.";
+"review.popup.rate" = "Оценить";
+"review.popup.later" = "Позже";
+
+/* Accessibility & Settings */
+"a11y.story_scene_card" = "Карточка со сценой истории";
+"a11y.story_scene_card_hint" = "Дважды нажмите, чтобы перевернуть и прочитать подсказку.";
+"settings.enable_haptics" = "Виброотклик";
+"settings.enable_haptics.description" = "Включить или выключить виброотклик.";
+"settings.enable_animations" = "Сокращение движения";
+"settings.enable_animations.description" = "Отключить визуальные эффекты и переходы.";
+"settings.enable_sounds" = "Звуковые эффекты";
+"settings.enable_sounds.description" = "Включить или выключить звуки интерфейса и меню.";

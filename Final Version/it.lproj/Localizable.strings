@@ -112,9 +112,13 @@
 "settings.reset_progress.confirm.title" = "Cancellare i progressi?";
 "settings.reset_progress.confirm.message" = "Questa azione rimuove i progressi salvati e ti riporta all'inizio dell'avventura.";
 "settings.reset_progress.confirm.action" = "Cancella";
+"settings.reset_progress.success" = "Dati cancellati correttamente";
 "settings.app" = "App";
 "settings.app_icon" = "Icona app";
-"settings.app_icon.message" = "Questa opzione è pronta per scegliere icone alternative quando saranno disponibili.";
+"settings.app_icon.default" = "Predefinita";
+"settings.app_icon.message" = "Scegli un'icona alternativa per personalizzare la tua applicazione.";
+"settings.app_icon.error.title" = "Errore icona";
+"settings.app_icon.error.not_configured" = "L'icona \"%@\" non è configurata correttamente in Xcode.";
 "settings.change_language" = "Cambia lingua";
 "settings.change_language.description" = "Scegli la lingua dell'app.";
 "settings.change_language.message" = "Seleziona la lingua che vuoi usare nell'app.";
@@ -127,7 +131,7 @@
 "settings.advanced_gate.wrong" = "Non è corretto. Riprova!";
 "settings.support" = "Supporto";
 "settings.whats_new" = "Novità";
-"settings.whats_new.message" = "Le novità della versione saranno aggiunte qui.";
+"settings.whats_new.message" = "Novità della versione 1.0.1:\n\n• Modificato il design grafico del libro delle fiabe\n• Modificato il game design del gioco delle sequenze con le carte\n• Modificate le immagini per il gioco delle sequenze con le carte\n• Modificata la UX/UI dei bottoni\n• Modificato il titolo del gioco in \"Lumi: A Journey Through Fables\"\n• Modificata la UI/UX del gioco delle sequenze delle carte\n• Modificato l'intro dei capitoli del gioco introducendo i dialoghi\n• Modificata la reward dei capitoli introducendo lo sblocco del libro delle fiabe\n• Modificati i banner dei capitoli\n• Introdotto lo storytelling book in AR, disabilitato in questa versione\n• Introdotte nuove opzioni di accessibilità\n• Aggiunto feedback di conferma per il reset dei dati\n• Aggiunta anteprima visiva con lucchetto delle icone in impostazioni\n• Risolto il blocco di caricamento dell'evento 1 con il debugger di Xcode\n• Risolto il bug di posizionamento dell'avatar dopo il caricamento della mappa";
 "settings.contact_me" = "Contattami";
 "settings.rate_app" = "Valuta l'app";
 "settings.rate_app.message" = "Il collegamento alla valutazione sarà disponibile quando l'app sarà pubblicata.";

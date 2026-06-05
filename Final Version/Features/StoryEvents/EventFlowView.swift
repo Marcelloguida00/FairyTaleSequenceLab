@@ -56,7 +56,6 @@ struct EventFlowView: View {
 
     @State private var phase: RedHoodEventFlowPhase = .intro
 
-
     var body: some View {
         ZStack {
             if phase == .intro {

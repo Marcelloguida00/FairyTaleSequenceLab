@@ -384,18 +384,13 @@ struct BookView: View {
 
                         Spacer()
 
-                        Button(action: onDismiss) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: isCompact ? 30 : 40))
-                                .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
-                                .background(Circle().fill(Color(red: 0.85, green: 0.8, blue: 0.65)))
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(lm.t("button.done"))
-                        .gameMinimumTouchTarget(
-                            minWidth: GameButtonMetrics.chromeCircleSize,
-                            minHeight: GameButtonMetrics.chromeCircleSize
+                        GameCircleButton(
+                            systemImage: "xmark",
+                            size: isCompact ? 30 : 40,
+                            iconSize: isCompact ? 14 : 18,
+                            action: onDismiss
                         )
+                        .accessibilityLabel(lm.t("button.done"))
                         .padding(isCompact ? 12 : 20)
                     }
                     Spacer()
@@ -418,12 +413,12 @@ struct BookView: View {
                 self.lastIsCompact = initialCompact
                 loadCompletedEvents(isCompact: initialCompact)
             }
-            .onChange(of: lm.currentLanguage) { _ in
+            .onChange(of: lm.currentLanguage) { _, _ in
                 if let isCompact = lastIsCompact {
                     loadCompletedEvents(isCompact: isCompact)
                 }
             }
-            .onChange(of: geom.size.width) { _ in
+            .onChange(of: geom.size.width) { _, _ in
                 let isCompact = geom.size.width < 600
                 if isCompact != lastIsCompact {
                     self.lastIsCompact = isCompact
@@ -1210,8 +1205,7 @@ struct BookView: View {
             if isFirst && !chunk.isEmpty {
                 let firstChar = String(chunk.prefix(1))
                 let restOfString = String(chunk.dropFirst())
-                (Text(firstChar).font(dropCapFont).foregroundColor(dropCapColor)
-                 + Text(restOfString).font(textFont).foregroundColor(textColor))
+                Text("\(Text(firstChar).font(dropCapFont).foregroundColor(dropCapColor))\(Text(restOfString).font(textFont).foregroundColor(textColor))")
                 .lineSpacing(lineSpacing + 4)
                 .multilineTextAlignment(alignment)
             } else if !chunk.isEmpty {
