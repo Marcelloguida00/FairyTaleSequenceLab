@@ -20,7 +20,8 @@
 /* Info */
 "info.title"          = "اطلاعات";
 "info.developers"     = "توسعه‌دهندگان";
-"info.developer.role.audio_composer" = "آهنگساز صدا";
+"info.collaborators"  = "همکاران";
+"info.collaborator.role.audio_composer" = "آهنگساز صدا";
 "info.contacts"       = "تماس";
 "info.support_email_subject" = "پشتیبانی برنامه WORLD OF FABLES";
 

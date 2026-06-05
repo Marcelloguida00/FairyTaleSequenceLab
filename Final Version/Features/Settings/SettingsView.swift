@@ -1230,24 +1230,32 @@ struct SettingsView: View {
 
             VStack(spacing: usesFrameLayout ? 18 : 14) {
                 ForEach(developers) { developer in
-                    developerProfileCard(developer)
+                    teamProfileCard(developer)
+                }
+            }
+
+            sectionHeader(lm.t("info.collaborators"))
+
+            VStack(spacing: usesFrameLayout ? 18 : 14) {
+                ForEach(collaborators) { collaborator in
+                    teamProfileCard(collaborator)
                 }
             }
         }
     }
 
-    private func developerProfileCard(_ developer: DeveloperProfile) -> some View {
+    private func teamProfileCard(_ profile: TeamProfile) -> some View {
         settingsCard(largeStyle: usesFrameLayout) {
             HStack(spacing: usesFrameLayout ? 20 : 16) {
-                developerAvatar(imageName: developer.imageName, name: developer.name)
+                teamAvatar(imageName: profile.imageName, name: profile.name)
 
                 VStack(alignment: .leading, spacing: usesFrameLayout ? 10 : 8) {
-                    Text(developer.name)
+                    Text(profile.name)
                         .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
                         .foregroundStyle(SettingsTheme.menuRowText)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    if let roleKey = developer.roleKey {
+                    if let roleKey = profile.roleKey {
                         Text(lm.t(roleKey))
                             .font(.app(size: usesFrameLayout ? 16 : 14, weight: .medium))
                             .foregroundStyle(SettingsTheme.secondaryText)
@@ -1255,8 +1263,8 @@ struct SettingsView: View {
                     }
 
                     HStack(spacing: usesFrameLayout ? 14 : 12) {
-                        developerLinkButton(title: "LinkedIn", icon: "link", urlString: developer.linkedInURL)
-                        developerLinkButton(title: "Instagram", icon: "camera.fill", urlString: developer.instagramURL)
+                        teamLinkButton(title: "LinkedIn", icon: "link", urlString: profile.linkedInURL)
+                        teamLinkButton(title: "Instagram", icon: "camera.fill", urlString: profile.instagramURL)
                     }
                 }
 
@@ -1266,7 +1274,7 @@ struct SettingsView: View {
         }
     }
 
-    private func developerAvatar(imageName: String, name: String) -> some View {
+    private func teamAvatar(imageName: String, name: String) -> some View {
         let size: CGFloat = usesFrameLayout ? 96 : 86
 
         return Image(imageName)
@@ -1282,7 +1290,7 @@ struct SettingsView: View {
         .accessibilityLabel(name)
     }
 
-    private func developerLinkButton(title: String, icon: String, urlString: String) -> some View {
+    private func teamLinkButton(title: String, icon: String, urlString: String) -> some View {
         Button {
             guard let url = URL(string: urlString), !urlString.isEmpty else { return }
             openURL(url)
@@ -1473,19 +1481,24 @@ struct SettingsView: View {
         return "\(version) (\(build))"
     }
 
-    private var developers: [DeveloperProfile] {
+    private var developers: [TeamProfile] {
         [
-            DeveloperProfile(name: "Calisto Ciro", imageName: "developer_ciro_callisto", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Chiappetta Giulia", imageName: "developer_giulia_chiappetta", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Karameta Albi", imageName: "developer_albi_karameta", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Toshpulatov Bobur", imageName: "developer_bobur", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: ""),
-            DeveloperProfile(
+            TeamProfile(name: "Calisto Ciro", imageName: "developer_ciro_callisto", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "Chiappetta Giulia", imageName: "developer_giulia_chiappetta", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "Karameta Albi", imageName: "developer_albi_karameta", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "Toshpulatov Bobur", imageName: "developer_bobur", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: "")
+        ]
+    }
+
+    private var collaborators: [TeamProfile] {
+        [
+            TeamProfile(
                 name: "Razzino Alberto",
                 imageName: "developer_alberto_razzino",
-                roleKey: "info.developer.role.audio_composer",
+                roleKey: "info.collaborator.role.audio_composer",
                 linkedInURL: "",
                 instagramURL: ""
             )
@@ -1493,7 +1506,7 @@ struct SettingsView: View {
     }
 }
 
-private struct DeveloperProfile: Identifiable {
+private struct TeamProfile: Identifiable {
     let id = UUID()
     let name: String
     let imageName: String

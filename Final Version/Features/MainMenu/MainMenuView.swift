@@ -292,7 +292,10 @@ private struct InfoView: View {
         "Guida Marcello",
         "Karameta Albi",
         "Toshpulatov Bobur",
-        "Torcicollo Adolfo",
+        "Torcicollo Adolfo"
+    ]
+
+    private let collaborators = [
         "Razzino Alberto"
     ]
 
@@ -309,6 +312,22 @@ private struct InfoView: View {
                     VStack(spacing: 0) {
                         ForEach(Array(developers.enumerated()), id: \.offset) { index, developer in
                             developerRow(developer, isLast: index == developers.count - 1)
+                        }
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(InfoTheme.panelFill)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
+                            )
+                    )
+
+                    sectionHeader(lm.t("info.collaborators"))
+
+                    VStack(spacing: 0) {
+                        ForEach(Array(collaborators.enumerated()), id: \.offset) { index, collaborator in
+                            developerRow(collaborator, isLast: index == collaborators.count - 1)
                         }
                     }
                     .background(

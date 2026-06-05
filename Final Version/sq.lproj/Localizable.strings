@@ -20,7 +20,8 @@
 /* Info */
 "info.title"          = "Info";
 "info.developers"     = "Zhvilluesit";
-"info.developer.role.audio_composer" = "Kompozitor audio";
+"info.collaborators"  = "Collaboratorët";
+"info.collaborator.role.audio_composer" = "Kompozitor audio";
 "info.contacts"       = "Kontaktet";
 "info.support_email_subject" = "Mbështetje për aplikacionin WORLD OF FABLES";
 
