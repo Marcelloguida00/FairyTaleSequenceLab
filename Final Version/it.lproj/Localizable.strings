@@ -50,6 +50,7 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Capitolo sbloccato nel libro!";
 "book.chapter_unlocked.message" = "«%@» è ora nel libro delle fiabe. Apri il libro sulla mappa per leggerlo!";
+"book.chapter_unlocked.open_hint" = "Tocca due volte per aprire il libro delle fiabe.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Carte sbloccate in AR";
 "book.ar.body"                  = "Guarda nello spazio le carte degli eventi della storia che hai sbloccato.";
@@ -86,12 +87,12 @@
 "settings.sound.description" = "Audio, musica ed effetti sonori dell'app.";
 "settings.sound.message" = "Controlla separatamente audio generale, musica di sottofondo ed effetti sonori di gioco.";
 "settings.audio.master" = "Audio app";
-"settings.audio.master.description" = "Attiva o disattiva tutti i suoni dell'app.";
+"settings.audio.master.description" = "Disattiva tutto l'audio dell'app: musica ed effetti sonori.";
 "settings.audio.music" = "Musica";
-"settings.audio.music.description" = "Musica di sottofondo e atmosfera.";
+"settings.audio.music.description" = "Musica di sottofondo e atmosfera in tutto il gioco. Non influisce sui suoni delle carte.";
 "settings.audio.music_volume" = "Volume musica";
-"settings.audio.sfx" = "Effetti sonori";
-"settings.audio.sfx.description" = "Interazioni di gioco e suoni della sequenza.";
+"settings.audio.sfx" = "Effetti carte";
+"settings.audio.sfx.description" = "Solo i suoni del gioco carte (sequenza): note, flip e jingle di vittoria.";
 "settings.sequencing_sfx" = "Suoni carte sequenza";
 "settings.sequencing_sfx.simplified" = "Semplificata";
 "settings.sequencing_sfx.orchestral" = "Orchestrale";

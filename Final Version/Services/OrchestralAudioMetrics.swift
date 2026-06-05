@@ -21,6 +21,14 @@ enum OrchestralAudioMetrics {
         duration(named: "OrchestralVictory_Jingle", fallback: 5.0)
     }
 
+    static var simplifiedVictoryJingleDuration: TimeInterval {
+        duration(named: "SequencingVictory_Jingle", fallback: 2.8)
+    }
+
+    static var simplifiedCorrectNoteDuration: TimeInterval {
+        duration(named: "PianoNote_DoHigh", fallback: 0.82)
+    }
+
     static func duration(named resource: String, fallback: TimeInterval) -> TimeInterval {
         if let cached = cache[resource] {
             return cached

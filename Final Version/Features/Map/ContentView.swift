@@ -78,6 +78,7 @@ struct ContentView: View {
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var suppressesMapChromeForDialogue = true
     @State private var redHoodPostSequenceReward: (level: Int, attemptCount: Int)? = nil
+    @State private var bookChapterUnlockNotice: (title: String, level: Int)? = nil
     @State private var currentFrame = 0
     @State private var walkTask: Task<Void, Never>? = nil
     @State private var walkGeneration = 0
@@ -138,6 +139,13 @@ struct ContentView: View {
                             activeRedHoodLevel = reward.level
                         }
                     },
+                    onChapterUnlock: { chapterTitle in
+                        withAnimation(.easeInOut(duration: 0.35)) {
+                            redHoodPostSequenceReward = nil
+                            suppressesMapChromeForDialogue = false
+                            bookChapterUnlockNotice = (chapterTitle, reward.level)
+                        }
+                    },
                     onComplete: {
                         finishRedHoodPostSequenceReward(for: reward.level)
                     }
@@ -163,6 +171,28 @@ struct ContentView: View {
                 topChromeButtons
                     .zIndex(31)
                     .transition(.opacity)
+            }
+
+            if let notice = bookChapterUnlockNotice {
+                BookChapterUnlockedBanner(
+                    chapterTitle: notice.title,
+                    onFinish: {
+                        let level = notice.level
+                        bookChapterUnlockNotice = nil
+                        handleRedHoodChapterCompletion(level)
+                    },
+                    onOpenStorybook: {
+                        let level = notice.level
+                        bookChapterUnlockNotice = nil
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                            isBookOpen = true
+                        }
+                        handleRedHoodChapterCompletion(level)
+                    }
+                )
+                .environmentObject(lm)
+                .zIndex(40)
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
 
             if shouldShowRedHoodPlayButton {
@@ -458,10 +488,11 @@ struct ContentView: View {
     }
 
     private func handleBackButton() {
-        if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil {
+        if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil || bookChapterUnlockNotice != nil {
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
                 redHoodPostSequenceReward = nil
+                bookChapterUnlockNotice = nil
                 pendingRedHoodLevel = nil
                 suppressesMapChromeForDialogue = true
             }

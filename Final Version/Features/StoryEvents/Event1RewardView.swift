@@ -4,31 +4,14 @@ struct RewardView: View {
     let event: EventData
     let attemptCount: Int
     var showsBookChapterUnlock: Bool = false
+    var onChapterUnlock: ((String) -> Void)? = nil
     let onDismiss: () -> Void
     let onNext: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
-    @State private var showBookChapterUnlocked = false
 
     var body: some View {
-        ZStack {
-            rewardContent
-                .allowsHitTesting(!showBookChapterUnlocked)
-
-            if showBookChapterUnlocked {
-                BookChapterUnlockedBanner(
-                    chapterTitle: BookChapterTitles.title(for: event.id, lm: lm)
-                ) {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        showBookChapterUnlocked = false
-                    }
-                    onNext()
-                }
-                .environmentObject(lm)
-                .transition(.opacity)
-                .zIndex(10)
-            }
-        }
+        rewardContent
     }
 
     @ViewBuilder
@@ -52,10 +35,8 @@ struct RewardView: View {
     }
 
     private func finishRewardFlow() {
-        if showsBookChapterUnlock {
-            withAnimation(.easeInOut(duration: 0.25)) {
-                showBookChapterUnlocked = true
-            }
+        if showsBookChapterUnlock, let onChapterUnlock {
+            onChapterUnlock(BookChapterTitles.title(for: event.id, lm: lm))
         } else {
             onNext()
         }

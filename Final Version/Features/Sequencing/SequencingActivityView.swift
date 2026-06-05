@@ -1098,20 +1098,21 @@ struct SequencingActivityView<Reward: View>: View {
             let correctLead = OrchestralAudioMetrics.correctClipDuration
             try? await Task.sleep(for: .seconds(correctLead * 0.38))
         } else {
-            try? await Task.sleep(for: .milliseconds(240))
+            let correctLead = OrchestralAudioMetrics.simplifiedCorrectNoteDuration
+            try? await Task.sleep(for: .seconds(correctLead * 0.32))
         }
 
         SequencingSoundCoordinator.victoryJingle()
 
         let jingleDuration = isOrchestral
             ? OrchestralAudioMetrics.victoryJingleDuration
-            : 1.05
+            : OrchestralAudioMetrics.simplifiedVictoryJingleDuration
         let slotCount = max(slotContents.count, 1)
 
         if !reduceMotion {
             let pulseUp = isOrchestral ? 0.46 : 0.40
             let pulseDown = isOrchestral ? 0.36 : 0.34
-            let waveWindow = isOrchestral ? jingleDuration * 0.88 : Double(slotCount) * 0.42
+            let waveWindow = jingleDuration * 0.88
             let slotCycle = waveWindow / Double(slotCount)
             let swellHold = max(0.12, slotCycle * 0.42)
             let settleHold = max(0.10, slotCycle * 0.38)
@@ -1139,10 +1140,10 @@ struct SequencingActivityView<Reward: View>: View {
             }
 
             let waveElapsed = (swellHold + settleHold) * Double(max(slotCount - 1, 0)) + swellHold
-            let tail = isOrchestral ? max(0.25, jingleDuration - waveElapsed) : 0.65
+            let tail = max(0.25, jingleDuration - waveElapsed)
             try? await Task.sleep(for: .seconds(tail))
         } else {
-            try? await Task.sleep(for: .seconds(isOrchestral ? jingleDuration : 1.2))
+            try? await Task.sleep(for: .seconds(jingleDuration))
         }
 
         await triggerCelebration()

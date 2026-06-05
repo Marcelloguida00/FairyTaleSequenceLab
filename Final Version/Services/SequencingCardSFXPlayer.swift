@@ -18,7 +18,7 @@ final class SequencingCardSFXPlayer {
     private init() {}
 
     func play(_ sfx: SequencingCardSFX) {
-        guard AppAudioSettings.isSFXAudible else { return }
+        guard AppAudioSettings.isSequencingSFXAudible else { return }
 
         let name = sfx.rawValue
         let player = players[name] ?? preparePlayer(named: name)

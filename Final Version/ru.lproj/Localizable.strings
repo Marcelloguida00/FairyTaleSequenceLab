@@ -50,6 +50,7 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Глава разблокирована в книге!";
 "book.chapter_unlocked.message" = "«%@» теперь в книге сказок. Открой книгу на карте, чтобы прочитать!";
+"book.chapter_unlocked.open_hint" = "Дважды коснитесь, чтобы открыть книгу сказок.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Открытые карточки в AR";
 "book.ar.body"                  = "Осмотрись и увидь карточки событий истории, которые ты открыл.";
@@ -86,12 +87,12 @@
 "settings.sound.description" = "Звук приложения, музыка и эффекты.";
 "settings.sound.message" = "Отдельно управляй общим звуком, фоновой музыкой и звуковыми эффектами.";
 "settings.audio.master" = "Звук приложения";
-"settings.audio.master.description" = "Включить или выключить все звуки.";
+"settings.audio.master.description" = "Отключает весь звук в приложении: музыку и эффекты.";
 "settings.audio.music" = "Музыка";
-"settings.audio.music.description" = "Фоновая музыка и атмосфера.";
+"settings.audio.music.description" = "Фоновая музыка и атмосфера во всей игре. Не влияет на звуки карточной игры.";
 "settings.audio.music_volume" = "Громкость музыки";
-"settings.audio.sfx" = "Звуковые эффекты";
-"settings.audio.sfx.description" = "Звуки игры и последовательности.";
+"settings.audio.sfx" = "Эффекты карт";
+"settings.audio.sfx.description" = "Только звуки игры с картами (последовательность): ноты, перевороты и финальный джингл.";
 "settings.sequencing_sfx" = "Звуки карт последовательности";
 "settings.sequencing_sfx.simplified" = "Упрощённая";
 "settings.sequencing_sfx.orchestral" = "Оркестровая";
