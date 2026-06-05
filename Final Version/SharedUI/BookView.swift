@@ -681,10 +681,14 @@ struct BookView: View {
             var imageName: String? = nil
             if pageIndex == 3 {
                 imageName = "Sequenza 2 evento 3"
+            } else if pageIndex == 4 {
+                imageName = "event3_card2"
             } else if pageIndex == 5 {
-                imageName = "event3_card4"
+                imageName = "scene4_card1"
             } else if pageIndex == 6 {
                 imageName = "scene4_card4"
+            } else if pageIndex == 8 {
+                imageName = "scene6_card2"
             } else if pageIndex == 9 {
                 imageName = "scene8_card1"
             } else if pageIndex == 10 {
@@ -861,18 +865,6 @@ struct BookView: View {
                                 )
                                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
                         }
-                        VStack {
-                            Spacer()
-                            Text(redRidingHood.title)
-                                .font(isCompact ? Font.custom("Alegreya", size: 50, relativeTo: .largeTitle).italic() : Font.custom("Alegreya", size: 70, relativeTo: .largeTitle).italic())
-                                .foregroundColor(.black)
-                                .kerning(isCompact ? 1 : 2)
-                                .shadow(color: .black.opacity(0.15), radius: 2, x: 1, y: 2)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 20)
-                            Spacer()
-                        }
-                    }
                     }
                     .padding(-pagePadding)
                 }
@@ -932,14 +924,26 @@ struct BookView: View {
                                 }
                                 
                             case .poemCenterText:
-                                Spacer()
+                                if pageIndex + 1 == 9 {
+                                    editorialImage(imgName: "event5_card2", height: imgHeight * 0.8)
+                                        .padding(.top, isCompact ? 10 : 20)
+                                } else {
+                                    Spacer()
+                                }
+                                
                                 HStack {
                                     Spacer(minLength: isCompact ? 30 : 60)
                                     editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .center)
                                         .multilineTextAlignment(.center)
                                     Spacer(minLength: isCompact ? 30 : 60)
                                 }
-                                Spacer()
+                                
+                                if pageIndex + 1 == 9 {
+                                    editorialImage(imgName: "event5_card4", height: imgHeight * 0.8)
+                                        .padding(.bottom, isCompact ? 10 : 20)
+                                } else {
+                                    Spacer()
+                                }
                                 
                             case .gatheredBottomRight:
                                 if let imgName = pageContent.imageName {
@@ -1052,7 +1056,11 @@ struct BookView: View {
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: isCompact ? 110 : 180)
-                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .mask(
+                                                    OrganicBlobMask()
+                                                        .padding(5)
+                                                        .blur(radius: 8)
+                                                )
                                                 .accessibilityHidden(true)
                                         }
                                         editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
@@ -1077,7 +1085,11 @@ struct BookView: View {
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: isCompact ? 110 : 180)
-                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .mask(
+                                                    OrganicBlobMask()
+                                                        .padding(5)
+                                                        .blur(radius: 8)
+                                                )
                                                 .accessibilityHidden(true)
                                         }
                                     }
@@ -1090,6 +1102,10 @@ struct BookView: View {
                                             .padding(.bottom, isCompact ? 10 : 15)
                                     }
                                     Spacer(minLength: 0)
+                                    if pageIndex + 1 == 10 {
+                                        editorialImage(imgName: "event7_card2", height: imgHeight)
+                                            .padding(.bottom, isCompact ? 10 : 20)
+                                    }
                                 }
                                 
                             case .textTopImageBottomLeftTextWrap:
@@ -1163,7 +1179,7 @@ struct BookView: View {
             GeometryReader { geo in
                 Image("FinalImage")
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: geo.size.width, height: geo.size.height)
                     .mask(
                         Rectangle()
