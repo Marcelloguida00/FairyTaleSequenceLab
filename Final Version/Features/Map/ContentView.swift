@@ -231,6 +231,8 @@ struct ContentView: View {
                 .opacity(isBookInteractionBlocked ? 0 : 1)
                 .animation(.easeInOut, value: isWalking)
                 .disabled(isBookInteractionBlocked)
+                .accessibilityLabel(lm.t("a11y.storybook_button"))
+                .accessibilityHint(lm.t("book.chapter_unlocked.open_hint"))
             }
 
         }
@@ -1251,18 +1253,23 @@ private struct IslandTitlePlaque: View {
                 .renderingMode(.original)
                 .interpolation(.high)
                 .frame(width: frameSize.width, height: frameSize.height)
+                .accessibilityHidden(true)
 
             Text(title)
                 .font(.app(size: titleFontSize, weight: .semibold))
-                .foregroundStyle(Color(hex: "#3D0000"))
+                .foregroundStyle(Color(hex: "#262521"))
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.72)
+                .lineLimit(nil)
+                .minimumScaleFactor(0.5)
                 .padding(.horizontal, frameSize.width * 0.14)
-                .frame(width: frameSize.width, height: frameSize.height * 0.68)
+                .frame(width: frameSize.width)
+                .accessibilityHidden(true)
         }
         .frame(width: frameSize.width, height: frameSize.height)
         .shadow(color: .black.opacity(0.22), radius: max(4, 7 * scale), x: 0, y: max(2, 4 * scale))
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel(title)
     }
 }
 
@@ -1303,26 +1310,30 @@ private struct ComingSoonBadge: View {
                 .renderingMode(.original)
                 .interpolation(.high)
                 .frame(width: frameSize.width, height: frameSize.height)
+                .accessibilityHidden(true)
 
             VStack(spacing: 4 * mapScale) {
                 Text(lm.t("map.coming_soon"))
                     .font(.app(size: titleFontSize, weight: .semibold))
-                    .foregroundStyle(Color(hex: "#3D0000"))
+                    .foregroundStyle(Color(hex: "#262521"))
                     .multilineTextAlignment(.center)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .lineLimit(nil)
+                    .minimumScaleFactor(0.5)
                 Text(releaseDateText)
                     .font(.app(size: dateFontSize, weight: .regular))
-                    .foregroundStyle(Color(hex: "#3D0000").opacity(0.82))
+                    .foregroundStyle(Color(hex: "#262521").opacity(0.82))
                     .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.78)
+                    .lineLimit(nil)
+                    .minimumScaleFactor(0.5)
             }
             .padding(.horizontal, frameSize.width * 0.12)
-            .frame(width: frameSize.width, height: frameSize.height * 0.72)
+            .frame(width: frameSize.width)
+            .accessibilityHidden(true)
         }
         .frame(width: frameSize.width, height: frameSize.height)
         .shadow(color: .black.opacity(0.22), radius: max(4, 7 * mapScale), x: 0, y: max(2, 4 * mapScale))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(lm.t("map.coming_soon")). \(releaseDateText)")
     }
 }
 

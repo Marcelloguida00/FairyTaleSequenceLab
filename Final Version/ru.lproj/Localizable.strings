@@ -53,6 +53,7 @@
 "book.chapter_unlocked.open_button" = "Открыть";
 "book.chapter_unlocked.tap_hint" = "Коснитесь экрана, чтобы продолжить.";
 "book.chapter_unlocked.open_hint" = "Дважды коснитесь, чтобы открыть книгу сказок.";
+"a11y.storybook_button"          = "Открыть книгу сказок";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Открытые карточки в AR";
 "book.ar.body"                  = "Осмотрись и увидь карточки событий истории, которые ты открыл.";
@@ -264,3 +265,6 @@
 "settings.enable_animations.description" = "Отключить визуальные эффекты и переходы.";
 "settings.enable_sounds" = "Звуковые эффекты";
 "settings.enable_sounds.description" = "Включить или выключить звуки интерфейса и меню.";
+"settings.reduce_contrast" = "Сокращение контраста";
+"settings.reduce_contrast.description" = "Использовать более контрастные цвета для улучшения читаемости.";
+

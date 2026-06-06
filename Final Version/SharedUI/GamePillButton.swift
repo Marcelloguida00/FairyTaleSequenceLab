@@ -5,7 +5,7 @@ enum GameButtonAppearance {
     static let glossMid = Color(hex: "#FCDB00")
     static let glossBottom = Color(hex: "#FCDB00")
     static let border = Color(hex: "#430303")
-    static let label = Color(red: 0.29, green: 0.12, blue: 0.08)
+    static let label = Color(hex: "#262521")
 
     /// Gloss strip on pill buttons (shorter = larger horizontal inset).
     static let pillHighlightHorizontalInset: CGFloat = 13
@@ -122,7 +122,8 @@ struct GamePillLabel: View {
         Group {
             if let boundsSize {
                 labelContent
-                    .frame(width: boundsSize.width, height: boundsSize.height, alignment: .center)
+                    .frame(width: boundsSize.width)
+                    .frame(minHeight: boundsSize.height, alignment: .center)
             } else {
                 labelContent
                     .frame(

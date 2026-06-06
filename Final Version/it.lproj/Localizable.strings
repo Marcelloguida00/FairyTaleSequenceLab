@@ -53,6 +53,7 @@
 "book.chapter_unlocked.open_button" = "Apri";
 "book.chapter_unlocked.tap_hint" = "Tocca lo schermo per continuare.";
 "book.chapter_unlocked.open_hint" = "Tocca due volte per aprire il libro delle fiabe.";
+"a11y.storybook_button"          = "Apri il libro delle fiabe";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Carte sbloccate in AR";
 "book.ar.body"                  = "Guarda nello spazio le carte degli eventi della storia che hai sbloccato.";
@@ -265,3 +266,5 @@
 "settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Attiva o disattiva la narrazione vocale.";
 "settings.voice_over.info" = "La compatibilità con VoiceOver è completamente supportata. Per utilizzarlo, abilita la funzionalità nelle Impostazioni di sistema di iOS.";
+"settings.reduce_contrast" = "Riduci contrasto";
+"settings.reduce_contrast.description" = "Usa colori ad alto contrasto per migliorare la leggibilità dei testi.";

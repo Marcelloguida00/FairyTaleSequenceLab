@@ -5,7 +5,7 @@ private enum SettingsTheme {
     static let panelFill = Color(red: 0.976, green: 0.957, blue: 0.890)
     static let panelBorder = Color(red: 0.722, green: 0.631, blue: 0.420)
     static let primaryText = Color(red: 0.290, green: 0.204, blue: 0.180)
-    static let secondaryText = Color(red: 0.549, green: 0.451, blue: 0.333)
+    static let secondaryText = Color(red: 0.365, green: 0.286, blue: 0.208)
     static let selectionFill = Color(red: 0.910, green: 0.851, blue: 0.710)
     static let controlFill = Color(red: 0.945, green: 0.918, blue: 0.827)
     static let divider = Color(red: 0.722, green: 0.631, blue: 0.420).opacity(0.35)
@@ -42,6 +42,8 @@ struct SettingsView: View {
     @AppStorage("enableHaptics") private var enableHaptics = true
     @AppStorage("reduceAnimations") private var reduceAnimations = false
     @AppStorage("enableSounds") private var enableSounds = true
+    @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
+    @AppStorage("reduceContrast") private var reduceContrast = false
     @State private var showResetProgressConfirmation = false
     @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
@@ -145,10 +147,6 @@ struct SettingsView: View {
         GameButtonMetrics.chromeCircleSize
     }
 
-    private var headerTitleSize: CGFloat {
-        usesFrameLayout ? 34 : 22
-    }
-
     private var header: some View {
         HStack(spacing: 0) {
             GameCircleBackButton(size: headerCircleSize) {
@@ -158,10 +156,10 @@ struct SettingsView: View {
             .accessibilityLabel(lm.t("button.back"))
 
             Text(headerTitle)
-                .font(.app(size: headerTitleSize, weight: .bold))
+                .font(.app(usesFrameLayout ? .largeTitle : .title3, weight: .bold))
                 .foregroundStyle(SettingsTheme.menuRowText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                .lineLimit(2)
+                .minimumScaleFactor(0.78)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
 
@@ -222,10 +220,14 @@ struct SettingsView: View {
         HStack(spacing: 10) {
             sectionLine
             Text(title)
-                .font(.app(size: usesFrameLayout ? 14 : 12, weight: .semibold))
+                .font(.app(.footnote, weight: .semibold))
                 .textCase(.uppercase)
                 .foregroundStyle(SettingsTheme.secondaryText)
                 .tracking(1.1)
+                .lineLimit(2)
+                .minimumScaleFactor(0.82)
+                .multilineTextAlignment(.center)
+                .layoutPriority(1)
             sectionLine
         }
         .padding(.horizontal, 4)
@@ -331,6 +333,7 @@ struct SettingsView: View {
             HStack(spacing: expanded ? 18 : 14) {
                 Text(lang.flag)
                     .font(.app(size: expanded ? 34 : 28))
+                    .accessibilityHidden(true)
 
                 Text(lang.nativeName)
                     .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
@@ -339,10 +342,11 @@ struct SettingsView: View {
                 Spacer()
 
                 if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.app(size: expanded ? 26 : 20, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.menuRowText)
-                        .transition(.scale.combined(with: .opacity))
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.app(size: expanded ? 26 : 20, weight: .semibold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .transition(.scale.combined(with: .opacity))
+                            .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, expanded ? 24 : 16)
@@ -359,6 +363,8 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .gameMinimumTouchTarget()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(lang.nativeName)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
         if !isLast {
@@ -386,6 +392,7 @@ struct SettingsView: View {
                             .font(.app(size: 20, weight: .semibold))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .frame(width: 28)
+                            .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.dyslexia_font"))
@@ -432,11 +439,12 @@ struct SettingsView: View {
 
             VStack(spacing: 0) {
                 HStack(spacing: 14) {
-                    Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                        .font(.app(size: 20, weight: .semibold))
-                        .foregroundStyle(SettingsTheme.secondaryText)
-                        .frame(width: 28)
-                        .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                        Image(systemName: musicMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.app(size: 20, weight: .semibold))
+                            .foregroundStyle(SettingsTheme.secondaryText)
+                            .frame(width: 28)
+                            .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                            .accessibilityHidden(true)
 
                     Slider(value: Binding(
                         get: { musicMuted ? 0 : musicVolume },
@@ -471,6 +479,7 @@ struct SettingsView: View {
                             .font(.app(size: 20, weight: .semibold))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .frame(width: 28)
+                            .accessibilityHidden(true)
 
                         Text(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
                             .font(.app(.body))
@@ -555,8 +564,9 @@ struct SettingsView: View {
                     )
                     .frame(width: knobSize, height: knobSize)
                     .offset(x: isOn ? knobOffset : -knobOffset)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
             )
+            .accessibilityHidden(true)
     }
 
     // MARK: - Progress section
@@ -575,6 +585,7 @@ struct SettingsView: View {
                             .font(.app(size: 20, weight: .semibold))
                             .foregroundStyle(Color.red)
                             .frame(width: 28)
+                            .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.reset_progress"))
@@ -599,6 +610,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(lm.t("settings.reset_progress"))
                 .accessibilityHint(lm.t("settings.reset_progress.description"))
             }
@@ -817,14 +829,15 @@ struct SettingsView: View {
                     .font(.app(size: usesFrameLayout ? 38 : 30, weight: .bold))
                     .foregroundStyle(SettingsTheme.menuRowText)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityHidden(true)
 
                 Text(detail.title(using: lm))
-                    .font(.app(size: usesFrameLayout ? 28 : 22, weight: .bold))
+                    .font(.app(usesFrameLayout ? .title : .title3, weight: .bold))
                     .foregroundStyle(SettingsTheme.menuRowText)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(detail.message(using: lm))
-                    .font(.app(size: usesFrameLayout ? 20 : 17, weight: .regular))
+                    .font(.app(usesFrameLayout ? .title3 : .body))
                     .foregroundStyle(SettingsTheme.secondaryText)
                     .lineSpacing(usesFrameLayout ? 6 : 5)
                     .fixedSize(horizontal: false, vertical: true)
@@ -848,14 +861,15 @@ struct SettingsView: View {
                             .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
                             .foregroundStyle(SettingsTheme.menuRowText)
                             .frame(width: usesFrameLayout ? 36 : 28)
+                            .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.dyslexia_font"))
-                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                                 .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
                             Text(lm.t("settings.dyslexia_font.description"))
-                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                                .font(.app(usesFrameLayout ? .callout : .caption))
                                 .foregroundStyle(SettingsTheme.secondaryText)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -870,7 +884,10 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
-                
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lm.t("settings.dyslexia_font"))
+                .accessibilityHint(lm.t("settings.dyslexia_font.description"))
+                .accessibilityAddTraits(fontSettings.dyslexiaFontEnabled ? [.isSelected] : [])
 
                 
                 // Enable Animations
@@ -885,14 +902,15 @@ struct SettingsView: View {
                             .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
                             .foregroundStyle(SettingsTheme.menuRowText)
                             .frame(width: usesFrameLayout ? 36 : 28)
+                            .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.enable_animations"))
-                                .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                                 .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
                             Text(lm.t("settings.enable_animations.description"))
-                                .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                                .font(.app(usesFrameLayout ? .callout : .caption))
                                 .foregroundStyle(SettingsTheme.secondaryText)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -907,6 +925,10 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lm.t("settings.enable_animations"))
+                .accessibilityHint(lm.t("settings.enable_animations.description"))
+                .accessibilityAddTraits(reduceAnimations ? [.isSelected] : [])
                 
                 settingsDivider(largeStyle: usesFrameLayout)
                 
@@ -932,6 +954,48 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, usesFrameLayout ? 24 : 18)
                 .padding(.vertical, usesFrameLayout ? 20 : 16)
+
+                settingsDivider(largeStyle: usesFrameLayout)
+
+                // Reduce Contrast
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        reduceContrast.toggle()
+                    }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+                            .accessibilityHidden(true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.reduce_contrast"))
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.reduce_contrast.description"))
+                                .font(.app(usesFrameLayout ? .callout : .caption))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: reduceContrast, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
+                }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lm.t("settings.reduce_contrast"))
+                .accessibilityHint(lm.t("settings.reduce_contrast.description"))
+                .accessibilityAddTraits(reduceContrast ? [.isSelected] : [])
             }
         }
     }
@@ -1066,14 +1130,15 @@ struct SettingsView: View {
                     .font(.app(size: expanded ? 28 : 20, weight: .bold))
                     .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                     .frame(width: expanded ? 36 : 28)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(lm.t(titleKey))
-                        .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                        .font(.app(expanded ? .title3 : .body, weight: expanded ? .semibold : .regular))
                         .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
                     Text(lm.t(descriptionKey))
-                        .font(.app(size: expanded ? 16 : 12, weight: .regular))
+                        .font(.app(expanded ? .callout : .caption))
                         .foregroundStyle(SettingsTheme.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -1090,6 +1155,7 @@ struct SettingsView: View {
         .buttonStyle(.plain)
         .gameMinimumTouchTarget()
         .disabled(disabled)
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(lm.t(titleKey))
         .accessibilityHint(lm.t(descriptionKey))
         .accessibilityAddTraits(isOn.wrappedValue ? [.isSelected] : [])
@@ -1102,6 +1168,7 @@ struct SettingsView: View {
                 .font(.app(size: expanded ? 24 : 20, weight: .semibold))
                 .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                 .frame(width: expanded ? 36 : 28)
+                .accessibilityHidden(true)
 
             Slider(value: Binding(
                 get: { musicVolume },
@@ -1123,9 +1190,10 @@ struct SettingsView: View {
                 .font(.app(size: expanded ? 24 : 20, weight: .semibold))
                 .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                 .frame(width: expanded ? 36 : 28)
+                .accessibilityHidden(true)
 
             Text(lm.t("settings.sequencing_sfx"))
-                .font(.app(size: expanded ? 22 : 17, weight: .semibold))
+                .font(.app(expanded ? .title3 : .body, weight: .semibold))
                 .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
             Spacer(minLength: 0)
@@ -1158,9 +1226,10 @@ struct SettingsView: View {
                     .font(.app(size: expanded ? 24 : 20, weight: .semibold))
                     .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                     .frame(width: expanded ? 36 : 28)
+                    .accessibilityHidden(true)
 
                 Text(lm.t(mode.localizedNameKey))
-                    .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                    .font(.app(expanded ? .title3 : .body, weight: expanded ? .semibold : .regular))
                     .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1171,6 +1240,7 @@ struct SettingsView: View {
                         .font(.app(size: expanded ? 24 : 20, weight: .semibold))
                         .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                         .transition(.scale.combined(with: .opacity))
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, expanded ? 24 : 18)
@@ -1187,6 +1257,7 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .gameMinimumTouchTarget()
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(lm.t(mode.localizedNameKey))
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
@@ -1218,9 +1289,10 @@ struct SettingsView: View {
                     .font(.app(size: expanded ? 24 : 20, weight: .semibold))
                     .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                     .frame(width: expanded ? 36 : 28)
+                    .accessibilityHidden(true)
 
                 Text(lm.t(theme.localizedNameKey))
-                    .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
+                    .font(.app(expanded ? .title3 : .body, weight: expanded ? .semibold : .regular))
                     .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1231,6 +1303,7 @@ struct SettingsView: View {
                         .font(.app(size: expanded ? 24 : 20, weight: .semibold))
                         .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                         .transition(.scale.combined(with: .opacity))
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, expanded ? 24 : 18)
@@ -1247,6 +1320,7 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .gameMinimumTouchTarget()
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(lm.t(theme.localizedNameKey))
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
 
@@ -1282,14 +1356,15 @@ struct SettingsView: View {
                         .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
                         .foregroundStyle(Color.red)
                         .frame(width: usesFrameLayout ? 36 : 28)
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lm.t("settings.reset_progress"))
-                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                            .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                             .foregroundStyle(Color.red)
 
                         Text(lm.t("settings.reset_progress.description"))
-                            .font(.app(size: usesFrameLayout ? 16 : 12, weight: .regular))
+                            .font(.app(usesFrameLayout ? .callout : .caption))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -1302,6 +1377,9 @@ struct SettingsView: View {
             }
             .buttonStyle(.plain)
             .gameMinimumTouchTarget()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(lm.t("settings.reset_progress"))
+            .accessibilityHint(lm.t("settings.reset_progress.description"))
         }
     }
 
@@ -1363,20 +1441,23 @@ struct SettingsView: View {
                         )
                         .opacity(isUnlocked ? 1.0 : 0.35)
                         .blur(radius: isUnlocked ? 0 : 2)
+                        .accessibilityHidden(true)
                     
                     if !isUnlocked {
                         Image(systemName: "lock.fill")
                             .font(.app(size: usesFrameLayout ? 22 : 18, weight: .bold))
                             .foregroundStyle(SettingsTheme.menuRowText)
                             .shadow(color: .white.opacity(0.8), radius: 3)
+                            .accessibilityHidden(true)
                     }
                 }
                 .frame(width: usesFrameLayout ? 72 : 56, height: usesFrameLayout ? 72 : 56)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .bold))
+                        .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .bold))
                         .foregroundStyle(isUnlocked ? (usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText) : SettingsTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
                 Spacer()
@@ -1386,6 +1467,7 @@ struct SettingsView: View {
                         .font(.app(size: usesFrameLayout ? 24 : 20, weight: .semibold))
                         .foregroundStyle(SettingsTheme.menuRowText)
                         .transition(.scale.combined(with: .opacity))
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, usesFrameLayout ? 24 : 18)
@@ -1393,6 +1475,7 @@ struct SettingsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
     }
 
@@ -1408,13 +1491,15 @@ struct SettingsView: View {
                         .frame(height: usesFrameLayout ? 1.5 : 1)
 
                     HStack(spacing: usesFrameLayout ? 14 : 10) {
-                        Image(systemName: "number.circle.fill")
-                            .font(.app(size: usesFrameLayout ? 26 : 20, weight: .bold))
-                            .foregroundStyle(SettingsTheme.menuRowText)
+                    Image(systemName: "number.circle.fill")
+                        .font(.app(size: usesFrameLayout ? 26 : 20, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .accessibilityHidden(true)
 
-                        Text("\(lm.t("settings.version")) \(appVersionText)")
-                            .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                    Text("\(lm.t("settings.version")) \(appVersionText)")
+                            .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                             .foregroundStyle(SettingsTheme.menuRowText)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 .padding(usesFrameLayout ? 24 : 18)
@@ -1447,13 +1532,13 @@ struct SettingsView: View {
 
                 VStack(alignment: .leading, spacing: usesFrameLayout ? 10 : 8) {
                     Text(profile.name)
-                        .font(.app(size: usesFrameLayout ? 22 : 17, weight: usesFrameLayout ? .semibold : .regular))
+                        .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                         .foregroundStyle(SettingsTheme.menuRowText)
                         .fixedSize(horizontal: false, vertical: true)
 
                     if let roleKey = profile.roleKey {
                         Text(lm.t(roleKey))
-                            .font(.app(size: usesFrameLayout ? 16 : 14, weight: .medium))
+                            .font(.app(usesFrameLayout ? .callout : .caption, weight: .medium))
                             .foregroundStyle(SettingsTheme.secondaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -1494,9 +1579,10 @@ struct SettingsView: View {
             HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.app(size: usesFrameLayout ? 15 : 13, weight: .bold))
+                    .accessibilityHidden(true)
 
                 Text(title)
-                    .font(.app(size: usesFrameLayout ? 15 : 13, weight: .semibold))
+                    .font(.app(.caption, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
             }
@@ -1567,14 +1653,16 @@ struct SettingsView: View {
                     .font(.app(size: largeStyle ? 28 : 20, weight: .bold))
                     .foregroundStyle(largeStyle ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
                     .frame(width: largeStyle ? 36 : 28)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.app(size: largeStyle ? 22 : 17, weight: largeStyle ? .semibold : .regular))
+                        .font(.app(largeStyle ? .title3 : .body, weight: largeStyle ? .semibold : .regular))
                         .foregroundStyle(largeStyle ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-                        .lineLimit(largeStyle ? 2 : 1)
-                        .minimumScaleFactor(largeStyle ? 0.82 : 1)
+                        .lineLimit(largeStyle ? 3 : 2)
+                        .minimumScaleFactor(0.82)
                         .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     if let detail {
                         Text(detail)
@@ -1594,6 +1682,7 @@ struct SettingsView: View {
                                 ? SettingsTheme.menuRowText.opacity(0.72)
                                 : SettingsTheme.secondaryText.opacity(0.65)
                         )
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, largeStyle ? 24 : 18)
@@ -1604,6 +1693,7 @@ struct SettingsView: View {
         .buttonStyle(.plain)
         .gameMinimumTouchTarget()
         .frame(maxHeight: fillHeight ? .infinity : nil)
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
     }
 

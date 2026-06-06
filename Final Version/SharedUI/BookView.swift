@@ -337,6 +337,7 @@ struct BookView: View {
     @State private var bookmarks: [FairyTaleBookmark] = []
     @State private var lastIsCompact: Bool? = nil
     @State private var isARBookOpen = false
+    @State private var pageTexts: [String] = []
     
     var body: some View {
         GeometryReader { geom in
@@ -383,6 +384,7 @@ struct BookView: View {
                                 }
                             }
                             .buttonStyle(.plain)
+                            .accessibilityElement(children: .ignore)
                             .accessibilityLabel(bookmark.info.title)
                             .gameMinimumTouchTarget(
                                 minWidth: max(isCompact ? 24 : 40, GameButtonMetrics.minimumTouchTarget),
@@ -431,6 +433,9 @@ struct BookView: View {
                 self.lastIsCompact = initialCompact
                 loadCompletedEvents(isCompact: initialCompact)
             }
+            .onDisappear {
+                AppSpeechSynthesizer.shared.stop()
+            }
             .onChange(of: lm.currentLanguage) { _, _ in
                 if let isCompact = lastIsCompact {
                     loadCompletedEvents(isCompact: isCompact)
@@ -442,6 +447,9 @@ struct BookView: View {
                     self.lastIsCompact = isCompact
                     buildPagesAndBookmarks(isCompact: isCompact)
                 }
+            }
+            .onChange(of: currentPage) { _, _ in
+                speakCurrentPage()
             }
         }
     }
@@ -726,6 +734,7 @@ struct BookView: View {
     private func buildPagesAndBookmarks(isCompact: Bool) {
         var newPages: [AnyView] = []
         var newBookmarks: [FairyTaleBookmark] = []
+        var newPageTexts: [String] = []
         
         let isDyslexiaEnabled = UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey)
         // Made padding smaller to make pages more compact
@@ -812,7 +821,9 @@ struct BookView: View {
                 }
             }
             newPages.append(emptyLeft)
+            newPageTexts.append(subtitle)
             newPages.append(emptyRight)
+            newPageTexts.append(title)
         }
         
         let redRidingHood = FairyTaleInfo(
@@ -883,7 +894,9 @@ struct BookView: View {
                 }
                 
                 newPages.append(insideCover)
+                newPageTexts.append("")
                 newPages.append(titleCover)
+                newPageTexts.append(redRidingHood.title)
                 // ------------------------------------------
                 
                 var pageIndex = newPages.count
@@ -1181,6 +1194,11 @@ struct BookView: View {
                         .padding(.vertical, isCompact ? 10 : 20)
                     }
                     newPages.append(page)
+                    var textToSpeak = pageContent.textChunk1
+                    if let chunk2 = pageContent.textChunk2 {
+                        textToSpeak += " " + chunk2
+                    }
+                    newPageTexts.append(textToSpeak)
                     pageIndex += 1
                 }
             }
@@ -1205,16 +1223,26 @@ struct BookView: View {
             .padding(-pagePadding) // Annulla il padding per occupare tutta la pagina e sovrapporsi alla cornice
         }
         newPages.append(finalImagePage)
+        newPageTexts.append("")
         
         if newPages.count % 2 != 0 {
             let emptyPage = pageContainer(isLeft: false, pageNumber: newPages.count + 1) {
                 Spacer()
             }
             newPages.append(emptyPage)
+            newPageTexts.append("")
         }
 
         self.bookPages = newPages
         self.bookmarks = newBookmarks
+        self.pageTexts = newPageTexts
+        speakCurrentPage()
+    }
+
+    private func speakCurrentPage() {
+        guard currentPage >= 0, currentPage < pageTexts.count else { return }
+        let text = pageTexts[currentPage]
+        AppSpeechSynthesizer.shared.speak(text, languageCode: lm.currentLanguage)
     }
     
     @ViewBuilder

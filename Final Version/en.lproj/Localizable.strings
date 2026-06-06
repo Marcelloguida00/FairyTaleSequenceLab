@@ -53,6 +53,7 @@
 "book.chapter_unlocked.open_button" = "Open";
 "book.chapter_unlocked.tap_hint" = "Tap anywhere to continue.";
 "book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
+"a11y.storybook_button"          = "Open storybook";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Unlocked Cards in AR";
 "book.ar.body"                  = "Look around to see the story event cards you have unlocked.";
@@ -90,6 +91,8 @@
 "settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Turn voice narration on or off.";
 "settings.voice_over.info" = "VoiceOver support is fully integrated. To use it, please enable the feature in your iOS System Settings.";
+"settings.reduce_contrast" = "Reduce contrast";
+"settings.reduce_contrast.description" = "Use high-contrast colors to improve text readability.";
 "settings.dyslexia_font"  = "Dyslexia font";
 "settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";
