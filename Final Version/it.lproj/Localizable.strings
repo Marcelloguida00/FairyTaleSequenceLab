@@ -260,3 +260,6 @@
 "settings.enable_sounds.description" = "Attiva o disattiva i suoni dell'interfaccia e dei menu.";
 "settings.voice_over" = "Voice Over";
 "settings.voice_over.description" = "Attiva o disattiva la narrazione vocale.";
+"settings.reduce_contrast" = "Riduci contrasto";
+"settings.reduce_contrast.description" = "Usa colori ad alto contrasto per migliorare la leggibilità dei testi.";
+

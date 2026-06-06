@@ -513,6 +513,7 @@ private struct MenuPanelView: View {
                 .padding(.bottom, panelSize.height * 0.12)
                 .frame(width: panelSize.width, height: panelSize.height)
             }
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }

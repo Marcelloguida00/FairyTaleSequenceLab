@@ -88,6 +88,8 @@
 "settings.enable_sounds.description" = "Turn interaction and menu sounds on or off.";
 "settings.voice_over" = "Voice Over";
 "settings.voice_over.description" = "Turn voice narration on or off.";
+"settings.reduce_contrast" = "Reduce contrast";
+"settings.reduce_contrast.description" = "Use high-contrast colors to improve text readability.";
 "settings.dyslexia_font"  = "Dyslexia font";
 "settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";

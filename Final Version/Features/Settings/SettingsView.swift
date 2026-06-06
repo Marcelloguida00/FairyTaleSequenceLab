@@ -43,6 +43,7 @@ struct SettingsView: View {
     @AppStorage("reduceAnimations") private var reduceAnimations = false
     @AppStorage("enableSounds") private var enableSounds = true
     @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
+    @AppStorage("reduceContrast") private var reduceContrast = false
     @State private var showResetProgressConfirmation = false
     @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
@@ -970,6 +971,48 @@ struct SettingsView: View {
                 .accessibilityLabel(lm.t("settings.voice_over"))
                 .accessibilityHint(lm.t("settings.voice_over.description"))
                 .accessibilityAddTraits(voiceOverEnabled ? [.isSelected] : [])
+
+                settingsDivider(largeStyle: usesFrameLayout)
+
+                // Reduce Contrast
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        reduceContrast.toggle()
+                    }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+                            .accessibilityHidden(true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.reduce_contrast"))
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.reduce_contrast.description"))
+                                .font(.app(usesFrameLayout ? .callout : .caption))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: reduceContrast, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
+                }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lm.t("settings.reduce_contrast"))
+                .accessibilityHint(lm.t("settings.reduce_contrast.description"))
+                .accessibilityAddTraits(reduceContrast ? [.isSelected] : [])
             }
         }
     }
