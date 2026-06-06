@@ -83,17 +83,17 @@ struct AppMenuTitleView: View {
         ZStack {
             ForEach(Array(titleStrokeOffsets.enumerated()), id: \.offset) { _, offset in
                 Text(text)
-                    .font(.app(size: fontSize, weight: .black))
+                    .font(.app(size: fontSize, weight: .black, relativeTo: lineIndex == 0 ? .largeTitle : .title3))
                     .foregroundStyle(titleStrokeColor)
                     .offset(x: offset.width, y: offset.height)
             }
 
             Text(text)
-                .font(.app(size: fontSize, weight: .black))
+                .font(.app(size: fontSize, weight: .black, relativeTo: lineIndex == 0 ? .largeTitle : .title3))
                 .foregroundStyle(titleFillGradient)
         }
         .lineLimit(1)
-        .minimumScaleFactor(style == .mainMenu ? 0.5 : 0.55)
+        .minimumScaleFactor(0.45)
     }
 
     // ==========================================
@@ -143,43 +143,44 @@ struct AppMenuTitleView: View {
     // VIEW BODY
     // ==========================================
     var body: some View {
-        if reduceContrast {
-            VStack(spacing: 6) {
-                // "LUMI" - Bold dynamic title scaling with device size and Dynamic Type
-                Text(lm.t("menu.title.line1"))
-                    .font(.custom(AppTypography.bold, size: titleFontSizeContrast, relativeTo: .largeTitle))
-                    .foregroundStyle(titleGradientContrast)
-                    .shadow(color: textShadowColorContrast, radius: shadowRadiusContrast, x: shadowOffsetContrast.x, y: shadowOffsetContrast.y)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+        Group {
+            if reduceContrast {
+                VStack(spacing: 6) {
+                    // "LUMI" - Bold dynamic title scaling with device size and Dynamic Type
+                    Text(lm.t("menu.title.line1"))
+                        .font(.custom(AppTypography.bold, size: titleFontSizeContrast, relativeTo: .largeTitle))
+                        .foregroundStyle(titleGradientContrast)
+                        .shadow(color: textShadowColorContrast, radius: shadowRadiusContrast, x: shadowOffsetContrast.x, y: shadowOffsetContrast.y)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
 
-                // "WORLD OF FABLES" - Elegant dynamic subtitle scaling with device size and Dynamic Type
-                Text(lm.t("menu.title.line2"))
-                    .font(.custom(AppTypography.medium, size: subtitleFontSizeContrast, relativeTo: .title3))
-                    .foregroundStyle(subtitleStyleContrast)
-                    .shadow(color: textShadowColorContrast, radius: shadowRadiusContrast, x: shadowOffsetContrast.x, y: shadowOffsetContrast.y)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.5)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, panelWidth * 0.04)
-            .fixedSize(horizontal: false, vertical: true)
-            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-            .accessibilityElement(children: .ignore)
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityLabel("\(lm.t("menu.title.line1")) \(lm.t("menu.title.line2"))")
-        } else {
-            VStack(spacing: lineSpacing) {
-                ForEach(Array(titleLines.enumerated()), id: \.offset) { index, line in
-                    titleLine(line, lineIndex: index)
+                    // "WORLD OF FABLES" - Elegant dynamic subtitle scaling with device size and Dynamic Type
+                    Text(lm.t("menu.title.line2"))
+                        .font(.custom(AppTypography.medium, size: subtitleFontSizeContrast, relativeTo: .title3))
+                        .foregroundStyle(subtitleStyleContrast)
+                        .shadow(color: textShadowColorContrast, radius: shadowRadiusContrast, x: shadowOffsetContrast.x, y: shadowOffsetContrast.y)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.5)
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityLabel("\(lm.t("menu.title.line1")) \(lm.t("menu.title.line2"))")
+            } else {
+                VStack(spacing: lineSpacing) {
+                    ForEach(Array(titleLines.enumerated()), id: \.offset) { index, line in
+                        titleLine(line, lineIndex: index)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityLabel(titleLines.joined(separator: " "))
             }
-            .padding(.horizontal, panelWidth * 0.04)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityLabel(titleLines.joined(separator: " "))
         }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, panelWidth * 0.04)
+        .fixedSize(horizontal: false, vertical: true)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 }
