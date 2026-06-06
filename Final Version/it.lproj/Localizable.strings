@@ -48,8 +48,10 @@
 "level.new_scene"        = "Nuova scena";
 
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
-"book.chapter_unlocked.title"   = "Capitolo sbloccato nel libro!";
-"book.chapter_unlocked.message" = "«%@» è ora nel libro delle fiabe. Apri il libro sulla mappa per leggerlo!";
+"book.chapter_unlocked.title"   = "Complimenti\nHai sbloccato un nuovo capitolo nel libro!";
+"book.chapter_unlocked.message" = "«%@» è ora nel libro delle fiabe.";
+"book.chapter_unlocked.open_button" = "Apri";
+"book.chapter_unlocked.tap_hint" = "Tocca lo schermo per continuare.";
 "book.chapter_unlocked.open_hint" = "Tocca due volte per aprire il libro delle fiabe.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Carte sbloccate in AR";

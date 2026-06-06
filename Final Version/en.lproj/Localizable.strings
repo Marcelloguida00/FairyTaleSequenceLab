@@ -48,8 +48,10 @@
 "level.new_scene"        = "New Scene";
 
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
-"book.chapter_unlocked.title"   = "Chapter unlocked in the book!";
-"book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book. Open the book on the map to read it!";
+"book.chapter_unlocked.title"   = "Congratulations!\nYou've unlocked a new chapter in the book!";
+"book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book.";
+"book.chapter_unlocked.open_button" = "Open";
+"book.chapter_unlocked.tap_hint" = "Tap anywhere to continue.";
 "book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Unlocked Cards in AR";

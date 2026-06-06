@@ -48,8 +48,10 @@
 "level.new_scene"        = "Новая сцена";
 
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
-"book.chapter_unlocked.title"   = "Глава разблокирована в книге!";
-"book.chapter_unlocked.message" = "«%@» теперь в книге сказок. Открой книгу на карте, чтобы прочитать!";
+"book.chapter_unlocked.title"   = "Поздравляем!\nТы открыл новую главу в книге!";
+"book.chapter_unlocked.message" = "«%@» теперь в книге сказок.";
+"book.chapter_unlocked.open_button" = "Открыть";
+"book.chapter_unlocked.tap_hint" = "Коснитесь экрана, чтобы продолжить.";
 "book.chapter_unlocked.open_hint" = "Дважды коснитесь, чтобы открыть книгу сказок.";
 "book.ar.button"                = "AR";
 "book.ar.title"                 = "Открытые карточки в AR";

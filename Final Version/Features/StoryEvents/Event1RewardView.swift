@@ -4,7 +4,7 @@ struct RewardView: View {
     let event: EventData
     let attemptCount: Int
     var showsBookChapterUnlock: Bool = false
-    var onChapterUnlock: ((String) -> Void)? = nil
+    var onChapterUnlockReady: (() -> Void)? = nil
     let onDismiss: () -> Void
     let onNext: () -> Void
 
@@ -35,8 +35,8 @@ struct RewardView: View {
     }
 
     private func finishRewardFlow() {
-        if showsBookChapterUnlock, let onChapterUnlock {
-            onChapterUnlock(BookChapterTitles.title(for: event.id, lm: lm))
+        if showsBookChapterUnlock, let onChapterUnlockReady {
+            onChapterUnlockReady()
         } else {
             onNext()
         }

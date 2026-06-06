@@ -78,7 +78,7 @@ struct ContentView: View {
     @State private var pendingRedHoodLevel: Int? = nil
     @State private var suppressesMapChromeForDialogue = true
     @State private var redHoodPostSequenceReward: (level: Int, attemptCount: Int)? = nil
-    @State private var bookChapterUnlockNotice: (title: String, level: Int)? = nil
+    @State private var pendingChapterUnlockLevel: Int? = nil
     @State private var currentFrame = 0
     @State private var walkTask: Task<Void, Never>? = nil
     @State private var walkGeneration = 0
@@ -139,12 +139,8 @@ struct ContentView: View {
                             activeRedHoodLevel = reward.level
                         }
                     },
-                    onChapterUnlock: { chapterTitle in
-                        withAnimation(.easeInOut(duration: 0.35)) {
-                            redHoodPostSequenceReward = nil
-                            suppressesMapChromeForDialogue = false
-                            bookChapterUnlockNotice = (chapterTitle, reward.level)
-                        }
+                    onChapterUnlockReady: {
+                        finishRedHoodPostSequenceReward(for: reward.level, pendingChapterUnlock: true)
                     },
                     onComplete: {
                         finishRedHoodPostSequenceReward(for: reward.level)
@@ -173,17 +169,14 @@ struct ContentView: View {
                     .transition(.opacity)
             }
 
-            if let notice = bookChapterUnlockNotice {
+            if let level = pendingChapterUnlockLevel {
                 BookChapterUnlockedBanner(
-                    chapterTitle: notice.title,
                     onFinish: {
-                        let level = notice.level
-                        bookChapterUnlockNotice = nil
+                        pendingChapterUnlockLevel = nil
                         handleRedHoodChapterCompletion(level)
                     },
                     onOpenStorybook: {
-                        let level = notice.level
-                        bookChapterUnlockNotice = nil
+                        pendingChapterUnlockLevel = nil
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                             isBookOpen = true
                         }
@@ -192,7 +185,7 @@ struct ContentView: View {
                 )
                 .environmentObject(lm)
                 .zIndex(40)
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(.opacity)
             }
 
             if shouldShowRedHoodPlayButton {
@@ -488,11 +481,11 @@ struct ContentView: View {
     }
 
     private func handleBackButton() {
-        if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil || bookChapterUnlockNotice != nil {
+        if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil || pendingChapterUnlockLevel != nil {
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
                 redHoodPostSequenceReward = nil
-                bookChapterUnlockNotice = nil
+                pendingChapterUnlockLevel = nil
                 pendingRedHoodLevel = nil
                 suppressesMapChromeForDialogue = true
             }
@@ -788,6 +781,7 @@ struct ContentView: View {
             || isBookOpen
             || (activeRedHoodLevel != nil && suppressesMapChromeForDialogue)
             || redHoodPostSequenceReward != nil
+            || pendingChapterUnlockLevel != nil
     }
 
     private var isMapToolbarBlocked: Bool {
@@ -1089,12 +1083,17 @@ struct ContentView: View {
     }
 
     @MainActor
-    private func finishRedHoodPostSequenceReward(for level: Int) {
+    private func finishRedHoodPostSequenceReward(for level: Int, pendingChapterUnlock: Bool = false) {
         withAnimation(.easeInOut(duration: 0.3)) {
             redHoodPostSequenceReward = nil
             suppressesMapChromeForDialogue = true
         }
-        handleRedHoodChapterCompletion(level)
+
+        if pendingChapterUnlock {
+            pendingChapterUnlockLevel = level
+        } else {
+            handleRedHoodChapterCompletion(level)
+        }
     }
 
     @MainActor

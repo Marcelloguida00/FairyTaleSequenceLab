@@ -10,7 +10,7 @@ struct RedHoodRewardPhaseView: View {
     let attemptCount: Int
     let onRewardReached: () -> Void
     let onReplay: () -> Void
-    let onChapterUnlock: (String) -> Void
+    let onChapterUnlockReady: () -> Void
     let onComplete: () -> Void
 
     @EnvironmentObject private var lm: LanguageManager
@@ -23,7 +23,7 @@ struct RedHoodRewardPhaseView: View {
                 event: eventData,
                 attemptCount: attemptCount,
                 showsBookChapterUnlock: isFirstTimeCompletion && (1...8).contains(eventData.id),
-                onChapterUnlock: onChapterUnlock,
+                onChapterUnlockReady: onChapterUnlockReady,
                 onDismiss: onReplay,
                 onNext: onComplete
             )

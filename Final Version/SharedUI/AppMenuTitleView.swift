@@ -14,19 +14,35 @@ struct AppMenuTitleView: View {
 
     @EnvironmentObject private var lm: LanguageManager
 
-    private var titleGradient: LinearGradient {
+    private var titleStrokeColor: Color {
+        GameButtonAppearance.border
+    }
+
+    /// Light cream highlight on top; FCDB00 dominates the fill.
+    private var titleFillGradient: LinearGradient {
         LinearGradient(
-            colors: [
-                Color(red: 1.0, green: 0.92, blue: 0.35),
-                Color(red: 0.98, green: 0.62, blue: 0.12)
+            stops: [
+                .init(color: Color(hex: "#FFFBDC"), location: 0),
+                .init(color: Color(hex: "#FCDB00"), location: 0.2),
+                .init(color: Color(hex: "#FCDB00"), location: 1)
             ],
             startPoint: .top,
             endPoint: .bottom
         )
     }
 
-    private var outlineColor: Color {
-        Color(red: 0.35, green: 0.20, blue: 0.06)
+    private var titleStrokeOffsets: [CGSize] {
+        let w: CGFloat = style == .mainMenu ? 2.2 : 1.6
+        return [
+            CGSize(width: -w, height: 0),
+            CGSize(width: w, height: 0),
+            CGSize(width: 0, height: -w),
+            CGSize(width: 0, height: w),
+            CGSize(width: -w, height: -w),
+            CGSize(width: w, height: -w),
+            CGSize(width: -w, height: w),
+            CGSize(width: w, height: w)
+        ]
     }
 
     private var lineSpacing: CGFloat {
@@ -58,9 +74,9 @@ struct AppMenuTitleView: View {
     private func titleFontSize(for lineIndex: Int) -> CGFloat {
         switch style {
         case .mainMenu:
-            return lineIndex == 0 ? panelWidth * 0.26 : panelWidth * 0.155
+            return lineIndex == 0 ? panelWidth * 0.26 : panelWidth * 0.125
         case .compact:
-            return panelWidth * 0.13
+            return lineIndex == 0 ? panelWidth * 0.13 : panelWidth * 0.108
         }
     }
 
@@ -69,14 +85,16 @@ struct AppMenuTitleView: View {
         let fontSize = titleFontSize(for: lineIndex)
 
         ZStack {
-            Text(text)
-                .font(.app(size: fontSize, weight: .black))
-                .foregroundStyle(outlineColor)
-                .offset(x: 1.5, y: 1.5)
+            ForEach(Array(titleStrokeOffsets.enumerated()), id: \.offset) { _, offset in
+                Text(text)
+                    .font(.app(size: fontSize, weight: .black))
+                    .foregroundStyle(titleStrokeColor)
+                    .offset(x: offset.width, y: offset.height)
+            }
 
             Text(text)
                 .font(.app(size: fontSize, weight: .black))
-                .foregroundStyle(titleGradient)
+                .foregroundStyle(titleFillGradient)
         }
         .lineLimit(1)
         .minimumScaleFactor(style == .mainMenu ? 0.5 : 0.55)

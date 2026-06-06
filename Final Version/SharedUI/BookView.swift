@@ -183,13 +183,50 @@ struct PageCurlBookView<Page: View>: UIViewControllerRepresentable {
 struct FairyTaleInfo {
     let title: String
     let color: Color
-    let emoji: String
+    let iconName: String
 }
 
 struct FairyTaleBookmark: Identifiable {
     let id = UUID()
     let info: FairyTaleInfo
     let startPageIndex: Int
+}
+
+private struct BookmarkIconView: View {
+    let iconName: String
+    let size: CGFloat
+    let yOffset: CGFloat
+
+    private static let strokeOffsets: [CGPoint] = [
+        CGPoint(x: -1.2, y: 0),
+        CGPoint(x: 1.2, y: 0),
+        CGPoint(x: 0, y: -1.2),
+        CGPoint(x: 0, y: 1.2),
+        CGPoint(x: -1.2, y: -1.2),
+        CGPoint(x: 1.2, y: -1.2),
+        CGPoint(x: -1.2, y: 1.2),
+        CGPoint(x: 1.2, y: 1.2)
+    ]
+
+    var body: some View {
+        ZStack {
+            ForEach(Array(Self.strokeOffsets.enumerated()), id: \.offset) { _, offset in
+                Image(iconName)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: size, height: size)
+                    .foregroundStyle(Color.white)
+                    .offset(x: offset.x, y: offset.y + yOffset)
+            }
+
+            Image(iconName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: size, height: size)
+                .offset(y: yOffset)
+        }
+    }
 }
 
 struct StoryScene: Identifiable {
@@ -337,10 +374,12 @@ struct BookView: View {
                                     .shadow(color: .black.opacity(0.4), radius: 2, x: 2, y: 2)
                                     .accessibilityHidden(true)
                                     
-                                    Text(bookmark.info.emoji)
-                                        .font(.system(size: isCompact ? 12 : 20))
-                                        .offset(y: isCompact ? -3 : -5)
-                                        .accessibilityHidden(true)
+                                    BookmarkIconView(
+                                        iconName: bookmark.info.iconName,
+                                        size: isCompact ? 14 : 22,
+                                        yOffset: isCompact ? -3 : -5
+                                    )
+                                    .accessibilityHidden(true)
                                 }
                             }
                             .buttonStyle(.plain)
@@ -779,7 +818,7 @@ struct BookView: View {
         let redRidingHood = FairyTaleInfo(
             title: lm.t("map.region.red_riding_hood"),
             color: Color(red: 0.7, green: 0.1, blue: 0.1),
-            emoji: "👧"
+            iconName: "RedHoodBookmarkIcon"
         )
 
         newBookmarks.append(FairyTaleBookmark(info: redRidingHood, startPageIndex: 0))
