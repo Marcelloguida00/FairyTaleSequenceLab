@@ -824,13 +824,13 @@ struct BookView: View {
         newBookmarks.append(FairyTaleBookmark(info: redRidingHood, startPageIndex: 0))
 
         if completedEvents.isEmpty {
-            addPlaceholder(title: redRidingHood.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
+            addPlaceholder(title: redRidingHood.title, subtitle: lm.t("book.placeholder.play_to_unlock"))
         } else {
             let maxCompletedId = completedEvents.map(\.id).max() ?? 0
             let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
 
             if visibleScenes.isEmpty {
-                addPlaceholder(title: redRidingHood.title, subtitle: lm.t("Gioca per sbloccare le scene!"))
+                addPlaceholder(title: redRidingHood.title, subtitle: lm.t("book.placeholder.play_to_unlock"))
             } else {
                 let textColors = Color(red: 0.25, green: 0.15, blue: 0.1) // Dark warm brown
                 let dropCapColor = Color(red: 0.6, green: 0.1, blue: 0.1) // Deep Red

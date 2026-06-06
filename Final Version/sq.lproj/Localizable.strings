@@ -85,8 +85,9 @@
 "settings.dyslexia_font.description" = "Përdor OpenDyslexic për të gjitha tekstet.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic aktiv";
 "settings.dyslexia_font.disabled" = "OpenDyslexic joaktiv";
-"settings.voice_over" = "Voice Over";
+"settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Aktivizo ose çaktivizo narracionin zanor.";
+"settings.voice_over.info" = "Mbështetja për VoiceOver është plotësisht e integruar. Për ta përdorur, aktivizoni funksionin në Cilësimet e Sistemit të iOS.";
 "settings.sound"          = "Zëri";
 "settings.sound.description" = "Audio, muzika dhe efektet e aplikacionit.";
 "settings.sound.message" = "Kontrollo veçmas audion e përgjithshme, muzikën dhe efektet e lojës.";
@@ -234,6 +235,9 @@
 /* Image placeholders */
 "Immagine di Introduzione" = "Imazhi i Hyrjes";
 "Immagine di Ricompensa" = "Imazhi i Shpërblimit";
+
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Luaj për të zhbllokuar skena të tjera!";
 
 
 /* AR Scan Strings */
