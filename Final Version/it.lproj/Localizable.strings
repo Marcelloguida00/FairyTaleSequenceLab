@@ -260,5 +260,6 @@
 "settings.enable_animations.description" = "Disattiva le transizioni e gli effetti visivi superflui.";
 "settings.enable_sounds" = "Effetti sonori";
 "settings.enable_sounds.description" = "Attiva o disattiva i suoni dell'interfaccia e dei menu.";
-"settings.voice_over" = "Voice Over";
+"settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Attiva o disattiva la narrazione vocale.";
+"settings.voice_over.info" = "La compatibilità con VoiceOver è completamente supportata. Per utilizzarlo, abilita la funzionalità nelle Impostazioni di sistema di iOS.";

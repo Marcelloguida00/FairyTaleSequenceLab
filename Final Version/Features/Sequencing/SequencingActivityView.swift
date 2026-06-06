@@ -848,20 +848,25 @@ struct SequencingActivityView<Reward: View>: View {
         cardId: Int,
         originSlot: Int?
     ) -> some View {
-        content
-            .onLongPressGesture(
-                minimumDuration: cardHoldDuration,
-                maximumDistance: cardHoldMaxJitter,
-                pressing: { isPressing in
-                    if !isPressing, draggingCardId == nil {
-                        endCardTouch()
-                    }
-                },
-                perform: { beginCardHold(cardId: cardId) }
-            )
-            .highPriorityGesture(cardDragGesture(cardId: cardId, originSlot: originSlot))
-            .animation(cardTouchAnimation, value: pressedCardId)
-            .animation(cardTouchAnimation, value: draggingCardId)
+        if allSlotsCorrect || isRunningCompletionSequence || isStorybookExpanded {
+            content
+                .allowsHitTesting(false)
+        } else {
+            content
+                .onLongPressGesture(
+                    minimumDuration: cardHoldDuration,
+                    maximumDistance: cardHoldMaxJitter,
+                    pressing: { isPressing in
+                        if !isPressing, draggingCardId == nil {
+                            endCardTouch()
+                        }
+                    },
+                    perform: { beginCardHold(cardId: cardId) }
+                )
+                .highPriorityGesture(cardDragGesture(cardId: cardId, originSlot: originSlot))
+                .animation(cardTouchAnimation, value: pressedCardId)
+                .animation(cardTouchAnimation, value: draggingCardId)
+        }
     }
 
     private func cardDragGesture(cardId: Int, originSlot: Int?) -> some Gesture {
@@ -1121,6 +1126,13 @@ struct SequencingActivityView<Reward: View>: View {
     @MainActor
     private func runCompletionWaveAndCelebrate() async {
         isRunningCompletionSequence = true
+        
+        withAnimation(flipAnimation) {
+            for index in flippedStates.indices {
+                flippedStates[index] = false
+            }
+        }
+        
         let isOrchestral = SequencingSFXMode.current == .orchestral
 
         if isOrchestral {

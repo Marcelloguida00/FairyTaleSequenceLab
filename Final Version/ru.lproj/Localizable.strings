@@ -96,8 +96,9 @@
 "settings.sequencing_sfx" = "Звуки карт последовательности";
 "settings.sequencing_sfx.simplified" = "Упрощённая";
 "settings.sequencing_sfx.orchestral" = "Оркестровая";
-"settings.voice_over" = "Voice Over";
+"settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Включить или выключить голосовое сопровождение.";
+"settings.voice_over.info" = "Поддержка VoiceOver полностью интегрирована. Чтобы использовать её, включите эту функцию в системных настройках iOS.";
 "settings.music"          = "Музыка";
 "settings.music.on"       = "Музыка включена";
 "settings.music.muted"    = "Музыка выключена";
