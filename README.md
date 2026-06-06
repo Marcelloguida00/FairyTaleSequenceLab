@@ -21,6 +21,7 @@ Backlog di funzionalità e miglioramenti pianificati per l’app.
 - **Aggiungere diversi rumori bianchi per la fase di gioco**
 - **Provare l'app su dimensioni diverse di ipad**
 - **il personaggio scompare se torni indietro nella fase gioco**
+- **Bloccare le carte quando hai finito il livello**
   
 ---
 
