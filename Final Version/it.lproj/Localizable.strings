@@ -190,6 +190,8 @@
 "a11y.return_to_menu"       = "Torna al menu principale";
 "a11y.play_button"          = "Gioca";
 "a11y.settings_button"      = "Apri impostazioni";
+"a11y.settings_hint"        = "Apre le impostazioni";
+"a11y.locked_level"         = "Livello bloccato";
 "a11y.menu_hint"            = "Esce dalla mappa e apre la schermata iniziale";
 "a11y.play_hint"            = "Apre il sipario e inizia l'avventura";
 "a11y.celebration"          = "Complimenti! Ce l'hai fatta!";

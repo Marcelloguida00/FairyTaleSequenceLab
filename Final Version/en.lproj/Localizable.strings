@@ -66,7 +66,7 @@
 
 /* Map */
 "map.coming_soon"             = "Coming Soon";
-"map.region.red_riding_hood"  = "Little Red Riding Hood";
+"map.region.red_riding_hood"  = "Red\nRiding Hood";
 "map.region.princess_frog"    = "The Princess and the Frog";
 "map.region.aladdin"          = "Aladdin";
 "map.region.beauty_beast"     = "Beauty and the Beast";
@@ -201,6 +201,8 @@
 "a11y.return_to_menu"       = "Return to main menu";
 "a11y.play_button"          = "Play";
 "a11y.settings_button"      = "Open settings";
+"a11y.settings_hint"        = "Opens the settings screen";
+"a11y.locked_level"         = "Locked level";
 "a11y.menu_hint"            = "Leaves the world map and opens the title screen";
 "a11y.play_hint"            = "Opens the cloud curtain and starts the adventure";
 "a11y.celebration"          = "Congratulations! You did it!";

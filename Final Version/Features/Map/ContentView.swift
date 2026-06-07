@@ -364,8 +364,9 @@ struct ContentView: View {
                     .disabled(isMapToolbarBlocked)
                     .opacity(isMapToolbarBlocked ? 0.45 : 1)
                     .accessibilityLabel(lm.t("a11y.settings_button"))
-                        .padding(.top, topChromeTopPadding(for: geometry.size))
-                        .padding(.trailing, horizontalInset)
+                    .accessibilityHint(lm.t("a11y.settings_hint"))
+                        .padding(.top, max(topChromeTopPadding(for: geometry.size), geometry.safeAreaInsets.top + 12))
+                        .padding(.trailing, max(horizontalInset, geometry.safeAreaInsets.trailing + 12))
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .zIndex(31)
                     .transition(.opacity)
@@ -409,9 +410,13 @@ struct ContentView: View {
 
             if activeMap == .redHood {
                 ForEach(RedHoodMapGraph.storyWaypoints, id: \.id) { wp in
-                    WaypointDot(state: dotState(for: wp.id), size: redHoodDotSize(for: mapSize))
+                    let wpState = dotState(for: wp.id)
+                    WaypointDot(state: wpState, size: redHoodDotSize(for: mapSize))
                         .position(projection.screenPoint(fromPixel: wp.point))
                         .allowsHitTesting(false)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(redHoodWaypointAccessibilityLabel(for: wp.id, state: wpState))
+                        .accessibilityAddTraits(.isImage)
                 }
             }
 
@@ -429,6 +434,9 @@ struct ContentView: View {
                     }
                     .position(projection.screenPoint(fromPixel: wp.point))
                     .allowsHitTesting(false)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(worldBaseAccessibilityLabel(for: wp.id))
+                    .accessibilityAddTraits(.isImage)
                 }
             }
 
@@ -480,6 +488,31 @@ struct ContentView: View {
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
         let multiplier: CGFloat = 0.11
         return min(mapSize.width, mapSize.height) * multiplier
+    }
+
+    private func worldBaseAccessibilityLabel(for baseID: Int) -> String {
+        if isWorldBaseUnlocked(baseID) {
+            if let region = MapGraph.storyRegion(for: baseID) {
+                return lm.t(region.titleKey)
+            }
+            return lm.t("a11y.play_button")
+        }
+        if let region = MapGraph.storyRegion(for: baseID) {
+            return "\(lm.t("a11y.locked_level")): \(lm.t(region.titleKey))"
+        }
+        return lm.t("a11y.locked_level")
+    }
+
+    private func redHoodWaypointAccessibilityLabel(for id: Int, state: WaypointDot.DotState) -> String {
+        let title = levelBannerTitle(for: id)
+        switch state {
+        case .locked:
+            return "\(lm.t("a11y.locked_level")): \(title)"
+        case .completed:
+            return "\(title) — \(lm.t("a11y.celebration"))"
+        case .next:
+            return title
+        }
     }
 
     private func handleBackButton() {
@@ -1256,20 +1289,22 @@ private struct IslandTitlePlaque: View {
                 .accessibilityHidden(true)
 
             Text(title)
-                .font(.app(size: titleFontSize, weight: .semibold))
+                .font(.app(size: titleFontSize, weight: .semibold, relativeTo: .title3))
                 .foregroundStyle(Color(hex: "#262521"))
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
-                .minimumScaleFactor(0.5)
+                .minimumScaleFactor(0.45)
                 .padding(.horizontal, frameSize.width * 0.14)
-                .frame(width: frameSize.width)
+                .frame(width: frameSize.width, alignment: .center)
                 .accessibilityHidden(true)
         }
         .frame(width: frameSize.width, height: frameSize.height)
+        .clipped()
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .shadow(color: .black.opacity(0.22), radius: max(4, 7 * scale), x: 0, y: max(2, 4 * scale))
         .accessibilityElement(children: .ignore)
         .accessibilityAddTraits(.isHeader)
-        .accessibilityLabel(title)
+        .accessibilityLabel(title.replacingOccurrences(of: "\n", with: " "))
     }
 }
 
@@ -1331,6 +1366,8 @@ private struct ComingSoonBadge: View {
             .accessibilityHidden(true)
         }
         .frame(width: frameSize.width, height: frameSize.height)
+        .clipped()
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .shadow(color: .black.opacity(0.22), radius: max(4, 7 * mapScale), x: 0, y: max(2, 4 * mapScale))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(lm.t("map.coming_soon")). \(releaseDateText)")
@@ -1390,7 +1427,9 @@ private struct WaypointDot: View {
 
             icon
                 .frame(width: size, height: size)
+                .clipShape(Circle())
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onAppear {
             guard state == .next, !reduceMotion else { return }
             withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {

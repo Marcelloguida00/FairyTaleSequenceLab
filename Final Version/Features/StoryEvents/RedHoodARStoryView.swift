@@ -79,8 +79,9 @@ struct RedHoodARStoryView: View {
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "lock.open")
-                .font(.system(size: 44, weight: .semibold))
+                .font(.system(.largeTitle, design: .default).weight(.semibold))
                 .foregroundColor(Color.appAccent)
+                .accessibilityHidden(true)
 
             Text(lm.t("redhood.ar.empty"))
                 .font(.app(.title3))
@@ -108,8 +109,9 @@ struct RedHoodARStoryView: View {
 
             VStack(spacing: 18) {
                 Image(systemName: "arkit")
-                    .font(.system(size: 72))
+                    .font(.system(.largeTitle))
                     .foregroundColor(Color.appAccent)
+                    .accessibilityHidden(true)
 
                 Text(lm.t("redhood.ar.unsupported"))
                     .font(.app(.title3))

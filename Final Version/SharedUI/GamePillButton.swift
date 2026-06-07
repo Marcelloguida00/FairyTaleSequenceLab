@@ -311,7 +311,7 @@ struct GameCircleSettingsButton: View {
         GameCircleButton(
             systemImage: "gearshape.fill",
             size: size,
-            iconSize: size * 0.38,
+            iconSize: size * 0.28,
             iconWeight: .black,
             action: action
         )

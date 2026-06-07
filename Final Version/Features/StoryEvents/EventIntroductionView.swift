@@ -39,8 +39,9 @@ struct EventIntroductionView: View {
 
                             VStack(spacing: 12) {
                                 Image(systemName: "photo.on.rectangle.angled")
-                                    .font(.system(size: 44))
+                                    .font(.system(.largeTitle))
                                     .foregroundColor(Color(red: 0.8, green: 0.6, blue: 0.4))
+                                    .accessibilityHidden(true)
 
                                 Text(event.bannerTitle)
                                     .font(.app(.title, weight: .bold))

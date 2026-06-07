@@ -502,7 +502,7 @@ private struct MenuPanelView: View {
                     .shadow(color: .black.opacity(0.35), radius: 16, y: 8)
                     .accessibilityHidden(true)
 
-                VStack(spacing: panelSize.height * 0.04) {
+                VStack(spacing: panelSize.height * 0.03) {
                     AppMenuTitleView(panelWidth: panelSize.width, style: .mainMenu)
 
                     Spacer(minLength: panelSize.height * 0.02)
@@ -525,6 +525,7 @@ private struct MenuPanelView: View {
                 .padding(.top, panelSize.height * 0.14)
                 .padding(.bottom, panelSize.height * 0.12)
                 .frame(width: panelSize.width, height: panelSize.height)
+                .clipped()
             }
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -560,13 +561,14 @@ private struct MenuSettingsButton: View {
             title: lm.t("button.settings"),
             fontSize: width * 0.105,
             horizontalPadding: width * 0.05,
-            verticalPadding: width * 0.08,
+            verticalPadding: width * 0.055,
             minWidth: width,
-            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.32),
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.26),
             isDisabled: isDisabled,
             action: action
         )
         .accessibilityLabel(lm.t("a11y.settings_button"))
+        .accessibilityHint(lm.t("a11y.settings_hint"))
     }
 }
 
@@ -642,9 +644,9 @@ private struct MenuPlayButton: View {
             title: lm.t("button.play"),
             fontSize: width * 0.115,
             horizontalPadding: width * 0.05,
-            verticalPadding: width * 0.08,
+            verticalPadding: width * 0.055,
             minWidth: width,
-            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.32),
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.26),
             isDisabled: isDisabled,
             action: action
         )

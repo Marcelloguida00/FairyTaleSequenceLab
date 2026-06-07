@@ -128,8 +128,9 @@ struct ARBookView: View {
     private var emptyState: some View {
         VStack(spacing: 14) {
             Image(systemName: "rectangle.stack")
-                .font(.system(size: 42, weight: .semibold))
+                .font(.system(.largeTitle, design: .default).weight(.semibold))
                 .foregroundColor(Color.appAccent)
+                .accessibilityHidden(true)
 
             Text(lm.t("book.ar.empty"))
                 .font(.app(.title3, weight: .bold))
@@ -157,8 +158,9 @@ struct ARBookView: View {
 
             VStack(spacing: 18) {
                 Image(systemName: "arkit")
-                    .font(.system(size: 72))
+                    .font(.system(.largeTitle))
                     .foregroundColor(Color.appAccent)
+                    .accessibilityHidden(true)
 
                 Text(lm.t("book.ar.unsupported"))
                     .font(.app(.title3, weight: .bold))

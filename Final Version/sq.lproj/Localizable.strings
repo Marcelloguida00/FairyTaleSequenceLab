@@ -193,6 +193,8 @@
 "a11y.return_to_menu"       = "Kthehu te menuja kryesore";
 "a11y.play_button"          = "Luaj";
 "a11y.settings_button"      = "Hap cilësimet";
+"a11y.settings_hint"        = "Hap ekranin e cilësimeve";
+"a11y.locked_level"         = "Nivel i bllokuar";
 "a11y.menu_hint"            = "Del nga harta dhe hap ekranin kryesor";
 "a11y.play_hint"            = "Hap siparin dhe fillon aventurën";
 "a11y.celebration"          = "Urime! E bëre!";
