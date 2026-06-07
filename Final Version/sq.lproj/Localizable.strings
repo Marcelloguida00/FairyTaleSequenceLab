@@ -197,6 +197,9 @@
 "a11y.locked_level"         = "Nivel i bllokuar";
 "a11y.menu_hint"            = "Del nga harta dhe hap ekranin kryesor";
 "a11y.play_hint"            = "Hap siparin dhe fillon aventurën";
+"a11y.main_menu"            = "Menuja kryesore";
+"a11y.world_map"            = "Harta e botës";
+"a11y.avatar"               = "Personazhi";
 "a11y.celebration"          = "Urime! E bëre!";
 "a11y.continue_sequencing"  = "Vazhdo te aktiviteti i renditjes";
 "a11y.check_order"          = "Kontrollo rendin e historisë";

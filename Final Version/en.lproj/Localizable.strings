@@ -205,6 +205,9 @@
 "a11y.locked_level"         = "Locked level";
 "a11y.menu_hint"            = "Leaves the world map and opens the title screen";
 "a11y.play_hint"            = "Opens the cloud curtain and starts the adventure";
+"a11y.main_menu"            = "Main menu";
+"a11y.world_map"            = "World map";
+"a11y.avatar"               = "Character";
 "a11y.celebration"          = "Congratulations! You did it!";
 "a11y.continue_sequencing"  = "Continue to the sequencing activity";
 "a11y.check_order"          = "Check your story order";

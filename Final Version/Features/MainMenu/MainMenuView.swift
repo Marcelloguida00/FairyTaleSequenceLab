@@ -488,6 +488,8 @@ private struct MenuPanelView: View {
     let onPlay: () -> Void
     let onSettings: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         GeometryReader { proxy in
             let panelSize = fittedPanelSize(in: proxy.size)
@@ -526,6 +528,8 @@ private struct MenuPanelView: View {
                 .padding(.bottom, panelSize.height * 0.12)
                 .frame(width: panelSize.width, height: panelSize.height)
                 .clipped()
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel(lm.t("a11y.main_menu"))
             }
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: .infinity, maxHeight: .infinity)

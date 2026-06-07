@@ -194,6 +194,9 @@
 "a11y.locked_level"         = "Livello bloccato";
 "a11y.menu_hint"            = "Esce dalla mappa e apre la schermata iniziale";
 "a11y.play_hint"            = "Apre il sipario e inizia l'avventura";
+"a11y.main_menu"            = "Menu principale";
+"a11y.world_map"            = "Mappa del mondo";
+"a11y.avatar"               = "Personaggio";
 "a11y.celebration"          = "Complimenti! Ce l'hai fatta!";
 "a11y.continue_sequencing"  = "Continua all'attività di sequenza";
 "a11y.check_order"          = "Controlla l'ordine della storia";

@@ -449,6 +449,8 @@ struct ContentView: View {
             .position(
                 projection.screenPoint(fromPixel: avatarPosition)
             )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(lm.t("a11y.avatar"))
 
             if let fgName = activeMap.foregroundImageName {
                 MapBackgroundImage(name: fgName, mapSize: mapSize)
@@ -483,6 +485,8 @@ struct ContentView: View {
                     handleMapTap(value.location, projection: projection)
                 }
         )
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(lm.t("a11y.world_map"))
     }
 
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
