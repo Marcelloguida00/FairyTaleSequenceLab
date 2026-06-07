@@ -834,11 +834,24 @@ struct BookView: View {
 
         newBookmarks.append(FairyTaleBookmark(info: redRidingHood, startPageIndex: 0))
 
+        let maxCompletedId = completedEvents.map(\.id).max() ?? 0
+        var maxUnlockedPage = 2
+        switch maxCompletedId {
+        case 1: maxUnlockedPage = 4
+        case 2: maxUnlockedPage = 5
+        case 3: maxUnlockedPage = 6
+        case 4: maxUnlockedPage = 7
+        case 5: maxUnlockedPage = 9
+        case 6: maxUnlockedPage = 10
+        case 7: maxUnlockedPage = 12
+        case 8...: maxUnlockedPage = 100
+        default: maxUnlockedPage = 2
+        }
+
         if completedEvents.isEmpty {
             addPlaceholder(title: redRidingHood.title, subtitle: lm.t("book.placeholder.play_to_unlock"))
         } else {
-            let maxCompletedId = completedEvents.map(\.id).max() ?? 0
-            let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
+            let visibleScenes = BookView.redHoodScenes
 
             if visibleScenes.isEmpty {
                 addPlaceholder(title: redRidingHood.title, subtitle: lm.t("book.placeholder.play_to_unlock"))
@@ -923,16 +936,90 @@ struct BookView: View {
                     }
                 }
                 
-                let editorialPages = generateEditorialPages(
+                var editorialPages = generateEditorialPages(
                     text: fullContinuousText, 
                     availableImages: availableImages, 
                     isDyslexiaEnabled: isDyslexiaEnabled, 
                     isCompact: isCompact
                 )
                 
+                // Sposta le prime frasi da pagina 5 (index 2) a pagina 4 (index 1) per far spazio al testo del lupo
+                if editorialPages.count > 2 {
+                    var p4Text = editorialPages[1].textChunk1
+                    let p5Text = editorialPages[2].textChunk1
+                    
+                    var p5Sentences: [String] = []
+                    p5Text.enumerateSubstrings(in: p5Text.startIndex..<p5Text.endIndex, options: .bySentences) { substring, _, _, _ in
+                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
+                            p5Sentences.append(s)
+                        }
+                    }
+                    
+                    let numSentencesToMove = 3
+                    if p5Sentences.count > numSentencesToMove {
+                        let movedSentences = p5Sentences.prefix(numSentencesToMove).joined(separator: " ")
+                        p4Text = p4Text + (p4Text.isEmpty ? "" : " ") + movedSentences
+                        let newP5Text = p5Sentences.dropFirst(numSentencesToMove).joined(separator: " ")
+                        
+                        editorialPages[1] = PageContent(layout: editorialPages[1].layout, textChunk1: p4Text, textChunk2: editorialPages[1].textChunk2, imageName: editorialPages[1].imageName)
+                        editorialPages[2] = PageContent(layout: editorialPages[2].layout, textChunk1: newP5Text, textChunk2: editorialPages[2].textChunk2, imageName: editorialPages[2].imageName)
+                    }
+                }
+                
+                // Sposta le ultime frasi da pagina 5 (index 2) a pagina 6 (index 3) per posizionare il dialogo del lupo
+                if editorialPages.count > 3 {
+                    let p5Text = editorialPages[2].textChunk1
+                    var p6Text = editorialPages[3].textChunk1
+                    
+                    var p5Sentences: [String] = []
+                    p5Text.enumerateSubstrings(in: p5Text.startIndex..<p5Text.endIndex, options: .bySentences) { substring, _, _, _ in
+                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
+                            p5Sentences.append(s)
+                        }
+                    }
+                    
+                    let numSentencesToMoveToP6 = 2
+                    if p5Sentences.count > numSentencesToMoveToP6 {
+                        let movedToP6 = p5Sentences.suffix(numSentencesToMoveToP6).joined(separator: " ")
+                        p6Text = movedToP6 + (p6Text.isEmpty ? "" : " ") + p6Text
+                        let newP5Text = p5Sentences.dropLast(numSentencesToMoveToP6).joined(separator: " ")
+                        
+                        editorialPages[2] = PageContent(layout: editorialPages[2].layout, textChunk1: newP5Text, textChunk2: editorialPages[2].textChunk2, imageName: editorialPages[2].imageName)
+                        editorialPages[3] = PageContent(layout: editorialPages[3].layout, textChunk1: p6Text, textChunk2: editorialPages[3].textChunk2, imageName: editorialPages[3].imageName)
+                    }
+                }
+                
+                // Sposta le prime 2 frasi da pagina 13 (index 10) a pagina 12 (index 9) e tronca il resto del testo dopo l'abbraccio
+                if editorialPages.count > 10 {
+                    var p12Text = editorialPages[9].textChunk1
+                    let p13Text = editorialPages[10].textChunk1
+                    
+                    var p13Sentences: [String] = []
+                    p13Text.enumerateSubstrings(in: p13Text.startIndex..<p13Text.endIndex, options: .bySentences) { substring, _, _, _ in
+                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
+                            p13Sentences.append(s)
+                        }
+                    }
+                    
+                    let numSentencesToMoveToP12 = 2
+                    if p13Sentences.count > numSentencesToMoveToP12 {
+                        let movedToP12 = p13Sentences.prefix(numSentencesToMoveToP12).joined(separator: " ")
+                        p12Text = p12Text + (p12Text.isEmpty ? "" : " ") + movedToP12
+                        
+                        // Prendi il testo fino all'abbraccio (altre 3 frasi)
+                        let numSentencesToKeepOnP13 = 3
+                        let keepOnP13 = p13Sentences.dropFirst(numSentencesToMoveToP12).prefix(numSentencesToKeepOnP13).joined(separator: " ")
+                        
+                        editorialPages[9] = PageContent(layout: editorialPages[9].layout, textChunk1: p12Text, textChunk2: editorialPages[9].textChunk2, imageName: editorialPages[9].imageName)
+                        editorialPages[10] = PageContent(layout: editorialPages[10].layout, textChunk1: keepOnP13, textChunk2: editorialPages[10].textChunk2, imageName: editorialPages[10].imageName)
+                    }
+                }
+                
                 for (i, pageContent) in editorialPages.enumerated() {
                     let isFirstPage = (i == 0)
                     let imgHeight: CGFloat = isCompact ? 160 : 280
+                    
+                    let isLocked = (pageIndex + 1) > maxUnlockedPage
                     
                     let page = pageContainer(isLeft: pageIndex % 2 == 0, pageNumber: pageIndex + 1) {
                         VStack(alignment: .leading, spacing: isCompact ? 8 : 12) {
@@ -1192,13 +1279,37 @@ struct BookView: View {
                             }
                         }
                         .padding(.vertical, isCompact ? 10 : 20)
+                        .overlay(
+                            Group {
+                                if isLocked {
+                                    ZStack {
+                                        Color.white.opacity(0.85) // Sbianca e nasconde leggermente i contenuti
+                                            .edgesIgnoringSafeArea(.all)
+                                            .blur(radius: 10)
+                                        VStack {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: isCompact ? 50 : 80))
+                                                .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
+                                                .shadow(color: .white, radius: 4)
+                                            Text(lm.t("Gioca per sbloccare le scene!"))
+                                                .font(isDyslexiaEnabled ?
+                                                      (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
+                                                        Font.custom("Alegreya", size: isCompact ? 20 : 30, relativeTo: .title))
+                                                .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
+                                                .multilineTextAlignment(.center)
+                                                .padding(.top, 10)
+                                        }
+                                    }
+                                }
+                            }
+                        )
                     }
                     newPages.append(page)
                     var textToSpeak = pageContent.textChunk1
                     if let chunk2 = pageContent.textChunk2 {
                         textToSpeak += " " + chunk2
                     }
-                    newPageTexts.append(textToSpeak)
+                    newPageTexts.append(isLocked ? "" : textToSpeak)
                     pageIndex += 1
                 }
             }
@@ -1206,19 +1317,41 @@ struct BookView: View {
 
         let finalPageNumber = newPages.count + 1
         let isLeft = newPages.count % 2 == 0
+        let finalIsLocked = finalPageNumber > maxUnlockedPage
         let finalImagePage = pageContainer(isLeft: isLeft, pageNumber: finalPageNumber, showVines: true) {
             GeometryReader { geo in
-                Image("FinalImage")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height)
-                    .mask(
-                        Rectangle()
-                            .fill(Color.black)
-                            .padding(isCompact ? 20 : 40)
-                            .blur(radius: isCompact ? 30 : 60)
-                    )
-                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                ZStack {
+                    Image("FinalImage")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                        .mask(
+                            Rectangle()
+                                .fill(Color.black)
+                                .padding(isCompact ? 20 : 40)
+                                .blur(radius: isCompact ? 30 : 60)
+                        )
+                        .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                    
+                    if finalIsLocked {
+                        ZStack {
+                            Color.white.opacity(0.85)
+                                .edgesIgnoringSafeArea(.all)
+                                .blur(radius: 10)
+                            VStack {
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: isCompact ? 50 : 80))
+                                    .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
+                                Text(lm.t("Gioca per sbloccare le scene!"))
+                                    .font(isDyslexiaEnabled ?
+                                          (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
+                                            Font.custom("Alegreya", size: isCompact ? 20 : 30, relativeTo: .title))
+                                    .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
+                                    .padding(.top, 10)
+                            }
+                        }
+                    }
+                }
             }
             .padding(-pagePadding) // Annulla il padding per occupare tutta la pagina e sovrapporsi alla cornice
         }
