@@ -201,6 +201,9 @@
 "a11y.world_map"            = "Harta e botës";
 "a11y.avatar"               = "Personazhi";
 "a11y.celebration"          = "Urime! E bëre!";
+"a11y.tap_to_play"          = "Prek për të luajtur";
+"a11y.level_locked_hint"    = "Ky nivel është i kyçur. Plotëso nivelet e mëparshme për ta shkyçur.";
+"a11y.tap_to_replay"        = "Prek për të luajtur përsëri";
 "a11y.continue_sequencing"  = "Vazhdo te aktiviteti i renditjes";
 "a11y.check_order"          = "Kontrollo rendin e historisë";
 "a11y.flip_all"             = "Kthej të gjitha kartat";
@@ -216,8 +219,16 @@
 
 "story.redhood.scene3.title" = "Skena 3 — Takimi me Ujkun";
 "story.redhood.scene3.text1" = "Ndërsa Kësulëkuqja po ecte përgjatë shtegut, pas një peme u shfaq një ujk.\n\nUjku e shikoi dhe i foli me zë të butë.\n\n«Mirëdita, vogëlushe. Ku po shkon me atë shportë të bukur?»";
-"story.redhood.scene3.text2" = "Kësulëkuqja, që ishte e edukuar, u përgjigj: «Po shkoj te gjyshja ime. Nuk ndihet mirë dhe po i çoj diçka për të ngrënë.»\n\nUjku dëgjoi me vëmendje. Pastaj buzëqeshi me dhelpëri.\n\n«Sa vajzë e mirë,» tha ai.\n\nPor në mendjen e tij, ujku po thurte një plan për të arritur para saj te shtëpia e gjyshes.";
-
+"a11y.button_select_app_icon" = "Zgjidh ikonën e aplikacionit";
+"a11y.button_locked"          = "Ky element është i mbyllur";
+"a11y.button_open_social_link" = "Hap lidhjen e mediave shoqërore";
+"a11y.hint_adjust_slider"     = "Rregulloni rrëshqitësin me shigjetat lart dhe poshtë";
+"a11y.source_tray"            = "Kartat burimore";
+"a11y.source_tray_hint"       = "Tërhiq kartat nga këtu në slota";
+"a11y.continue_button"        = "Vazhdo";
+"a11y.continue_hint"          = "Vazhdon në ngjarjen e ardhshme";
+"a11y.envelope_open_button"   = "Hap paketon";
+"a11y.envelope_open_hint"     = "Hap zarf për të zbuluar kartat e shbllokuara";
 "story.redhood.scene4.title" = "Skena 4 — Ujku Vrapon te Gjyshja";
 "story.redhood.scene4.text1" = "Sapo Kësulëkuqja filloi të ecte përsëri, ujku vrapoi shpejt nëpër pyll.\n\nKaloi mes pemëve, këceu mbi rrënjët dhe ndoqi një rrugë të shkurtër të fshehur.";
 "story.redhood.scene4.text2" = "Për pak kohë mbërriti para shtëpisë së gjyshes. Shtëpiza ishte e vogël dhe e qetë, me një derë druri dhe një dritare pranë kopshtit.\n\nUjku iu afrua derës dhe trokiti.\n\nTrok, trok, trok.\n\nNga brenda, gjyshja pyeti: «Kush është?»\n\nUjku u përpoq të bënte një zë të ëmbël dhe u përgjigj: «Jam unë, Kësulëkuqja.»";
@@ -276,4 +287,20 @@
 "settings.reduce_contrast.description" = "Përdorni ngjyra me kontrast të lartë për të përmirësuar lexueshmërinë e tekstit.";
 "settings.differentiate" = "Diferencuhu pa përdorur vetëm ngjyrën";
 "settings.differentiate.description" = "Shtoni modele dhe ikona për të ndihmuar në dallimin e elementeve përtej ngjyrës.";
+
+/* Additional accessibility labels and hints */
+"a11y.tutorial_skip_button" = "Kalizo tutorialin";
+"a11y.tutorial_skip_hint" = "Kalizo tutorialin dhe mbyll ekranin e onsit";
+"a11y.tutorial_next_hint" = "Shkon në hapin tjetër të tutorialit";
+"a11y.tutorial_done_hint" = "Përfundon tutorialin dhe mbyll ekranin";
+"a11y.onboarding_skip_button" = "Kalizo onsit";
+"a11y.onboarding_skip_hint" = "Kalizo onsit dhe fillo aventurën";
+"a11y.onboarding_next_button" = "Faqja tjetër";
+"a11y.onboarding_next_hint" = "Shkon në faqen tjetër të onsit";
+"a11y.onboarding_start_button" = "Fillo aventurën";
+"a11y.onboarding_start_hint" = "Fillon aventurën me Kapucinjakën e Kuqe";
+"a11y.redhood_final_button_hint" = "Festohet fitoria dhe kthe në hartë";
+"a11y.ar_back_hint" = "Mbyll pamjen e realitetit të përmirësuar dhe kthe në hartë";
+"a11y.reward_pack_label" = "Paketa e shpërblimit";
+"a11y.reward_pack_hint" = "Trokit ose lëviz lart për të hapur paketën e shpërblimit";
 

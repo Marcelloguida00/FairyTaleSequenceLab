@@ -76,6 +76,7 @@ struct RewardPackOpeningView: View {
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Reward pack")
+                .accessibilityHint("Tap or drag upward to open the reward pack")
                 .accessibilityAddTraits(.isButton)
             }
             .onAppear {

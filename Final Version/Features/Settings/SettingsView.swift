@@ -462,6 +462,8 @@ struct SettingsView: View {
                     .disabled(musicMuted)
                     .opacity(musicMuted ? 0.45 : 1)
                     .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                    .accessibilityLabel(lm.t("settings.audio.music_volume"))
+                    .accessibilityHint(lm.t("a11y.hint_adjust_slider"))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
@@ -496,6 +498,9 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
+                .accessibilityAddTraits([.isToggle])
 
                 SettingsTheme.divider
                     .frame(height: 1)
@@ -1201,7 +1206,7 @@ struct SettingsView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(lm.t(titleKey))
         .accessibilityHint(lm.t(descriptionKey))
-        .accessibilityAddTraits(isOn.wrappedValue ? [.isSelected] : [])
+        .accessibilityAddTraits(isOn.wrappedValue ? [.isToggle, .isSelected] : [.isToggle])
     }
 
     @ViewBuilder
@@ -1225,6 +1230,7 @@ struct SettingsView: View {
         .padding(.horizontal, expanded ? 24 : 18)
         .padding(.vertical, expanded ? 16 : 14)
         .accessibilityLabel(lm.t("settings.audio.music_volume"))
+        .accessibilityHint(lm.t("a11y.hint_adjust_slider"))
     }
 
     private func sequencingSFXSectionHeader(expanded: Bool) -> some View {
@@ -1520,6 +1526,8 @@ struct SettingsView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
+        .accessibilityHint(isUnlocked ? lm.t("a11y.button_select_app_icon") : lm.t("a11y.button_locked"))
+        .accessibilityAddTraits(isSelected && isUnlocked ? [.isSelected] : [])
     }
 
     private var aboutDetailContent: some View {
@@ -1646,6 +1654,7 @@ struct SettingsView: View {
         .disabled(urlString.isEmpty)
         .opacity(urlString.isEmpty ? 0.48 : 1)
         .accessibilityLabel(title)
+        .accessibilityHint(lm.t("a11y.button_open_social_link"))
     }
 
     @ViewBuilder
@@ -1738,6 +1747,7 @@ struct SettingsView: View {
         .frame(maxHeight: fillHeight ? .infinity : nil)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
+        .accessibilityHint(detail ?? "")
     }
 
     private func resetProgress() {

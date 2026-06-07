@@ -413,10 +413,14 @@ struct ContentView: View {
                     let wpState = dotState(for: wp.id)
                     WaypointDot(state: wpState, size: redHoodDotSize(for: mapSize))
                         .position(projection.screenPoint(fromPixel: wp.point))
-                        .allowsHitTesting(false)
+                        .frame(width: 50, height: 50)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(redHoodWaypointAccessibilityLabel(for: wp.id, state: wpState))
-                        .accessibilityAddTraits(.isImage)
+                        .accessibilityHint(redHoodWaypointAccessibilityHint(for: wpState))
+                        .accessibilityAddTraits(.isButton)
+                        .onTapGesture {
+                            handleRedHoodWaypointActivation(wp.id)
+                        }
                 }
             }
 
@@ -433,10 +437,14 @@ struct ContentView: View {
                         }
                     }
                     .position(projection.screenPoint(fromPixel: wp.point))
-                    .allowsHitTesting(false)
+                    .frame(width: 50, height: 50)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(worldBaseAccessibilityLabel(for: wp.id))
-                    .accessibilityAddTraits(.isImage)
+                    .accessibilityHint(worldBaseAccessibilityHint(for: wp.id))
+                    .accessibilityAddTraits(.isButton)
+                    .onTapGesture {
+                        handleMainMapWaypointActivation(wp.id)
+                    }
                 }
             }
 
@@ -516,6 +524,24 @@ struct ContentView: View {
             return "\(title) — \(lm.t("a11y.celebration"))"
         case .next:
             return title
+        }
+    }
+
+    private func worldBaseAccessibilityHint(for baseID: Int) -> String {
+        if isWorldBaseUnlocked(baseID) {
+            return lm.t("a11y.tap_to_play")
+        }
+        return lm.t("a11y.level_locked_hint")
+    }
+
+    private func redHoodWaypointAccessibilityHint(for state: WaypointDot.DotState) -> String {
+        switch state {
+        case .locked:
+            return lm.t("a11y.level_locked_hint")
+        case .completed:
+            return lm.t("a11y.tap_to_replay")
+        case .next:
+            return lm.t("a11y.tap_to_play")
         }
     }
 
@@ -945,6 +971,19 @@ struct ContentView: View {
         }
     }
 
+    private func handleMainMapWaypointActivation(_ baseId: Int) {
+        guard isWorldBaseUnlocked(baseId) else { return }
+        guard let target = MapGraph.waypoint(id: baseId) else { return }
+        guard let start = nearestWaypoint(to: avatarPosition, among: MapGraph.waypoints) else { return }
+
+        if target.id == start.id {
+            return
+        }
+
+        guard let route = MapGraph.shortestPath(from: start.id, to: target.id) else { return }
+        startWalking(route)
+    }
+
     private func handleMainMapTap(_ screenTap: CGPoint, projection: MapProjection) {
         let reachableBases = MapGraph.baseWaypoints.filter { isWorldBaseUnlocked($0.id) }
 
@@ -970,6 +1009,37 @@ struct ContentView: View {
         }
 
         startWalking(route)
+    }
+
+    private func handleRedHoodWaypointActivation(_ waypointId: Int) {
+        guard activeRedHoodLevel == nil else { return }
+        guard isRedHoodWaypointPlayable(waypointId) else { return }
+        guard let target = RedHoodMapGraph.waypoint(id: waypointId) else { return }
+        guard let start = nearestWaypoint(to: avatarPosition, among: RedHoodMapGraph.waypoints) else { return }
+
+        if target.id == start.id {
+            guard !isWalking else { return }
+            if shouldOfferRedHoodLevelStart(for: target.id) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
+            }
+            return
+        }
+
+        guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
+        if pendingRedHoodLevel != nil {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                pendingRedHoodLevel = nil
+            }
+        }
+        startWalking(route) {
+            if shouldOfferRedHoodLevelStart(for: target.id) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
+            }
+        }
     }
 
     private func handleRedHoodMapTap(_ screenTap: CGPoint, projection: MapProjection) {

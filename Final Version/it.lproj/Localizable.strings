@@ -198,6 +198,9 @@
 "a11y.world_map"            = "Mappa del mondo";
 "a11y.avatar"               = "Personaggio";
 "a11y.celebration"          = "Complimenti! Ce l'hai fatta!";
+"a11y.tap_to_play"          = "Tocca per giocare";
+"a11y.level_locked_hint"    = "Questo livello è bloccato. Completa i livelli precedenti per sbloccarlo.";
+"a11y.tap_to_replay"        = "Tocca per rigiocare";
 "a11y.continue_sequencing"  = "Continua all'attività di sequenza";
 "a11y.check_order"          = "Controlla l'ordine della storia";
 "a11y.flip_all"             = "Gira tutte le carte";
@@ -216,6 +219,16 @@
 "story.redhood.scene3.title" = "Scena 3";
 "story.redhood.scene3.text1" = "As the woods grew darker, a large, dark wolf stepped out from behind the trees. Little Red Riding Hood's heart began to race.\n\n\"Where are you going all alone, little girl?\" the wolf asked in a deep voice.";
 "story.redhood.scene3.text2" = "\"I'm going to my grandmother's cottage at the end of this path to bring her some cakes,\" she replied timidly.\n\nThe clever wolf hatched a quick plan. \"Have a safe trip!\" he said, and instantly vanished into the bushes.";
+"a11y.button_select_app_icon" = "Seleziona l'icona dell'app";
+"a11y.button_locked"          = "Questo elemento è bloccato";
+"a11y.button_open_social_link" = "Apri link dei social media";
+"a11y.hint_adjust_slider"     = "Regola il cursore con i tasti freccia su e giù";
+"a11y.source_tray"            = "Carte sorgente";
+"a11y.source_tray_hint"       = "Trascina le carte da qui negli slot";
+"a11y.continue_button"        = "Continua";
+"a11y.continue_hint"          = "Passa all'evento successivo";
+"a11y.envelope_open_button"   = "Apri pacco";
+"a11y.envelope_open_hint"     = "Apri la busta per rivelare le carte sbloccare";
 
 "story.redhood.scene4.title" = "Scena 4";
 "story.redhood.scene4.text1" = "The wolf ran as fast as he could, thinking only of his next meal. He arrived at the cottage and knocked gently on the door. Knock! Knock!";
@@ -275,3 +288,19 @@
 "settings.reduce_contrast.description" = "Usa colori ad alto contrasto per migliorare la leggibilità dei testi.";
 "settings.differentiate" = "Distingui senza usare solo il colore";
 "settings.differentiate.description" = "Aggiungi pattern e icone per aiutare a distinguere gli elementi oltre al colore.";
+
+/* Additional accessibility labels and hints */
+"a11y.tutorial_skip_button" = "Salta il tutorial";
+"a11y.tutorial_skip_hint" = "Salta il tutorial e chiude la schermata di onboarding";
+"a11y.tutorial_next_hint" = "Passa al prossimo passaggio del tutorial";
+"a11y.tutorial_done_hint" = "Completa il tutorial e chiude la schermata";
+"a11y.onboarding_skip_button" = "Salta onboarding";
+"a11y.onboarding_skip_hint" = "Salta l'onboarding e inizia l'avventura";
+"a11y.onboarding_next_button" = "Prossima pagina";
+"a11y.onboarding_next_hint" = "Passa alla prossima pagina di onboarding";
+"a11y.onboarding_start_button" = "Inizia avventura";
+"a11y.onboarding_start_hint" = "Inizia l'avventura con Cappuccetto Rosso";
+"a11y.redhood_final_button_hint" = "Celebra la vittoria e ritorna alla mappa";
+"a11y.ar_back_hint" = "Chiude la vista di realtà aumentata e ritorna alla mappa";
+"a11y.reward_pack_label" = "Pacco premio";
+"a11y.reward_pack_hint" = "Tocca o scorri verso l'alto per aprire il pacco premio";

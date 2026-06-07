@@ -71,7 +71,9 @@ struct EventIntroductionView: View {
                                 trailingIcon: "arrow.right",
                                 action: onContinue
                             )
-                            .accessibilityLabel(lm.t("a11y.continue_sequencing"))
+                            .accessibilityLabel(lm.t("a11y.continue_button"))
+                            .accessibilityHint(lm.t("a11y.continue_hint"))
+                            .accessibilityAddTraits(.isButton)
                         }
                         .padding(.horizontal, 32)
                         .padding(.vertical, 20)

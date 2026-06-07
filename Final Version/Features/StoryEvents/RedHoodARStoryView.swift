@@ -63,6 +63,7 @@ struct RedHoodARStoryView: View {
                 onClose()
             }
             .accessibilityLabel(lm.t("a11y.go_back"))
+            .accessibilityHint(lm.t("a11y.ar_back_hint"))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

@@ -180,6 +180,9 @@ struct EnvelopeOpeningView: View {
                         .opacity(isAnimating ? 0.6 : 1.0)
                         .scaleEffect(isAnimating ? 0.97 : 1.0)
                         .animation(.easeInOut, value: isAnimating)
+                        .accessibilityLabel(isOpened ? lm.t("button.continue") : lm.t("a11y.envelope_open_button"))
+                        .accessibilityHint(lm.t("a11y.envelope_open_hint"))
+                        .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 48)
                 }

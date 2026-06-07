@@ -232,6 +232,7 @@ struct GamePillButton: View {
     var leadingIcon: String? = nil
     var trailingIcon: String? = nil
     var isDisabled: Bool = false
+    var accessibilityHint: String? = nil
     let action: () -> Void
 
     private var boundsSize: CGSize? {
@@ -243,7 +244,7 @@ struct GamePillButton: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        let baseButton = Button(action: action) {
             GamePillLabel(
                 title: title,
                 fontSize: fontSize,
@@ -263,6 +264,13 @@ struct GamePillButton: View {
         )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
+        .accessibilityAddTraits(.isButton)
+
+        if let hint = accessibilityHint {
+            baseButton.accessibilityHint(hint)
+        } else {
+            baseButton
+        }
     }
 }
 
