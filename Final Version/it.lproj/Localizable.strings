@@ -273,3 +273,5 @@
 "settings.voice_over.info" = "La compatibilità con VoiceOver è completamente supportata. Per utilizzarlo, abilita la funzionalità nelle Impostazioni di sistema di iOS.";
 "settings.reduce_contrast" = "Riduci contrasto";
 "settings.reduce_contrast.description" = "Usa colori ad alto contrasto per migliorare la leggibilità dei testi.";
+"settings.differentiate" = "Distingui senza usare solo il colore";
+"settings.differentiate.description" = "Aggiungi pattern e icone per aiutare a distinguere gli elementi oltre al colore.";

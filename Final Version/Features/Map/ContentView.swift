@@ -1412,6 +1412,7 @@ private struct WaypointDot: View {
 
     @State private var pulse = false
     @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @Environment(\.differentiate) private var differentiate
     @AppStorage("reduceAnimations") private var reduceAnimations = false
     private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
@@ -1429,6 +1430,12 @@ private struct WaypointDot: View {
                 .shadow(color: .black.opacity(0.30), radius: 4, y: 2)
                 .frame(width: size, height: size)
 
+            if differentiate {
+                patternOverlay
+                    .frame(width: size, height: size)
+                    .clipShape(Circle())
+            }
+
             icon
                 .frame(width: size, height: size)
                 .clipShape(Circle())
@@ -1439,6 +1446,30 @@ private struct WaypointDot: View {
             withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                 pulse = true
             }
+        }
+    }
+
+    @ViewBuilder
+    private var patternOverlay: some View {
+        switch state {
+        case .completed:
+            Image(systemName: "checkmark.circle")
+                .font(.app(size: size * 0.5, weight: .bold))
+                .foregroundColor(.white.opacity(0.4))
+        case .next:
+            RadialGradient(
+                gradient: Gradient(colors: [
+                    .white.opacity(0.3),
+                    .clear
+                ]),
+                center: .center,
+                startRadius: 0,
+                endRadius: size / 2
+            )
+        case .locked:
+            Image(systemName: "lock.circle")
+                .font(.app(size: size * 0.5, weight: .bold))
+                .foregroundColor(.white.opacity(0.4))
         }
     }
 
