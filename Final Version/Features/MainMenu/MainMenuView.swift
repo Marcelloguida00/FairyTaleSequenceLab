@@ -9,6 +9,7 @@ struct MainMenuSceneView: View {
     var body: some View {
         ZStack {
             WorldMapBackgroundView()
+                .accessibilityHidden(true)
 
             CloudTransitionOverlay(
                 enterProgress: cloudEnterProgress,
@@ -314,6 +315,8 @@ private struct InfoView: View {
                             developerRow(developer, isLast: index == developers.count - 1)
                         }
                     }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel(lm.t("info.developers"))
                     .background(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .fill(InfoTheme.panelFill)
@@ -331,6 +334,8 @@ private struct InfoView: View {
                                 developerRow(collaborator, isLast: index == collaborators.count - 1)
                             }
                         }
+                        .accessibilityElement(children: .contain)
+                        .accessibilityLabel(lm.t("info.collaborators"))
                         .background(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
                                 .fill(InfoTheme.panelFill)
@@ -365,12 +370,14 @@ private struct InfoView: View {
         HStack {
             HStack(spacing: 10) {
                 Image(systemName: "info.circle.fill")
-                    .font(.app(size: 22, weight: .bold))
+                    .font(.app(.title2, weight: .bold))
                     .foregroundStyle(InfoTheme.secondaryText)
+                    .accessibilityHidden(true)
 
                 Text(lm.t("info.title"))
                     .font(.app(.title2))
                     .foregroundStyle(InfoTheme.primaryText)
+                    .accessibilityAddTraits(.isHeader)
             }
 
             Spacer()
@@ -392,6 +399,7 @@ private struct InfoView: View {
                 .textCase(.uppercase)
                 .foregroundStyle(InfoTheme.secondaryText)
                 .tracking(1.1)
+                .accessibilityAddTraits(.isHeader)
             sectionLine
         }
         .padding(.horizontal, 4)
@@ -401,15 +409,17 @@ private struct InfoView: View {
         Rectangle()
             .fill(InfoTheme.divider)
             .frame(height: 1)
+            .accessibilityHidden(true)
     }
 
     @ViewBuilder
     private func developerRow(_ name: String, isLast: Bool) -> some View {
         HStack(spacing: 14) {
             Image(systemName: "person.fill")
-                .font(.app(size: 18, weight: .semibold))
+                .font(.app(.body, weight: .semibold))
                 .foregroundStyle(InfoTheme.secondaryText)
                 .frame(width: 28)
+                .accessibilityHidden(true)
 
             Text(name)
                 .font(.app(.body))
@@ -424,6 +434,7 @@ private struct InfoView: View {
             InfoTheme.divider
                 .frame(height: 1)
                 .padding(.leading, 56)
+                .accessibilityHidden(true)
         }
     }
 
@@ -431,9 +442,10 @@ private struct InfoView: View {
         Link(destination: supportMailURL) {
             HStack(spacing: 14) {
                 Image(systemName: "envelope.fill")
-                    .font(.app(size: 18, weight: .semibold))
+                    .font(.app(.body, weight: .semibold))
                     .foregroundStyle(InfoTheme.secondaryText)
                     .frame(width: 28)
+                    .accessibilityHidden(true)
 
                 Text(supportEmail)
                     .font(.app(.body))
@@ -444,8 +456,9 @@ private struct InfoView: View {
                 Spacer()
 
                 Image(systemName: "arrow.up.right")
-                    .font(.app(size: 14, weight: .bold))
+                    .font(.app(.footnote, weight: .bold))
                     .foregroundStyle(InfoTheme.secondaryText.opacity(0.70))
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
