@@ -82,11 +82,13 @@ struct AppMenuTitleView: View {
                     .font(.app(size: fontSize, weight: .black, relativeTo: lineIndex == 0 ? .largeTitle : .title3))
                     .foregroundStyle(titleStrokeColor)
                     .offset(x: offset.width, y: offset.height)
+                    .accessibilityHidden(true)
             }
 
             Text(text)
                 .font(.app(size: fontSize, weight: .black, relativeTo: lineIndex == 0 ? .largeTitle : .title3))
                 .foregroundStyle(titleFillGradient)
+                .accessibilityHidden(true)
         }
         .lineLimit(1)
         .minimumScaleFactor(0.45)
