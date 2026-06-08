@@ -49,4 +49,13 @@ enum SequencingSoundCoordinator {
             OrchestralSequencingPlayer.shared.playVictoryJingle()
         }
     }
+
+    static func cardFlipped(usesAlternateFlipSound: Bool) {
+        switch SequencingSFXMode.current {
+        case .simplified:
+            SequencingCardSFXPlayer.shared.play(usesAlternateFlipSound ? .flipAll2 : .flipAll1)
+        case .orchestral:
+            OrchestralSequencingPlayer.shared.playFlip(alternate: usesAlternateFlipSound)
+        }
+    }
 }

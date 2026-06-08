@@ -9,6 +9,7 @@ struct MainMenuSceneView: View {
     var body: some View {
         ZStack {
             WorldMapBackgroundView()
+                .accessibilityHidden(true)
 
             CloudTransitionOverlay(
                 enterProgress: cloudEnterProgress,
@@ -25,6 +26,7 @@ struct MainMenuSceneView: View {
 struct MainMenuPanelLayer: View {
     let isTransitioning: Bool
     let resetID: Int
+    var deferPanelReveal: Bool = false
     let onPlay: () -> Void
 
     @State private var panelOpacity: Double = 0
@@ -122,7 +124,19 @@ struct MainMenuPanelLayer: View {
         }
         .ignoresSafeArea(.keyboard)
         .onAppear {
-            tryRevealPanel()
+            if !deferPanelReveal {
+                tryRevealPanel()
+            }
+        }
+        .onChange(of: deferPanelReveal) { _, shouldDefer in
+            if !shouldDefer {
+                tryRevealPanel()
+            }
+        }
+        .onChange(of: resetID) { _, _ in
+            if !deferPanelReveal {
+                revealPanel()
+            }
         }
     }
 
@@ -314,6 +328,8 @@ private struct InfoView: View {
                             developerRow(developer, isLast: index == developers.count - 1)
                         }
                     }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel(lm.t("info.developers"))
                     .background(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .fill(InfoTheme.panelFill)
@@ -331,6 +347,8 @@ private struct InfoView: View {
                                 developerRow(collaborator, isLast: index == collaborators.count - 1)
                             }
                         }
+                        .accessibilityElement(children: .contain)
+                        .accessibilityLabel(lm.t("info.collaborators"))
                         .background(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
                                 .fill(InfoTheme.panelFill)
@@ -365,12 +383,14 @@ private struct InfoView: View {
         HStack {
             HStack(spacing: 10) {
                 Image(systemName: "info.circle.fill")
-                    .font(.app(size: 22, weight: .bold))
+                    .font(.app(.title2, weight: .bold))
                     .foregroundStyle(InfoTheme.secondaryText)
+                    .accessibilityHidden(true)
 
                 Text(lm.t("info.title"))
                     .font(.app(.title2))
                     .foregroundStyle(InfoTheme.primaryText)
+                    .accessibilityAddTraits(.isHeader)
             }
 
             Spacer()
@@ -392,6 +412,7 @@ private struct InfoView: View {
                 .textCase(.uppercase)
                 .foregroundStyle(InfoTheme.secondaryText)
                 .tracking(1.1)
+                .accessibilityAddTraits(.isHeader)
             sectionLine
         }
         .padding(.horizontal, 4)
@@ -401,15 +422,17 @@ private struct InfoView: View {
         Rectangle()
             .fill(InfoTheme.divider)
             .frame(height: 1)
+            .accessibilityHidden(true)
     }
 
     @ViewBuilder
     private func developerRow(_ name: String, isLast: Bool) -> some View {
         HStack(spacing: 14) {
             Image(systemName: "person.fill")
-                .font(.app(size: 18, weight: .semibold))
+                .font(.app(.body, weight: .semibold))
                 .foregroundStyle(InfoTheme.secondaryText)
                 .frame(width: 28)
+                .accessibilityHidden(true)
 
             Text(name)
                 .font(.app(.body))
@@ -424,6 +447,7 @@ private struct InfoView: View {
             InfoTheme.divider
                 .frame(height: 1)
                 .padding(.leading, 56)
+                .accessibilityHidden(true)
         }
     }
 
@@ -431,9 +455,10 @@ private struct InfoView: View {
         Link(destination: supportMailURL) {
             HStack(spacing: 14) {
                 Image(systemName: "envelope.fill")
-                    .font(.app(size: 18, weight: .semibold))
+                    .font(.app(.body, weight: .semibold))
                     .foregroundStyle(InfoTheme.secondaryText)
                     .frame(width: 28)
+                    .accessibilityHidden(true)
 
                 Text(supportEmail)
                     .font(.app(.body))
@@ -444,8 +469,9 @@ private struct InfoView: View {
                 Spacer()
 
                 Image(systemName: "arrow.up.right")
-                    .font(.app(size: 14, weight: .bold))
+                    .font(.app(.footnote, weight: .bold))
                     .foregroundStyle(InfoTheme.secondaryText.opacity(0.70))
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -475,6 +501,8 @@ private struct MenuPanelView: View {
     let onPlay: () -> Void
     let onSettings: () -> Void
 
+    @EnvironmentObject private var lm: LanguageManager
+
     var body: some View {
         GeometryReader { proxy in
             let panelSize = fittedPanelSize(in: proxy.size)
@@ -489,7 +517,7 @@ private struct MenuPanelView: View {
                     .shadow(color: .black.opacity(0.35), radius: 16, y: 8)
                     .accessibilityHidden(true)
 
-                VStack(spacing: panelSize.height * 0.04) {
+                VStack(spacing: panelSize.height * 0.03) {
                     AppMenuTitleView(panelWidth: panelSize.width, style: .mainMenu)
 
                     Spacer(minLength: panelSize.height * 0.02)
@@ -512,6 +540,9 @@ private struct MenuPanelView: View {
                 .padding(.top, panelSize.height * 0.14)
                 .padding(.bottom, panelSize.height * 0.12)
                 .frame(width: panelSize.width, height: panelSize.height)
+                .clipped()
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel(lm.t("a11y.main_menu"))
             }
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -547,13 +578,14 @@ private struct MenuSettingsButton: View {
             title: lm.t("button.settings"),
             fontSize: width * 0.105,
             horizontalPadding: width * 0.05,
-            verticalPadding: width * 0.08,
+            verticalPadding: width * 0.055,
             minWidth: width,
-            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.32),
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.26),
             isDisabled: isDisabled,
             action: action
         )
         .accessibilityLabel(lm.t("a11y.settings_button"))
+        .accessibilityHint(lm.t("a11y.settings_hint"))
     }
 }
 
@@ -629,9 +661,9 @@ private struct MenuPlayButton: View {
             title: lm.t("button.play"),
             fontSize: width * 0.115,
             horizontalPadding: width * 0.05,
-            verticalPadding: width * 0.08,
+            verticalPadding: width * 0.055,
             minWidth: width,
-            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.32),
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: width * 0.26),
             isDisabled: isDisabled,
             action: action
         )

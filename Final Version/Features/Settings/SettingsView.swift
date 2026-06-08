@@ -44,6 +44,7 @@ struct SettingsView: View {
     @AppStorage("enableSounds") private var enableSounds = true
     @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
     @AppStorage("reduceContrast") private var reduceContrast = false
+    @AppStorage("differentiate") private var differentiate = false
     @State private var showResetProgressConfirmation = false
     @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
@@ -461,6 +462,8 @@ struct SettingsView: View {
                     .disabled(musicMuted)
                     .opacity(musicMuted ? 0.45 : 1)
                     .animation(.easeInOut(duration: 0.2), value: musicMuted)
+                    .accessibilityLabel(lm.t("settings.audio.music_volume"))
+                    .accessibilityHint(lm.t("a11y.hint_adjust_slider"))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
@@ -495,6 +498,9 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(musicMuted ? lm.t("settings.music.unmute") : lm.t("settings.music.mute"))
+                .accessibilityAddTraits([.isToggle])
 
                 SettingsTheme.divider
                     .frame(height: 1)
@@ -996,6 +1002,48 @@ struct SettingsView: View {
                 .accessibilityLabel(lm.t("settings.reduce_contrast"))
                 .accessibilityHint(lm.t("settings.reduce_contrast.description"))
                 .accessibilityAddTraits(reduceContrast ? [.isSelected] : [])
+
+                settingsDivider(largeStyle: usesFrameLayout)
+
+                // Differentiate without colour alone
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        differentiate.toggle()
+                    }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "square.grid.2x2")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+                            .accessibilityHidden(true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.differentiate"))
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.differentiate.description"))
+                                .font(.app(usesFrameLayout ? .callout : .caption))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: differentiate, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
+                }
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lm.t("settings.differentiate"))
+                .accessibilityHint(lm.t("settings.differentiate.description"))
+                .accessibilityAddTraits(differentiate ? [.isSelected] : [])
             }
         }
     }
@@ -1158,7 +1206,7 @@ struct SettingsView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(lm.t(titleKey))
         .accessibilityHint(lm.t(descriptionKey))
-        .accessibilityAddTraits(isOn.wrappedValue ? [.isSelected] : [])
+        .accessibilityAddTraits(isOn.wrappedValue ? [.isToggle, .isSelected] : [.isToggle])
     }
 
     @ViewBuilder
@@ -1182,6 +1230,7 @@ struct SettingsView: View {
         .padding(.horizontal, expanded ? 24 : 18)
         .padding(.vertical, expanded ? 16 : 14)
         .accessibilityLabel(lm.t("settings.audio.music_volume"))
+        .accessibilityHint(lm.t("a11y.hint_adjust_slider"))
     }
 
     private func sequencingSFXSectionHeader(expanded: Bool) -> some View {
@@ -1220,6 +1269,7 @@ struct SettingsView: View {
                 sequencingSFXMode = mode.rawValue
             }
             SequencingSoundCoordinator.resetSession()
+            ForestAmbiencePlayer.shared.applySequencingSFXMode()
         } label: {
             HStack(spacing: expanded ? 18 : 14) {
                 Image(systemName: mode == .orchestral ? "hifispeaker.2.fill" : "pianokeys")
@@ -1477,6 +1527,8 @@ struct SettingsView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
+        .accessibilityHint(isUnlocked ? lm.t("a11y.button_select_app_icon") : lm.t("a11y.button_locked"))
+        .accessibilityAddTraits(isSelected && isUnlocked ? [.isSelected] : [])
     }
 
     private var aboutDetailContent: some View {
@@ -1603,6 +1655,7 @@ struct SettingsView: View {
         .disabled(urlString.isEmpty)
         .opacity(urlString.isEmpty ? 0.48 : 1)
         .accessibilityLabel(title)
+        .accessibilityHint(lm.t("a11y.button_open_social_link"))
     }
 
     @ViewBuilder
@@ -1695,6 +1748,7 @@ struct SettingsView: View {
         .frame(maxHeight: fillHeight ? .infinity : nil)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
+        .accessibilityHint(detail ?? "")
     }
 
     private func resetProgress() {

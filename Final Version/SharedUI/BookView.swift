@@ -804,8 +804,9 @@ struct BookView: View {
             let emptyLeft = pageContainer(isLeft: true) {
                 VStack(spacing: isCompact ? 10 : 20) {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: isCompact ? 30 : 60))
+                        .font(.system(isCompact ? .title2 : .largeTitle))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
+                        .accessibilityHidden(true)
                     Text(subtitle)
                         .font(isDyslexiaEnabled ? .app(.subheadline) : Font.custom("Alegreya", size: isCompact ? 18 : 26, relativeTo: .body))
                         .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.1))
@@ -1304,9 +1305,10 @@ struct BookView: View {
                                             .blur(radius: 10)
                                         VStack {
                                             Image(systemName: "lock.fill")
-                                                .font(.system(size: isCompact ? 50 : 80))
+                                                .font(.system(isCompact ? .title : .largeTitle))
                                                 .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
                                                 .shadow(color: .white, radius: 4)
+                                                .accessibilityHidden(true)
                                             Text(lm.t("Gioca per sbloccare le scene!"))
                                                 .font(isDyslexiaEnabled ?
                                                       (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
@@ -1356,8 +1358,9 @@ struct BookView: View {
                                 .blur(radius: 10)
                             VStack {
                                 Image(systemName: "lock.fill")
-                                    .font(.system(size: isCompact ? 50 : 80))
+                                    .font(.system(isCompact ? .title : .largeTitle))
                                     .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
+                                    .accessibilityHidden(true)
                                 Text(lm.t("Gioca per sbloccare le scene!"))
                                     .font(isDyslexiaEnabled ?
                                           (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
@@ -1389,9 +1392,12 @@ struct BookView: View {
     }
 
     private func speakCurrentPage() {
+        // Voice narration has been disabled per user request.
+        /*
         guard currentPage >= 0, currentPage < pageTexts.count else { return }
         let text = pageTexts[currentPage]
         AppSpeechSynthesizer.shared.speak(text, languageCode: lm.currentLanguage)
+        */
     }
     
     @ViewBuilder

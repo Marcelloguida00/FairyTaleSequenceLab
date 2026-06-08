@@ -1,7 +1,4 @@
 import SwiftUI
-#if canImport(UIKit)
-import UIKit
-#endif
 
 enum AppMenuTitleStyle {
     /// Main menu panel — large two-line hero title.
@@ -16,7 +13,6 @@ struct AppMenuTitleView: View {
     var style: AppMenuTitleStyle = .compact
 
     @EnvironmentObject private var lm: LanguageManager
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize // Forces view update on system text size changes
     @AppStorage("reduceContrast") private var reduceContrast = false
 
     // ==========================================
@@ -86,37 +82,22 @@ struct AppMenuTitleView: View {
                     .font(.app(size: fontSize, weight: .black, relativeTo: lineIndex == 0 ? .largeTitle : .title3))
                     .foregroundStyle(titleStrokeColor)
                     .offset(x: offset.width, y: offset.height)
+                    .accessibilityHidden(true)
             }
 
             Text(text)
                 .font(.app(size: fontSize, weight: .black, relativeTo: lineIndex == 0 ? .largeTitle : .title3))
                 .foregroundStyle(titleFillGradient)
+                .accessibilityHidden(true)
         }
         .lineLimit(1)
         .minimumScaleFactor(0.45)
+        .accessibilityHidden(true)
     }
 
     // ==========================================
-    // STYLING PROPERTIES (With Reduce Contrast - High Contrast Style)
+    // STYLING PROPERTIES (With Increase Contrast - High Contrast Style)
     // ==========================================
-    private var titleFontSizeContrast: CGFloat {
-        let baseSize = panelWidth * 0.18
-        #if canImport(UIKit)
-        return UIFontMetrics(forTextStyle: .largeTitle).scaledValue(for: baseSize)
-        #else
-        return baseSize
-        #endif
-    }
-
-    private var subtitleFontSizeContrast: CGFloat {
-        let baseSize = panelWidth * 0.075
-        #if canImport(UIKit)
-        return UIFontMetrics(forTextStyle: .title3).scaledValue(for: baseSize)
-        #else
-        return baseSize
-        #endif
-    }
-
     private var titleGradientContrast: LinearGradient {
         LinearGradient(
             colors: [
@@ -146,23 +127,23 @@ struct AppMenuTitleView: View {
         Group {
             if reduceContrast {
                 VStack(spacing: 6) {
-                    // "LUMI" - Bold dynamic title scaling with device size and Dynamic Type
                     Text(lm.t("menu.title.line1"))
-                        .font(.custom(AppTypography.bold, size: titleFontSizeContrast, relativeTo: .largeTitle))
+                        .font(.custom(AppTypography.bold, size: panelWidth * 0.18, relativeTo: .largeTitle))
                         .foregroundStyle(titleGradientContrast)
                         .shadow(color: textShadowColorContrast, radius: shadowRadiusContrast, x: shadowOffsetContrast.x, y: shadowOffsetContrast.y)
                         .multilineTextAlignment(.center)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
+                        .accessibilityHidden(true)
 
-                    // "WORLD OF FABLES" - Elegant dynamic subtitle scaling with device size and Dynamic Type
                     Text(lm.t("menu.title.line2"))
-                        .font(.custom(AppTypography.medium, size: subtitleFontSizeContrast, relativeTo: .title3))
+                        .font(.custom(AppTypography.medium, size: panelWidth * 0.075, relativeTo: .title3))
                         .foregroundStyle(subtitleStyleContrast)
                         .shadow(color: textShadowColorContrast, radius: shadowRadiusContrast, x: shadowOffsetContrast.x, y: shadowOffsetContrast.y)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .minimumScaleFactor(0.5)
+                        .accessibilityHidden(true)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityAddTraits(.isHeader)
@@ -173,7 +154,7 @@ struct AppMenuTitleView: View {
                         titleLine(line, lineIndex: index)
                     }
                 }
-                .accessibilityElement(children: .combine)
+                .accessibilityElement(children: .ignore)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityLabel(titleLines.joined(separator: " "))
             }

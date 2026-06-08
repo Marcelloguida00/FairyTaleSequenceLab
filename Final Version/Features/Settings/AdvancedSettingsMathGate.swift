@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct MathAdditionProblem: Equatable {
     let first: Int
@@ -47,7 +48,7 @@ struct AdvancedSettingsMathGate: View {
                     }
 
                 modalCard
-                    .frame(maxWidth: min(proxy.size.width - 32, dynamicTypeSize.isAccessibilitySize ? 560 : 440))
+                    .frame(maxWidth: modalMaxWidth(in: proxy.size.width))
                     .position(
                         x: proxy.size.width * 0.5,
                         y: modalCenterY(totalHeight: proxy.size.height)
@@ -72,6 +73,12 @@ struct AdvancedSettingsMathGate: View {
         }
     }
 
+    private func modalMaxWidth(in totalWidth: CGFloat) -> CGFloat {
+        let horizontalInset: CGFloat = 40
+        let cap: CGFloat = dynamicTypeSize.isAccessibilitySize ? 520 : 480
+        return min(totalWidth - horizontalInset, cap)
+    }
+
     private func modalCenterY(totalHeight: CGFloat) -> CGFloat {
         guard keyboardHeight > 0 else {
             return totalHeight * 0.5
@@ -82,63 +89,73 @@ struct AdvancedSettingsMathGate: View {
     }
 
     private var modalCard: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 22) {
-                Text(lm.t("settings.advanced_gate.title"))
-                    .font(.app(.title, weight: .bold))
-                    .foregroundStyle(SettingsGateTheme.rowText)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(lm.t("settings.advanced_gate.message"))
-                    .font(.app(.body))
-                    .foregroundStyle(SettingsGateTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                equationEntry
-
-                if showWrongAnswer {
-                    Text(lm.t("settings.advanced_gate.wrong"))
-                        .font(.app(.callout, weight: .semibold))
-                        .foregroundStyle(Color.red)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                ScrollView(.vertical, showsIndicators: false) {
+                    modalCardContent
                 }
-
-                actionButtons
+                .scrollBounceBehavior(.basedOnSize)
+            } else {
+                modalCardContent
             }
-            .padding(dynamicTypeSize.isAccessibilitySize ? 24 : 28)
         }
-        .scrollBounceBehavior(.basedOnSize)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(SettingsGateTheme.panelFill)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .stroke(SettingsGateTheme.panelBorder, lineWidth: 2.5)
                 )
         )
         .shadow(color: .black.opacity(0.22), radius: 18, y: 10)
     }
 
-    private var equationEntry: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 14) {
-                equationText
-                answerField
+    private var modalCardContent: some View {
+        VStack(spacing: 14) {
+            VStack(spacing: 6) {
+                Text(lm.t("settings.advanced_gate.title"))
+                    .font(.app(.title3, weight: .bold))
+                    .foregroundStyle(SettingsGateTheme.rowText)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.9)
+
+                Text(lm.t("settings.advanced_gate.message"))
+                    .font(.app(.subheadline))
+                    .foregroundStyle(SettingsGateTheme.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.9)
             }
 
-            VStack(spacing: 12) {
-                equationText
-                answerField
+            equationEntry
+
+            if showWrongAnswer {
+                Text(lm.t("settings.advanced_gate.wrong"))
+                    .font(.app(.caption, weight: .semibold))
+                    .foregroundStyle(Color.red)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
             }
+
+            actionButtons
         }
+        .padding(.horizontal, 22)
+        .padding(.vertical, 18)
+        .frame(maxWidth: .infinity)
+    }
+
+    private var equationEntry: some View {
+        HStack(spacing: 12) {
+            equationText
+            answerField
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var equationText: some View {
         Text("\(problem.first) + \(problem.second) =")
-            .font(.app(.largeTitle, weight: .bold))
+            .font(.app(.title2, weight: .bold))
             .foregroundStyle(SettingsGateTheme.rowText)
             .lineLimit(1)
             .minimumScaleFactor(0.78)
@@ -153,8 +170,8 @@ struct AdvancedSettingsMathGate: View {
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .textContentType(.oneTimeCode)
-            .frame(minWidth: 112, minHeight: 52)
-            .padding(.horizontal, 8)
+            .frame(width: 88, height: 48)
+            .padding(.horizontal, 6)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(SettingsGateTheme.fieldFill)
@@ -181,17 +198,11 @@ struct AdvancedSettingsMathGate: View {
     }
 
     private var actionButtons: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 16) {
-                cancelButton
-                submitButton
-            }
-
-            VStack(spacing: 12) {
-                submitButton
-                cancelButton
-            }
+        HStack(spacing: 12) {
+            cancelButton
+            submitButton
         }
+        .frame(maxWidth: .infinity)
     }
 
     private var cancelButton: some View {
@@ -204,9 +215,9 @@ struct AdvancedSettingsMathGate: View {
                 .foregroundStyle(SettingsGateTheme.secondaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.82)
-                .padding(.horizontal, 22)
-                .padding(.vertical, 12)
-                .frame(minWidth: 124, minHeight: GameButtonMetrics.minimumTouchTarget)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity, minHeight: GameButtonMetrics.minimumTouchTarget)
         }
         .buttonStyle(.plain)
         .gameMinimumTouchTarget()
@@ -220,9 +231,9 @@ struct AdvancedSettingsMathGate: View {
                 .foregroundStyle(GameButtonAppearance.label)
                 .lineLimit(1)
                 .minimumScaleFactor(0.76)
-                .padding(.horizontal, 26)
-                .padding(.vertical, 13)
-                .frame(minWidth: 156, minHeight: 52)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity, minHeight: 48)
                 .background(GamePillButtonBackground())
         }
         .buttonStyle(.plain)
@@ -241,10 +252,12 @@ struct AdvancedSettingsMathGate: View {
               value == problem.answer else {
             showWrongAnswer = true
             AppSettings.hapticImpact(.rigid)
+            UIAccessibility.post(notification: .announcement, argument: lm.t("settings.advanced_gate.wrong"))
             return
         }
 
         AppSettings.hapticSuccess()
+        UIAccessibility.post(notification: .announcement, argument: lm.t("settings.advanced_gate.success"))
         onSuccess()
     }
 }

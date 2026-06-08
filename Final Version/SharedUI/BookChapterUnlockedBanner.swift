@@ -22,6 +22,7 @@ struct BookChapterUnlockedBanner: View {
     @State private var isVisible = false
     @State private var didDismiss = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage("reduceContrast") private var increaseContrast = false
 
     private var headline: String {
         lm.t("book.chapter_unlocked.title")
@@ -29,6 +30,10 @@ struct BookChapterUnlockedBanner: View {
 
     private var openButtonTitle: String {
         lm.t("book.chapter_unlocked.open_button")
+    }
+
+    private var continueButtonTitle: String {
+        lm.t("book.chapter_unlocked.continue_button")
     }
 
     private var tapHint: String {
@@ -55,11 +60,54 @@ struct BookChapterUnlockedBanner: View {
                     .padding(.horizontal, 16)
                     .fixedSize(horizontal: false, vertical: true)
 
-                GamePillButton(
-                    title: openButtonTitle,
-                    leadingIcon: "book.closed.fill"
-                ) {
-                    dismiss(openingStorybook: true)
+                HStack(spacing: 12) {
+                    Button {
+                        dismiss(openingStorybook: false)
+                    } label: {
+                        Text(continueButtonTitle)
+                            .font(.app(size: GameButtonMetrics.pillFontSize, weight: .semibold))
+                            .foregroundColor(increaseContrast ? .black : .white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                            .padding(.horizontal, GameButtonMetrics.pillHorizontalPadding)
+                            .padding(.vertical, GameButtonMetrics.pillVerticalPadding)
+                            .frame(maxWidth: .infinity, minHeight: GameButtonMetrics.pillMinHeight)
+                            .background(
+                                Capsule()
+                                    .fill(increaseContrast ? Color.white : Color.white.opacity(0.22))
+                                    .overlay(
+                                        Capsule().stroke(
+                                            increaseContrast ? Color.black : Color.white.opacity(0.60),
+                                            lineWidth: increaseContrast ? 2 : 1.5
+                                        )
+                                    )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(continueButtonTitle)
+                    .accessibilityAddTraits(.isButton)
+
+                    Button {
+                        dismiss(openingStorybook: true)
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "book.closed.fill")
+                                .font(.app(size: GameButtonMetrics.pillFontSize * 0.92, weight: .black))
+                            Text(openButtonTitle.uppercased())
+                                .font(.app(size: GameButtonMetrics.pillFontSize, weight: .bold))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.72)
+                        }
+                        .foregroundStyle(GameButtonAppearance.label)
+                        .shadow(color: .black.opacity(0.16), radius: 0, x: 0, y: 1)
+                        .padding(.horizontal, GameButtonMetrics.pillHorizontalPadding)
+                        .padding(.vertical, GameButtonMetrics.pillVerticalPadding)
+                        .frame(maxWidth: .infinity, minHeight: GameButtonMetrics.pillMinHeight)
+                        .background(GamePillButtonBackground())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(openButtonTitle)
+                    .accessibilityAddTraits(.isButton)
                 }
             }
             .padding(.horizontal, 24)
