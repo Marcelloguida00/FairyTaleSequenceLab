@@ -1269,6 +1269,7 @@ struct SettingsView: View {
                 sequencingSFXMode = mode.rawValue
             }
             SequencingSoundCoordinator.resetSession()
+            ForestAmbiencePlayer.shared.applySequencingSFXMode()
         } label: {
             HStack(spacing: expanded ? 18 : 14) {
                 Image(systemName: mode == .orchestral ? "hifispeaker.2.fill" : "pianokeys")

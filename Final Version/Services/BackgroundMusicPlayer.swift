@@ -132,7 +132,10 @@ final class BackgroundMusicPlayer {
             print("Warning: Missing background music resource: \(resourceName).\(resourceExtension)")
             return
         }
+        installLoopPlayer(from: url)
+    }
 
+    private func installLoopPlayer(from url: URL) {
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.ambient, options: [.mixWithOthers])

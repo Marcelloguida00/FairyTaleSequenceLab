@@ -6,19 +6,19 @@ enum OrchestralAudioMetrics {
     private static var cache: [String: TimeInterval] = [:]
 
     static var correctClipDuration: TimeInterval {
-        duration(named: "OrchestralCorrect_1", fallback: 2.0)
+        duration(named: OrchestralAudioResources.correctResponse(step: 1), fallback: 2.0)
     }
 
     static var wrongClipDuration: TimeInterval {
-        duration(named: "OrchestralWrong_1", fallback: 2.0)
+        duration(named: OrchestralAudioResources.wrongResponse(cycle: 1), fallback: 2.0)
     }
 
     static var pickLoopDuration: TimeInterval {
-        duration(named: "OrchestralPick_1", fallback: 2.0)
+        duration(named: OrchestralAudioResources.pickNote(step: 1), fallback: 2.0)
     }
 
     static var victoryJingleDuration: TimeInterval {
-        duration(named: "OrchestralVictory_Jingle", fallback: 5.0)
+        duration(named: OrchestralAudioResources.victoryJingle, fallback: 5.0)
     }
 
     static var simplifiedVictoryJingleDuration: TimeInterval {

@@ -165,9 +165,25 @@ private enum CloudFieldFactory {
 
 // MARK: - Overlay
 
+enum CloudEntrySideFilter: Equatable {
+    case all
+    case fromRight
+    case fromRightTrailing
+    case fromLeft
+    case fromLeftTrailing
+}
+
 struct CloudTransitionOverlay: View {
     let enterProgress: CGFloat
     let exitProgress: CGFloat
+    /// Multiplies cloud color — use grey/white tints to darken or brighten particles.
+    var cloudTint: Color = .white
+    var cloudBrightness: CGFloat = 0
+    var cloudSaturation: CGFloat = 1
+    var entrySideFilter: CloudEntrySideFilter = .all
+    var opacityScale: CGFloat = 1
+    var cloudSizeScale: CGFloat = 1
+    var entrySpreadScale: CGFloat = 1
 
     private static let cloudPeakOpacity: CGFloat = 0.78
 
@@ -183,12 +199,14 @@ struct CloudTransitionOverlay: View {
                     .ignoresSafeArea()
 
                 ForEach(CloudFieldFactory.particles) { particle in
-                    cloudView(
-                        particle: particle,
-                        in: proxy.size,
-                        baseSize: baseSize
-                    )
-                    .zIndex(particle.depth)
+                    if matchesEntryFilter(particle) {
+                        cloudView(
+                            particle: particle,
+                            in: proxy.size,
+                            baseSize: baseSize
+                        )
+                        .zIndex(particle.depth)
+                    }
                 }
             }
         }
@@ -208,7 +226,7 @@ struct CloudTransitionOverlay: View {
         let easedEnter = easeInOut(min(1, enterProgress * particle.speedBias))
         let easedExit = easeInOut(exitProgress * particle.speedBias)
 
-        let entrySpread = max(size.width, size.height) * 0.62
+        let entrySpread = max(size.width, size.height) * 0.62 * entrySpreadScale
         let exitSpread = max(size.width, size.height) * 0.58
 
         let entryOffset = CGPoint(
@@ -237,9 +255,9 @@ struct CloudTransitionOverlay: View {
                 return fadeIn * max(0, 1 - easedExit * 1.05)
             }
             return fadeIn
-        }()
+        }() * opacityScale
 
-        let dimension = baseSize * particle.scale
+        let dimension = baseSize * particle.scale * cloudSizeScale
 
         Image("cloud")
             .resizable()
@@ -247,8 +265,26 @@ struct CloudTransitionOverlay: View {
             .scaledToFit()
             .frame(width: dimension, height: dimension)
             .rotationEffect(.degrees(particle.rotation))
+            .colorMultiply(cloudTint)
+            .brightness(cloudBrightness)
+            .saturation(cloudSaturation)
             .opacity(opacity)
             .position(position)
+    }
+
+    private func matchesEntryFilter(_ particle: CloudParticle) -> Bool {
+        switch entrySideFilter {
+        case .all:
+            return true
+        case .fromRight:
+            return particle.entryVector.x > 0.12
+        case .fromRightTrailing:
+            return particle.entryVector.x > 0.04 || particle.anchor.x > 0.56
+        case .fromLeft:
+            return particle.entryVector.x < -0.12
+        case .fromLeftTrailing:
+            return particle.entryVector.x < -0.04 || particle.anchor.x < 0.44
+        }
     }
 
     private func easeInOut(_ t: CGFloat) -> CGFloat {

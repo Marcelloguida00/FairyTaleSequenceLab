@@ -26,6 +26,7 @@ struct MainMenuSceneView: View {
 struct MainMenuPanelLayer: View {
     let isTransitioning: Bool
     let resetID: Int
+    var deferPanelReveal: Bool = false
     let onPlay: () -> Void
 
     @State private var panelOpacity: Double = 0
@@ -123,7 +124,19 @@ struct MainMenuPanelLayer: View {
         }
         .ignoresSafeArea(.keyboard)
         .onAppear {
-            tryRevealPanel()
+            if !deferPanelReveal {
+                tryRevealPanel()
+            }
+        }
+        .onChange(of: deferPanelReveal) { _, shouldDefer in
+            if !shouldDefer {
+                tryRevealPanel()
+            }
+        }
+        .onChange(of: resetID) { _, _ in
+            if !deferPanelReveal {
+                revealPanel()
+            }
         }
     }
 
