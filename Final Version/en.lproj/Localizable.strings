@@ -50,7 +50,8 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Congratulations!\nYou've unlocked a new chapter in the book!";
 "book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book.";
-"book.chapter_unlocked.open_button" = "Open";
+"book.chapter_unlocked.open_button" = "Open the book";
+"book.chapter_unlocked.continue_button" = "Continue";
 "book.chapter_unlocked.tap_hint" = "Tap anywhere to continue.";
 "book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
 "a11y.storybook_button"          = "Open storybook";

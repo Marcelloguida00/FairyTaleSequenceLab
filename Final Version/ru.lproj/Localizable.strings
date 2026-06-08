@@ -50,7 +50,8 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Поздравляем!\nТы открыл новую главу в книге!";
 "book.chapter_unlocked.message" = "«%@» теперь в книге сказок.";
-"book.chapter_unlocked.open_button" = "Открыть";
+"book.chapter_unlocked.open_button" = "Открыть книгу";
+"book.chapter_unlocked.continue_button" = "Продолжить";
 "book.chapter_unlocked.tap_hint" = "Коснитесь экрана, чтобы продолжить.";
 "book.chapter_unlocked.open_hint" = "Дважды коснитесь, чтобы открыть книгу сказок.";
 "a11y.storybook_button"          = "Открыть книгу сказок";
