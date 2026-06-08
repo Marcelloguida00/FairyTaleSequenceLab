@@ -5,8 +5,18 @@ struct VillainOnboardingCinematicView: View {
     let onFinish: () -> Void
 
     private static let cloudSkyColor = Color(red: 0.55, green: 0.78, blue: 0.95)
+    private static let narratorScriptKeys = [
+        "onboarding.page1.body",
+        "onboarding.page2.body",
+        "onboarding.page3.body",
+        "onboarding.page4.body"
+    ]
 
+    @EnvironmentObject private var lm: LanguageManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @State private var narratorScriptIndex = 0
+    @State private var showsNarratorBar = true
 
     @State private var rightCloudEnter: CGFloat = 0
     @State private var rightCloudTrailEnter: CGFloat = 0
@@ -135,10 +145,24 @@ struct VillainOnboardingCinematicView: View {
                     )
                     .opacity(villainOpacity)
             }
+            .overlay(alignment: .bottom) {
+                if showsNarratorBar {
+                    let narratorWidth = min(proxy.size.width - 32, 920)
+
+                    NarratorScriptBar(
+                        message: lm.t(Self.narratorScriptKeys[narratorScriptIndex]),
+                        maxWidth: narratorWidth
+                    )
+                    .padding(.horizontal, max(16, proxy.safeAreaInsets.leading + 12))
+                    .padding(.bottom, max(20, proxy.safeAreaInsets.bottom + 14))
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.35), value: showsNarratorBar)
+            .animation(.easeInOut(duration: 0.25), value: narratorScriptIndex)
         }
         .ignoresSafeArea()
         .background(cinematicBackdropColor)
-        .accessibilityHidden(true)
         .task {
             await runSequence()
         }
@@ -182,6 +206,9 @@ struct VillainOnboardingCinematicView: View {
             return
         }
 
+        showsNarratorBar = true
+        setNarratorScript(0)
+
         // 1. Villain flies in from the right with a dense cloud trail.
         villainPose = .flyIn
         villainX = 1.18
@@ -199,6 +226,7 @@ struct VillainOnboardingCinematicView: View {
             villainX = 0.50
         }
         try? await Task.sleep(nanoseconds: 700_000_000)
+        setNarratorScript(1)
 
         // 3. Casts the spell: frames 0 → 11.
         villainPose = .magicCast
@@ -210,6 +238,7 @@ struct VillainOnboardingCinematicView: View {
         await playLaughFrames()
 
         // 5. Clouds darken; left clouds join with the same density as the right.
+        setNarratorScript(2)
         leftCloudTrailEnter = 0.12
         animate(duration: 1.1) {
             cloudTint = Color(white: 0.52)
@@ -257,9 +286,11 @@ struct VillainOnboardingCinematicView: View {
             skyDimming = 0
         }
         try? await Task.sleep(nanoseconds: 1_200_000_000)
+        setNarratorScript(3)
 
         // 9. Main menu sits behind the menu clouds; hide only the onboarding map.
         showsOnboardingMap = false
+        showsNarratorBar = false
         try? await Task.sleep(nanoseconds: 700_000_000)
 
         // 10. Open the villain curtain; main-menu background clouds stay fixed underneath.
@@ -274,14 +305,25 @@ struct VillainOnboardingCinematicView: View {
 
     @MainActor
     private func runReducedMotionSequence() async {
+        showsNarratorBar = true
+        setNarratorScript(0)
+        try? await Task.sleep(nanoseconds: 400_000_000)
+
         animate(duration: 0.2) {
             coverCloudEnter = 1
             cloudTint = .white
         }
         try? await Task.sleep(nanoseconds: 300_000_000)
+        showsNarratorBar = false
         showsOnboardingMap = false
         villainCloudExit = 1
         onFinish()
+    }
+
+    @MainActor
+    private func setNarratorScript(_ index: Int) {
+        let clamped = min(max(index, 0), Self.narratorScriptKeys.count - 1)
+        narratorScriptIndex = clamped
     }
 
     @MainActor
@@ -309,4 +351,5 @@ struct VillainOnboardingCinematicView: View {
 
 #Preview("Villain Onboarding") {
     VillainOnboardingCinematicView(onFinish: {})
+        .environmentObject(LanguageManager())
 }

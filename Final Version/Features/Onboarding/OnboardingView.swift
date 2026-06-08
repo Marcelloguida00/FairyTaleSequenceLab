@@ -69,10 +69,9 @@ struct OnboardingView: View {
     }
 
     private func pageView(_ page: PageData, geo: GeometryProxy) -> some View {
-        let mascotHeight = min(geo.size.height * 0.32, 260)
-        let mascotWidth = min(geo.size.width * 0.24, 280)
-        let bubbleWidth = min(geo.size.width * 0.66, 980)
-        let bubbleHeight = min(max(geo.size.height * 0.12, 116), 160)
+        let mascotHeight = min(geo.size.height * 0.30, 240)
+        let mascotWidth = min(geo.size.width * 0.20, 220)
+        let narratorMaxWidth = min(geo.size.width * 0.74, 900)
 
         return ZStack {
             backgroundElement(page.visual, geo: geo)
@@ -102,19 +101,17 @@ struct OnboardingView: View {
                 .shadow(color: .black.opacity(0.60), radius: 8, y: 3)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-            OnboardingDialogueView(
+            OnboardingNarratorDialogueView(
                 imageName: page.mascotFrames[0],
                 animatedImageNames: page.mascotFrames,
                 message: lm.t(page.bodyKey),
                 mascotWidth: mascotWidth,
                 mascotHeight: mascotHeight,
-                bubbleWidth: bubbleWidth,
-                bubbleHeight: bubbleHeight,
-                bubbleFont: .app(.title3)
+                narratorMaxWidth: narratorMaxWidth
             )
-            .padding(.leading, max(18, geo.safeAreaInsets.leading + 18))
-            .padding(.trailing, max(24, geo.safeAreaInsets.trailing + 24))
-            .padding(.bottom, max(122, geo.safeAreaInsets.bottom + 102))
+            .padding(.leading, max(16, geo.safeAreaInsets.leading + 12))
+            .padding(.trailing, max(20, geo.safeAreaInsets.trailing + 16))
+            .padding(.bottom, max(118, geo.safeAreaInsets.bottom + 98))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         }
     }
@@ -223,20 +220,18 @@ struct OnboardingView: View {
     }
 }
 
-private struct OnboardingDialogueView: View {
+private struct OnboardingNarratorDialogueView: View {
     let imageName: String
     let animatedImageNames: [String]
     let message: String
     let mascotWidth: CGFloat
     let mascotHeight: CGFloat
-    let bubbleWidth: CGFloat
-    let bubbleHeight: CGFloat
-    let bubbleFont: Font
+    let narratorMaxWidth: CGFloat
 
     @State private var frameIndex = 0
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 18) {
+        HStack(alignment: .bottom, spacing: 14) {
             Image(currentImageName)
                 .resizable()
                 .scaledToFit()
@@ -244,30 +239,10 @@ private struct OnboardingDialogueView: View {
                 .shadow(color: .black.opacity(0.24), radius: 7, y: 4)
                 .accessibilityHidden(true)
 
-            Text(message)
-                .font(bubbleFont)
-                .fontWeight(.semibold)
-                .foregroundColor(Color.appPrimaryText)
-                .multilineTextAlignment(.leading)
-                .lineLimit(4)
-                .minimumScaleFactor(0.72)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 16)
-                .frame(width: bubbleWidth, height: bubbleHeight, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Color.appSpeechBubble)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(Color.appBorder, lineWidth: 2)
-                        )
-                        .shadow(color: .black.opacity(0.16), radius: 8, y: 3)
-                )
+            NarratorScriptBar(message: message, maxWidth: narratorMaxWidth)
 
             Spacer(minLength: 0)
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(message)
         .task(id: animatedImageNames) {
             guard !animatedImageNames.isEmpty else { return }
 
@@ -282,6 +257,7 @@ private struct OnboardingDialogueView: View {
         guard !animatedImageNames.isEmpty else { return imageName }
         return animatedImageNames[frameIndex % animatedImageNames.count]
     }
+
 }
 
 #Preview("Onboarding") {
