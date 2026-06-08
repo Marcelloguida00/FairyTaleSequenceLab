@@ -1376,9 +1376,12 @@ struct BookView: View {
     }
 
     private func speakCurrentPage() {
+        // Voice narration has been disabled per user request.
+        /*
         guard currentPage >= 0, currentPage < pageTexts.count else { return }
         let text = pageTexts[currentPage]
         AppSpeechSynthesizer.shared.speak(text, languageCode: lm.currentLanguage)
+        */
     }
     
     @ViewBuilder

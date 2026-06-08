@@ -91,7 +91,7 @@
 "settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Turn voice narration on or off.";
 "settings.voice_over.info" = "VoiceOver support is fully integrated. To use it, please enable the feature in your iOS System Settings.";
-"settings.reduce_contrast" = "Reduce contrast";
+"settings.reduce_contrast" = "Increase contrast";
 "settings.reduce_contrast.description" = "Use high-contrast colors to improve text readability.";
 "settings.differentiate" = "Differentiate without colour alone";
 "settings.differentiate.description" = "Add patterns and icons to help distinguish elements beyond color alone.";

@@ -1572,12 +1572,12 @@ private struct WaypointDot: View {
     private var borderColor: Color {
         switch state {
         case .completed: return Color(red: 0.08, green: 0.50, blue: 0.18)
-        case .next:      return Color(red: 0.82, green: 0.38, blue: 0.04)
+        case .next:      return Color(red: 0.03, green: 0.36, blue: 0.68)
         case .locked:    return Color(red: 0.30, green: 0.30, blue: 0.32)
         }
     }
 
-    private var nextColor: Color { Color(red: 0.98, green: 0.58, blue: 0.08) }
+    private var nextColor: Color { Color(red: 0.12, green: 0.64, blue: 0.92) }
 }
 
 private struct MainMapIslandDot: View {

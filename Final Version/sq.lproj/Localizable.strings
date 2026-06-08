@@ -283,7 +283,7 @@
 "settings.enable_animations.description" = "Çaktivizoni efektet vizuale dhe kalimet.";
 "settings.enable_sounds" = "Efektet e Zërit";
 "settings.enable_sounds.description" = "Aktivizoni ose çaktivizoni tingujt e ndërveprimit dhe menysë.";
-"settings.reduce_contrast" = "Zvogëlo kontrastin";
+"settings.reduce_contrast" = "Rrit kontrastin";
 "settings.reduce_contrast.description" = "Përdorni ngjyra me kontrast të lartë për të përmirësuar lexueshmërinë e tekstit.";
 "settings.differentiate" = "Diferencuhu pa përdorur vetëm ngjyrën";
 "settings.differentiate.description" = "Shtoni modele dhe ikona për të ndihmuar në dallimin e elementeve përtej ngjyrës.";

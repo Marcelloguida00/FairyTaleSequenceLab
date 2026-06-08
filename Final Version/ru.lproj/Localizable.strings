@@ -283,7 +283,7 @@
 "settings.enable_animations.description" = "Отключить визуальные эффекты и переходы.";
 "settings.enable_sounds" = "Звуковые эффекты";
 "settings.enable_sounds.description" = "Включить или выключить звуки интерфейса и меню.";
-"settings.reduce_contrast" = "Сокращение контраста";
+"settings.reduce_contrast" = "Увеличить контраст";
 "settings.reduce_contrast.description" = "Использовать более контрастные цвета для улучшения читаемости.";
 "settings.differentiate" = "Различать без только цвета";
 "settings.differentiate.description" = "Добавьте узоры и значки, чтобы отличать элементы помимо цвета.";
