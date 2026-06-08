@@ -186,8 +186,8 @@
 "tutorial.skip"             = "Skip Tutorial";
 "tutorial.next"             = "Next";
 "tutorial.done"             = "Let's go!";
-"tutorial.step1.title"      = "Lord Tempus Strikes!";
-"tutorial.step1.body"       = "Lord Tempus has turned the whole World of Fables upside down! But together we can fix it. Tap anywhere on the map to start walking!";
+"tutorial.step1.title"      = "Tap the waypoints";
+"tutorial.step1.body"       = "To walk on the map, you must click on the unlocked waypoints.";
 "tutorial.step2.title"      = "Find a Story Island";
 "tutorial.step2.body"       = "Walk to a glowing story island. When you arrive, a play button appears — tap it to begin restoring that fairy tale!";
 "tutorial.step3.title"      = "Restore the Order";
@@ -305,3 +305,7 @@
 "a11y.reward_pack_label" = "Reward pack";
 "a11y.reward_pack_hint" = "Tap or drag upward to open the reward pack";
 
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Tap Play to start the story!";
+"tutorial.drag_first_scene" = "Drag the first scene into the first position";
+"tutorial.tap_to_flip" = "Tap the card to flip it and read the clue";

@@ -173,8 +173,8 @@
 "tutorial.skip"             = "Salta il tutorial";
 "tutorial.next"             = "Avanti";
 "tutorial.done"             = "Andiamo!";
-"tutorial.step1.title"      = "Lord Tempus Colpisce!";
-"tutorial.step1.body"       = "Lord Tempus ha messo sottosopra tutto il Mondo delle Favole! Ma insieme possiamo sistemarlo. Tocca la mappa per cominciare a camminare!";
+"tutorial.step1.title"      = "Tocca i waypoint";
+"tutorial.step1.body"       = "Per camminare nella mappa devi cliccare sui waypoint sbloccati.";
 "tutorial.step2.title"      = "Trova un'Isola delle Storie";
 "tutorial.step2.body"       = "Cammina verso un'isola luminosa. Quando arrivi, appare un pulsante play — toccalo per iniziare a ripristinare quella fiaba!";
 "tutorial.step3.title"      = "Ripristina l'Ordine";
@@ -305,3 +305,8 @@
 "a11y.ar_back_hint" = "Chiude la vista di realtà aumentata e ritorna alla mappa";
 "a11y.reward_pack_label" = "Pacco premio";
 "a11y.reward_pack_hint" = "Tocca o scorri verso l'alto per aprire il pacco premio";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Tocca Gioca per iniziare la storia!";
+"tutorial.drag_first_scene" = "Trascina la prima scena nella prima posizione";
+"tutorial.tap_to_flip" = "Tocca la carta per girarla e leggere l'indizio";

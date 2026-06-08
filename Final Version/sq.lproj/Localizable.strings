@@ -176,8 +176,8 @@
 "tutorial.skip"             = "Kalo tutorialin";
 "tutorial.next"             = "Tjetër";
 "tutorial.done"             = "Hajde!";
-"tutorial.step1.title"      = "Lord Tempus Godet!";
-"tutorial.step1.body"       = "Lord Tempus ka përmbysur gjithë Botën e Basmave! Por bashkë mund ta rregullojmë. Trokit kudo në hartë për të filluar ecjen!";
+"tutorial.step1.title"      = "Trokit mbi pikat";
+"tutorial.step1.body"       = "Për të ecur në hartë duhet të trokasësh mbi pikat e zhbllokuara.";
 "tutorial.step2.title"      = "Gjej një Ishull Historie";
 "tutorial.step2.body"       = "Ec drejt një ishulli ndriçues. Kur arrish, shfaqet butoni i play — trokit për të filluar restaurimin e asaj basme!";
 "tutorial.step3.title"      = "Rikthe Rendin";
@@ -304,4 +304,9 @@
 "a11y.ar_back_hint" = "Mbyll pamjen e realitetit të përmirësuar dhe kthe në hartë";
 "a11y.reward_pack_label" = "Paketa e shpërblimit";
 "a11y.reward_pack_hint" = "Trokit ose lëviz lart për të hapur paketën e shpërblimit";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Trokit Luaj për të filluar historinë!";
+"tutorial.drag_first_scene" = "Tërhiq skenën e parë në pozicionin e parë";
+"tutorial.tap_to_flip" = "Trokit mbi kartë për ta kthyer dhe për të lexuar udhëzimin";
 

@@ -62,6 +62,7 @@ struct ContentView: View {
     let isGlobalTransitioning: Bool
 
     @EnvironmentObject private var lm: LanguageManager
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
 
     @State private var activeMap = ActiveMap.main
     @State private var avatarPosition = MapGraph.initialWaypoint.point
@@ -210,6 +211,21 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
+            if activeMap == .redHood,
+               !hasSeenTutorial,
+               activeRedHoodLevel == nil,
+               pendingRedHoodLevel == 0 || pendingRedHoodLevel == 1 {
+                GeometryReader { screenGeo in
+                    HandTutorialIndicator(
+                        point: CGPoint(x: screenGeo.size.width / 2, y: screenGeo.size.height - 110),
+                        customMessage: lm.t("tutorial.play_to_start")
+                    )
+                }
+                .ignoresSafeArea()
+                .zIndex(32)
+                .allowsHitTesting(false)
             }
             if showsStorybookButton {
                 Button(action: {
@@ -422,6 +438,22 @@ struct ContentView: View {
                             handleRedHoodWaypointActivation(wp.id)
                         }
                 }
+
+                if !hasSeenTutorial {
+                    if pendingRedHoodLevel == nil {
+                        if completedRedHoodLevels.contains(0) {
+                            if let wp = RedHoodMapGraph.waypoint(id: 1) {
+                                HandTutorialIndicator(point: projection.screenPoint(fromPixel: wp.point))
+                                    .zIndex(30)
+                            }
+                        } else {
+                            if let wp = RedHoodMapGraph.waypoint(id: 0) {
+                                HandTutorialIndicator(point: projection.screenPoint(fromPixel: wp.point))
+                                    .zIndex(30)
+                            }
+                        }
+                    }
+                }
             }
 
             if activeMap == .main {
@@ -452,7 +484,8 @@ struct ContentView: View {
                 direction: avatarDirection,
                 frame: isWalking ? currentFrame : 0,
                 size: avatarSize(for: mapSize),
-                markerIsRaised: markerIsRaised
+                markerIsRaised: markerIsRaised,
+                showsMarker: !(activeMap == .redHood && !hasSeenTutorial)
             )
             .position(
                 projection.screenPoint(fromPixel: avatarPosition)
@@ -1284,16 +1317,19 @@ private struct AvatarWithMarker: View {
     let frame: Int
     let size: CGFloat
     let markerIsRaised: Bool
+    var showsMarker: Bool = true
 
     var body: some View {
         ZStack {
             AvatarSprite(direction: direction, frame: frame, size: size)
 
-            GameMapLocationMarker(
-                width: size * 0.34,
-                height: size * 0.28
-            )
-                .offset(y: markerIsRaised ? -size * 0.76 : -size * 0.62)
+            if showsMarker {
+                GameMapLocationMarker(
+                    width: size * 0.34,
+                    height: size * 0.28
+                )
+                    .offset(y: markerIsRaised ? -size * 0.76 : -size * 0.62)
+            }
         }
         .frame(width: size, height: size)
     }
@@ -1977,5 +2013,45 @@ private extension CGPoint {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(isGlobalTransitioning: false)
+    }
+}
+
+struct HandTutorialIndicator: View {
+    let point: CGPoint
+    var customMessage: String? = nil
+    @State private var bounce = false
+    @EnvironmentObject private var lm: LanguageManager
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Text(customMessage ?? lm.t("tutorial.step1.body"))
+                .font(.app(.title3, weight: .bold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.black)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.yellow, lineWidth: 1.5))
+                )
+                .shadow(color: .black.opacity(0.35), radius: 5)
+                .frame(maxWidth: 320)
+                .multilineTextAlignment(.center)
+                .offset(y: -65)
+            
+            Image(systemName: "hand.tap.fill")
+                .font(.system(size: 40, weight: .bold))
+                .foregroundColor(.white)
+                .shadow(color: .black.opacity(0.4), radius: 5, x: 2, y: 3)
+                .rotationEffect(.degrees(180))
+                .offset(y: bounce ? -5 : 5)
+        }
+        .position(x: point.x, y: point.y - 20)
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
+                bounce = true
+            }
+        }
+        .allowsHitTesting(false)
     }
 }
