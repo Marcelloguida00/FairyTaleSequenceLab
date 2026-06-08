@@ -85,7 +85,6 @@ enum DialogueSpeakerRole: Equatable {
             self = .lumi
         } else if normalized.contains("cappuccetto")
             || normalized.contains("red riding")
-            || normalized.contains("little red")
             || normalized.contains("kesul")
             || normalized.contains("kapele")
             || normalized.contains("красн")
