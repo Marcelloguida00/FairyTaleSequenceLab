@@ -715,7 +715,7 @@ struct BookView: View {
             } else if pageIndex == 10 {
                 imageName = "scene8_card2"
             } else if pageIndex == 11 {
-                imageName = "scene8_card3"
+                imageName = "image 1"
             } else if layoutUsesImage && currentImageIndex < availableImages.count {
                 imageName = availableImages[currentImageIndex]
                 currentImageIndex += 1
@@ -990,9 +990,8 @@ struct BookView: View {
                     }
                 }
                 
-                // Sposta le prime 2 frasi da pagina 13 (index 10) a pagina 12 (index 9) e tronca il resto del testo dopo l'abbraccio
+                // Tronca il testo di pagina 13 (index 10) per rimuovere la parte del tramonto, mantenendo l'abbraccio su pagina 13
                 if editorialPages.count > 10 {
-                    var p12Text = editorialPages[9].textChunk1
                     let p13Text = editorialPages[10].textChunk1
                     
                     var p13Sentences: [String] = []
@@ -1002,17 +1001,34 @@ struct BookView: View {
                         }
                     }
                     
-                    let numSentencesToMoveToP12 = 2
-                    if p13Sentences.count > numSentencesToMoveToP12 {
-                        let movedToP12 = p13Sentences.prefix(numSentencesToMoveToP12).joined(separator: " ")
-                        p12Text = p12Text + (p12Text.isEmpty ? "" : " ") + movedToP12
-                        
-                        // Prendi il testo fino all'abbraccio (altre 3 frasi)
-                        let numSentencesToKeepOnP13 = 3
-                        let keepOnP13 = p13Sentences.dropFirst(numSentencesToMoveToP12).prefix(numSentencesToKeepOnP13).joined(separator: " ")
-                        
-                        editorialPages[9] = PageContent(layout: editorialPages[9].layout, textChunk1: p12Text, textChunk2: editorialPages[9].textChunk2, imageName: editorialPages[9].imageName)
+                    // Mantieni su pagina 13 le prime 3 frasi (Pericolo superato, abbraccio, ringraziamento al taglialegna)
+                    let numSentencesToKeepOnP13 = 3
+                    if p13Sentences.count >= numSentencesToKeepOnP13 {
+                        let keepOnP13 = p13Sentences.prefix(numSentencesToKeepOnP13).joined(separator: " ")
                         editorialPages[10] = PageContent(layout: editorialPages[10].layout, textChunk1: keepOnP13, textChunk2: editorialPages[10].textChunk2, imageName: editorialPages[10].imageName)
+                    }
+                }
+                
+                // Sposta la prima frase da pagina 9 (index 6) a pagina 8 (index 5) per far apparire il testo mancante
+                if editorialPages.count > 6 {
+                    var p8Text = editorialPages[5].textChunk1
+                    let p9Text = editorialPages[6].textChunk1
+                    
+                    var p9Sentences: [String] = []
+                    p9Text.enumerateSubstrings(in: p9Text.startIndex..<p9Text.endIndex, options: .bySentences) { substring, _, _, _ in
+                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
+                            p9Sentences.append(s)
+                        }
+                    }
+                    
+                    let numSentencesToMoveToP8 = 1
+                    if p9Sentences.count > numSentencesToMoveToP8 {
+                        let movedToP8 = p9Sentences.prefix(numSentencesToMoveToP8).joined(separator: " ")
+                        p8Text = p8Text + (p8Text.isEmpty ? "" : " ") + movedToP8
+                        let newP9Text = p9Sentences.dropFirst(numSentencesToMoveToP8).joined(separator: " ")
+                        
+                        editorialPages[5] = PageContent(layout: editorialPages[5].layout, textChunk1: p8Text, textChunk2: editorialPages[5].textChunk2, imageName: editorialPages[5].imageName)
+                        editorialPages[6] = PageContent(layout: editorialPages[6].layout, textChunk1: newP9Text, textChunk2: editorialPages[6].textChunk2, imageName: editorialPages[6].imageName)
                     }
                 }
                 
@@ -1376,9 +1392,12 @@ struct BookView: View {
     }
 
     private func speakCurrentPage() {
+        // Voice narration has been disabled per user request.
+        /*
         guard currentPage >= 0, currentPage < pageTexts.count else { return }
         let text = pageTexts[currentPage]
         AppSpeechSynthesizer.shared.speak(text, languageCode: lm.currentLanguage)
+        */
     }
     
     @ViewBuilder

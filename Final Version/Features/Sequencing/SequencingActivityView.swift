@@ -110,13 +110,13 @@ private struct SourceCardHintBorder: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: 16)
-            .stroke(Color(red: 1.0, green: 0.78, blue: 0.16), lineWidth: 5)
+            .stroke(Color(red: 0.22, green: 1.0, blue: 0.08), lineWidth: 7)
             .frame(width: cardW, height: cardH)
             .shadow(
-                color: Color(red: 1.0, green: 0.78, blue: 0.16).opacity(pulse ? 0.92 : 0.50),
-                radius: pulse ? 16 : 8
+                color: Color(red: 0.22, green: 1.0, blue: 0.08).opacity(pulse ? 1.0 : 0.55),
+                radius: pulse ? 22 : 10
             )
-            .scaleEffect(pulse ? 1.035 : 1.0)
+            .scaleEffect(pulse ? 1.045 : 1.0)
             .animation(
                 reduceMotion ? nil : .easeInOut(duration: 0.75).repeatForever(autoreverses: true),
                 value: pulse
@@ -126,6 +126,33 @@ private struct SourceCardHintBorder: View {
                 pulse = true
             }
             .allowsHitTesting(false)
+    }
+}
+
+private struct SourceCardHintWrapper<Content: View>: View {
+    let content: Content
+    let cardW: CGFloat
+    let cardH: CGFloat
+
+    @State private var jumping = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    init(cardW: CGFloat, cardH: CGFloat, @ViewBuilder content: () -> Content) {
+        self.cardW = cardW
+        self.cardH = cardH
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .overlay(SourceCardHintBorder(cardW: cardW, cardH: cardH))
+            .offset(y: jumping ? -11 : 0)
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(.easeInOut(duration: 0.52).repeatForever(autoreverses: true)) {
+                    jumping = true
+                }
+            }
     }
 }
 
@@ -798,25 +825,31 @@ struct SequencingActivityView<Reward: View>: View {
     @ViewBuilder
     private func sourceCard(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
         if let card = cardData(for: cardId) {
-            cardInteractionGestures(
-                SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
-                    .frame(width: cardW, height: cardH)
-                    .scaleEffect(cardTouchScale(for: cardId))
-                    .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
-                    .contentShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(sourceCardHintOverlay(cardId: cardId, cardW: cardW, cardH: cardH)),
-                cardId: cardId,
-                originSlot: nil
-            )
+            if guidedSourceCardID == cardId {
+                cardInteractionGestures(
+                    SourceCardHintWrapper(cardW: cardW, cardH: cardH) {
+                        SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                            .frame(width: cardW, height: cardH)
+                            .scaleEffect(cardTouchScale(for: cardId))
+                            .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
+                            .contentShape(RoundedRectangle(cornerRadius: 16))
+                    },
+                    cardId: cardId,
+                    originSlot: nil
+                )
+            } else {
+                cardInteractionGestures(
+                    SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                        .frame(width: cardW, height: cardH)
+                        .scaleEffect(cardTouchScale(for: cardId))
+                        .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
+                        .contentShape(RoundedRectangle(cornerRadius: 16)),
+                    cardId: cardId,
+                    originSlot: nil
+                )
+            }
         } else {
             ghostCard(cardW: cardW, cardH: cardH)
-        }
-    }
-
-    @ViewBuilder
-    private func sourceCardHintOverlay(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
-        if guidedSourceCardID == cardId {
-            SourceCardHintBorder(cardW: cardW, cardH: cardH)
         }
     }
 

@@ -3,14 +3,13 @@
 Backlog di funzionalità e miglioramenti pianificati per l’app.
 
 ---
-## TASK OGGI ##
-- **LIBRO**
-- **MIGLIORA LA UX/UI DEL GIOCO DELLE SEQUENZE**
-- **MIGLIRARE IL SETTINGS SU DIVERSI DISPOSITIVI**
-- **AGGIUNGERE TUTTE LE ACCESSIBILITà NEL SETTINGS**
-- **MODIFICARE COLORE DEL TOGGLE**
-- **CAMBIARE LO STILE DELLA NOTIFICA DI QUANDO HAI SBLOCCATO IL NUOVO CAPTOLO DEL LIBRO**
-- **FARE GLI SCREEN DELL'APP DA AGGIUNGERE ALL'APP STORE**
+## TASK ##
+- **FARE L'ONBOARDING E TUTORIAL**
+- **Mmigliorare i dialoghi**
+- **fare narrazione**
+- **migliorare accesibility**
+- 
+
   
 
 ## FUTURE TASK

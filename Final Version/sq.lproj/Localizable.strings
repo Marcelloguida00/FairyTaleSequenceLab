@@ -50,7 +50,8 @@
 /* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
 "book.chapter_unlocked.title"   = "Urime!\nKe zhbllokuar një kapitull të ri në libër!";
 "book.chapter_unlocked.message" = "«%@» është tani në librin e përrallave.";
-"book.chapter_unlocked.open_button" = "Hape";
+"book.chapter_unlocked.open_button" = "Hap librin";
+"book.chapter_unlocked.continue_button" = "Vazhdo";
 "book.chapter_unlocked.tap_hint" = "Prek ekranin për të vazhduar.";
 "book.chapter_unlocked.open_hint" = "Prek dy herë për të hapur librin e përrallave.";
 "a11y.storybook_button"          = "Hap librin e përrallave";
@@ -283,7 +284,7 @@
 "settings.enable_animations.description" = "Çaktivizoni efektet vizuale dhe kalimet.";
 "settings.enable_sounds" = "Efektet e Zërit";
 "settings.enable_sounds.description" = "Aktivizoni ose çaktivizoni tingujt e ndërveprimit dhe menysë.";
-"settings.reduce_contrast" = "Zvogëlo kontrastin";
+"settings.reduce_contrast" = "Rrit kontrastin";
 "settings.reduce_contrast.description" = "Përdorni ngjyra me kontrast të lartë për të përmirësuar lexueshmërinë e tekstit.";
 "settings.differentiate" = "Diferencuhu pa përdorur vetëm ngjyrën";
 "settings.differentiate.description" = "Shtoni modele dhe ikona për të ndihmuar në dallimin e elementeve përtej ngjyrës.";

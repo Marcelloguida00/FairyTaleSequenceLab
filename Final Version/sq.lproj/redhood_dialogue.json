@@ -3,138 +3,135 @@
     {
       "waypoint": 0,
       "introDialogue": [
-        { "speaker": "Lumi", "text": "Ku jam?… A je ti Kësulëkuqja? Pse je e trishtuar?" },
-        { "speaker": "Kësulëkuqja", "text": "O Lumi, jam shumë e trishtuar! Lord Tempus i ligë ka përzier gjithë historinë time. Më ndihmo ta rregullojmë!" },
-        { "speaker": "Lumi", "text": "Mos u trishto, të ndihmoj unë! Së bashku do t'i kthejmë gjërat në vendin e duhur." },
-        { "speaker": "Kësulëkuqja", "text": "Faleminderit, Lumi! Shkojmë drejt shtegut që të renditim ngjarjet në çdo ndalesë. Fillojmë!" }
+        { "speaker": "Lumi", "text": "Je Kësulëkuqja? Pse je e trishtuar?" },
+        { "speaker": "Kësulëkuqja", "text": "Lord Tempus përzieu historinë time! Më ndihmo ta rregullojmë, fillojmë!" }
       ]
     },
     {
       "waypoint": 1,
       "eventId": 1,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Jemi në shtëpinë e nënës që po më përgatit një shportë me ushqim dhe bukë për gjyshen e sëmurë. Më ndihmo të vendos veprimet e mia në rendin e duhur para se të nisem!" }
+        { "speaker": "Kësulëkuqja", "text": "Nëna përgatit shportën për gjyshen e sëmurë. Vendos veprimet e mia në rend para se të nisem!" }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "U bë! Tani nëna të jep shportën, vesh mantelin dhe në fund del nga shtëpia!" },
-        { "speaker": "Kësulëkuqja", "text": "Urime Lumi, ishe shumë i shpejtë! Tani mund të nisem. Mbaj mend: para se të dalësh nga shtëpia duhet të përgatitesh mirë!" }
+        { "speaker": "Lumi", "text": "U bë! Nëna të jep shportën, vesh mantelin dhe del nga shtëpia." },
+        { "speaker": "Kësulëkuqja", "text": "Urime! Mbaj mend: para se të dalësh duhet gjithmonë të përgatitesh mirë." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "U bë! Tani nëna të jep shportën, vesh mantelin dhe në fund del nga shtëpia!" },
-        { "speaker": "Kësulëkuqja", "text": "Bravo Lumi, e pe që duke provuar përsëri ia dole! Mbaj mend: para se të dalësh nga shtëpia duhet të përgatitesh mirë!" }
+        { "speaker": "Lumi", "text": "U bë! Nëna të jep shportën, vesh mantelin dhe del nga shtëpia." },
+        { "speaker": "Kësulëkuqja", "text": "Bravo, ia dole duke provuar! Përgatitja para daljes është e rëndësishme." }
       ]
     },
     {
       "waypoint": 2,
       "eventId": 2,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Nisem në pyll. Dielli shkëlqen, ka lule me ngjyra, zogj të vegjël dhe flutura. Por u shpërqendrova duke mbledhur lule… më ndihmon të rendis momentet e kësaj ecjeje?" }
+        { "speaker": "Kësulëkuqja", "text": "U shpërqendrova duke mbledhur lule në pyll! Rendis momentet e kësaj ecjeje." }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Ja ku jemi! Së pari ecje, pastaj i pe lulet, u ndale për t'i mbledhur dhe u largove nga shtegu." },
-        { "speaker": "Kësulëkuqja", "text": "Çfarë punë e shkëlqyer, gjithçka perfekte! Mësova që nëse shpërqendrohesh rrezikon të humbasësh rrugën e duhur." }
+        { "speaker": "Lumi", "text": "Ja! Së pari ecje, pastaj lule, u ndale dhe u largove nga shtegu." },
+        { "speaker": "Kësulëkuqja", "text": "Perfekte! Shpërqendrimi të bën të humbasësh rrugën e duhur." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Ja ku jemi! Së pari ecje, pastaj i pe lulet, u ndale për t'i mbledhur dhe u largove nga shtegu." },
-        { "speaker": "Kësulëkuqja", "text": "Punë e mirë Lumi, ishe i fortë duke provuar përsëri! Mësova që nëse shpërqendrohesh rrezikon të humbasësh rrugën e duhur." }
+        { "speaker": "Lumi", "text": "Ja! Së pari ecje, pastaj lule, u ndale dhe u largove nga shtegu." },
+        { "speaker": "Kësulëkuqja", "text": "Mirë që provove përsëri! Shpërqendrimi të bën të humbasësh rrugën." }
       ]
     },
     {
       "waypoint": 3,
       "eventId": 3,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Në shteg shfaqet një ujk dhe fillon të flasë me mua. I tregoj që po shkoj te gjysja ime e sëmurë. Ujku duket kurioz por jo frikësues. T'i vendosim në rend takimin tonë?" }
+        { "speaker": "Kësulëkuqja", "text": "Një ujk kurioz më ndalon në shteg! T'i vendosim në rend momentet e takimit?" }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Gjithçka në rregull! Ujku afrohet, të flet dhe zbulon ku jeton gjysja." },
-        { "speaker": "Kësulëkuqja", "text": "Çfarë skuadre jemi! Duhet të jesh në guardia nga të huajt." }
+        { "speaker": "Lumi", "text": "Gjithçka në rend! Ujku afrohet, flet me ty dhe mëson ku jeton gjysja." },
+        { "speaker": "Kësulëkuqja", "text": "Çfarë skuadre! Gjithmonë ki kujdes nga të huajt." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Gjithçka në rregull! Ujku afrohet, të flet dhe zbulon ku jeton gjysja." },
-        { "speaker": "Kësulëkuqja", "text": "Së bashku ia dolëm, bravo që vazhdove! Duhet të jesh në guardia nga të huajt." }
+        { "speaker": "Lumi", "text": "Gjithçka në rend! Ujku afrohet, flet me ty dhe mëson ku jeton gjysja." },
+        { "speaker": "Kësulëkuqja", "text": "Së bashku ia dolëm! Ki kujdes gjithmonë nga të huajt." }
       ]
     },
     {
       "waypoint": 4,
       "eventId": 4,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Ujku vrapon në pyll dhe arrin te shtëpia e gjyshes para meje. Dëshiron të më parandalojë! T'i rendisim veprimet e tij për të parë çfarë bën!" }
+        { "speaker": "Kësulëkuqja", "text": "Ujku vrapon tek gjysja për të ardhur para meje! Rendis veprimet e tij." }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Ngjarjet janë në rend: ujku vrapon mes pemëve, sheh shtëpinë dhe troket në derë." },
-        { "speaker": "Kësulëkuqja", "text": "Mahnitëse, sekuencë perfekte! Ujku ishte i zgjuar—ndonjëherë shkurtimet fshehin shaka të këqija." }
+        { "speaker": "Lumi", "text": "Në rend: ujku vrapon mes pemëve, sheh shtëpinë dhe troket në derë." },
+        { "speaker": "Kësulëkuqja", "text": "Perfekte! Ujku ishte i zgjuar—shkurtimet fshehin shaka të këqija." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Ngjarjet janë në radhë: ujku vrapon mes pemëve, sheh shtëpinë dhe troket në derë." },
-        { "speaker": "Kësulëkuqja", "text": "Garë e kaluar, fantastike që provuam përsëri! Ujku ishte i zgjuar—ndonjëherë shkurtimet fshehin shaka të këqija." }
+        { "speaker": "Lumi", "text": "Në rend: ujku vrapon mes pemëve, sheh shtëpinë dhe troket në derë." },
+        { "speaker": "Kësulëkuqja", "text": "Mirë që provuam! Shkurtimet mund të fshehin surpriza të këqija." }
       ]
     },
     {
       "waypoint": 5,
       "eventId": 5,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Ujku hyn në shtëpi dhe sillet si gjysja. Vesh kapuçen dhe fanellën e natës, pastaj shtrihet në shtrat dhe më pret. Më ndihmo Lumi!" }
+        { "speaker": "Kësulëkuqja", "text": "Ujku vishet si gjysja dhe pret në shtrat! Rendis veprimet e tij." }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Gjithçka në rend! Ujku merr rrobat, vesh kapuçen dhe fshihet nën mbuloja." },
-        { "speaker": "Kësulëkuqja", "text": "Je i madh Lumi! Tani e di që gjërat nuk janë gjithmonë si duken në fillim." }
+        { "speaker": "Lumi", "text": "Gjithçka gati! Merr rrobat, vesh kapuçen dhe fshihet nën mbuloja." },
+        { "speaker": "Kësulëkuqja", "text": "Je i madh, Lumi! Gjërat nuk janë gjithmonë si duken." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Gjithçka në rend! Ujku merr rrobat, vesh kapuçen dhe fshihet nën mbuloja." },
-        { "speaker": "Kësulëkuqja", "text": "Heqja dorës nuk është zgjidhje—ia dolëm! Tani e di që gjërat nuk janë gjithmonë si duken në fillim." }
+        { "speaker": "Lumi", "text": "Gjithçka gati! Merr rrobat, vesh kapuçen dhe fshihet nën mbuloja." },
+        { "speaker": "Kësulëkuqja", "text": "Nuk dorëzohemi—ia dolëm! Gjërat nuk janë gjithmonë si duken." }
       ]
     },
     {
       "waypoint": 6,
       "eventId": 6,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Më në fund mbërrij te shtëpia e gjyshes. Trokas në derë dhe dëgjoj nga brenda një zë të çuditshëm që më thotë të hyj. T'i rendisim veprimet e hyrjes sime?" }
+        { "speaker": "Kësulëkuqja", "text": "Mbërrij tek gjysja dhe dëgjoj një zë të çuditshëm! Rendis veprimet e hyrjes sime." }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Ja ku jemi: hap derën, dëgjon dhe përpiqet të hetojë, pastaj shkon drejt shtratit." },
-        { "speaker": "Kësulëkuqja", "text": "Urime, gjithçka e saktë herën e parë! Mësova që duhet gjithmonë t'i dëgjosh ndjenjat kur diçka duket e çuditshme." }
+        { "speaker": "Lumi", "text": "Ja: hap derën, dëgjon me kujdes dhe shkon drejt shtratit." },
+        { "speaker": "Kësulëkuqja", "text": "Herën e parë perfekte! Besoji ndjenjave kur diçka duket e çuditshme." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Ja ku jemi: hap derën, vendos shportën mbi tavolinë dhe shkon drejt shtratit." },
-        { "speaker": "Kësulëkuqja", "text": "Fantastike—duke gabuar mësohet! Mësova që duhet gjithmonë t'i dëgjosh ndjenjat kur diçka duket e çuditshme." }
+        { "speaker": "Lumi", "text": "Ja: hap derën, vendos shportën dhe shkon drejt shtratit." },
+        { "speaker": "Kësulëkuqja", "text": "Duke gabuar mësohet! Besoji ndjenjave kur diçka duket e çuditshme." }
       ]
     },
     {
       "waypoint": 7,
       "eventId": 7,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Afrohem te shtrati dhe shoh gjyshen, por diçka nuk shkon. Duket ndryshe nga zakonisht… Më ndihmo të rendis momentet e zbulimit tim!" }
+        { "speaker": "Kësulëkuqja", "text": "Gjysja duket ndryshe nga zakonisht… Rendis momentet e zbulimit tim!" }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Ja ku jemi! Së pari sheh veshët e mëdhenj, pastaj sytë e mëdhenj dhe në fund gojën plot me dhëmbë!" },
-        { "speaker": "Kësulëkuqja", "text": "Çfarë detektivi, Lumi! Të bësh pyetje është mënyra më e mirë për të zbuluar të vërtetën." }
+        { "speaker": "Lumi", "text": "Ja! Veshët e mëdhenj, pastaj sytë e mëdhenj dhe goja plot me dhëmbë!" },
+        { "speaker": "Kësulëkuqja", "text": "Çfarë detektivi! Pyetjet janë mënyra më e mirë për të gjetur të vërtetën." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Shiko! Së pari sheh veshët e mëdhenj, pastaj sytë e mëdhenj dhe në fund gojën plot me dhëmbë!" },
-        { "speaker": "Kësulëkuqja", "text": "Së bashku jemi shumë të fortë, mirë që provove përsëri! Të bësh pyetje është mënyra më e mirë për të zbuluar të vërtetën." }
+        { "speaker": "Lumi", "text": "Shiko! Veshët e mëdhenj, sytë e mëdhenj dhe goja plot me dhëmbë!" },
+        { "speaker": "Kësulëkuqja", "text": "Së bashku jemi të fortë! Pyetjet ndihmojnë të zbulosh të vërtetën." }
       ]
     },
     {
       "waypoint": 8,
       "eventId": 8,
       "introDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Kam shumë frikë, por ndihma arrin në kohë. Ujku ndalet dhe gjysja e unë jemi të sigurt. T'i vendosim në rend ngjarjet e fundit?" }
+        { "speaker": "Kësulëkuqja", "text": "Ndihma arrin në kohë! Ujku ndalet. Rendis ngjarjet e fundit." }
       ],
       "rewardDialogue_success": [
-        { "speaker": "Lumi", "text": "Ngjarjet janë në vend: gjuetari e ndjek ujkun, gjysja shpëtohet dhe festoni!" },
-        { "speaker": "Kësulëkuqja", "text": "Sa lumturi, Lumi! Fitëm! Mbaj mend gjithmonë që bashkimi bën forcën dhe së bashku kalojmë çdo rrezik." }
+        { "speaker": "Lumi", "text": "Gjithçka gati: gjuetari e ndjek ujkun, gjysja shpëtohet dhe festoni!" },
+        { "speaker": "Kësulëkuqja", "text": "Fitëm, Lumi! Bashkimi bën forcën." }
       ],
       "rewardDialogue_retry": [
-        { "speaker": "Lumi", "text": "Ngjarjet janë në vend: gjuetari e ndjek ujkun, gjysja shpëtohet dhe festoni!" },
-        { "speaker": "Kësulëkuqja", "text": "Mahnitshëm Lumi. Duhej edhe një provë! Mbaj mend gjithmonë që bashkimi bën forcën dhe së bashku kalojmë çdo rrezik." }
+        { "speaker": "Lumi", "text": "Gjithçka gati: gjuetari e ndjek ujkun, gjysja shpëtohet dhe festoni!" },
+        { "speaker": "Kësulëkuqja", "text": "Duhej edhe një provë, por ia dolëm! Bashkimi bën forcën." }
       ]
     },
     {
       "waypoint": 9,
       "rewardDialogue": [
-        { "speaker": "Kësulëkuqja", "text": "Shiko qiellin, Lumi, shkëlqen përsëri! Të gjitha kujtimet janë në vend dhe magjia u zhduk." },
-        { "speaker": "Lumi", "text": "Ia dolëm! Ishte e bukur të të ndihmoja të rirendisje historinë tënde." },
-        { "speaker": "Kësulëkuqja", "text": "Je shok i mrekullueshëm, Lumi. Tani mund ta lexosh gjithë historinë time dhe mbaj mend që edhe shokët e mi të tjerë kanë nevojë për ndihmën tënde—por faleminderit përsëri, shihemi së shpejti!" }
+        { "speaker": "Kësulëkuqja", "text": "Shiko qiellin, shkëlqen përsëri! Të gjitha kujtimet janë në vend." },
+        { "speaker": "Lumi", "text": "Ia dolëm! Tani mund ta lexosh gjithë historinë tënde, Kësulëkuqe." }
       ]
     }
   ]
