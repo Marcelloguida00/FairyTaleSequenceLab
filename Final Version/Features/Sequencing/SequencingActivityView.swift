@@ -258,6 +258,12 @@ struct SequencingActivityView<Reward: View>: View {
     private let tapToFlipMaxDistance: CGFloat = 8
     private let celebrationPostWaveTailCap: TimeInterval = 0.35
     private let celebrationZoomAnimationDelay: TimeInterval = 0.12
+    /// > 1 speeds up the post-completion card wave, flip-back, and celebration handoff (both SFX modes).
+    private let completionAnimationSpeed: Double = 1.55
+
+    private func completionScaled(_ duration: TimeInterval) -> TimeInterval {
+        duration / completionAnimationSpeed
+    }
 
     init(
         event: EventData,
@@ -822,18 +828,18 @@ struct SequencingActivityView<Reward: View>: View {
         }
     }
 
-    /// Alternates `SequencingFlipAll_1` / `SequencingFlipAll_2` for every flip (single card or flip all).
+    /// Alternates flip sounds for every card toggle (simplified or orchestral).
     private func playFlipToggleSound() {
-        if flipToggleUsesFirstSound {
-            SequencingCardSFXPlayer.shared.play(.flipAll1)
-        } else {
-            SequencingCardSFXPlayer.shared.play(.flipAll2)
-        }
+        SequencingSoundCoordinator.cardFlipped(usesAlternateFlipSound: !flipToggleUsesFirstSound)
         flipToggleUsesFirstSound.toggle()
     }
 
     private var flipAnimation: Animation {
         reduceMotion ? .linear(duration: 0.01) : .easeInOut(duration: 0.42)
+    }
+
+    private var completionFlipAnimation: Animation {
+        reduceMotion ? .linear(duration: 0.01) : .easeInOut(duration: completionScaled(0.42))
     }
 
     private func cardTouchScale(for cardId: Int) -> CGFloat {
@@ -1127,20 +1133,20 @@ struct SequencingActivityView<Reward: View>: View {
     private func runCompletionWaveAndCelebrate() async {
         isRunningCompletionSequence = true
         
-        withAnimation(flipAnimation) {
+        withAnimation(completionFlipAnimation) {
             for index in flippedStates.indices {
                 flippedStates[index] = false
             }
         }
-        
+
         let isOrchestral = SequencingSFXMode.current == .orchestral
 
         if isOrchestral {
             let correctLead = OrchestralAudioMetrics.correctClipDuration
-            try? await Task.sleep(for: .seconds(correctLead * 0.28))
+            try? await Task.sleep(for: .seconds(completionScaled(correctLead * 0.28)))
         } else {
             let beat = OrchestralAudioMetrics.simplifiedVictoryArpeggioBeat
-            try? await Task.sleep(for: .seconds(beat * 0.5))
+            try? await Task.sleep(for: .seconds(completionScaled(beat * 0.5)))
         }
 
         SequencingSoundCoordinator.victoryJingle()
@@ -1157,19 +1163,19 @@ struct SequencingActivityView<Reward: View>: View {
             let settleHold: TimeInterval
 
             if isOrchestral {
-                let waveWindow = jingleDuration * 0.88
+                let waveWindow = completionScaled(jingleDuration * 0.88)
                 let slotCycle = waveWindow / Double(slotCount)
-                pulseUp = 0.46
-                pulseDown = 0.36
-                swellHold = max(0.12, slotCycle * 0.42)
-                settleHold = max(0.10, slotCycle * 0.38)
+                pulseUp = completionScaled(0.46)
+                pulseDown = completionScaled(0.36)
+                swellHold = max(0.08, slotCycle * 0.42)
+                settleHold = max(0.07, slotCycle * 0.38)
             } else {
                 // Match the four quick arpeggio hits in SequencingVictory_Jingle (~0.20 s apart).
                 let beat = OrchestralAudioMetrics.simplifiedVictoryArpeggioBeat
-                pulseUp = 0.26
-                pulseDown = 0.22
-                swellHold = beat * 0.52
-                settleHold = beat * 0.48
+                pulseUp = completionScaled(0.26)
+                pulseDown = completionScaled(0.22)
+                swellHold = completionScaled(beat * 0.52)
+                settleHold = completionScaled(beat * 0.48)
             }
 
             for slot in slotContents.indices {
@@ -1195,11 +1201,11 @@ struct SequencingActivityView<Reward: View>: View {
             }
 
             let waveElapsed = (swellHold + settleHold) * Double(max(slotCount - 1, 0)) + swellHold
-            let naturalTail = max(0.2, jingleDuration - waveElapsed)
-            let tail = min(naturalTail, celebrationPostWaveTailCap)
+            let naturalTail = max(0.12, jingleDuration - waveElapsed)
+            let tail = min(completionScaled(naturalTail), completionScaled(celebrationPostWaveTailCap))
             try? await Task.sleep(for: .seconds(tail))
         } else {
-            try? await Task.sleep(for: .seconds(jingleDuration))
+            try? await Task.sleep(for: .seconds(completionScaled(jingleDuration)))
         }
 
         await triggerCelebration()
@@ -1211,8 +1217,8 @@ struct SequencingActivityView<Reward: View>: View {
         AppSettings.hapticSuccess()
         UIAccessibility.post(notification: .announcement, argument: "Correct! Great job!")
 
-        let zoomAnimation = Animation.spring(response: 0.6, dampingFraction: 0.8)
-            .delay(reduceMotion ? 0 : celebrationZoomAnimationDelay)
+        let zoomAnimation = Animation.spring(response: completionScaled(0.6), dampingFraction: 0.8)
+            .delay(reduceMotion ? 0 : completionScaled(celebrationZoomAnimationDelay))
 
         if onSequencingComplete != nil {
             withAnimation(zoomAnimation) {

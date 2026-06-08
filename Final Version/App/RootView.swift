@@ -17,6 +17,10 @@ struct RootView: View {
         isTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01
     }
 
+    private var shouldDeferMainMenuPanelReveal: Bool {
+        AppFeatureFlags.showsOnboarding && !hasSeenOnboarding
+    }
+
     var body: some View {
         let usesDyslexiaFont = fontSettings.dyslexiaFontEnabled
 
@@ -46,6 +50,7 @@ struct RootView: View {
                 MainMenuPanelLayer(
                     isTransitioning: isTransitioning,
                     resetID: menuPanelResetID,
+                    deferPanelReveal: shouldDeferMainMenuPanelReveal,
                     onPlay: {
                         Task { await beginGame() }
                     }
@@ -66,9 +71,15 @@ struct RootView: View {
 
             // Onboarding: primo avvio assoluto
             if AppFeatureFlags.showsOnboarding && !hasSeenOnboarding {
-                OnboardingView {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        hasSeenOnboarding = true
+                Group {
+                    if AppFeatureFlags.usesVillainOnboardingCinematic {
+                        VillainOnboardingCinematicView {
+                            Task { await completeVillainOnboarding() }
+                        }
+                    } else {
+                        OnboardingView {
+                            Task { await completeOnboarding() }
+                        }
                     }
                 }
                 .zIndex(100)
@@ -87,6 +98,30 @@ struct RootView: View {
             }
             BackgroundMusicPlayer.shared.start()
         }
+    }
+
+    @MainActor
+    private func completeOnboarding() async {
+        withAnimation(.easeInOut(duration: 0.35)) {
+            hasSeenOnboarding = true
+        }
+
+        await CloudTransitionAnimator.runCurtainOpen(
+            exitProgress: $menuCloudExitProgress,
+            duration: CloudTransitionAnimator.playOpenDuration
+        ) {}
+
+        menuCloudExitProgress = 0
+    }
+
+    @MainActor
+    private func completeVillainOnboarding() async {
+        withAnimation(.easeInOut(duration: 0.35)) {
+            hasSeenOnboarding = true
+        }
+
+        // Keep main-menu background clouds fixed (enter = 1, exit = 0).
+        menuCloudExitProgress = 0
     }
 
     /// Play: sipario già presente → si apre (0.8s) → gioco.

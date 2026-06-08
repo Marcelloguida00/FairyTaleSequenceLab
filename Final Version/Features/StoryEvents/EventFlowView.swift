@@ -81,7 +81,7 @@ struct EventFlowView: View {
             notifyPhaseChange(.intro)
 
             BackgroundMusicPlayer.shared.fadeOut()
-            ForestAmbiencePlayer.shared.fadeIn()
+            ForestAmbiencePlayer.shared.enterSequencingSection()
 
             if eventData.id == 3 && !hasAskedForReview {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -93,7 +93,7 @@ struct EventFlowView: View {
             notifyPhaseChange(newPhase)
         }
         .onDisappear {
-            ForestAmbiencePlayer.shared.fadeOutAndStop()
+            ForestAmbiencePlayer.shared.leaveSequencingSection()
             BackgroundMusicPlayer.shared.fadeIn()
         }
         .alert(lm.t("review.popup.title"), isPresented: $showReviewAlert) {

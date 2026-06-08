@@ -21,7 +21,7 @@ final class OrchestralSequencingPlayer {
         guard AppAudioSettings.isSequencingSFXAudible, (1...4).contains(step) else { return }
         stopPickLoop()
 
-        guard let player = preparePlayer(named: "OrchestralPick_\(step)", loops: -1) else { return }
+        guard let player = preparePlayer(named: OrchestralAudioResources.pickNote(step: step), loops: -1) else { return }
         player.volume = pickVolume
         player.play()
         pickPlayer = player
@@ -35,17 +35,26 @@ final class OrchestralSequencingPlayer {
     func playCorrect(step: Int) {
         guard (1...4).contains(step) else { return }
         stopPickLoop()
-        playOneShot(named: "OrchestralCorrect_\(step)", volumeScale: 1.0)
+        playOneShot(named: OrchestralAudioResources.correctResponse(step: step), volumeScale: 1.0)
     }
 
     func playWrong() {
         wrongCycleIndex = (wrongCycleIndex % 4) + 1
-        playOneShot(named: "OrchestralWrong_\(wrongCycleIndex)", volumeScale: 0.92)
+        playOneShot(named: OrchestralAudioResources.wrongResponse(cycle: wrongCycleIndex), volumeScale: 0.92)
     }
 
     func playVictoryJingle() {
         stopPickLoop()
-        playOneShot(named: "OrchestralVictory_Jingle", volumeScale: 1.0)
+        playOneShot(named: OrchestralAudioResources.victoryJingle, volumeScale: 1.0)
+    }
+
+    func playFlip(alternate: Bool) {
+        let orchestralName = OrchestralAudioResources.flipCard(alternate: alternate)
+        if playOneShotIfAvailable(named: orchestralName, volumeScale: 1.05) {
+            return
+        }
+        let fallback = alternate ? "SequencingFlipAll_2" : "SequencingFlipAll_1"
+        playOneShot(named: fallback, volumeScale: 1.05)
     }
 
     private var savedVolume: Float {
@@ -64,10 +73,22 @@ final class OrchestralSequencingPlayer {
         oneShotPlayer = player
     }
 
-    private func preparePlayer(named resource: String, loops: Int) -> AVAudioPlayer? {
+    @discardableResult
+    private func playOneShotIfAvailable(named resource: String, volumeScale: Float) -> Bool {
+        guard AppAudioSettings.isSequencingSFXAudible else { return false }
+        guard let player = preparePlayer(named: resource, loops: 0, logMissing: false) else { return false }
+        player.volume = min(savedVolume * 1.35 * volumeScale, 1)
+        player.play()
+        oneShotPlayer = player
+        return true
+    }
+
+    private func preparePlayer(named resource: String, loops: Int, logMissing: Bool = true) -> AVAudioPlayer? {
         guard let url = Bundle.main.url(forResource: resource, withExtension: "wav")
             ?? Bundle.main.url(forResource: resource, withExtension: "wav", subdirectory: "Resources/Audio") else {
-            assertionFailure("Missing orchestral audio resource: \(resource).wav")
+            if logMissing {
+                assertionFailure("Missing orchestral audio resource: \(resource).wav")
+            }
             return nil
         }
 
