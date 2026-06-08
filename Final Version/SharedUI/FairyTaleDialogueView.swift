@@ -93,16 +93,9 @@ struct FairyTaleDialogueView: View {
         }
         .ignoresSafeArea()
         .accessibilityElement(children: .contain)
-        .onAppear {
-            speakCurrentLine()
-        }
-        .onDisappear {
-            AppSpeechSynthesizer.shared.stop()
-        }
         .onChange(of: lineIndex) { _, _ in
             dialogueChunkIndex = 0
             isDialogueTextFullyShown = false
-            speakCurrentLine()
         }
         .onChange(of: dialogueChunkIndex) { _, _ in
             isDialogueTextFullyShown = false
@@ -238,10 +231,6 @@ struct FairyTaleDialogueView: View {
         }
     }
 
-    private func speakCurrentLine() {
-        guard let line = currentLine else { return }
-        AppSpeechSynthesizer.shared.speak("\(line.speaker). \(line.text)", languageCode: lm.currentLanguage)
-    }
 }
 
 // MARK: - Dialogue frame (name plate + body text)

@@ -56,9 +56,10 @@ struct SequenceCardView: View {
                     
                     VStack(spacing: 8) {
                         Image(systemName: "photo")
-                            .font(.system(size: 24))
+                            .font(.system(.title3))
                             .foregroundColor(Color(red: 0.5, green: 0.3, blue: 0.1))
-                        
+                            .accessibilityHidden(true)
+
                         Text("Scena \(card.id + 1)")
                             .font(.app(.caption, weight: .bold))
                             .foregroundColor(Color(red: 0.4, green: 0.2, blue: 0.05))

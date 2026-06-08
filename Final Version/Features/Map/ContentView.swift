@@ -364,8 +364,9 @@ struct ContentView: View {
                     .disabled(isMapToolbarBlocked)
                     .opacity(isMapToolbarBlocked ? 0.45 : 1)
                     .accessibilityLabel(lm.t("a11y.settings_button"))
-                        .padding(.top, topChromeTopPadding(for: geometry.size))
-                        .padding(.trailing, horizontalInset)
+                    .accessibilityHint(lm.t("a11y.settings_hint"))
+                        .padding(.top, max(topChromeTopPadding(for: geometry.size), geometry.safeAreaInsets.top + 12))
+                        .padding(.trailing, max(horizontalInset, geometry.safeAreaInsets.trailing + 12))
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .zIndex(31)
                     .transition(.opacity)
@@ -409,9 +410,17 @@ struct ContentView: View {
 
             if activeMap == .redHood {
                 ForEach(RedHoodMapGraph.storyWaypoints, id: \.id) { wp in
-                    WaypointDot(state: dotState(for: wp.id), size: redHoodDotSize(for: mapSize))
+                    let wpState = dotState(for: wp.id)
+                    WaypointDot(state: wpState, size: redHoodDotSize(for: mapSize))
                         .position(projection.screenPoint(fromPixel: wp.point))
-                        .allowsHitTesting(false)
+                        .frame(width: 50, height: 50)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(redHoodWaypointAccessibilityLabel(for: wp.id, state: wpState))
+                        .accessibilityHint(redHoodWaypointAccessibilityHint(for: wpState))
+                        .accessibilityAddTraits(.isButton)
+                        .onTapGesture {
+                            handleRedHoodWaypointActivation(wp.id)
+                        }
                 }
             }
 
@@ -428,7 +437,14 @@ struct ContentView: View {
                         }
                     }
                     .position(projection.screenPoint(fromPixel: wp.point))
-                    .allowsHitTesting(false)
+                    .frame(width: 50, height: 50)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(worldBaseAccessibilityLabel(for: wp.id))
+                    .accessibilityHint(worldBaseAccessibilityHint(for: wp.id))
+                    .accessibilityAddTraits(.isButton)
+                    .onTapGesture {
+                        handleMainMapWaypointActivation(wp.id)
+                    }
                 }
             }
 
@@ -441,6 +457,8 @@ struct ContentView: View {
             .position(
                 projection.screenPoint(fromPixel: avatarPosition)
             )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(lm.t("a11y.avatar"))
 
             if let fgName = activeMap.foregroundImageName {
                 MapBackgroundImage(name: fgName, mapSize: mapSize)
@@ -475,11 +493,56 @@ struct ContentView: View {
                     handleMapTap(value.location, projection: projection)
                 }
         )
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(lm.t("a11y.world_map"))
     }
 
     private func avatarSize(for mapSize: CGSize) -> CGFloat {
         let multiplier: CGFloat = 0.11
         return min(mapSize.width, mapSize.height) * multiplier
+    }
+
+    private func worldBaseAccessibilityLabel(for baseID: Int) -> String {
+        if isWorldBaseUnlocked(baseID) {
+            if let region = MapGraph.storyRegion(for: baseID) {
+                return lm.t(region.titleKey)
+            }
+            return lm.t("a11y.play_button")
+        }
+        if let region = MapGraph.storyRegion(for: baseID) {
+            return "\(lm.t("a11y.locked_level")): \(lm.t(region.titleKey))"
+        }
+        return lm.t("a11y.locked_level")
+    }
+
+    private func redHoodWaypointAccessibilityLabel(for id: Int, state: WaypointDot.DotState) -> String {
+        let title = levelBannerTitle(for: id)
+        switch state {
+        case .locked:
+            return "\(lm.t("a11y.locked_level")): \(title)"
+        case .completed:
+            return "\(title) — \(lm.t("a11y.celebration"))"
+        case .next:
+            return title
+        }
+    }
+
+    private func worldBaseAccessibilityHint(for baseID: Int) -> String {
+        if isWorldBaseUnlocked(baseID) {
+            return lm.t("a11y.tap_to_play")
+        }
+        return lm.t("a11y.level_locked_hint")
+    }
+
+    private func redHoodWaypointAccessibilityHint(for state: WaypointDot.DotState) -> String {
+        switch state {
+        case .locked:
+            return lm.t("a11y.level_locked_hint")
+        case .completed:
+            return lm.t("a11y.tap_to_replay")
+        case .next:
+            return lm.t("a11y.tap_to_play")
+        }
     }
 
     private func handleBackButton() {
@@ -908,6 +971,19 @@ struct ContentView: View {
         }
     }
 
+    private func handleMainMapWaypointActivation(_ baseId: Int) {
+        guard isWorldBaseUnlocked(baseId) else { return }
+        guard let target = MapGraph.waypoint(id: baseId) else { return }
+        guard let start = nearestWaypoint(to: avatarPosition, among: MapGraph.waypoints) else { return }
+
+        if target.id == start.id {
+            return
+        }
+
+        guard let route = MapGraph.shortestPath(from: start.id, to: target.id) else { return }
+        startWalking(route)
+    }
+
     private func handleMainMapTap(_ screenTap: CGPoint, projection: MapProjection) {
         let reachableBases = MapGraph.baseWaypoints.filter { isWorldBaseUnlocked($0.id) }
 
@@ -933,6 +1009,37 @@ struct ContentView: View {
         }
 
         startWalking(route)
+    }
+
+    private func handleRedHoodWaypointActivation(_ waypointId: Int) {
+        guard activeRedHoodLevel == nil else { return }
+        guard isRedHoodWaypointPlayable(waypointId) else { return }
+        guard let target = RedHoodMapGraph.waypoint(id: waypointId) else { return }
+        guard let start = nearestWaypoint(to: avatarPosition, among: RedHoodMapGraph.waypoints) else { return }
+
+        if target.id == start.id {
+            guard !isWalking else { return }
+            if shouldOfferRedHoodLevelStart(for: target.id) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
+            }
+            return
+        }
+
+        guard let route = RedHoodMapGraph.shortestPath(from: start.id, to: target.id) else { return }
+        if pendingRedHoodLevel != nil {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                pendingRedHoodLevel = nil
+            }
+        }
+        startWalking(route) {
+            if shouldOfferRedHoodLevelStart(for: target.id) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    pendingRedHoodLevel = target.id
+                }
+            }
+        }
     }
 
     private func handleRedHoodMapTap(_ screenTap: CGPoint, projection: MapProjection) {
@@ -1256,20 +1363,22 @@ private struct IslandTitlePlaque: View {
                 .accessibilityHidden(true)
 
             Text(title)
-                .font(.app(size: titleFontSize, weight: .semibold))
+                .font(.app(size: titleFontSize, weight: .semibold, relativeTo: .title3))
                 .foregroundStyle(Color(hex: "#262521"))
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
-                .minimumScaleFactor(0.5)
+                .minimumScaleFactor(0.45)
                 .padding(.horizontal, frameSize.width * 0.14)
-                .frame(width: frameSize.width)
+                .frame(width: frameSize.width, alignment: .center)
                 .accessibilityHidden(true)
         }
         .frame(width: frameSize.width, height: frameSize.height)
+        .clipped()
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .shadow(color: .black.opacity(0.22), radius: max(4, 7 * scale), x: 0, y: max(2, 4 * scale))
         .accessibilityElement(children: .ignore)
         .accessibilityAddTraits(.isHeader)
-        .accessibilityLabel(title)
+        .accessibilityLabel(title.replacingOccurrences(of: "\n", with: " "))
     }
 }
 
@@ -1331,6 +1440,8 @@ private struct ComingSoonBadge: View {
             .accessibilityHidden(true)
         }
         .frame(width: frameSize.width, height: frameSize.height)
+        .clipped()
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .shadow(color: .black.opacity(0.22), radius: max(4, 7 * mapScale), x: 0, y: max(2, 4 * mapScale))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(lm.t("map.coming_soon")). \(releaseDateText)")
@@ -1371,6 +1482,7 @@ private struct WaypointDot: View {
 
     @State private var pulse = false
     @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @Environment(\.differentiate) private var differentiate
     @AppStorage("reduceAnimations") private var reduceAnimations = false
     private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
@@ -1388,14 +1500,46 @@ private struct WaypointDot: View {
                 .shadow(color: .black.opacity(0.30), radius: 4, y: 2)
                 .frame(width: size, height: size)
 
+            if differentiate {
+                patternOverlay
+                    .frame(width: size, height: size)
+                    .clipShape(Circle())
+            }
+
             icon
                 .frame(width: size, height: size)
+                .clipShape(Circle())
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onAppear {
             guard state == .next, !reduceMotion else { return }
             withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                 pulse = true
             }
+        }
+    }
+
+    @ViewBuilder
+    private var patternOverlay: some View {
+        switch state {
+        case .completed:
+            Image(systemName: "checkmark.circle")
+                .font(.app(size: size * 0.5, weight: .bold))
+                .foregroundColor(.white.opacity(0.4))
+        case .next:
+            RadialGradient(
+                gradient: Gradient(colors: [
+                    .white.opacity(0.3),
+                    .clear
+                ]),
+                center: .center,
+                startRadius: 0,
+                endRadius: size / 2
+            )
+        case .locked:
+            Image(systemName: "lock.circle")
+                .font(.app(size: size * 0.5, weight: .bold))
+                .foregroundColor(.white.opacity(0.4))
         }
     }
 

@@ -64,6 +64,9 @@ struct TutorialOverlayView: View {
                     .shadow(color: .black.opacity(0.40), radius: 12, y: 5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     .zIndex(2)
+                    .accessibilityLabel(lm.t("a11y.tutorial_skip_button"))
+                    .accessibilityHint(lm.t("a11y.tutorial_skip_hint"))
+                    .accessibilityAddTraits(.isButton)
 
                 bottomSheet(geo: geo)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -141,6 +144,9 @@ struct TutorialOverlayView: View {
                     title: currentStep < steps.count - 1
                         ? lm.t("tutorial.next")
                         : lm.t("tutorial.done"),
+                    accessibilityHint: currentStep < steps.count - 1
+                        ? lm.t("a11y.tutorial_next_hint")
+                        : lm.t("a11y.tutorial_done_hint"),
                     action: {
                         if currentStep < steps.count - 1 {
                             withAnimation(.easeInOut(duration: 0.25)) { currentStep += 1 }

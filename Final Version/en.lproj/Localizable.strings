@@ -66,7 +66,7 @@
 
 /* Map */
 "map.coming_soon"             = "Coming Soon";
-"map.region.red_riding_hood"  = "Little Red Riding Hood";
+"map.region.red_riding_hood"  = "Red\nRiding Hood";
 "map.region.princess_frog"    = "The Princess and the Frog";
 "map.region.aladdin"          = "Aladdin";
 "map.region.beauty_beast"     = "Beauty and the Beast";
@@ -93,6 +93,8 @@
 "settings.voice_over.info" = "VoiceOver support is fully integrated. To use it, please enable the feature in your iOS System Settings.";
 "settings.reduce_contrast" = "Reduce contrast";
 "settings.reduce_contrast.description" = "Use high-contrast colors to improve text readability.";
+"settings.differentiate" = "Differentiate without colour alone";
+"settings.differentiate.description" = "Add patterns and icons to help distinguish elements beyond color alone.";
 "settings.dyslexia_font"  = "Dyslexia font";
 "settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";
@@ -201,14 +203,32 @@
 "a11y.return_to_menu"       = "Return to main menu";
 "a11y.play_button"          = "Play";
 "a11y.settings_button"      = "Open settings";
+"a11y.settings_hint"        = "Opens the settings screen";
+"a11y.locked_level"         = "Locked level";
 "a11y.menu_hint"            = "Leaves the world map and opens the title screen";
 "a11y.play_hint"            = "Opens the cloud curtain and starts the adventure";
+"a11y.main_menu"            = "Main menu";
+"a11y.world_map"            = "World map";
+"a11y.avatar"               = "Character";
 "a11y.celebration"          = "Congratulations! You did it!";
+"a11y.tap_to_play"          = "Tap to play";
+"a11y.level_locked_hint"    = "This level is locked. Complete previous levels to unlock it.";
+"a11y.tap_to_replay"        = "Tap to replay";
 "a11y.continue_sequencing"  = "Continue to the sequencing activity";
 "a11y.check_order"          = "Check your story order";
 "a11y.flip_all"             = "Flip all cards";
 "a11y.story_scene_card"     = "Story scene card";
 "a11y.story_scene_card_hint" = "Double tap to flip and read a hint.";
+"a11y.button_select_app_icon" = "Select app icon";
+"a11y.button_locked"          = "This item is locked";
+"a11y.button_open_social_link" = "Open social media link";
+"a11y.hint_adjust_slider"     = "Adjust the slider with up and down arrows";
+"a11y.source_tray"            = "Source cards";
+"a11y.source_tray_hint"       = "Drag cards from here to the slots";
+"a11y.continue_button"        = "Continue";
+"a11y.continue_hint"          = "Continues to the next event";
+"a11y.envelope_open_button"   = "Open pack";
+"a11y.envelope_open_hint"     = "Opens the envelope to reveal the unlocked cards";
 
 /* English Story Book Scenes */
 "story.redhood.scene1.title" = "Scene 1";
@@ -267,4 +287,20 @@
 "ar.scan.congrats" = "Great job!";
 "ar.scan.found_all" = "You found all the cards.";
 "ar.scan.correct" = "Correct!";
+
+/* Additional accessibility labels and hints */
+"a11y.tutorial_skip_button" = "Skip tutorial";
+"a11y.tutorial_skip_hint" = "Skips the tutorial and closes the onboarding screen";
+"a11y.tutorial_next_hint" = "Advances to the next tutorial step";
+"a11y.tutorial_done_hint" = "Completes the tutorial and closes the screen";
+"a11y.onboarding_skip_button" = "Skip onboarding";
+"a11y.onboarding_skip_hint" = "Skips the onboarding and starts the adventure";
+"a11y.onboarding_next_button" = "Next page";
+"a11y.onboarding_next_hint" = "Advances to the next onboarding page";
+"a11y.onboarding_start_button" = "Start adventure";
+"a11y.onboarding_start_hint" = "Starts the adventure with Little Red Riding Hood";
+"a11y.redhood_final_button_hint" = "Celebrates the victory and returns to the map";
+"a11y.ar_back_hint" = "Closes the augmented reality view and returns to the map";
+"a11y.reward_pack_label" = "Reward pack";
+"a11y.reward_pack_hint" = "Tap or drag upward to open the reward pack";
 

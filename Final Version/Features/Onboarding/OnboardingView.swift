@@ -164,6 +164,9 @@ struct OnboardingView: View {
                 .opacity(currentPage < pages.count - 1 ? 1 : 0)
                 .disabled(currentPage == pages.count - 1)
                 .frame(minWidth: 80, alignment: .leading)
+                .accessibilityLabel(lm.t("a11y.onboarding_skip_button"))
+                .accessibilityHint(lm.t("a11y.onboarding_skip_hint"))
+                .accessibilityAddTraits(.isButton)
 
             Spacer()
 
@@ -213,6 +216,9 @@ struct OnboardingView: View {
             .buttonStyle(.plain)
             .gameMinimumTouchTarget()
             .frame(minWidth: 80, alignment: .trailing)
+            .accessibilityLabel(currentPage < pages.count - 1 ? lm.t("a11y.onboarding_next_button") : lm.t("a11y.onboarding_start_button"))
+            .accessibilityHint(currentPage < pages.count - 1 ? lm.t("a11y.onboarding_next_hint") : lm.t("a11y.onboarding_start_hint"))
+            .accessibilityAddTraits(.isButton)
         }
     }
 }

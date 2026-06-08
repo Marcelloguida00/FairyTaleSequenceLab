@@ -66,6 +66,8 @@ struct RedHoodLevel0View: View {
                         minHeight: GameButtonMetrics.pillMinHeight(atLeast: 64)
                     )
                     .accessibilityLabel(lm.t("redhood.intro.button"))
+                    .accessibilityHint(lm.t("a11y.start_event"))
+                    .accessibilityAddTraits(.isButton)
 
                     Spacer()
                 }

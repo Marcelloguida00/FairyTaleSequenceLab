@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct MathAdditionProblem: Equatable {
     let first: Int
@@ -241,10 +242,12 @@ struct AdvancedSettingsMathGate: View {
               value == problem.answer else {
             showWrongAnswer = true
             AppSettings.hapticImpact(.rigid)
+            UIAccessibility.post(notification: .announcement, argument: lm.t("settings.advanced_gate.wrong"))
             return
         }
 
         AppSettings.hapticSuccess()
+        UIAccessibility.post(notification: .announcement, argument: lm.t("settings.advanced_gate.success"))
         onSuccess()
     }
 }

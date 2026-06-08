@@ -42,41 +42,79 @@ private typealias GameButtonStyle = GameButtonAppearance
 
 /// Glossy yellow capsule button used across the app.
 struct GamePillButtonBackground: View {
+    @Environment(\.differentiate) private var differentiate
+
     var body: some View {
-        Capsule()
-            .fill(GameButtonStyle.glossGradient)
-            .overlay(alignment: .top) {
+        ZStack {
+            Capsule()
+                .fill(GameButtonStyle.glossGradient)
+                .overlay(alignment: .top) {
+                    Capsule()
+                        .fill(GameButtonStyle.highlightGradient)
+                        .padding(.horizontal, GameButtonAppearance.pillHighlightHorizontalInset)
+                        .padding(.top, GameButtonAppearance.pillHighlightTopInset)
+                        .frame(height: GameButtonAppearance.pillHighlightHeight)
+                }
+                .overlay {
+                    Capsule()
+                        .stroke(GameButtonAppearance.border, lineWidth: 2)
+                }
+                .shadow(color: .black.opacity(0.28), radius: 5, y: 3)
+
+            if differentiate {
                 Capsule()
-                    .fill(GameButtonStyle.highlightGradient)
-                    .padding(.horizontal, GameButtonAppearance.pillHighlightHorizontalInset)
-                    .padding(.top, GameButtonAppearance.pillHighlightTopInset)
-                    .frame(height: GameButtonAppearance.pillHighlightHeight)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                .clear,
+                                GameButtonAppearance.border.opacity(0.15),
+                                .clear
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
             }
-            .overlay {
-                Capsule()
-                    .stroke(GameButtonAppearance.border, lineWidth: 2)
-            }
-            .shadow(color: .black.opacity(0.28), radius: 5, y: 3)
+        }
     }
 }
 
 /// Glossy yellow circle used for icon buttons (back, etc.).
 struct GameCircleButtonBackground: View {
+    @Environment(\.differentiate) private var differentiate
+
     var body: some View {
-        Circle()
-            .fill(GameButtonStyle.glossGradient)
-            .overlay(alignment: .top) {
+        ZStack {
+            Circle()
+                .fill(GameButtonStyle.glossGradient)
+                .overlay(alignment: .top) {
+                    Circle()
+                        .fill(GameButtonStyle.highlightGradient)
+                        .padding(.horizontal, GameButtonAppearance.circleHighlightHorizontalInset)
+                        .padding(.top, GameButtonAppearance.circleHighlightTopInset)
+                        .frame(height: GameButtonAppearance.circleHighlightHeight)
+                }
+                .overlay {
+                    Circle()
+                        .stroke(GameButtonAppearance.border, lineWidth: 2)
+                }
+                .shadow(color: .black.opacity(0.28), radius: 5, y: 3)
+
+            if differentiate {
                 Circle()
-                    .fill(GameButtonStyle.highlightGradient)
-                    .padding(.horizontal, GameButtonAppearance.circleHighlightHorizontalInset)
-                    .padding(.top, GameButtonAppearance.circleHighlightTopInset)
-                    .frame(height: GameButtonAppearance.circleHighlightHeight)
+                    .fill(
+                        RadialGradient(
+                            gradient: Gradient(colors: [
+                                GameButtonAppearance.border.opacity(0.2),
+                                .clear
+                            ]),
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 30
+                        )
+                    )
             }
-            .overlay {
-                Circle()
-                    .stroke(GameButtonAppearance.border, lineWidth: 2)
-            }
-            .shadow(color: .black.opacity(0.28), radius: 5, y: 3)
+        }
     }
 }
 
@@ -194,6 +232,7 @@ struct GamePillButton: View {
     var leadingIcon: String? = nil
     var trailingIcon: String? = nil
     var isDisabled: Bool = false
+    var accessibilityHint: String? = nil
     let action: () -> Void
 
     private var boundsSize: CGSize? {
@@ -205,7 +244,7 @@ struct GamePillButton: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        let baseButton = Button(action: action) {
             GamePillLabel(
                 title: title,
                 fontSize: fontSize,
@@ -225,6 +264,13 @@ struct GamePillButton: View {
         )
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.55 : 1)
+        .accessibilityAddTraits(.isButton)
+
+        if let hint = accessibilityHint {
+            baseButton.accessibilityHint(hint)
+        } else {
+            baseButton
+        }
     }
 }
 
@@ -311,7 +357,7 @@ struct GameCircleSettingsButton: View {
         GameCircleButton(
             systemImage: "gearshape.fill",
             size: size,
-            iconSize: size * 0.38,
+            iconSize: size * 0.28,
             iconWeight: .black,
             action: action
         )

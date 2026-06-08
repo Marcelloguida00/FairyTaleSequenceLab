@@ -569,6 +569,8 @@ struct SequencingActivityView<Reward: View>: View {
             }
         )
         .accessibilityElement(children: .contain)
+        .accessibilityLabel(lm.t("a11y.source_tray"))
+        .accessibilityHint(lm.t("a11y.source_tray_hint"))
     }
 
     // MARK: - Storybook frame
@@ -647,9 +649,9 @@ struct SequencingActivityView<Reward: View>: View {
             trailingIcon: "arrow.right",
             action: handleCelebrationContinue
         )
-        .accessibilityLabel(
-            event.isLastEvent ? lm.t("button.back_to_map") : lm.t("button.next_event")
-        )
+        .accessibilityLabel(lm.t("a11y.continue_button"))
+        .accessibilityHint(lm.t("a11y.continue_hint"))
+        .accessibilityAddTraits(.isButton)
     }
 
     private func handleCelebrationContinue() {

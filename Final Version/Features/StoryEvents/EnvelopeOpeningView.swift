@@ -126,6 +126,7 @@ struct EnvelopeOpeningView: View {
                             Image(systemName: "sparkle")
                                 .font(.system(size: p.size))
                                 .foregroundColor(p.color)
+                                .accessibilityHidden(true)
                                 .scaleEffect(p.scale)
                                 .rotationEffect(.degrees(p.rotation))
                                 .position(x: geo.size.width / 2 + p.x, y: geo.size.height / 2 + p.y - (isOpened ? 80 : 0))
@@ -179,6 +180,9 @@ struct EnvelopeOpeningView: View {
                         .opacity(isAnimating ? 0.6 : 1.0)
                         .scaleEffect(isAnimating ? 0.97 : 1.0)
                         .animation(.easeInOut, value: isAnimating)
+                        .accessibilityLabel(isOpened ? lm.t("button.continue") : lm.t("a11y.envelope_open_button"))
+                        .accessibilityHint(lm.t("a11y.envelope_open_hint"))
+                        .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 48)
                 }
@@ -519,9 +523,10 @@ struct CardItemView: View {
                 // Fallback elegant placeholder
                 VStack(spacing: 8) {
                     Image(systemName: "photo")
-                        .font(.system(size: 24))
+                        .font(.system(.title3))
                         .foregroundColor(Color(hex: "ffd700").opacity(0.8))
-                    
+                        .accessibilityHidden(true)
+
                     Text("Scena \(card.id + 1)")
                         .font(.app(.caption, weight: .bold))
                         .foregroundColor(Color(hex: "ffd700"))
