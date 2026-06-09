@@ -31,6 +31,7 @@ struct SettingsView: View {
     var inFrameMode: Bool = false
     var onAdvancedSettingsRequested: (() -> Void)? = nil
     @Binding var advancedSettingsUnlocked: Bool
+    var onShowTutorialAgain: (() -> Void)? = nil
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
@@ -58,12 +59,14 @@ struct SettingsView: View {
         onClose: (() -> Void)? = nil,
         inFrameMode: Bool = false,
         onAdvancedSettingsRequested: (() -> Void)? = nil,
-        advancedSettingsUnlocked: Binding<Bool> = .constant(false)
+        advancedSettingsUnlocked: Binding<Bool> = .constant(false),
+        onShowTutorialAgain: (() -> Void)? = nil
     ) {
         self.onClose = onClose
         self.inFrameMode = inFrameMode
         self.onAdvancedSettingsRequested = onAdvancedSettingsRequested
         self._advancedSettingsUnlocked = advancedSettingsUnlocked
+        self.onShowTutorialAgain = onShowTutorialAgain
     }
 
     private var usesFrameLayout: Bool {
@@ -677,6 +680,8 @@ struct SettingsView: View {
                     closeSettings()
                 }
 
+                settingsDivider(largeStyle: usesFrameLayout)
+
                 settingsActionRow(
                     icon: "book.fill",
                     title: lm.t("settings.show_tutorial_again"),
@@ -686,7 +691,11 @@ struct SettingsView: View {
                     fillHeight: usesExpandedMainRows
                 ) {
                     AppSettings.hapticImpact(.light)
-                    hasSeenTutorial = false
+                    if let onShowTutorialAgain {
+                        onShowTutorialAgain()
+                    } else {
+                        hasSeenTutorial = false
+                    }
                     closeSettings()
                 }
             }

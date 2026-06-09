@@ -282,7 +282,36 @@ struct ContentView: View {
                             showAdvancedMathGate = true
                         }
                     },
-                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked,
+                    onShowTutorialAgain: {
+                        guard !UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") else { return }
+                        
+                        UserDefaults.standard.set(Array(completedRedHoodLevels).sorted(), forKey: "tutorialBackup_completedRedHoodLevels")
+                        UserDefaults.standard.set(Array(unlockedWorldBaseIDs).sorted(), forKey: "tutorialBackup_unlockedWorldBaseIDs")
+                        UserDefaults.standard.set(currentBaseID, forKey: "tutorialBackup_currentBaseID")
+                        UserDefaults.standard.set(activeMap == .redHood ? "redHood" : "main", forKey: "tutorialBackup_activeMap")
+                        UserDefaults.standard.set(hasSeenTutorial, forKey: "tutorialBackup_hasSeenTutorial")
+                        
+                        UserDefaults.standard.set(true, forKey: "isTemporaryTutorialMode")
+                        
+                        hasSeenTutorial = false
+                        
+                        let tempCompleted: Set<Int> = []
+                        completedRedHoodLevels = tempCompleted
+                        persistCompletedRedHoodLevels(tempCompleted)
+                        
+                        unlockedWorldBaseIDs = [MapGraph.redRidingHoodBaseID]
+                        persistUnlockedWorldBaseIDs()
+                        
+                        activeMap = .redHood
+                        currentBaseID = RedHoodMapGraph.initialWaypoint.id
+                        avatarPosition = RedHoodMapGraph.initialWaypoint.point
+                        
+                        pendingRedHoodLevel = nil
+                        activeRedHoodLevel = nil
+                        redHoodPostSequenceReward = nil
+                        pendingChapterUnlockLevel = nil
+                    }
                 )
                 .environmentObject(lm)
                 .transition(.opacity)
@@ -580,6 +609,7 @@ struct ContentView: View {
 
     private func handleBackButton() {
         if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil || pendingChapterUnlockLevel != nil {
+            let isTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
                 redHoodPostSequenceReward = nil
@@ -587,8 +617,16 @@ struct ContentView: View {
                 pendingRedHoodLevel = nil
                 suppressesMapChromeForDialogue = true
             }
+            if isTemp {
+                restoreStateAfterTutorial()
+            }
         } else if activeMap == .redHood {
-            Task { await closeRedHoodSubMap() }
+            let isTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
+            if isTemp {
+                restoreStateAfterTutorial()
+            } else {
+                Task { await closeRedHoodSubMap() }
+            }
         }
     }
 
@@ -725,6 +763,55 @@ struct ContentView: View {
         }
     }
 
+    private func restoreStateAfterTutorial() {
+        guard UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") else { return }
+        
+        let backupCompleted = UserDefaults.standard.array(forKey: "tutorialBackup_completedRedHoodLevels") as? [Int] ?? []
+        let backupUnlockedWorld = UserDefaults.standard.array(forKey: "tutorialBackup_unlockedWorldBaseIDs") as? [Int] ?? [MapGraph.redRidingHoodBaseID]
+        let backupCurrentBaseID = UserDefaults.standard.integer(forKey: "tutorialBackup_currentBaseID")
+        let backupActiveMapStr = UserDefaults.standard.string(forKey: "tutorialBackup_activeMap") ?? "main"
+        let backupHasSeenTutorial = UserDefaults.standard.bool(forKey: "tutorialBackup_hasSeenTutorial")
+        
+        UserDefaults.standard.removeObject(forKey: "isTemporaryTutorialMode")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_completedRedHoodLevels")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_unlockedWorldBaseIDs")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_currentBaseID")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_activeMap")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_hasSeenTutorial")
+        
+        hasSeenTutorial = backupHasSeenTutorial
+        
+        UserDefaults.standard.set(backupCompleted, forKey: "completedRedHoodLevels")
+        UserDefaults.standard.set(backupUnlockedWorld, forKey: "unlockedWorldBaseIDs")
+        UserDefaults.standard.set(backupCurrentBaseID, forKey: "currentBaseID")
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            completedRedHoodLevels = Set(backupCompleted)
+            unlockedWorldBaseIDs = Set(backupUnlockedWorld)
+            currentBaseID = backupCurrentBaseID
+            activeMap = (backupActiveMapStr == "redHood") ? .redHood : .main
+            
+            if activeMap == .redHood {
+                if let wp = RedHoodMapGraph.waypoint(id: currentBaseID) {
+                    avatarPosition = wp.point
+                } else {
+                    avatarPosition = RedHoodMapGraph.initialWaypoint.point
+                }
+            } else {
+                if let wp = MapGraph.waypoint(id: currentBaseID) {
+                    avatarPosition = wp.point
+                } else {
+                    avatarPosition = MapGraph.initialWaypoint.point
+                }
+            }
+            
+            activeRedHoodLevel = nil
+            pendingRedHoodLevel = nil
+            redHoodPostSequenceReward = nil
+            pendingChapterUnlockLevel = nil
+        }
+    }
+
     @MainActor
     private func returnToWorldMapAfterRedHoodCompletion() async {
         guard activeMap == .redHood else { return }
@@ -753,6 +840,11 @@ struct ContentView: View {
             markRedHoodLevelCompleted(level)
             activeRedHoodLevel = nil
             pendingRedHoodLevel = nil
+        }
+
+        if level == 1 && UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
+            restoreStateAfterTutorial()
+            return
         }
 
         Task { @MainActor in

@@ -140,6 +140,7 @@
 "settings.change_language.description" = "Choose the app language.";
 "settings.change_language.message" = "Select the language you want to use in the app.";
 "settings.show_onboarding_again" = "Show onboarding again";
+"settings.show_tutorial_again" = "Show tutorial again";
 "settings.advanced_settings" = "Advanced Settings";
 "settings.advanced_gate.title" = "For grown-ups";
 "settings.advanced_gate.message" = "Solve this addition to open Advanced Settings.";

@@ -9,7 +9,7 @@ enum AppFeatureFlags {
     static let showsOrchestralSequencingSFX = true
 
     /// First-launch onboarding flow and Settings → «Show onboarding again».
-    static let showsOnboarding = false
+    static let showsOnboarding = true
 
     /// Cinematic villain intro (world map + clouds). When false, uses the paginated `OnboardingView`.
     static let usesVillainOnboardingCinematic = true

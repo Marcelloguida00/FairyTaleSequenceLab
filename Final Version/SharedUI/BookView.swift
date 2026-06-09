@@ -562,174 +562,6 @@ struct BookView: View {
         return pages
     }
     
-    private func generateEditorialPages(text: String, availableImages: [String], isDyslexiaEnabled: Bool, isCompact: Bool) -> [PageContent] {
-        var sentences: [String] = []
-        text.enumerateSubstrings(in: text.startIndex..<text.endIndex, options: .bySentences) { substring, _, _, _ in
-            if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
-                sentences.append(s)
-            }
-        }
-        var pages: [PageContent] = []
-        var currentImageIndex = 0
-        var currentSentenceIndex = 0
-        var pageIndex = 0
-        
-        let layouts: [PageLayoutType] = [
-            .textTopImageBottom,
-            .imageTopTextBottom,
-            .fullText,
-            .imageTopTextBottom,
-            .gatheredBottomRight,
-            .textTopImageBottom,
-            .poemCenterText,
-            .imageTopRightTextWrap,
-            .textTopImageBottom,
-            .textTopImageBottom,
-            .fullText
-        ]
-        
-        // Define relative capacity weights for each layout type
-        let layoutWeights: [PageLayoutType: Double] = [
-            .fullText: 1.0,
-            .poemCenterText: 0.5,
-            .gatheredBottomRight: 0.5,
-            .gatheredTopLeft: 0.5,
-            .textTopImageBottom: 0.4,
-            .imageTopTextBottom: 0.4,
-            .textLeftImageRight: 0.4,
-            .imageLeftTextRight: 0.4,
-            .textTopImageCenterTextBottom: 0.5,
-            .imageTopLeftTextWrap: 0.6,
-            .imageTopRightTextWrap: 0.6,
-            .textTopImageBottomLeftTextWrap: 0.6,
-            .textTopImageBottomRightTextWrap: 0.6
-        ]
-        
-        let totalWeight = layouts.reduce(0.0) { $0 + (layoutWeights[$1] ?? 1.0) }
-        let totalChars = sentences.reduce(0) { $0 + $1.count + 1 }
-        var remainingTotalChars = totalChars
-        var remainingWeight = totalWeight
-        
-        while currentSentenceIndex < sentences.count {
-            let layout = layouts[pageIndex % layouts.count]
-            pageIndex += 1
-            
-            let currentWeight = layoutWeights[layout] ?? 1.0
-            
-            var maxChars = 0
-            if remainingWeight > 0 {
-                maxChars = Int((currentWeight / remainingWeight) * Double(remainingTotalChars))
-            } else {
-                maxChars = remainingTotalChars
-            }
-            
-            if maxChars < 50 { maxChars = 50 }
-            
-            var targetChars1 = maxChars
-            var requiresTwoChunks = false
-            
-            switch layout {
-            case .textTopImageCenterTextBottom:
-                targetChars1 = maxChars / 2
-                requiresTwoChunks = true
-            case .imageTopLeftTextWrap, .imageTopRightTextWrap:
-                targetChars1 = Int(Double(maxChars) * 0.35)
-                requiresTwoChunks = true
-            case .textTopImageBottomLeftTextWrap, .textTopImageBottomRightTextWrap:
-                targetChars1 = Int(Double(maxChars) * 0.5)
-                requiresTwoChunks = true
-            default:
-                break
-            }
-            
-            var chunk1 = ""
-            var chunk2: String? = nil
-            
-            while currentSentenceIndex < sentences.count {
-                let sentence = sentences[currentSentenceIndex]
-                if chunk1.isEmpty {
-                    chunk1 = sentence
-                } else if chunk1.count + sentence.count + 1 <= targetChars1 {
-                    chunk1 += " " + sentence
-                } else {
-                    break
-                }
-                currentSentenceIndex += 1
-            }
-            
-            if requiresTwoChunks {
-                var chunk2Text = ""
-                let targetChars2 = maxChars - chunk1.count
-                while currentSentenceIndex < sentences.count {
-                    let sentence = sentences[currentSentenceIndex]
-                    if chunk2Text.isEmpty {
-                        chunk2Text = sentence
-                    } else if chunk2Text.count + sentence.count + 1 <= targetChars2 {
-                        chunk2Text += " " + sentence
-                    } else {
-                        break
-                    }
-                    currentSentenceIndex += 1
-                }
-                if !chunk2Text.isEmpty {
-                    chunk2 = chunk2Text
-                }
-            }
-            
-            if pageIndex == layouts.count {
-                while currentSentenceIndex < sentences.count {
-                    let sentence = sentences[currentSentenceIndex]
-                    if requiresTwoChunks {
-                        chunk2 = (chunk2 ?? "") + (chunk2 == nil ? "" : " ") + sentence
-                    } else {
-                        chunk1 += " " + sentence
-                    }
-                    currentSentenceIndex += 1
-                }
-            } else {
-                let consumed = chunk1.count + (chunk2 == nil ? 0 : chunk2!.count + 1)
-                remainingTotalChars -= consumed
-                remainingWeight -= currentWeight
-            }
-            let layoutUsesImage: Bool
-            switch layout {
-            case .fullText, .poemCenterText, .gatheredBottomRight, .gatheredTopLeft:
-                layoutUsesImage = false
-            default:
-                layoutUsesImage = true
-            }
-            
-            var imageName: String? = nil
-            if pageIndex == 3 {
-                imageName = "Sequenza 2 evento 3"
-            } else if pageIndex == 4 {
-                imageName = "event3_card2"
-            } else if pageIndex == 5 {
-                imageName = "scene4_card1"
-            } else if pageIndex == 6 {
-                imageName = "scene4_card4"
-            } else if pageIndex == 8 {
-                imageName = "scene6_card2"
-            } else if pageIndex == 9 {
-                imageName = "scene8_card1"
-            } else if pageIndex == 10 {
-                imageName = "scene8_card2"
-            } else if pageIndex == 11 {
-                imageName = "image 1"
-            } else if layoutUsesImage && currentImageIndex < availableImages.count {
-                imageName = availableImages[currentImageIndex]
-                currentImageIndex += 1
-            }
-            
-            let finalLayout = (layoutUsesImage && imageName == nil) ? .fullText : layout
-            let finalChunk1 = (finalLayout == .fullText && chunk2 != nil) ? (chunk1 + " " + chunk2!) : chunk1
-            let finalChunk2 = (finalLayout == .fullText) ? nil : chunk2
-            
-            pages.append(PageContent(layout: finalLayout, textChunk1: finalChunk1, textChunk2: finalChunk2, imageName: imageName))
-        }
-        
-        return pages
-    }
     
     private func buildPagesAndBookmarks(isCompact: Bool) {
         var newPages: [AnyView] = []
@@ -913,141 +745,48 @@ struct BookView: View {
                 newPageTexts.append(redRidingHood.title)
                 // ------------------------------------------
                 
+                struct StaticPageSpec {
+                    let layout: PageLayoutType
+                    let text1Key: String
+                    let text2Key: String?
+                    let imageName: String?
+                    let isFirst: Bool
+                }
+
+                let staticPages: [StaticPageSpec] = [
+                    StaticPageSpec(layout: .textTopImageBottom, text1Key: "story.redhood.scene1.text1", text2Key: nil, imageName: "MotherBasket", isFirst: true),
+                    StaticPageSpec(layout: .imageTopTextBottom, text1Key: "story.redhood.scene1.text2", text2Key: nil, imageName: "RedHoodWalking", isFirst: false),
+                    StaticPageSpec(layout: .fullText, text1Key: "story.redhood.scene2.text1", text2Key: "story.redhood.scene2.text2", imageName: nil, isFirst: false),
+                    StaticPageSpec(layout: .imageTopTextBottom, text1Key: "story.redhood.scene3.text1", text2Key: nil, imageName: "RedHoodWolf", isFirst: false),
+                    StaticPageSpec(layout: .gatheredBottomRight, text1Key: "story.redhood.scene3.text2", text2Key: nil, imageName: "event3_card2", isFirst: false),
+                    StaticPageSpec(layout: .textTopImageBottom, text1Key: "story.redhood.scene4.text1", text2Key: "story.redhood.scene4.text2", imageName: "scene4_card1", isFirst: false),
+                    StaticPageSpec(layout: .poemCenterText, text1Key: "story.redhood.scene5.text1", text2Key: "story.redhood.scene5.text2", imageName: nil, isFirst: false),
+                    StaticPageSpec(layout: .imageTopRightTextWrap, text1Key: "story.redhood.scene6.text1", text2Key: "story.redhood.scene6.text2", imageName: "scene6_card2", isFirst: false),
+                    StaticPageSpec(layout: .textTopImageBottom, text1Key: "story.redhood.scene7.text1", text2Key: nil, imageName: "scene8_card1", isFirst: false),
+                    StaticPageSpec(layout: .textTopImageBottom, text1Key: "story.redhood.scene7.text2", text2Key: nil, imageName: "scene8_card2", isFirst: false),
+                    StaticPageSpec(layout: .fullText, text1Key: "story.redhood.scene8.text1", text2Key: "story.redhood.scene8.text2", imageName: nil, isFirst: false)
+                ]
+                
                 var pageIndex = newPages.count
-                
-                var fullContinuousText = ""
-                var availableImages: [String] = []
-                
-                for scene in visibleScenes {
-                    let sceneText1 = lm.t(scene.text1Key).trimmingCharacters(in: .whitespacesAndNewlines)
-                    let sceneText2 = lm.t(scene.text2Key).trimmingCharacters(in: .whitespacesAndNewlines)
-                    
-                    if !sceneText1.isEmpty {
-                        fullContinuousText += (fullContinuousText.isEmpty ? "" : " ") + sceneText1
-                    }
-                    if !sceneText2.isEmpty {
-                        fullContinuousText += (fullContinuousText.isEmpty ? "" : " ") + sceneText2
-                    }
-                    
-                    if UIImage(named: scene.introImageName) != nil {
-                        availableImages.append(scene.introImageName)
-                    }
-                    if UIImage(named: scene.rewardImageName) != nil {
-                        availableImages.append(scene.rewardImageName)
-                    }
-                }
-                
-                var editorialPages = generateEditorialPages(
-                    text: fullContinuousText, 
-                    availableImages: availableImages, 
-                    isDyslexiaEnabled: isDyslexiaEnabled, 
-                    isCompact: isCompact
-                )
-                
-                // Sposta le prime frasi da pagina 5 (index 2) a pagina 4 (index 1) per far spazio al testo del lupo
-                if editorialPages.count > 2 {
-                    var p4Text = editorialPages[1].textChunk1
-                    let p5Text = editorialPages[2].textChunk1
-                    
-                    var p5Sentences: [String] = []
-                    p5Text.enumerateSubstrings(in: p5Text.startIndex..<p5Text.endIndex, options: .bySentences) { substring, _, _, _ in
-                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
-                            p5Sentences.append(s)
-                        }
-                    }
-                    
-                    let numSentencesToMove = 3
-                    if p5Sentences.count > numSentencesToMove {
-                        let movedSentences = p5Sentences.prefix(numSentencesToMove).joined(separator: " ")
-                        p4Text = p4Text + (p4Text.isEmpty ? "" : " ") + movedSentences
-                        let newP5Text = p5Sentences.dropFirst(numSentencesToMove).joined(separator: " ")
-                        
-                        editorialPages[1] = PageContent(layout: editorialPages[1].layout, textChunk1: p4Text, textChunk2: editorialPages[1].textChunk2, imageName: editorialPages[1].imageName)
-                        editorialPages[2] = PageContent(layout: editorialPages[2].layout, textChunk1: newP5Text, textChunk2: editorialPages[2].textChunk2, imageName: editorialPages[2].imageName)
-                    }
-                }
-                
-                // Sposta le ultime frasi da pagina 5 (index 2) a pagina 6 (index 3) per posizionare il dialogo del lupo
-                if editorialPages.count > 3 {
-                    let p5Text = editorialPages[2].textChunk1
-                    var p6Text = editorialPages[3].textChunk1
-                    
-                    var p5Sentences: [String] = []
-                    p5Text.enumerateSubstrings(in: p5Text.startIndex..<p5Text.endIndex, options: .bySentences) { substring, _, _, _ in
-                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
-                            p5Sentences.append(s)
-                        }
-                    }
-                    
-                    let numSentencesToMoveToP6 = 2
-                    if p5Sentences.count > numSentencesToMoveToP6 {
-                        let movedToP6 = p5Sentences.suffix(numSentencesToMoveToP6).joined(separator: " ")
-                        p6Text = movedToP6 + (p6Text.isEmpty ? "" : " ") + p6Text
-                        let newP5Text = p5Sentences.dropLast(numSentencesToMoveToP6).joined(separator: " ")
-                        
-                        editorialPages[2] = PageContent(layout: editorialPages[2].layout, textChunk1: newP5Text, textChunk2: editorialPages[2].textChunk2, imageName: editorialPages[2].imageName)
-                        editorialPages[3] = PageContent(layout: editorialPages[3].layout, textChunk1: p6Text, textChunk2: editorialPages[3].textChunk2, imageName: editorialPages[3].imageName)
-                    }
-                }
-                
-                // Tronca il testo di pagina 13 (index 10) per rimuovere la parte del tramonto, mantenendo l'abbraccio su pagina 13
-                if editorialPages.count > 10 {
-                    let p13Text = editorialPages[10].textChunk1
-                    
-                    var p13Sentences: [String] = []
-                    p13Text.enumerateSubstrings(in: p13Text.startIndex..<p13Text.endIndex, options: .bySentences) { substring, _, _, _ in
-                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
-                            p13Sentences.append(s)
-                        }
-                    }
-                    
-                    // Mantieni su pagina 13 le prime 3 frasi (Pericolo superato, abbraccio, ringraziamento al taglialegna)
-                    let numSentencesToKeepOnP13 = 3
-                    if p13Sentences.count >= numSentencesToKeepOnP13 {
-                        let keepOnP13 = p13Sentences.prefix(numSentencesToKeepOnP13).joined(separator: " ")
-                        editorialPages[10] = PageContent(layout: editorialPages[10].layout, textChunk1: keepOnP13, textChunk2: editorialPages[10].textChunk2, imageName: editorialPages[10].imageName)
-                    }
-                }
-                
-                // Sposta la prima frase da pagina 9 (index 6) a pagina 8 (index 5) per far apparire il testo mancante
-                if editorialPages.count > 6 {
-                    var p8Text = editorialPages[5].textChunk1
-                    let p9Text = editorialPages[6].textChunk1
-                    
-                    var p9Sentences: [String] = []
-                    p9Text.enumerateSubstrings(in: p9Text.startIndex..<p9Text.endIndex, options: .bySentences) { substring, _, _, _ in
-                        if let s = substring?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty {
-                            p9Sentences.append(s)
-                        }
-                    }
-                    
-                    let numSentencesToMoveToP8 = 1
-                    if p9Sentences.count > numSentencesToMoveToP8 {
-                        let movedToP8 = p9Sentences.prefix(numSentencesToMoveToP8).joined(separator: " ")
-                        p8Text = p8Text + (p8Text.isEmpty ? "" : " ") + movedToP8
-                        let newP9Text = p9Sentences.dropFirst(numSentencesToMoveToP8).joined(separator: " ")
-                        
-                        editorialPages[5] = PageContent(layout: editorialPages[5].layout, textChunk1: p8Text, textChunk2: editorialPages[5].textChunk2, imageName: editorialPages[5].imageName)
-                        editorialPages[6] = PageContent(layout: editorialPages[6].layout, textChunk1: newP9Text, textChunk2: editorialPages[6].textChunk2, imageName: editorialPages[6].imageName)
-                    }
-                }
-                
-                for (i, pageContent) in editorialPages.enumerated() {
-                    let isFirstPage = (i == 0)
+                for spec in staticPages {
+                    let isFirstPage = spec.isFirst
                     let imgHeight: CGFloat = isCompact ? 160 : 280
                     
                     let isLocked = (pageIndex + 1) > maxUnlockedPage
                     
+                    let textChunk1 = lm.t(spec.text1Key)
+                    let textChunk2 = spec.text2Key.map { lm.t($0) }
+                    
                     let page = pageContainer(isLeft: pageIndex % 2 == 0, pageNumber: pageIndex + 1) {
                         VStack(alignment: .leading, spacing: isCompact ? 8 : 12) {
                             
-                            switch pageContent.layout {
+                            switch spec.layout {
                             case .fullText:
-                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.vertical, isCompact ? 10 : 15)
                                 Spacer(minLength: 0)
-                                if let imgName = pageContent.imageName {
+                                if let imgName = spec.imageName {
                                     let pageNum = pageIndex + 1
                                     let needsOffset = [3, 8, 11, 12, 13].contains(pageNum)
                                     editorialImage(imgName: imgName, height: imgHeight, offsetY: needsOffset ? (isCompact ? 40 : 70) : 0)
@@ -1063,7 +802,7 @@ struct BookView: View {
                                 
                                 HStack {
                                     Spacer(minLength: isCompact ? 30 : 60)
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .center)
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .center)
                                         .multilineTextAlignment(.center)
                                     Spacer(minLength: isCompact ? 30 : 60)
                                 }
@@ -1076,14 +815,14 @@ struct BookView: View {
                                 }
                                 
                             case .gatheredBottomRight:
-                                if let imgName = pageContent.imageName {
+                                if let imgName = spec.imageName {
                                     editorialImage(imgName: imgName, height: imgHeight)
                                         .padding(.top, isCompact ? 10 : 20)
                                 }
                                 Spacer()
                                 HStack {
                                     Spacer(minLength: isCompact ? 60 : 120)
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .trailing)
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .trailing)
                                         .multilineTextAlignment(.trailing)
                                 }
                                 .padding(.bottom, isCompact ? 20 : 40)
@@ -1091,7 +830,7 @@ struct BookView: View {
                                 
                             case .gatheredTopLeft:
                                 HStack {
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .leading)
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing, alignment: .leading)
                                         .multilineTextAlignment(.leading)
                                     Spacer(minLength: isCompact ? 60 : 120)
                                 }
@@ -1100,11 +839,11 @@ struct BookView: View {
                                 Spacer()
                                 
                             case .textTopImageBottom:
-                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.vertical, isCompact ? 10 : 15)
                                 Spacer(minLength: 10)
-                                if let imgName = pageContent.imageName {
+                                if let imgName = spec.imageName {
                                     let pageNum = pageIndex + 1
                                     let needsOffset = [3, 8, 11, 12, 13].contains(pageNum)
                                     editorialImage(imgName: imgName, height: imgHeight, offsetY: needsOffset ? (isCompact ? 40 : 70) : 0)
@@ -1112,20 +851,20 @@ struct BookView: View {
                                 Spacer(minLength: 0)
                                 
                             case .imageTopTextBottom:
-                                if let imgName = pageContent.imageName {
+                                if let imgName = spec.imageName {
                                     editorialImage(imgName: imgName, height: imgHeight)
                                         .padding(.top, isCompact ? 10 : 20)
                                 }
                                 Spacer(minLength: 10)
-                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.vertical, isCompact ? 10 : 15)
                                 Spacer(minLength: 0)
                                 
                             case .textLeftImageRight:
                                 HStack(alignment: .top, spacing: 15) {
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
-                                    if let imgName = pageContent.imageName {
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    if let imgName = spec.imageName {
                                         Image(imgName)
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
@@ -1144,7 +883,7 @@ struct BookView: View {
                                 
                             case .imageLeftTextRight:
                                 HStack(alignment: .top, spacing: 15) {
-                                    if let imgName = pageContent.imageName {
+                                    if let imgName = spec.imageName {
                                         Image(imgName)
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
@@ -1156,22 +895,22 @@ struct BookView: View {
                                             )
                                             .accessibilityHidden(true)
                                     }
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                 }
                                 .padding(.horizontal, isCompact ? 20 : 35)
                                 .padding(.vertical, isCompact ? 10 : 15)
                                 Spacer(minLength: 0)
                                 
                             case .textTopImageCenterTextBottom:
-                                editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.top, isCompact ? 10 : 15)
                                 Spacer(minLength: 5)
-                                if let imgName = pageContent.imageName {
+                                if let imgName = spec.imageName {
                                     editorialImage(imgName: imgName, height: imgHeight * 0.8)
                                 }
                                 Spacer(minLength: 5)
-                                if let chunk2 = pageContent.textChunk2 {
+                                if let chunk2 = textChunk2 {
                                     editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                         .padding(.horizontal, isCompact ? 20 : 35)
                                         .padding(.bottom, isCompact ? 10 : 15)
@@ -1181,7 +920,7 @@ struct BookView: View {
                             case .imageTopLeftTextWrap:
                                 VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
                                     HStack(alignment: .top, spacing: 15) {
-                                        if let imgName = pageContent.imageName {
+                                        if let imgName = spec.imageName {
                                             Image(imgName)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
@@ -1193,12 +932,12 @@ struct BookView: View {
                                                 )
                                                 .accessibilityHidden(true)
                                         }
-                                        editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                     }
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.top, isCompact ? 10 : 15)
                                     
-                                    if let chunk2 = pageContent.textChunk2 {
+                                    if let chunk2 = textChunk2 {
                                         editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                             .padding(.horizontal, isCompact ? 20 : 35)
                                             .padding(.bottom, isCompact ? 10 : 15)
@@ -1209,8 +948,8 @@ struct BookView: View {
                             case .imageTopRightTextWrap:
                                 VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
                                     HStack(alignment: .top, spacing: 15) {
-                                        editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
-                                        if let imgName = pageContent.imageName {
+                                        editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                        if let imgName = spec.imageName {
                                             Image(imgName)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
@@ -1226,7 +965,7 @@ struct BookView: View {
                                     .padding(.horizontal, isCompact ? 20 : 35)
                                     .padding(.top, isCompact ? 10 : 15)
                                     
-                                    if let chunk2 = pageContent.textChunk2 {
+                                    if let chunk2 = textChunk2 {
                                         editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                             .padding(.horizontal, isCompact ? 20 : 35)
                                             .padding(.bottom, isCompact ? 10 : 15)
@@ -1240,12 +979,12 @@ struct BookView: View {
                                 
                             case .textTopImageBottomLeftTextWrap:
                                 VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                         .padding(.horizontal, isCompact ? 20 : 35)
                                         .padding(.top, isCompact ? 10 : 15)
                                         
                                     HStack(alignment: .top, spacing: 15) {
-                                        if let imgName = pageContent.imageName {
+                                        if let imgName = spec.imageName {
                                             Image(imgName)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
@@ -1257,7 +996,7 @@ struct BookView: View {
                                                 )
                                                 .accessibilityHidden(true)
                                         }
-                                        if let chunk2 = pageContent.textChunk2 {
+                                        if let chunk2 = textChunk2 {
                                             editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                         }
                                     }
@@ -1268,15 +1007,15 @@ struct BookView: View {
                                 
                             case .textTopImageBottomRightTextWrap:
                                 VStack(alignment: .leading, spacing: isCompact ? 10 : 15) {
-                                    editorialText(chunk: pageContent.textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
+                                    editorialText(chunk: textChunk1, isFirst: isFirstPage, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                         .padding(.horizontal, isCompact ? 20 : 35)
                                         .padding(.top, isCompact ? 10 : 15)
                                         
                                     HStack(alignment: .top, spacing: 15) {
-                                        if let chunk2 = pageContent.textChunk2 {
+                                        if let chunk2 = textChunk2 {
                                             editorialText(chunk: chunk2, isFirst: false, textFont: textFont, dropCapFont: dropCapFont, textColor: textColors, dropCapColor: dropCapColor, lineSpacing: lineSpacing)
                                         }
-                                        if let imgName = pageContent.imageName {
+                                        if let imgName = spec.imageName {
                                             Image(imgName)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
@@ -1300,7 +1039,7 @@ struct BookView: View {
                             Group {
                                 if isLocked {
                                     ZStack {
-                                        Color.white.opacity(0.85) // Sbianca e nasconde leggermente i contenuti
+                                        Color.white.opacity(0.85)
                                             .edgesIgnoringSafeArea(.all)
                                             .blur(radius: 10)
                                         VStack {
@@ -1309,7 +1048,7 @@ struct BookView: View {
                                                 .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
                                                 .shadow(color: .white, radius: 4)
                                                 .accessibilityHidden(true)
-                                            Text(lm.t("Gioca per sbloccare le scene!"))
+                                            Text(lm.t("book.placeholder.play_to_unlock"))
                                                 .font(isDyslexiaEnabled ?
                                                       (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
                                                         Font.custom("Alegreya", size: isCompact ? 20 : 30, relativeTo: .title))
@@ -1323,8 +1062,8 @@ struct BookView: View {
                         )
                     }
                     newPages.append(page)
-                    var textToSpeak = pageContent.textChunk1
-                    if let chunk2 = pageContent.textChunk2 {
+                    var textToSpeak = textChunk1
+                    if let chunk2 = textChunk2 {
                         textToSpeak += " " + chunk2
                     }
                     newPageTexts.append(isLocked ? "" : textToSpeak)
@@ -1361,7 +1100,7 @@ struct BookView: View {
                                     .font(.system(isCompact ? .title : .largeTitle))
                                     .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.1))
                                     .accessibilityHidden(true)
-                                Text(lm.t("Gioca per sbloccare le scene!"))
+                                Text(lm.t("book.placeholder.play_to_unlock"))
                                     .font(isDyslexiaEnabled ?
                                           (isCompact ? Font.app(.headline, weight: .bold) : Font.app(.title, weight: .bold)) :
                                             Font.custom("Alegreya", size: isCompact ? 20 : 30, relativeTo: .title))
@@ -1409,12 +1148,14 @@ struct BookView: View {
                 Text("\(Text(firstChar).font(dropCapFont).foregroundColor(dropCapColor))\(Text(restOfString).font(textFont).foregroundColor(textColor))")
                 .lineSpacing(lineSpacing + 4)
                 .multilineTextAlignment(alignment)
+                .minimumScaleFactor(0.5)
             } else if !chunk.isEmpty {
                 Text(chunk)
                     .font(textFont)
                     .foregroundColor(textColor)
                     .lineSpacing(lineSpacing + 4)
                     .multilineTextAlignment(alignment)
+                    .minimumScaleFactor(0.5)
             }
         }
         .frame(maxWidth: .infinity, alignment: alignment == .center ? .center : (alignment == .trailing ? .trailing : .leading))

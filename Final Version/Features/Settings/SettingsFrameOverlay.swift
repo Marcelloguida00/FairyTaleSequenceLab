@@ -9,6 +9,7 @@ struct SettingsFrameOverlay: View {
     let onClose: () -> Void
     let onAdvancedSettingsRequested: () -> Void
     @Binding var advancedSettingsUnlocked: Bool
+    var onShowTutorialAgain: (() -> Void)? = nil
 
     var body: some View {
         GeometryReader { proxy in
@@ -28,7 +29,8 @@ struct SettingsFrameOverlay: View {
                     onClose: onClose,
                     inFrameMode: true,
                     onAdvancedSettingsRequested: onAdvancedSettingsRequested,
-                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked,
+                    onShowTutorialAgain: onShowTutorialAgain
                 )
                 .padding(SettingsFrameLayout.contentInset)
                 .frame(width: frameSize.width, height: frameSize.height)
