@@ -330,13 +330,14 @@ struct BookView: View {
     ]
 
     let onDismiss: () -> Void
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @State private var completedEvents: [EventData] = []
     @State private var currentPage = 0
     @State private var bookPages: [AnyView] = []
     @State private var bookmarks: [FairyTaleBookmark] = []
     @State private var lastIsCompact: Bool? = nil
     @State private var isARBookOpen = false
+    @State private var arPageImages: [UIImage] = []
     @State private var pageTexts: [String] = []
     
     var body: some View {
@@ -402,6 +403,28 @@ struct BookView: View {
                 // Top actions
                 VStack {
                     HStack {
+                        if !unlockedScenes.isEmpty {
+                            Button {
+                                AppSettings.hapticImpact(.light)
+                                // Renderizza le pagine SwiftUI in immagini così l'AR è identico al libro.
+                                arPageImages = renderBookPagesToImages()
+                                withAnimation(.easeInOut(duration: 0.24)) {
+                                    isARBookOpen = true
+                                }
+                            } label: {
+                                GamePillLabel(
+                                    title: lm.t("book.ar.button"),
+                                    fontSize: isCompact ? 13 : 15,
+                                    horizontalPadding: isCompact ? 14 : 18,
+                                    verticalPadding: isCompact ? 8 : 10,
+                                    leadingIcon: "arkit"
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(lm.t("a11y.book_ar_button"))
+                            .padding(isCompact ? 12 : 20)
+                        }
+
                         Spacer()
 
                         GameCircleButton(
@@ -417,12 +440,12 @@ struct BookView: View {
                 }
 
                 if isARBookOpen {
-                    ARBookView(cards: arStoryCards, chapterText: currentChapterText) {
+                    ARBookView(pageImages: arPageImages) {
                         withAnimation(.easeInOut(duration: 0.24)) {
                             isARBookOpen = false
                         }
                     }
-                    .environmentObject(lm)
+                    .environment(lm)
                     .ignoresSafeArea()
                     .transition(.opacity)
                     .zIndex(100)
@@ -454,52 +477,32 @@ struct BookView: View {
         }
     }
 
-    private func currentScene() -> StoryScene? {
-        let isDyslexiaEnabled = UserDefaults.standard.bool(forKey: AppFontSettings.dyslexiaFontKey)
-        let isCompact = lastIsCompact ?? false
+    /// Scenes whose story content the player has already unlocked.
+    private var unlockedScenes: [StoryScene] {
         let maxCompletedId = completedEvents.map(\.id).max() ?? 0
-        let visibleScenes = Array(BookView.redHoodScenes.prefix(maxCompletedId))
-        
-        var pageIndex = 0
-        for scene in visibleScenes {
-            let startPage = pageIndex
-            pageIndex += 1 // intro page
-            
-            let fullText = lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
-            let textPages = paginateText(fullText, isDyslexiaEnabled: isDyslexiaEnabled, isCompact: isCompact)
-            
-            pageIndex += textPages.count
-            if textPages.count % 2 != 0 { pageIndex += 1 }
-            pageIndex += 1 // reward page
-            
-            if currentPage >= startPage && currentPage < pageIndex {
-                return scene
-            }
-        }
-        return visibleScenes.last
+        return Array(BookView.redHoodScenes.prefix(maxCompletedId))
     }
 
-    private var arStoryCards: [ARStoryCard] {
-        guard let scene = currentScene(), let event = completedEvents.first(where: { $0.id == scene.id }) else { return [] }
-        return event.cards
-            .sorted { $0.correctPosition < $1.correctPosition }
-            .map { card in
-                ARStoryCard(
-                    id: "\(event.id)-\(card.id)",
-                    eventID: event.id,
-                    sequenceNumber: card.correctPosition + 1,
-                    eventTitle: event.bannerTitle,
-                    imageName: card.imageName,
-                    description: card.description
-                )
-            }
+    /// Renders the on-screen SwiftUI book pages into images so the AR book is
+    /// pixel-identical to BookView. Must run on the main thread (ImageRenderer +
+    /// UIKit text rendering requirement) — drawing the pages off-main produced
+    /// blank/white textures in AR.
+    @MainActor
+    private func renderBookPagesToImages() -> [UIImage] {
+        // 0.75 aspect ratio matches a single on-screen page (the book is 1.5 wide for two pages).
+        let size = CGSize(width: 1080, height: 1440)
+        return bookPages.map { page in
+            let renderer = ImageRenderer(content:
+                page
+                    .environment(lm)
+                    .frame(width: size.width, height: size.height)
+            )
+            renderer.scale = 1
+            renderer.isOpaque = true
+            return renderer.uiImage ?? UIImage()
+        }
     }
-    
-    private var currentChapterText: String {
-        guard let scene = currentScene() else { return "" }
-        return lm.t(scene.text1Key) + "\n\n" + lm.t(scene.text2Key)
-    }
-    
+
     private func isBookmarkActive(_ bookmark: FairyTaleBookmark) -> Bool {
         guard let index = bookmarks.firstIndex(where: { $0.id == bookmark.id }) else { return false }
         let startPage = bookmark.startPageIndex

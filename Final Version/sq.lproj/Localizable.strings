@@ -23,6 +23,7 @@
 "info.collaborator.role.audio_composer" = "Kompozitor audio";
 "info.contacts"       = "Kontaktet";
 "info.support_email_subject" = "Mbështetje për aplikacionin WORLD OF FABLES";
+"info.font_credits" = "Fonti OpenDyslexic është krijuar nga Abelardo Gonzalez dhe është i licencuar sipas SIL Open Font License (OFL).";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Rendit historinë në rend";
@@ -56,8 +57,16 @@
 "book.chapter_unlocked.open_hint" = "Prek dy herë për të hapur librin e përrallave.";
 "a11y.storybook_button"          = "Hap librin e përrallave";
 "book.ar.button"                = "AR";
-"book.ar.title"                 = "Kartat e hapura në AR";
-"book.ar.body"                  = "Shiko në hapësirë kartat e ngjarjeve të historisë që ke hapur.";
+"book.ar.title"                 = "Libri në AR";
+"book.ar.body"                  = "Vendose librin mbi një sipërfaqe të rrafshët dhe shfleto faqet.";
+"book.ar.cover_title"           = "Kësulëkuqja";
+"book.ar.the_end"               = "Fundi";
+"book.ar.generating_pages"      = "Po krijohen faqet…";
+"book.ar.searching_surface"     = "Lëviz pajisjen për të gjetur një sipërfaqe të rrafshët.";
+"book.ar.tap_to_place"          = "Prek për të vendosur librin.";
+"book.ar.prev_page"             = "Faqja e mëparshme";
+"book.ar.next_page"             = "Faqja tjetër";
+"book.ar.reposition"            = "Zhvendos librin";
 "book.ar.turn_page"             = "Karta tjetër";
 "book.ar.next_card"             = "Karta tjetër";
 "book.ar.placeholder.title"     = "Asnjë kartë ende";

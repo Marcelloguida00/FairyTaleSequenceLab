@@ -17,7 +17,7 @@ struct RedHoodARStoryView: View {
     let cards: [RedHoodARCard]
     let onClose: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         ZStack(alignment: .top) {

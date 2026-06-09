@@ -23,6 +23,7 @@
 "info.collaborator.role.audio_composer" = "Аудиокомпозитор";
 "info.contacts"       = "Контакты";
 "info.support_email_subject" = "Поддержка приложения WORLD OF FABLES";
+"info.font_credits" = "Шрифт OpenDyslexic создан Абелардо Гонсалесом и распространяется по лицензии SIL Open Font License (OFL).";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Расставь сцены по порядку";
@@ -56,8 +57,16 @@
 "book.chapter_unlocked.open_hint" = "Дважды коснитесь, чтобы открыть книгу сказок.";
 "a11y.storybook_button"          = "Открыть книгу сказок";
 "book.ar.button"                = "AR";
-"book.ar.title"                 = "Открытые карточки в AR";
-"book.ar.body"                  = "Осмотрись и увидь карточки событий истории, которые ты открыл.";
+"book.ar.title"                 = "Книга в AR";
+"book.ar.body"                  = "Поставь книгу на ровную поверхность и листай страницы.";
+"book.ar.cover_title"           = "Красная\nШапочка";
+"book.ar.the_end"               = "Конец";
+"book.ar.generating_pages"      = "Создание страниц…";
+"book.ar.searching_surface"     = "Перемещай устройство, чтобы найти ровную поверхность.";
+"book.ar.tap_to_place"          = "Нажми, чтобы разместить книгу.";
+"book.ar.prev_page"             = "Предыдущая страница";
+"book.ar.next_page"             = "Следующая страница";
+"book.ar.reposition"            = "Переместить книгу";
 "book.ar.turn_page"             = "Следующая карточка";
 "book.ar.next_card"             = "Следующая карточка";
 "book.ar.placeholder.title"     = "Пока нет карточек";

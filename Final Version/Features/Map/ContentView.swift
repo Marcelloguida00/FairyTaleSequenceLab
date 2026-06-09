@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 
 private enum ActiveMap {
     case main
@@ -61,7 +60,7 @@ private enum MapOverlayMetrics {
 struct ContentView: View {
     let isGlobalTransitioning: Bool
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
 
     @State private var activeMap = ActiveMap.main
@@ -99,7 +98,6 @@ struct ContentView: View {
 
     private static let settingsFadeDuration: TimeInterval = 0.30
 
-    private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
@@ -184,7 +182,7 @@ struct ContentView: View {
                         handleRedHoodChapterCompletion(level)
                     }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .zIndex(40)
                 .transition(.opacity)
             }
@@ -313,7 +311,7 @@ struct ContentView: View {
                         pendingChapterUnlockLevel = nil
                     }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .transition(.opacity)
                 .zIndex(120)
                 .allowsHitTesting(!showAdvancedMathGate)
@@ -332,14 +330,21 @@ struct ContentView: View {
                         }
                     }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .transition(.opacity)
                 .zIndex(130)
             }
         }
-        .onReceive(spriteTimer) { _ in
-            if isWalking {
-                currentFrame = (currentFrame + 1) % 4
+        .task {
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(nanoseconds: 120_000_000) // 0.12 seconds
+                    if isWalking {
+                        currentFrame = (currentFrame + 1) % 4
+                    }
+                } catch {
+                    break
+                }
             }
         }
         .onAppear {
@@ -1263,12 +1268,12 @@ struct ContentView: View {
             RedHoodLevel0View {
                 handleRedHoodChapterCompletion(0)
             }
-            .environmentObject(lm)
+            .environment(lm)
         } else if level == 9 {
             RedHoodLevelFinalView {
                 handleRedHoodChapterCompletion(9)
             }
-            .environmentObject(lm)
+            .environment(lm)
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(
                 eventData: eventData,
@@ -1293,7 +1298,7 @@ struct ContentView: View {
                     handleRedHoodChapterCompletion(level)
                 }
             )
-            .environmentObject(lm)
+            .environment(lm)
         }
     }
 
@@ -1522,7 +1527,7 @@ private struct StoryRegionPlaque: View {
 private struct ComingSoonBadge: View {
     let mapScale: CGFloat
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     private var frameSize: CGSize {
         IslandTitleFrameAsset.frameSize(mapScale: mapScale)
@@ -1580,7 +1585,7 @@ private struct MapPlayButton: View {
     let accessibilityLabel: String
     let action: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         GamePrimaryPillButton(title: lm.t("button.play"), action: action)
@@ -2112,7 +2117,7 @@ struct HandTutorialIndicator: View {
     let point: CGPoint
     var customMessage: String? = nil
     @State private var bounce = false
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         ZStack(alignment: .bottom) {

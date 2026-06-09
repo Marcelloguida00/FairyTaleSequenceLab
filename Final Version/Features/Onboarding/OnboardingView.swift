@@ -3,7 +3,7 @@ import SwiftUI
 struct OnboardingView: View {
     let onFinish: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @State private var currentPage = 0
 
     private struct PageData {
@@ -286,5 +286,5 @@ private struct OnboardingDialogueView: View {
 
 #Preview("Onboarding") {
     OnboardingView(onFinish: {})
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
 }

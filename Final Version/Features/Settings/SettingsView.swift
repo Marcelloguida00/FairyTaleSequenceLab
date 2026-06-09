@@ -22,7 +22,7 @@ private enum SettingsRoute: Equatable {
 }
 
 struct SettingsView: View {
-    @EnvironmentObject var lm: LanguageManager
+    @Environment(LanguageManager.self) var lm
     @Environment(AppFontSettings.self) private var fontSettings
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -1597,6 +1597,18 @@ struct SettingsView: View {
                     }
                 }
             }
+
+            sectionHeader(lm.t("settings.accessibility"))
+
+            settingsCard(largeStyle: usesFrameLayout) {
+                Text(lm.t("info.font_credits"))
+                    .font(.app(usesFrameLayout ? .body : .callout))
+                    .foregroundStyle(SettingsTheme.menuRowText)
+                    .padding(usesFrameLayout ? 20 : 16)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
         }
     }
 
@@ -1849,8 +1861,8 @@ struct SettingsView: View {
         [
             TeamProfile(name: "Calisto Ciro", imageName: "developer_ciro_callisto", linkedInURL: "", instagramURL: ""),
             TeamProfile(name: "Chiappetta Giulia", imageName: "developer_giulia_chiappetta", linkedInURL: "", instagramURL: ""),
-            TeamProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "", instagramURL: ""),
-            TeamProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "https://www.linkedin.com/in/francesca-de-marco-141027411/", instagramURL: ""),
+            TeamProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "https://www.linkedin.com/in/marcello-guida-76b64b279/", instagramURL: ""),
             TeamProfile(name: "Karameta Albi", imageName: "developer_albi_karameta", linkedInURL: "", instagramURL: ""),
             TeamProfile(name: "Toshpulatov Bobur", imageName: "developer_bobur", linkedInURL: "", instagramURL: ""),
             TeamProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: "")
@@ -1958,5 +1970,5 @@ private enum SettingsDetail: Identifiable, Equatable {
 
 #Preview {
     SettingsView()
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
 }

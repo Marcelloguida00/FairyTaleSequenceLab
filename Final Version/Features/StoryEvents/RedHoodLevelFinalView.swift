@@ -3,7 +3,7 @@ import SwiftUI
 struct RedHoodLevelFinalView: View {
     let onComplete: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     private var buttonText: String {
         let text = lm.t("redhood.final.button")

@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct Final_VersionApp: App {
-    @StateObject private var languageManager = LanguageManager()
+    @State private var languageManager = LanguageManager()
     @State private var fontSettings = AppFontSettings()
     @AppStorage("reduceAnimations") private var reduceAnimations = false
 
@@ -20,7 +20,7 @@ struct Final_VersionApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(languageManager)
+                .environment(languageManager)
                 .environment(fontSettings)
                 .font(Font.custom(
                     AppTypography.fontName(

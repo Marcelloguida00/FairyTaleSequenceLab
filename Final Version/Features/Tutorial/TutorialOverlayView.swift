@@ -3,7 +3,7 @@ import SwiftUI
 struct TutorialOverlayView: View {
     let onFinish: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @State private var currentStep = 0
 
     private struct StepData {

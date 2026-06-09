@@ -23,6 +23,7 @@
 "info.collaborator.role.audio_composer" = "Audio Composer";
 "info.contacts"       = "Contacts";
 "info.support_email_subject" = "WORLD OF FABLES app support";
+"info.font_credits" = "OpenDyslexic font is created by Abelardo Gonzalez and is licensed under the SIL Open Font License (OFL).";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Put the story in order";
@@ -56,8 +57,16 @@
 "book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
 "a11y.storybook_button"          = "Open storybook";
 "book.ar.button"                = "AR";
-"book.ar.title"                 = "Unlocked Cards in AR";
-"book.ar.body"                  = "Look around to see the story event cards you have unlocked.";
+"book.ar.title"                 = "Storybook in AR";
+"book.ar.body"                  = "Place the storybook on a flat surface and flip through its pages.";
+"book.ar.cover_title"           = "Little Red\nRiding Hood";
+"book.ar.the_end"               = "The End";
+"book.ar.generating_pages"      = "Creating the pages…";
+"book.ar.searching_surface"     = "Move your device to find a flat surface.";
+"book.ar.tap_to_place"          = "Tap to place the book.";
+"book.ar.prev_page"             = "Previous page";
+"book.ar.next_page"             = "Next page";
+"book.ar.reposition"            = "Move the book";
 "book.ar.turn_page"             = "Next card";
 "book.ar.next_card"             = "Next card";
 "book.ar.placeholder.title"     = "No cards yet";

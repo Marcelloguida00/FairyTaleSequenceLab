@@ -23,6 +23,7 @@
 "info.collaborator.role.audio_composer" = "Compositore audio";
 "info.contacts"       = "Contatti";
 "info.support_email_subject" = "Assistenza applicazione WORLD OF FABLES";
+"info.font_credits" = "Il font OpenDyslexic è creato da Abelardo Gonzalez ed è rilasciato sotto la licenza SIL Open Font License (OFL).";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Metti la storia in ordine";
@@ -56,8 +57,16 @@
 "book.chapter_unlocked.open_hint" = "Tocca due volte per aprire il libro delle fiabe.";
 "a11y.storybook_button"          = "Apri il libro delle fiabe";
 "book.ar.button"                = "AR";
-"book.ar.title"                 = "Carte sbloccate in AR";
-"book.ar.body"                  = "Guarda nello spazio le carte degli eventi della storia che hai sbloccato.";
+"book.ar.title"                 = "Libro in AR";
+"book.ar.body"                  = "Appoggia il libro su una superficie piana e sfoglia le pagine.";
+"book.ar.cover_title"           = "Cappuccetto\nRosso";
+"book.ar.the_end"               = "Fine";
+"book.ar.generating_pages"      = "Creazione delle pagine in corso…";
+"book.ar.searching_surface"     = "Muovi il dispositivo per trovare una superficie piana.";
+"book.ar.tap_to_place"          = "Tocca per posizionare il libro.";
+"book.ar.prev_page"             = "Pagina precedente";
+"book.ar.next_page"             = "Pagina successiva";
+"book.ar.reposition"            = "Sposta il libro";
 "book.ar.turn_page"             = "Prossima carta";
 "book.ar.next_card"             = "Prossima carta";
 "book.ar.placeholder.title"     = "Nessuna carta";

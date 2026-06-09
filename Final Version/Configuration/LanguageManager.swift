@@ -1,7 +1,8 @@
 import Foundation
-import Combine
+import Observation
 
-final class LanguageManager: ObservableObject {
+@Observable
+final class LanguageManager {
 
     struct Language {
         let code: String
@@ -16,7 +17,7 @@ final class LanguageManager: ObservableObject {
         Language(code: "ru", nativeName: "Русский",   flag: "🇷🇺"),
     ]
 
-    @Published var currentLanguage: String {
+    var currentLanguage: String {
         didSet { UserDefaults.standard.set(currentLanguage, forKey: "appLanguage") }
     }
 

@@ -274,7 +274,7 @@ struct SequencingActivityView<Reward: View>: View {
     let onCelebrationZoomChange: ((Bool) -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
     @State private var sourceCardFrames: [Int: CGRect] = [:]
     @State private var tutorialHandProgress: CGFloat = 0.0
@@ -1423,7 +1423,7 @@ private struct SequencingActivityPreview: View {
                 )
             }
         }
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
     }
 }
 
