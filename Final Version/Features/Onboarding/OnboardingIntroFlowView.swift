@@ -10,7 +10,7 @@ struct OnboardingIntroFlowView: View {
         case outro4 = 3
     }
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     @State private var phase: Phase = .intro1
     @State private var showsVillainScene = false
@@ -159,5 +159,5 @@ enum OnboardingScripts {
 
 #Preview("Onboarding Intro Flow") {
     OnboardingIntroFlowView(onFinish: {})
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
 }

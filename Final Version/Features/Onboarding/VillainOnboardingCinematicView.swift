@@ -391,5 +391,5 @@ struct VillainOnboardingCinematicView: View {
 
 #Preview("Villain Onboarding") {
     VillainOnboardingCinematicView(onFinish: {})
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
 }
