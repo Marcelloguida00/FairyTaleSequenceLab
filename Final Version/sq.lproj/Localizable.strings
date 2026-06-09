@@ -138,7 +138,7 @@
 "settings.advanced_gate.wrong" = "Nuk është e saktë. Provo përsëri!";
 "settings.support" = "Mbështetje";
 "settings.whats_new" = "Çfarë ka të re";
-"settings.whats_new.message" = "Çfarë ka të re në versionin 1.0.1:\n\n• Ndryshuar dizajni grafik i librit të përrallave\n• Ndryshuar dizajni i lojës së sekuencave të kartave\n• Përditësuar imazhet për lojën e sekuencave të kartave\n• Përmirësuar UI/UX i butonave\n• Përditësuar titulli i lojës në \"Lumi: A Journey Through Fables\"\n• Përmirësuar ndërfaqja e lojës së sekuencave të kartave\n• Ndryshuar hyrja e kapitujve duke prezantuar dialogët\n• Përditësuar shpërblimi i kapitujve për të zhbllokuar kapitullin në librin e përrallave\n• Ridizenjuar banerat e kapitujve në hartë\n• Prezantuar shikimi i librit në realitetin e shtuar (AR), i çaktivizuar në këtë version\n• Prezantuar cilësime të reja të aksesueshmërisë\n• Shtuar një dritare konfirmimi kur fshihen të dhënat\n• Shtuar pamjet paraprake të ikonave të aplikacionit me statusin e kyçjes/zhbllokimit në cilësime\n• Rregulluar rrëzimi i aplikacionit në Xcode kur hyni në evente\n• Rregulluar gabimi i pozicionimit të avatarit pas ngarkimit të hartës";
+"settings.whats_new.message" = "Çfarë ka të re në versionin 1.0.2:\n\n• Çaktivizuar leximi automatik me zë i faqeve të librit të përrallave\n• Përmirësuar mbështetja e aksesueshmërisë duke riemëruar opsionin e kontrastit në \"Rrit kontrastin\"\n• Optimizuar paraqitja dhe numërimi i faqeve të librit të përrallave\n• Përmirësuar udhëzuesi hyrës në hartën e lojës\n• Shkurtuar dialogët e Kësulëkuqes për një ritëm më të mirë leximi\n• Shtuar baneri me dy butona për zhbllokimin e librit me mbështetje shumëguhëshe dhe kontrast të lartë\n• Përditësuar ngjyrat e ndërfaqes dhe përmirësuar animacionet e sekuencave të kartave";
 "settings.contact_me" = "Më kontakto";
 "settings.rate_app" = "Vlerëso aplikacionin";
 "settings.rate_app.message" = "Lidhja për vlerësim do të jetë e disponueshme kur aplikacioni të publikohet.";
@@ -176,8 +176,8 @@
 "tutorial.skip"             = "Kalo tutorialin";
 "tutorial.next"             = "Tjetër";
 "tutorial.done"             = "Hajde!";
-"tutorial.step1.title"      = "Lord Tempus Godet!";
-"tutorial.step1.body"       = "Lord Tempus ka përmbysur gjithë Botën e Basmave! Por bashkë mund ta rregullojmë. Trokit kudo në hartë për të filluar ecjen!";
+"tutorial.step1.title"      = "Trokit mbi pikat";
+"tutorial.step1.body"       = "Për të ecur në hartë duhet të trokasësh mbi pikat e zhbllokuara.";
 "tutorial.step2.title"      = "Gjej një Ishull Historie";
 "tutorial.step2.body"       = "Ec drejt një ishulli ndriçues. Kur arrish, shfaqet butoni i play — trokit për të filluar restaurimin e asaj basme!";
 "tutorial.step3.title"      = "Rikthe Rendin";
@@ -304,4 +304,9 @@
 "a11y.ar_back_hint" = "Mbyll pamjen e realitetit të përmirësuar dhe kthe në hartë";
 "a11y.reward_pack_label" = "Paketa e shpërblimit";
 "a11y.reward_pack_hint" = "Trokit ose lëviz lart për të hapur paketën e shpërblimit";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Trokit Luaj për të filluar historinë!";
+"tutorial.drag_first_scene" = "Tërhiq skenën e parë në pozicionin e parë";
+"tutorial.tap_to_flip" = "Trokit mbi kartë për ta kthyer dhe për të lexuar udhëzimin";
 

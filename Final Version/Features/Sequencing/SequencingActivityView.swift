@@ -101,6 +101,33 @@ private struct EmptySequenceSlotView: View {
     }
 }
 
+private struct TapRippleEffect: View {
+    @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.yellow.opacity(0.8), lineWidth: 2)
+                .frame(width: 30, height: 30)
+                .scaleEffect(pulse ? 2.2 : 0.8)
+                .opacity(pulse ? 0.0 : 1.0)
+            
+            Circle()
+                .fill(Color.yellow.opacity(0.35))
+                .frame(width: 30, height: 30)
+                .scaleEffect(pulse ? 1.6 : 0.8)
+                .opacity(pulse ? 0.0 : 1.0)
+        }
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(Animation.easeOut(duration: 0.95).repeatForever(autoreverses: false)) {
+                pulse = true
+            }
+        }
+    }
+}
+
 private struct SourceCardHintBorder: View {
     let cardW: CGFloat
     let cardH: CGFloat
@@ -248,6 +275,10 @@ struct SequencingActivityView<Reward: View>: View {
     let makeReward: (Int, @escaping () -> Void) -> Reward
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var lm: LanguageManager
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
+    @State private var sourceCardFrames: [Int: CGRect] = [:]
+    @State private var tutorialHandProgress: CGFloat = 0.0
+    @State private var tutorialTapBounce = false
 
     // card ids in source row order (randomized at activity start)
     @State private var shuffledStart: [Int]
@@ -434,7 +465,14 @@ struct SequencingActivityView<Reward: View>: View {
             }
         }
         .ignoresSafeArea()
-        .onAppear(perform: repairBoardStateIfNeeded)
+        .onAppear {
+            repairBoardStateIfNeeded()
+            if event.id == 1 && !hasSeenTutorial {
+                withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                    tutorialTapBounce = true
+                }
+            }
+        }
         .onChange(of: event.id) { _, _ in
             resetBoardState()
         }
@@ -528,6 +566,63 @@ struct SequencingActivityView<Reward: View>: View {
                     removal:   .scale(scale: 0.95).combined(with: .opacity)
                 ))
                 .zIndex(10)
+            }
+
+            if event.id == 1 && !hasSeenTutorial {
+                if let targetCardID = event.correctOrder.first,
+                   let cardFrame = sourceCardFrames[targetCardID],
+                   let slotFrame = slotFrames[0] {
+                    
+                    let isCardPlaced = (slotContents[0] == targetCardID)
+                    
+                    let startPoint = CGPoint(x: cardFrame.midX, y: cardFrame.midY)
+                    let endPoint = CGPoint(x: slotFrame.midX, y: slotFrame.midY)
+                    
+                    let currentX = isCardPlaced ? endPoint.x : startPoint.x + (endPoint.x - startPoint.x) * tutorialHandProgress
+                    let currentY = isCardPlaced ? endPoint.y : startPoint.y + (endPoint.y - startPoint.y) * tutorialHandProgress
+                    
+                    ZStack {
+                        VStack(spacing: 4) {
+                            let msg = isCardPlaced ? lm.t("tutorial.tap_to_flip") : lm.t("tutorial.drag_first_scene")
+                            Text(msg)
+                                .font(.app(.title3, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.black)
+                                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.yellow, lineWidth: 1.5))
+                                )
+                                .shadow(color: .black.opacity(0.35), radius: 5)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: 320)
+                            
+                            ZStack {
+                                if isCardPlaced {
+                                    TapRippleEffect()
+                                        .offset(y: -18)
+                                }
+                                
+                                Image(systemName: isCardPlaced ? "hand.tap.fill" : "hand.draw.fill")
+                                     .font(.system(size: 40, weight: .bold))
+                                     .foregroundColor(.white)
+                                     .shadow(color: .black.opacity(0.4), radius: 5, x: 2, y: 3)
+                                     .scaleEffect(isCardPlaced ? (tutorialTapBounce ? 0.85 : 1.05) : 1.0)
+                                     .offset(y: isCardPlaced ? (tutorialTapBounce ? 10 : -8) : 0)
+                            }
+                        }
+                        .position(x: currentX, y: currentY - 60)
+                    }
+                    .zIndex(200)
+                    .allowsHitTesting(false)
+                    .onAppear {
+                        tutorialHandProgress = 0.0
+                        withAnimation(Animation.linear(duration: 2.2).repeatForever(autoreverses: false)) {
+                            tutorialHandProgress = 1.0
+                        }
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -825,29 +920,43 @@ struct SequencingActivityView<Reward: View>: View {
     @ViewBuilder
     private func sourceCard(cardId: Int, cardW: CGFloat, cardH: CGFloat) -> some View {
         if let card = cardData(for: cardId) {
-            if guidedSourceCardID == cardId {
-                cardInteractionGestures(
-                    SourceCardHintWrapper(cardW: cardW, cardH: cardH) {
+            let cardView = Group {
+                if guidedSourceCardID == cardId {
+                    cardInteractionGestures(
+                        SourceCardHintWrapper(cardW: cardW, cardH: cardH) {
+                            SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
+                                .frame(width: cardW, height: cardH)
+                                .scaleEffect(cardTouchScale(for: cardId))
+                                .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
+                                .contentShape(RoundedRectangle(cornerRadius: 16))
+                        },
+                        cardId: cardId,
+                        originSlot: nil
+                    )
+                } else {
+                    cardInteractionGestures(
                         SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
                             .frame(width: cardW, height: cardH)
                             .scaleEffect(cardTouchScale(for: cardId))
                             .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
-                            .contentShape(RoundedRectangle(cornerRadius: 16))
-                    },
-                    cardId: cardId,
-                    originSlot: nil
-                )
-            } else {
-                cardInteractionGestures(
-                    SequenceCardView(card: card, isFlipped: flippedState(for: cardId))
-                        .frame(width: cardW, height: cardH)
-                        .scaleEffect(cardTouchScale(for: cardId))
-                        .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
-                        .contentShape(RoundedRectangle(cornerRadius: 16)),
-                    cardId: cardId,
-                    originSlot: nil
-                )
+                            .contentShape(RoundedRectangle(cornerRadius: 16)),
+                        cardId: cardId,
+                        originSlot: nil
+                    )
+                }
             }
+
+            cardView
+                .background(
+                    GeometryReader { g in
+                        let frame = g.frame(in: .named("gameBoard"))
+                        Color.clear
+                            .onAppear { sourceCardFrames[cardId] = frame }
+                            .onChange(of: frame) { _, newFrame in
+                                sourceCardFrames[cardId] = newFrame
+                            }
+                    }
+                )
         } else {
             ghostCard(cardW: cardW, cardH: cardH)
         }
@@ -860,6 +969,12 @@ struct SequencingActivityView<Reward: View>: View {
         playFlipToggleSound()
         withAnimation(flipAnimation) {
             flippedStates[index].toggle()
+        }
+
+        if !hasSeenTutorial && cardId == event.correctOrder.first && slotContents[0] == cardId {
+            withAnimation(.easeInOut(duration: 0.35)) {
+                hasSeenTutorial = true
+            }
         }
     }
 
@@ -889,7 +1004,9 @@ struct SequencingActivityView<Reward: View>: View {
         cardId: Int,
         originSlot: Int?
     ) -> some View {
-        if allSlotsCorrect || isRunningCompletionSequence || isStorybookExpanded {
+        let isLockedByTutorial = (event.id == 1 && !hasSeenTutorial && cardId != event.correctOrder.first)
+
+        if allSlotsCorrect || isRunningCompletionSequence || isStorybookExpanded || isLockedByTutorial {
             content
                 .allowsHitTesting(false)
         } else {

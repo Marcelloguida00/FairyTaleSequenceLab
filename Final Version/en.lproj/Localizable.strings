@@ -148,7 +148,7 @@
 "settings.advanced_gate.wrong" = "That's not right. Try again!";
 "settings.support" = "Support";
 "settings.whats_new" = "What's New";
-"settings.whats_new.message" = "What's New in Version 1.0.1:\n\n• Redesigned the graphic design of the storybook\n• Modified the game design of the card sequencing activity\n• Updated the images for the card sequencing activity\n• Refined the button UI/UX\n• Updated the game title to \"Lumi: A Journey Through Fables\"\n• Improved the card sequencing game interface\n• Added narrative dialogues to chapter introductions\n• Updated chapter rewards to unlock chapters in the storybook\n• Redesigned the map chapter banners\n• Introduced AR storytelling card scanner mode (disabled in this version)\n• Added new accessibility options (dyslexia font, animations, and sound effects toggles)\n• Added confirmation pop-up when resetting data\n• Added visual app icon previews with lock/unlock status in settings\n• Fixed Xcode debugger crash when entering story events\n• Fixed avatar positioning offset bugs on map reload";
+"settings.whats_new.message" = "What's New in Version 1.0.2:\n\n• Disabled automatic voice narration on storybook pages\n• Improved accessibility support by renaming the contrast option to \"Increase Contrast\"\n• Optimized storybook layout and pagination\n• Improved the introductory tutorial on the world map\n• Shortened Red Riding Hood dialogues for better pacing\n• Added a two-button book unlock banner with multi-language and high-contrast support\n• Updated UI colors and improved card sequencing animations";
 "settings.contact_me" = "Contact me";
 "settings.rate_app" = "Rate the app";
 "settings.rate_app.message" = "The rating link will be available when the app is published.";
@@ -186,8 +186,8 @@
 "tutorial.skip"             = "Skip Tutorial";
 "tutorial.next"             = "Next";
 "tutorial.done"             = "Let's go!";
-"tutorial.step1.title"      = "Lord Tempus Strikes!";
-"tutorial.step1.body"       = "Lord Tempus has turned the whole World of Fables upside down! But together we can fix it. Tap anywhere on the map to start walking!";
+"tutorial.step1.title"      = "Tap the waypoints";
+"tutorial.step1.body"       = "To walk on the map, you must click on the unlocked waypoints.";
 "tutorial.step2.title"      = "Find a Story Island";
 "tutorial.step2.body"       = "Walk to a glowing story island. When you arrive, a play button appears — tap it to begin restoring that fairy tale!";
 "tutorial.step3.title"      = "Restore the Order";
@@ -305,3 +305,7 @@
 "a11y.reward_pack_label" = "Reward pack";
 "a11y.reward_pack_hint" = "Tap or drag upward to open the reward pack";
 
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Tap Play to start the story!";
+"tutorial.drag_first_scene" = "Drag the first scene into the first position";
+"tutorial.tap_to_flip" = "Tap the card to flip it and read the clue";

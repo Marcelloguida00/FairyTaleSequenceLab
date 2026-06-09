@@ -135,7 +135,7 @@
 "settings.advanced_gate.wrong" = "Non è corretto. Riprova!";
 "settings.support" = "Supporto";
 "settings.whats_new" = "Novità";
-"settings.whats_new.message" = "Novità della versione 1.0.1:\n\n• Modificato il design grafico del libro delle fiabe\n• Modificato il game design del gioco delle sequenze con le carte\n• Modificate le immagini per il gioco delle sequenze con le carte\n• Modificata la UX/UI dei bottoni\n• Modificato il titolo del gioco in \"Lumi: A Journey Through Fables\"\n• Modificata la UI/UX del gioco delle sequenze delle carte\n• Modificato l'intro dei capitoli del gioco introducendo i dialoghi\n• Modificata la reward dei capitoli introducendo lo sblocco del libro delle fiabe\n• Modificati i banner dei capitoli\n• Introdotto lo storytelling book in AR, disabilitato in questa versione\n• Introdotte nuove opzioni di accessibilità\n• Aggiunto feedback di conferma per il reset dei dati\n• Aggiunta anteprima visiva con lucchetto delle icone in impostazioni\n• Risolto il blocco di caricamento dell'evento 1 con il debugger di Xcode\n• Risolto il bug di posizionamento dell'avatar dopo il caricamento della mappa";
+"settings.whats_new.message" = "Novità della versione 1.0.2:\n\n• Disattivata la lettura automatica (sintesi vocale) delle pagine del libro delle fiabe\n• Migliorato il supporto all'accessibilità rinominando l'opzione in \"Aumenta contrasto\"\n• Ottimizzato il layout e l'impaginazione del libro delle fiabe\n• Migliorato il tutorial introduttivo sulla mappa di gioco\n• Accorciati i dialoghi di Cappuccetto Rosso per un ritmo di lettura migliore\n• Aggiunto il banner di sblocco del libro a due pulsanti con supporto multilingua e alto contrasto\n• Aggiornati i colori dell'interfaccia e migliorate le animazioni delle carte";
 "settings.contact_me" = "Contattami";
 "settings.rate_app" = "Valuta l'app";
 "settings.rate_app.message" = "Il collegamento alla valutazione sarà disponibile quando l'app sarà pubblicata.";
@@ -173,8 +173,8 @@
 "tutorial.skip"             = "Salta il tutorial";
 "tutorial.next"             = "Avanti";
 "tutorial.done"             = "Andiamo!";
-"tutorial.step1.title"      = "Lord Tempus Colpisce!";
-"tutorial.step1.body"       = "Lord Tempus ha messo sottosopra tutto il Mondo delle Favole! Ma insieme possiamo sistemarlo. Tocca la mappa per cominciare a camminare!";
+"tutorial.step1.title"      = "Tocca i waypoint";
+"tutorial.step1.body"       = "Per camminare nella mappa devi cliccare sui waypoint sbloccati.";
 "tutorial.step2.title"      = "Trova un'Isola delle Storie";
 "tutorial.step2.body"       = "Cammina verso un'isola luminosa. Quando arrivi, appare un pulsante play — toccalo per iniziare a ripristinare quella fiaba!";
 "tutorial.step3.title"      = "Ripristina l'Ordine";
@@ -305,3 +305,8 @@
 "a11y.ar_back_hint" = "Chiude la vista di realtà aumentata e ritorna alla mappa";
 "a11y.reward_pack_label" = "Pacco premio";
 "a11y.reward_pack_hint" = "Tocca o scorri verso l'alto per aprire il pacco premio";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Tocca Gioca per iniziare la storia!";
+"tutorial.drag_first_scene" = "Trascina la prima scena nella prima posizione";
+"tutorial.tap_to_flip" = "Tocca la carta per girarla e leggere l'indizio";
