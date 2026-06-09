@@ -33,6 +33,7 @@ struct SettingsView: View {
     @Binding var advancedSettingsUnlocked: Bool
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
     @AppStorage(AppAudioSettings.masterKey) private var audioMasterEnabled = true
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
@@ -673,6 +674,19 @@ struct SettingsView: View {
                 ) {
                     AppSettings.hapticImpact(.light)
                     hasSeenOnboarding = false
+                    closeSettings()
+                }
+
+                settingsActionRow(
+                    icon: "book.fill",
+                    title: lm.t("settings.show_tutorial_again"),
+                    detail: nil,
+                    showsDisclosure: false,
+                    largeStyle: usesFrameLayout,
+                    fillHeight: usesExpandedMainRows
+                ) {
+                    AppSettings.hapticImpact(.light)
+                    hasSeenTutorial = false
                     closeSettings()
                 }
             }
