@@ -1,2 +1,321 @@
-"/* Buttons */\n\"button.play\"        = \"JUGAR\";\n\"button.back\"        = \"Atrás\";\n\"button.menu\"        = \"Menú\";\n\"button.continue\"    = \"Continuar\";\n\"button.check\"       = \"¡Comprobar!\";\n\"button.flip_all\"    = \"Voltear todas\";\n\"button.play_again\"  = \"Jugar de nuevo\";\n\"button.next_event\"  = \"Siguiente evento\";\n\"button.back_to_map\" = \"Volver al mapa\";\n\"button.done\"        = \"Listo\";\n\"button.cancel\"      = \"Cancelar\";\n\"button.settings\"    = \"AJUSTES\";\n\n/* Main menu */\n\"menu.title.line1\"    = \"Lumi\";\n\"menu.title.line2\"    = \"World Of Fables\";\n\n/* Info */\n\"info.title\"          = \"Información\";\n\"info.developers\"     = \"Desarrolladores\";\n\"info.collaborators\"  = \"Colaboradores\";\n\"info.collaborator.role.audio_composer\" = \"Compositor de Audio\";\n\"info.contacts\"       = \"Contactos\";\n\"info.support_email_subject\" = \"Soporte de la aplicación WORLD OF FABLES\";\n\"info.font_credits\" = \"La fuente OpenDyslexic ha sido creada por Abelardo González y está bajo la licencia SIL Open Font License (OFL).\";\n\n/* Sequencing activity */\n\"sequencing.instruction\" = \"Ordena la historia\";\n\"celebration.title\"      = \"¡Lo lograste!\";\n\"feedback.good_try\"      = \"¡Buen intento!\";\n\n/* Position labels (used in contextual hints) */\n\"pos.1st\" = \"1.ª\";\n\"pos.2nd\" = \"2.ª\";\n\"pos.3rd\" = \"3.ª\";\n\"pos.4th\" = \"4.ª\";\n\n/* Contextual hints */\n\"hint.tap_check\"    = \"¡Toca Comprobar!\";\n\"hint.wrong_1\"      = \"¿Es '%@' realmente la %@ escena? Piensa en cuándo ocurre.\";\n\"hint.wrong_2\"      = \"La %@ escena no debería ser '%@'. Busca otra.\";\n\"hint.wrong_3\"      = \"La %@ escena debería ser '%@'. ¿Puedes encontrarla?\";\n\"hint.empty_1\"      = \"La posición %d todavía está vacía. ¡Intenta colocar una carta ahí!\";\n\"hint.empty_2\"      = \"La %@ escena debería ser '%@'.\";\n\n/* Level banners */\n\"level.adventure_begins\" = \"¡Comienza la aventura!\";\n\"level.new_scene\"        = \"
-<truncated 27515 bytes>
+/* Buttons */
+"button.play"        = "JUGAR";
+"button.back"        = "Atrás";
+"button.menu"        = "Menú";
+"button.continue"    = "Continuar";
+"button.check"       = "¡Controlar!";
+"button.flip_all"    = "Voltear todo";
+"button.play_again"  = "jugar de nuevo";
+"button.next_event"  = "Próximo evento";
+"button.back_to_map" = "Volver al mapa";
+"button.done"        = "Hecho";
+"button.cancel"      = "Cancelar";
+"button.settings"    = "AJUSTES";
+
+/* Main menu */
+"menu.title.line1"    = "lumi";
+"menu.title.line2"    = "Mundo de fábulas";
+
+/* Info */
+"info.title"          = "Información";
+"info.developers"     = "Desarrolladores";
+"info.collaborators"  = "Colaboradores";
+"info.collaborator.role.audio_composer" = "Compositor de audio";
+"info.contacts"       = "Contactos";
+"info.support_email_subject" = "Soporte de la aplicación MUNDO DE FÁBULAS";
+"info.font_credits" = "La fuente OpenDyslexic es creada por Abelardo González y tiene la licencia SIL Open Font License (OFL).";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Pon la historia en orden";
+"celebration.title"      = "¡Lo hiciste!";
+"feedback.good_try"      = "¡Buen intento!";
+
+/* Position labels (used in contextual hints) */
+"pos.1st" = "1er";
+"pos.2nd" = "2do";
+"pos.3rd" = "3er";
+"pos.4th" = "4to";
+
+/* Contextual hints */
+"hint.tap_check"    = "Toca ¡Verificar!";
+"hint.wrong_1"      = "¿Es '%@' realmente la escena %@? Piensa en cuándo sucederá.";
+"hint.wrong_2"      = "La escena %@ no debería ser '%@'. Busque otro.";
+"hint.wrong_3"      = "La escena %@ debería ser '%@'. ¿Puedes encontrarlo?";
+"hint.empty_1"      = "La posición %d todavía está vacía. ¡Intenta colocar una tarjeta allí!";
+"hint.empty_2"      = "La escena %@ debería ser '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "¡Comienza la aventura!";
+"level.new_scene"        = "Nueva escena";
+
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "¡Felicidades!\n¡Has desbloqueado un nuevo capítulo en el libro!";
+"book.chapter_unlocked.message" = "\"%@\" está ahora en tu libro de cuentos de hadas.";
+"book.chapter_unlocked.open_button" = "abre el libro";
+"book.chapter_unlocked.continue_button" = "Continuar";
+"book.chapter_unlocked.tap_hint" = "Toque en cualquier lugar para continuar.";
+"book.chapter_unlocked.open_hint" = "Toca dos veces para abrir el libro de cuentos.";
+"a11y.storybook_button"          = "libro de cuentos abierto";
+"book.ar.button"                = "Arkansas";
+"book.ar.title"                 = "Libro de cuentos en AR";
+"book.ar.body"                  = "Coloque el libro de cuentos sobre una superficie plana y hojee sus páginas.";
+"book.ar.cover_title"           = "Caperucita roja";
+"book.ar.the_end"               = "El fin";
+"book.ar.generating_pages"      = "Creando las páginas…";
+"book.ar.searching_surface"     = "Mueva su dispositivo para encontrar una superficie plana.";
+"book.ar.tap_to_place"          = "Toque para colocar el libro.";
+"book.ar.prev_page"             = "Pagina anterior";
+"book.ar.next_page"             = "Página siguiente";
+"book.ar.reposition"            = "mueve el libro";
+"book.ar.turn_page"             = "siguiente tarjeta";
+"book.ar.next_card"             = "siguiente tarjeta";
+"book.ar.placeholder.title"     = "Aún no hay tarjetas";
+"book.ar.empty"                 = "Completa un evento para desbloquear sus cartas en AR.";
+"book.ar.unsupported"           = "Este dispositivo no es compatible con la realidad aumentada.";
+"a11y.book_ar_button"           = "Muestra cartas de historia desbloqueadas en realidad aumentada";
+
+/* Map */
+"map.coming_soon"             = "Muy pronto";
+"map.region.red_riding_hood"  = "rojo\nCaperucita";
+"map.region.princess_frog"    = "La princesa y el sapo";
+"map.region.aladdin"          = "aladino";
+"map.region.beauty_beast"     = "La bella y la bestia";
+
+/* Reward screen */
+"reward.perfect"   = "¡Perfecto! ¡Lo conseguiste en el primer intento!";
+"reward.well_done" = "¡Bien hecho! ¡Lo descubriste!";
+"reward.did_it"    = "¡Lo hiciste! ¡Cada intento te hizo más fuerte!";
+
+/* Settings */
+"settings.title"          = "Ajustes";
+"settings.language"       = "Idioma";
+"settings.accessibility"  = "Accesibilidad";
+"settings.accessibility.description" = "Fuente legible y preferencias de lectura.";
+"settings.accessibility.message" = "Administre opciones que hacen que el texto sea más fácil de leer y la aplicación más accesible.";
+"settings.enable_haptics" = "hápticos";
+"settings.enable_haptics.description" = "Activa o desactiva la respuesta táctil.";
+"settings.enable_animations" = "Reducir animaciones";
+"settings.enable_animations.description" = "Desactiva los efectos visuales y las transiciones.";
+"settings.enable_sounds" = "Efectos sonoros";
+"settings.enable_sounds.description" = "Activa o desactiva los sonidos de interacción y menú.";
+"settings.voice_over" = "Voz en off";
+"settings.voice_over.description" = "Activa o desactiva la narración de voz.";
+"settings.voice_over.info" = "La compatibilidad con VoiceOver está totalmente integrada. Para usarlo, habilite la función en la configuración de su sistema iOS.";
+"settings.reduce_contrast" = "aumentar el contraste";
+"settings.reduce_contrast.description" = "Utilice colores de alto contraste para mejorar la legibilidad del texto.";
+"settings.differentiate" = "Diferenciarse sin color solo";
+"settings.differentiate.description" = "Agregue patrones e íconos para ayudar a distinguir elementos más allá del color.";
+"settings.dyslexia_font"  = "Fuente de dislexia";
+"settings.dyslexia_font.description" = "Utilice OpenDyslexic para todo el texto.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic en";
+"settings.dyslexia_font.disabled" = "AbiertoDisléxico desactivado";
+"settings.sound"          = "Sonido";
+"settings.sound.description" = "Aplicación de audio, música y efectos de sonido.";
+"settings.sound.message" = "Controle el audio de la aplicación, la música de fondo y los efectos de sonido del juego por separado.";
+"settings.audio.master" = "audio de la aplicación";
+"settings.audio.master.description" = "Desactiva todo el audio de la aplicación: música y efectos de sonido.";
+"settings.audio.music" = "Música";
+"settings.audio.music.description" = "Música de fondo y ambiente durante todo el juego. No afecta los sonidos de los juegos de cartas.";
+"settings.audio.music_volume" = "Volumen de música";
+"settings.audio.sfx" = "Efectos del juego de cartas";
+"settings.audio.sfx.description" = "Sonidos en la actividad de secuenciación de cartas únicamente: notas, volteos y tintineo de victoria.";
+"settings.sequencing_sfx" = "Sonidos de tarjeta de secuenciación";
+"settings.sequencing_sfx.simplified" = "Simplificado";
+"settings.sequencing_sfx.orchestral" = "Orquestal";
+"settings.music"          = "Música";
+"settings.music.on"       = "Música encendida";
+"settings.music.muted"    = "Música silenciada";
+"settings.music.mute"     = "Silenciar música";
+"settings.music.unmute"   = "Activar música";
+"settings.music.theme.garden_gate" = "Más allá de la puerta del jardín";
+"settings.music.theme.red_hood_1" = "Tema de Caperucita Roja 1";
+"settings.music.theme.red_hood_2" = "Tema de Caperucita Roja 2";
+"settings.music.theme.red_hood_3" = "Tema de Caperucita Roja 3";
+"settings.progress"       = "Progreso";
+"settings.saved_data"     = "Datos guardados";
+"settings.reset_progress" = "Restablecer progreso";
+"settings.reset_progress.description" = "Comienza la aventura desde el principio.";
+"settings.reset_progress.confirm.title" = "¿Reiniciar el progreso?";
+"settings.reset_progress.confirm.message" = "Esto eliminará el progreso guardado y te devolverá al inicio de la aventura.";
+"settings.reset_progress.confirm.action" = "Reiniciar";
+"settings.reset_progress.success" = "Datos borrados exitosamente";
+"settings.app" = "Aplicación";
+"settings.app_icon" = "Icono de aplicación";
+"settings.app_icon.default" = "Por defecto";
+"settings.app_icon.message" = "Elija un icono alternativo para personalizar su aplicación.";
+"settings.app_icon.error.title" = "Error de icono";
+"settings.app_icon.error.not_configured" = "El icono \"%@\" no está configurado correctamente en Xcode.";
+"settings.change_language" = "Cambiar idioma";
+"settings.change_language.description" = "Elija el idioma de la aplicación.";
+"settings.change_language.message" = "Seleccione el idioma que desea utilizar en la aplicación.";
+"settings.show_onboarding_again" = "Mostrar incorporación nuevamente";
+"settings.show_tutorial_again" = "Mostrar tutorial nuevamente";
+"settings.advanced_settings" = "Configuración avanzada";
+"settings.advanced_gate.title" = "Para adultos";
+"settings.advanced_gate.message" = "Resuelva esta adición para abrir Configuración avanzada.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "Continuar";
+"settings.advanced_gate.wrong" = "Eso no está bien. ¡Intentar otra vez!";
+"settings.support" = "Apoyo";
+"settings.whats_new" = "Qué hay de nuevo";
+"settings.whats_new.message" = "Novedades de la versión 1.0.2:\n\n• Narración de voz automática deshabilitada en las páginas del libro de cuentos.\n• Soporte de accesibilidad mejorado al cambiar el nombre de la opción de contraste a \"Aumentar contraste\"\n• Diseño y paginación optimizados del libro de cuentos.\n• Se mejoró el tutorial introductorio sobre el mapa mundial.\n• Diálogos de Caperucita Roja acortados para un mejor ritmo\n• Se agregó un banner de desbloqueo de libros con dos botones compatible con varios idiomas y alto contraste.\n• Colores de interfaz de usuario actualizados y animaciones de secuenciación de tarjetas mejoradas";
+"settings.contact_me" = "Contáctame";
+"settings.rate_app" = "Califica la aplicación";
+"settings.rate_app.message" = "El enlace de calificación estará disponible cuando se publique la aplicación.";
+"settings.about" = "Acerca de";
+"settings.about.message" = "World of Fables es un juego educativo para niños. Ayuda a desarrollar la comprensión de historias, el orden lógico de los eventos, la atención y la memoria visual mediante la reconstrucción de cuentos de hadas ilustrados.";
+"settings.version" = "Versión";
+"settings.privacy_policy" = "política de privacidad";
+"settings.privacy_policy.message" = "POLÍTICA DE PRIVACIDAD\n\nÚltima actualización: 1 de junio de 2026\n\n1. Introducción\nEsta Política de Privacidad describe cómo World of Fables, una aplicación educativa para niños diseñada para desarrollar la comprensión de historias, la secuencia lógica, la atención y la memoria visual, maneja la información. La aplicación está diseñada según los principios de minimización de datos y privacidad desde el diseño.\n\n2. Responsable del tratamiento de datos\nEl responsable del tratamiento es Marcello Guida. Para cuestiones de privacidad, comuníquese con: mguida2604@gmail.com.\n\n3. Datos personales y métodos de recopilación\nLa aplicación no requiere registro ni inicio de sesión y no recopila nombres, apellidos, direcciones de correo electrónico, números de teléfono, direcciones postales, datos de ubicación, direcciones IP, identificadores de dispositivos, información del sistema operativo, registros de uso u otra información de identificación. No crea perfiles de usuario.\n\nLa aplicación guarda solo las preferencias no personales y el progreso del juego localmente en el dispositivo utilizando el almacenamiento UserDefaults de Apple. Estos pueden incluir niveles completados, áreas desbloqueadas, posición actual del juego, idioma seleccionado, preferencias de accesibilidad, configuraciones de música, configuraciones de animación y configuraciones hápticas.\n\nSi un usuario, padre o tutor se comunica voluntariamente con el soporte por correo electrónico, la dirección de correo electrónico del remitente y cualquier información incluida en el mensaje se procesarán únicamente para responder a la solicitud.\n\n4. Finalidades y bases jurídicas según el RGPD\nLa configuración y el progreso locales se utilizan únicamente para proporcionar la funcionalidad solicitada por la aplicación y preservar la experiencia del usuario. No se transmiten al Responsable del tratamiento.\n\nCualquier correo electrónico de soporte se procesa para responder a la solicitud del usuario y, cuando corresponda, para tomar medidas precontractuales a solicitud del usuario o perseguir el interés legítimo del Responsable del tratamiento de proporcionar asistencia, de conformidad con el artículo 6(1)(b) y el artículo 6(1)(f) del RGPD. Los datos también podrán procesarse cuando sea necesario para cumplir con una obligación legal o proteger los derechos del Responsable del tratamiento, de conformidad con el artículo 6(1)(c) y el artículo 6(1)(f) del RGPD.\n\n5. Cámara y realidad aumentada\nLa aplicación incluye una función opcional de realidad aumentada. Sujeto al permiso del dispositivo del usuario, la cámara se usa solo para mostrar tarjetas de historia en el entorno del usuario a través de ARKit. La entrada de la cámara se procesa localmente en el dispositivo. La aplicación no graba, guarda, carga ni comparte fotos, vídeos ni datos de la cámara. El permiso de la cámara se puede negar o revocar en cualquier momento en la configuración del dispositivo.\n\n6. Seguridad y retención\nLas preferencias locales y el progreso permanecen en el dispositivo y se pueden eliminar restableciendo el progreso en la aplicación, desinstalando la aplicación o usando los controles disponibles del dispositivo. Los correos electrónicos de soporte se conservan solo durante el tiempo necesario para responder a la solicitud, cumplir con las obligaciones legales aplicables o proteger los derechos del Controlador de datos. Se adoptan las medidas técnicas y organizativas adecuadas en relación con el tratamiento limitado realizado.\n\n7. Terceros, almacenamiento remoto y transferencias internacionales\nLa aplicación no envía datos del usuario o del dispositivo al Controlador de datos, servidores externos, bases de datos en la nube, servicios de hosting, socios o terceros. No transfiere datos de aplicaciones fuera del Espacio Económico Europeo. Los mensajes de correo electrónico enviados voluntariamente al soporte se manejan a través de los servicios de correo electrónico utilizados por el remitente y el Responsable del tratamiento; Se aplican los términos y políticas de privacidad de los proveedores pertinentes y pueden prever el procesamiento fuera del Espacio Económico Europeo de acuerdo con la ley aplicable.\n\n8. Cookies, seguimiento, análisis y publicidad\nLa aplicación no utiliza cookies, tecnologías de seguimiento, SDK de análisis de terceros, redes publicitarias, contenido patrocinado ni publicidad comportamental.\n\n9. Funciones no incluidas\nLa aplicación no incluye cuentas de usuario, servicios de autenticación externos, notificaciones push, compras, pagos, suscripciones ni mecanismos de pago externos.\n\n10. Privacidad de los niños\nLa aplicación está destinada a niños pero no recopila datos personales de niños. El contacto de soporte está destinado a padres o tutores. Los niños no deben enviar información personal por correo electrónico. Si se reciben datos personales relacionados con un niño de forma no intencionada, un padre o tutor puede solicitar su eliminación comunicándose con el Responsable del tratamiento.\n\n11. Derechos del usuario\nCuando el Responsable del tratamiento trate datos personales, los usuarios podrán ejercer los derechos previstos en los artículos 15 a 22 del RGPD, cuando corresponda: acceso, rectificación, supresión, limitación del tratamiento, oposición, portabilidad de los datos y retirada del consentimiento sin que ello afecte al tratamiento lícito previo. Los usuarios también pueden presentar una queja ante la autoridad de control competente, incluida la Autoridad Italiana de Protección de Datos (Garante per la protezione dei dati personali).\n\n12. Ejercicio de los derechos de privacidad y de contactos\nPara ejercer sus derechos de privacidad o solicitar información, comuníquese con Marcello Guida en mguida2604@gmail.com. Las solicitudes se manejarán de acuerdo con la ley aplicable.\n\n13. Cambios a esta Política de Privacidad\nEsta Política puede actualizarse si la aplicación o los requisitos legales aplicables cambian. Cualquier nuevo procesamiento se describirá antes de su introducción. La versión actualizada estará disponible en la aplicación.";
+
+/* Accessibility */
+"a11y.info_button"       = "Información";
+"a11y.info_hint"         = "Muestra los nombres de los desarrolladores.";
+"a11y.info_close_button" = "Cerrar información";
+"a11y.info_email_button" = "Escribe un correo electrónico de soporte";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Caperucita roja";
+"redhood.intro.mascot"  = "¡Oh, no! ¡Un monstruo ha destruido todos los cuentos de hadas y ha esparcido sus escenas! ¿Puedes ayudarme a reconstruir la historia de Caperucita Roja?";
+"redhood.intro.button"  = "¡Empieza la Aventura!";
+
+/* Onboarding */
+"onboarding.skip"           = "Saltar";
+"onboarding.next"           = "Próximo";
+"onboarding.start"          = "¡Salva las fábulas!";
+"onboarding.page1.title"    = "Conoce a Lumi";
+"onboarding.page1.body"     = "Hace mucho tiempo, en un mundo mágico, vivía una pequeña y encantadora niña llamada Lumi, que era una gran amiga de todos los personajes de cuentos de hadas.";
+"onboarding.page2.title"    = "Un giro oscuro";
+"onboarding.page2.body"     = "Un día, Lumi estaba a bordo del barco, lista para atracar en el bosque de Caperucita Roja para visitarla. Pero de repente... El cielo se volvió negro como la tinta.";
+"onboarding.page3.title"    = "Señor Tempus";
+"onboarding.page3.body"     = "¡Era el malvado Lord Tempus, el mago del tiempo! Celoso de no tener una historia propia, el mago lanzó un hechizo y mezcló las piezas de todos los cuentos de hadas, ¡creando un completo desastre! Ahora Caperucita Roja y todos los demás están confundidos y las historias ya no tienen sentido.";
+"onboarding.page4.title"    = "¡Te necesitamos!";
+"onboarding.page4.body"     = "Lumi necesita un ayudante valiente y súper inteligente para volver a armar todo... ¡sí! ¡Lumi definitivamente te necesita!";
+
+/* Tutorial */
+"tutorial.skip"             = "Saltar tutorial";
+"tutorial.next"             = "Próximo";
+"tutorial.done"             = "¡Vamos!";
+"tutorial.step1.title"      = "Toca los puntos de ruta";
+"tutorial.step1.body"       = "Para caminar por el mapa, debes hacer clic en los puntos de ruta desbloqueados.";
+"tutorial.step2.title"      = "Encuentra una isla de historias";
+"tutorial.step2.body"       = "Camine hasta una isla de historias resplandecientes. Cuando llegues, aparecerá un botón de reproducción: ¡tócalo para comenzar a restaurar ese cuento de hadas!";
+"tutorial.step3.title"      = "Restaurar el orden";
+"tutorial.step3.body"       = "Arrastra las tarjetas de escena en el orden correcto para reconstruir el cuento de hadas. ¡Piensa en lo que sucede primero!";
+"tutorial.step4.title"      = "Voltear en busca de pistas";
+"tutorial.step4.body"       = "¿No estás seguro de dónde va una tarjeta? ¡Gíralo para leer una pista sobre cuándo ocurre esa escena en la historia!";
+"tutorial.step5.title"      = "¡Rompe el hechizo!";
+"tutorial.step5.body"       = "Cuando todos los espacios estén llenos, presione ¡Verificar! Si lo haces bien, romperás el hechizo de Lord Tempus sobre esa historia. ¡Eres un héroe!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Jugar a Caperucita Roja";
+"a11y.start_event"          = "Iniciar evento";
+"a11y.go_back"              = "Volver";
+"a11y.return_to_menu"       = "Volver al menú principal";
+"a11y.play_button"          = "Jugar";
+"a11y.settings_button"      = "Abrir configuración";
+"a11y.settings_hint"        = "Abre la pantalla de configuración";
+"a11y.locked_level"         = "Nivel bloqueado";
+"a11y.menu_hint"            = "Sale del mapa mundial y abre la pantalla de título.";
+"a11y.play_hint"            = "Abre la cortina de nubes y comienza la aventura.";
+"a11y.main_menu"            = "Menú principal";
+"a11y.world_map"            = "mapa mundial";
+"a11y.avatar"               = "Personaje";
+"a11y.celebration"          = "¡Felicidades! ¡Lo hiciste!";
+"a11y.tap_to_play"          = "Toca para jugar";
+"a11y.level_locked_hint"    = "Este nivel está bloqueado. Completa los niveles anteriores para desbloquearlo.";
+"a11y.tap_to_replay"        = "Toca para reproducir";
+"a11y.continue_sequencing"  = "Continuar con la actividad de secuenciación.";
+"a11y.check_order"          = "Consulta el orden de tus historias";
+"a11y.flip_all"             = "Voltear todas las cartas";
+"a11y.story_scene_card"     = "Tarjeta de escena de historia";
+"a11y.story_scene_card_hint" = "Toca dos veces para voltear y leer una pista.";
+"a11y.button_select_app_icon" = "Seleccionar icono de aplicación";
+"a11y.button_locked"          = "Este artículo está bloqueado";
+"a11y.button_open_social_link" = "Abrir enlace de redes sociales";
+"a11y.hint_adjust_slider"     = "Ajuste el control deslizante con las flechas hacia arriba y hacia abajo";
+"a11y.source_tray"            = "Tarjetas fuente";
+"a11y.source_tray_hint"       = "Arrastra las cartas desde aquí a las ranuras.";
+"a11y.continue_button"        = "Continuar";
+"a11y.continue_hint"          = "Continúa hasta el próximo evento.";
+"a11y.envelope_open_button"   = "paquete abierto";
+"a11y.envelope_open_hint"     = "Abre el sobre para revelar las tarjetas desbloqueadas.";
+
+/* English Story Book Scenes */
+"story.redhood.scene1.title" = "Escena 1";
+"story.redhood.scene1.text1" = "Érase una vez, en lo profundo de un espeso bosque, había una pequeña cabaña donde vivía una niña encantadora. Todos la llamaban Caperucita Roja porque su madre le había hecho un precioso manto rojo con capucha a juego.";
+"story.redhood.scene1.text2" = "Una mañana, su madre le dijo: \"La abuela está en cama enferma con un fuerte resfriado. Llévale esta cesta de pasteles recién hechos, pero recuerda: ¡sigue por el camino principal y no te detengas!\".\n\nLa pequeña se despidió de su madre con un beso y le prometió: \"¡No te preocupes, mamá! Caminaré rápido e iré directa a casa de la abuela\".";
+
+"story.redhood.scene2.title" = "Escena 2";
+"story.redhood.scene2.text1" = "Sin embargo, tan pronto como entró en el bosque, olvidó su promesa. Vio un huerto de deliciosas fresas silvestres y deliciosas flores, así que dejó su canasta.";
+"story.redhood.scene2.text2" = "\"¡A la abuela le encantarán!\" pensó, corriendo para recogerlos.\n\nDe repente, se dio cuenta de lo tarde que era, se apresuró a coger su cesta y se apresuró por el sendero.";
+
+"story.redhood.scene3.title" = "Escena 3";
+"story.redhood.scene3.text1" = "A medida que el bosque se oscurecía, un lobo grande y oscuro salió de detrás de los árboles. El corazón de Caperucita Roja empezó a acelerarse.\n\n\"¿A dónde vas sola, pequeña?\" preguntó el lobo con voz profunda.";
+"story.redhood.scene3.text2" = "\"Voy a la cabaña de mi abuela al final de este camino para llevarle unos pasteles\", respondió tímidamente.\n\nEl astuto lobo ideó un plan rápido. \"¡Que tengas un buen viaje!\" dijo, y al instante desapareció entre los arbustos.";
+
+"story.redhood.scene4.title" = "Escena 4";
+"story.redhood.scene4.text1" = "El lobo corrió lo más rápido que pudo, pensando sólo en su próxima comida. Llegó a la cabaña y llamó suavemente a la puerta. ¡Golpear! ¡Golpear!";
+"story.redhood.scene4.text2" = "\"¿Quién es?\" preguntó la abuela.\n\n\"¡Soy yo, Caperucita Roja!\" respondió el lobo, disimulando su voz.\n\n\"Entra, querida, la puerta está abierta\", dijo la anciana.";
+
+"story.redhood.scene5.title" = "escena 5";
+"story.redhood.scene5.text1" = "El lobo irrumpió en la habitación, pero la astuta abuela se escondió rápidamente dentro del armario para evitar ser encontrada.";
+"story.redhood.scene5.text2" = "Al encontrar la habitación vacía, el lobo se puso el gorro de dormir, se metió en la cama y levantó las mantas.";
+
+"story.redhood.scene6.title" = "escena 6";
+"story.redhood.scene6.text1" = "Poco después llegó Caperucita Roja y llamó a la puerta.\n\n\"Entra, mi dulce niña\", susurró el lobo, tratando de sonar dulce.";
+"story.redhood.scene6.text2" = "La niña entró pero notó que algo era muy extraño.";
+
+"story.redhood.scene7.title" = "Escena 7";
+"story.redhood.scene7.text1" = "\"¡Ay, abuela, qué voz tan profunda tienes!\"\n\n\"Será mejor para hablar contigo, querida.\"\n\n\"¡Y qué ojos tan grandes tienes!\"\n\n\"Será mejor verte, querida.\"";
+"story.redhood.scene7.text2" = "\"¡Y qué manos tan grandes tienes!\"\n\n\"Será mejor abrazarte, querida.\"\n\n\"Pero abuela... ¡qué boca tan gigante tienes!\" ella jadeó.\n\n\"¡Para COMERTE mejor!\" rugió el lobo.\n\nSaltó de la cama, pero Caperucita Roja, aterrorizada, ¡empezó a gritar tan fuerte como podía!";
+
+"story.redhood.scene8.title" = "Escena 8";
+"story.redhood.scene8.text1" = "Un leñador que pasaba por allí escuchó los fuertes gritos de Caperucita Roja provenientes de la cabaña. Corrió lo más rápido que pudo y atravesó la puerta con un gran palo de madera.\n\nAl ver al valiente leñador, el lobo cobarde entró en pánico, saltó por la ventana y corrió hacia lo profundo del bosque, para nunca más ser visto.";
+"story.redhood.scene8.text2" = "Al enterarse de que el peligro había pasado, la abuela finalmente salió del armario.\n\nCaperucita Roja y su abuela se abrazaron fuertemente, muy felices de estar por fin completamente sanas y salvas. Agradecieron de todo corazón al valiente leñador por salvarles la vida.\n\nAl atardecer, la madre llegó a la cabaña, aterrorizada porque su hija llegaba tarde. Cuando vio que todos estaban a salvo, lloró de alegría.\n\nMientras Caperucita Roja y su madre caminaban juntas de regreso a casa bajo los árboles, la niña tomó fuertemente la mano de su madre y dijo: \"¡De ahora en adelante, siempre seguiremos el camino, sin distracciones!\".";
+
+/* Image placeholders */
+"Immagine di Introduzione" = "Imagen de introducción";
+"Immagine di Ricompensa" = "Imagen de recompensa";
+
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Juega para desbloquear más escenas.";
+
+/* Review Popup */
+"review.popup.title" = "¿Disfrutando de Lumi?";
+"review.popup.message" = "Si te estás divirtiendo con nuestras fábulas, ¡deja un comentario! Nos ayuda a crear nuevas historias.";
+"review.popup.rate" = "Calificar aplicación";
+"review.popup.later" = "Más tarde";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "Escaneo de habitación...";
+"ar.scan.not_available" = "Mueva el dispositivo para escanear...";
+"ar.scan.limited" = "Sigue moviéndote...";
+"ar.scan.extending" = "Mapeo en progreso...";
+"ar.scan.mapped" = "¡Casi listo!";
+"ar.scan.find_card" = "Encuentra la tarjeta:";
+"ar.scan.congrats" = "¡Buen trabajo!";
+"ar.scan.found_all" = "Encontraste todas las cartas.";
+"ar.scan.correct" = "¡Correcto!";
+
+/* Additional accessibility labels and hints */
+"a11y.tutorial_skip_button" = "Saltar tutorial";
+"a11y.tutorial_skip_hint" = "Salta el tutorial y cierra la pantalla de incorporación.";
+"a11y.tutorial_next_hint" = "Avanza al siguiente paso del tutorial";
+"a11y.tutorial_done_hint" = "Completa el tutorial y cierra la pantalla.";
+"a11y.onboarding_skip_button" = "Saltar incorporación";
+"a11y.onboarding_skip_hint" = "Se salta el onboarding y comienza la aventura.";
+"a11y.onboarding_next_button" = "Página siguiente";
+"a11y.onboarding_next_hint" = "Avanza a la siguiente página de incorporación";
+"a11y.onboarding_start_button" = "Iniciar aventura";
+"a11y.onboarding_start_hint" = "Comienza la aventura con Caperucita Roja";
+"a11y.redhood_final_button_hint" = "Celebra la victoria y regresa al mapa.";
+"a11y.ar_back_hint" = "Cierra la vista de realidad aumentada y vuelve al mapa.";
+"a11y.reward_pack_label" = "Paquete de recompensas";
+"a11y.reward_pack_hint" = "Toca o arrastra hacia arriba para abrir el paquete de recompensas";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "¡Toca Reproducir para comenzar la historia!";
+"tutorial.drag_first_scene" = "Arrastra la primera escena a la primera posición.";
+"tutorial.tap_to_flip" = "Toca la tarjeta para darle la vuelta y leer la pista.";

@@ -336,9 +336,19 @@ struct SettingsView: View {
             AppSettings.hapticImpact(.light)
         } label: {
             HStack(spacing: expanded ? 18 : 14) {
-                Text(lang.flag)
-                    .font(.app(size: expanded ? 34 : 28))
-                    .accessibilityHidden(true)
+                if lang.code == "fa" {
+                    Image("fa_flag")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: expanded ? 42 : 34, height: expanded ? 28 : 22)
+                        .clipShape(RoundedRectangle(cornerRadius: 3))
+                        .overlay(RoundedRectangle(cornerRadius: 3).stroke(SettingsTheme.panelBorder.opacity(0.35), lineWidth: 1))
+                        .accessibilityHidden(true)
+                } else {
+                    Text(lang.flag)
+                        .font(.app(size: expanded ? 34 : 28))
+                        .accessibilityHidden(true)
+                }
 
                 Text(lang.nativeName)
                     .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))

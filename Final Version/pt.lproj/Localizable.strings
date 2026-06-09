@@ -1,2 +1,321 @@
-"/* Buttons */\n\"button.play\"        = \"JOGAR\";\n\"button.back\"        = \"Voltar\";\n\"button.menu\"        = \"Menu\";\n\"button.continue\"    = \"Continuar\";\n\"button.check\"       = \"Verificar!\";\n\"button.flip_all\"    = \"Virar todas\";\n\"button.play_again\"  = \"Jogar novamente\";\n\"button.next_event\"  = \"Próximo evento\";\n\"button.back_to_map\" = \"Voltar ao mapa\";\n\"button.done\"        = \"Concluído\";\n\"button.cancel\"      = \"Cancelar\";\n\"button.settings\"    = \"AJUSTES\";\n\n/* Main menu */\n\"menu.title.line1\"    = \"Lumi\";\n\"menu.title.line2\"    = \"World Of Fables\";\n\n/* Info */\n\"info.title\"          = \"Informações\";\n\"info.developers\"     = \"Desenvolvedores\";\n\"info.collaborators\"  = \"Colaboradores\";\n\"info.collaborator.role.audio_composer\" = \"Compositor de Áudio\";\n\"info.contacts\"       = \"Contactos\";\n\"info.support_email_subject\" = \"Suporte do aplicativo WORLD OF FABLES\";\n\"info.font_credits\" = \"A fonte OpenDyslexic foi criada por Abelardo González e está licenciada sob a SIL Open Font License (OFL).\";\n\n/* Sequencing activity */\n\"sequencing.instruction\" = \"Ordene a história\";\n\"celebration.title\"      = \"Você conseguiu!\";\n\"feedback.good_try\"      = \"Boa tentativa!\";\n\n/* Position labels (used in contextual hints) */\n\"pos.1st\" = \"1.ª\";\n\"pos.2nd\" = \"2.ª\";\n\"pos.3rd\" = \"3.ª\";\n\"pos.4th\" = \"4.ª\";\n\n/* Contextual hints */\n\"hint.tap_check\"    = \"Toque em Verificar!\";\n\"hint.wrong_1\"      = \"Será '%@' realmente a %@ cena? Pense em quando ela acontece.\";\n\"hint.wrong_2\"      = \"A %@ cena não deveria ser '%@'. Procure por outra.\";\n\"hint.wrong_3\"      = \"A %@ cena deveria ser '%@'. Consegue encontrá-la?\";\n\"hint.empty_1\"      = \"A posição %d ainda está vazia. Tente colocar uma carta lá!\";\n\"hint.empty_2\"      = \"A %@ cena deveria ser '%@'.\";\n\n/* Level banners */\n\"level.adventure_begins\" = \"A Aventura Começa!\";\n\"level.new_scene\"        = \"Nova Cena\";\n\n/* 
-<truncated 26607 bytes>
+/* Buttons */
+"button.play"        = "JOGAR";
+"button.back"        = "Voltar";
+"button.menu"        = "Menu";
+"button.continue"    = "Continuar";
+"button.check"       = "Verificar!";
+"button.flip_all"    = "Virar todas";
+"button.play_again"  = "Jogar novamente";
+"button.next_event"  = "Próximo evento";
+"button.back_to_map" = "Voltar ao mapa";
+"button.done"        = "Concluído";
+"button.cancel"      = "Cancelar";
+"button.settings"    = "AJUSTES";
+
+/* Main menu */
+"menu.title.line1"    = "Lumi";
+"menu.title.line2"    = "World Of Fables";
+
+/* Info */
+"info.title"          = "Informações";
+"info.developers"     = "Desenvolvedores";
+"info.collaborators"  = "Colaboradores";
+"info.collaborator.role.audio_composer" = "Compositor de Áudio";
+"info.contacts"       = "Contactos";
+"info.support_email_subject" = "Suporte do aplicativo WORLD OF FABLES";
+"info.font_credits" = "A fonte OpenDyslexic foi criada por Abelardo González e está licenciada sob a SIL Open Font License (OFL).";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Ordene a história";
+"celebration.title"      = "Você conseguiu!";
+"feedback.good_try"      = "Boa tentativa!";
+
+/* Position labels (used in contextual hints) */
+"pos.1st" = "1.ª";
+"pos.2nd" = "2.ª";
+"pos.3rd" = "3.ª";
+"pos.4th" = "4.ª";
+
+/* Contextual hints */
+"hint.tap_check"    = "Toque em Verificar!";
+"hint.wrong_1"      = "Será '%@' realmente a %@ cena? Pense em quando ela acontece.";
+"hint.wrong_2"      = "A %@ cena não deveria ser '%@'. Procure por outra.";
+"hint.wrong_3"      = "A %@ cena deveria ser '%@'. Consegue encontrá-la?";
+"hint.empty_1"      = "A posição %d ainda está vazia. Tente colocar uma carta lá!";
+"hint.empty_2"      = "A %@ cena deveria ser '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "A Aventura Começa!";
+"level.new_scene"        = "Nova Cena";
+
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Congratulations!\nYou've unlocked a new chapter in the book!";
+"book.chapter_unlocked.message" = "\"%@\" is now in your fairy-tale book.";
+"book.chapter_unlocked.open_button" = "Open the book";
+"book.chapter_unlocked.continue_button" = "Continue";
+"book.chapter_unlocked.tap_hint" = "Tap anywhere to continue.";
+"book.chapter_unlocked.open_hint" = "Double tap to open the storybook.";
+"a11y.storybook_button"          = "Open storybook";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "Storybook in AR";
+"book.ar.body"                  = "Place the storybook on a flat surface and flip through its pages.";
+"book.ar.cover_title"           = "Little Red\nRiding Hood";
+"book.ar.the_end"               = "The End";
+"book.ar.generating_pages"      = "Creating the pages…";
+"book.ar.searching_surface"     = "Move your device to find a flat surface.";
+"book.ar.tap_to_place"          = "Tap to place the book.";
+"book.ar.prev_page"             = "Previous page";
+"book.ar.next_page"             = "Next page";
+"book.ar.reposition"            = "Move the book";
+"book.ar.turn_page"             = "Next card";
+"book.ar.next_card"             = "Next card";
+"book.ar.placeholder.title"     = "No cards yet";
+"book.ar.empty"                 = "Complete an event to unlock its cards in AR.";
+"book.ar.unsupported"           = "This device does not support augmented reality.";
+"a11y.book_ar_button"           = "Show unlocked story cards in augmented reality";
+
+/* Map */
+"map.coming_soon"             = "Coming Soon";
+"map.region.red_riding_hood"  = "Red\nRiding Hood";
+"map.region.princess_frog"    = "The Princess and the Frog";
+"map.region.aladdin"          = "Aladdin";
+"map.region.beauty_beast"     = "Beauty and the Beast";
+
+/* Reward screen */
+"reward.perfect"   = "Perfect! You got it on the first try!";
+"reward.well_done" = "Well done! You figured it out!";
+"reward.did_it"    = "You did it! Every try made you stronger!";
+
+/* Settings */
+"settings.title"          = "Settings";
+"settings.language"       = "Language";
+"settings.accessibility"  = "Accessibility";
+"settings.accessibility.description" = "Readable font and reading preferences.";
+"settings.accessibility.message" = "Manage options that make text easier to read and the app more accessible.";
+"settings.enable_haptics" = "Haptics";
+"settings.enable_haptics.description" = "Turn tactile feedback on or off.";
+"settings.enable_animations" = "Reduce animations";
+"settings.enable_animations.description" = "Turn off visual effects and transitions.";
+"settings.enable_sounds" = "Sound Effects";
+"settings.enable_sounds.description" = "Turn interaction and menu sounds on or off.";
+"settings.voice_over" = "VoiceOver";
+"settings.voice_over.description" = "Turn voice narration on or off.";
+"settings.voice_over.info" = "VoiceOver support is fully integrated. To use it, please enable the feature in your iOS System Settings.";
+"settings.reduce_contrast" = "Increase contrast";
+"settings.reduce_contrast.description" = "Use high-contrast colors to improve text readability.";
+"settings.differentiate" = "Differentiate without colour alone";
+"settings.differentiate.description" = "Add patterns and icons to help distinguish elements beyond color alone.";
+"settings.dyslexia_font"  = "Dyslexia font";
+"settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic on";
+"settings.dyslexia_font.disabled" = "OpenDyslexic off";
+"settings.sound"          = "Sound";
+"settings.sound.description" = "App audio, music, and sound effects.";
+"settings.sound.message" = "Control app audio, background music, and game sound effects separately.";
+"settings.audio.master" = "App audio";
+"settings.audio.master.description" = "Turns off all audio in the app: music and sound effects.";
+"settings.audio.music" = "Music";
+"settings.audio.music.description" = "Background music and ambience throughout the game. Does not affect card-game sounds.";
+"settings.audio.music_volume" = "Music volume";
+"settings.audio.sfx" = "Card game effects";
+"settings.audio.sfx.description" = "Sounds in the card sequencing activity only: notes, flips, and victory jingle.";
+"settings.sequencing_sfx" = "Sequencing card sounds";
+"settings.sequencing_sfx.simplified" = "Simplified";
+"settings.sequencing_sfx.orchestral" = "Orchestral";
+"settings.music"          = "Music";
+"settings.music.on"       = "Music on";
+"settings.music.muted"    = "Music muted";
+"settings.music.mute"     = "Mute Music";
+"settings.music.unmute"   = "Unmute Music";
+"settings.music.theme.garden_gate" = "Beyond the Garden Gate";
+"settings.music.theme.red_hood_1" = "Red Riding Hood Theme 1";
+"settings.music.theme.red_hood_2" = "Red Riding Hood Theme 2";
+"settings.music.theme.red_hood_3" = "Red Riding Hood Theme 3";
+"settings.progress"       = "Progress";
+"settings.saved_data"     = "Saved Data";
+"settings.reset_progress" = "Reset Progress";
+"settings.reset_progress.description" = "Start the adventure from the beginning.";
+"settings.reset_progress.confirm.title" = "Reset progress?";
+"settings.reset_progress.confirm.message" = "This will remove saved progress and return you to the start of the adventure.";
+"settings.reset_progress.confirm.action" = "Reset";
+"settings.reset_progress.success" = "Data cleared successfully";
+"settings.app" = "App";
+"settings.app_icon" = "App Icon";
+"settings.app_icon.default" = "Default";
+"settings.app_icon.message" = "Choose an alternate icon to customize your application.";
+"settings.app_icon.error.title" = "Icon Error";
+"settings.app_icon.error.not_configured" = "The icon \"%@\" is not configured correctly in Xcode.";
+"settings.change_language" = "Change Language";
+"settings.change_language.description" = "Choose the app language.";
+"settings.change_language.message" = "Select the language you want to use in the app.";
+"settings.show_onboarding_again" = "Show onboarding again";
+"settings.show_tutorial_again" = "Show tutorial again";
+"settings.advanced_settings" = "Advanced Settings";
+"settings.advanced_gate.title" = "For grown-ups";
+"settings.advanced_gate.message" = "Solve this addition to open Advanced Settings.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "Continue";
+"settings.advanced_gate.wrong" = "That's not right. Try again!";
+"settings.support" = "Support";
+"settings.whats_new" = "What's New";
+"settings.whats_new.message" = "What's New in Version 1.0.2:\n\n• Disabled automatic voice narration on storybook pages\n• Improved accessibility support by renaming the contrast option to \"Increase Contrast\"\n• Optimized storybook layout and pagination\n• Improved the introductory tutorial on the world map\n• Shortened Red Riding Hood dialogues for better pacing\n• Added a two-button book unlock banner with multi-language and high-contrast support\n• Updated UI colors and improved card sequencing animations";
+"settings.contact_me" = "Contact me";
+"settings.rate_app" = "Rate the app";
+"settings.rate_app.message" = "The rating link will be available when the app is published.";
+"settings.about" = "About";
+"settings.about.message" = "World of Fables is an educational game for children. It helps develop story comprehension, logical event order, attention, and visual memory by rebuilding illustrated fairy tales.";
+"settings.version" = "Version";
+"settings.privacy_policy" = "Privacy Policy";
+"settings.privacy_policy.message" = "PRIVACY POLICY\n\nLast updated: June 1, 2026\n\n1. Introduction\nThis Privacy Policy describes how World of Fables, an educational app for children designed to develop story comprehension, logical sequencing, attention, and visual memory, handles information. The app is designed according to the principles of data minimization and privacy by design.\n\n2. Data Controller\nThe Data Controller is Marcello Guida. For privacy matters, please contact: mguida2604@gmail.com.\n\n3. Personal data and methods of collection\nThe app does not require registration or login and does not collect names, surnames, email addresses, telephone numbers, postal addresses, location data, IP addresses, device identifiers, operating system information, usage logs, or other identifying information. It does not create user profiles.\n\nThe app saves only non-personal preferences and gameplay progress locally on the device using Apple's UserDefaults storage. These may include completed levels, unlocked areas, current gameplay position, selected language, accessibility preferences, music settings, animation settings, and haptic settings.\n\nIf a user or a parent or guardian voluntarily contacts support by email, the sender's email address and any information included in the message will be processed solely to respond to the request.\n\n4. Purposes and legal bases under the GDPR\nLocal settings and progress are used only to provide the app's requested functionality and preserve the user experience. They are not transmitted to the Data Controller.\n\nAny support email is processed to respond to the user's request and, where applicable, to take pre-contractual steps at the user's request or pursue the Data Controller's legitimate interest in providing assistance, pursuant to Article 6(1)(b) and Article 6(1)(f) GDPR. Data may also be processed where necessary to comply with a legal obligation or protect the Data Controller's rights, pursuant to Article 6(1)(c) and Article 6(1)(f) GDPR.\n\n5. Camera and augmented reality\nThe app includes an optional augmented reality feature. Subject to the user's device permission, the camera is used only to display story cards in the user's surroundings through ARKit. Camera input is processed locally on the device. The app does not record, save, upload, or share photos, videos, or camera data. Camera permission may be denied or revoked at any time in the device settings.\n\n6. Security and retention\nLocal preferences and progress remain on the device and can be removed by resetting progress in the app, uninstalling the app, or using the device's available controls. Support emails are retained only for the time necessary to answer the request, meet applicable legal obligations, or protect the Data Controller's rights. Appropriate technical and organizational measures are adopted in relation to the limited processing performed.\n\n7. Third parties, remote storage, and international transfers\nThe app does not send user or device data to the Data Controller, external servers, cloud databases, hosting services, partners, or third parties. It does not transfer app data outside the European Economic Area. Email messages voluntarily sent to support are handled through the email services used by the sender and the Data Controller; the relevant providers' terms and privacy policies apply and may provide for processing outside the European Economic Area in accordance with applicable law.\n\n8. Cookies, tracking, analytics, and advertising\nThe app does not use cookies, tracking technologies, third-party analytics SDKs, advertising networks, sponsored content, or behavioral advertising.\n\n9. Features not included\nThe app does not include user accounts, external authentication services, push notifications, purchases, payments, subscriptions, or external payment mechanisms.\n\n10. Children's privacy\nThe app is intended for children but does not collect personal data from children. The support contact is intended for parents or guardians. Children should not send personal information by email. If personal data relating to a child is received unintentionally, a parent or guardian may request its deletion by contacting the Data Controller.\n\n11. User rights\nWhere the Data Controller processes personal data, users may exercise the rights provided by Articles 15-22 GDPR, where applicable: access, rectification, erasure, restriction of processing, objection, data portability, and withdrawal of consent without affecting prior lawful processing. Users may also lodge a complaint with the competent supervisory authority, including the Italian Data Protection Authority (Garante per la protezione dei dati personali).\n\n12. Exercising privacy rights and contacts\nTo exercise privacy rights or request information, please contact Marcello Guida at mguida2604@gmail.com. Requests will be handled in accordance with applicable law.\n\n13. Changes to this Privacy Policy\nThis Policy may be updated if the app or applicable legal requirements change. Any new processing will be described before it is introduced. The updated version will be made available in the app.";
+
+/* Accessibility */
+"a11y.info_button"       = "Info";
+"a11y.info_hint"         = "Shows the developers' names";
+"a11y.info_close_button" = "Close info";
+"a11y.info_email_button" = "Write a support email";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Little Red Riding Hood";
+"redhood.intro.mascot"  = "Oh no! A monster has destroyed all the fairy tales and scattered their scenes! Can you help me put the story of Little Red Riding Hood back together?";
+"redhood.intro.button"  = "Start the Adventure!";
+
+/* Onboarding */
+"onboarding.skip"           = "Skip";
+"onboarding.next"           = "Next";
+"onboarding.start"          = "Save the Fables!";
+"onboarding.page1.title"    = "Meet Lumi";
+"onboarding.page1.body"     = "A long time ago, in a magical world, there lived a small and charming child named Lumi, who was a great friend to all the fairy tale characters.";
+"onboarding.page2.title"    = "A Dark Turn";
+"onboarding.page2.body"     = "One day, Lumi was aboard the ship, ready to dock in Red Riding Hood's forest to visit her. But suddenly... The sky turned inky black.";
+"onboarding.page3.title"    = "Lord Tempus";
+"onboarding.page3.body"     = "It was the evil Lord Tempus, the weather wizard! Jealous of not having a story of his own, the wizard cast a spell and mixed up the pieces of all the fairy tales, creating a complete mess! Now Red Riding Hood and everyone else is confused, and the stories no longer make sense.";
+"onboarding.page4.title"    = "We Need You!";
+"onboarding.page4.body"     = "Lumi needs a brave and super-smart helper to put everything back together... yes! Lumi definitely needs you!";
+
+/* Tutorial */
+"tutorial.skip"             = "Skip Tutorial";
+"tutorial.next"             = "Next";
+"tutorial.done"             = "Let's go!";
+"tutorial.step1.title"      = "Tap the waypoints";
+"tutorial.step1.body"       = "To walk on the map, you must click on the unlocked waypoints.";
+"tutorial.step2.title"      = "Find a Story Island";
+"tutorial.step2.body"       = "Walk to a glowing story island. When you arrive, a play button appears — tap it to begin restoring that fairy tale!";
+"tutorial.step3.title"      = "Restore the Order";
+"tutorial.step3.body"       = "Drag the scene cards into the right order to rebuild the fairy tale. Think about what happens first!";
+"tutorial.step4.title"      = "Flip for Clues";
+"tutorial.step4.body"       = "Not sure where a card goes? Flip it to read a clue about when that scene happens in the story!";
+"tutorial.step5.title"      = "Break the Spell!";
+"tutorial.step5.body"       = "When all slots are filled, press Check! Get it right and you break Lord Tempus's spell on that story. You're a hero!";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Play Little Red Riding Hood";
+"a11y.start_event"          = "Start event";
+"a11y.go_back"              = "Go back";
+"a11y.return_to_menu"       = "Return to main menu";
+"a11y.play_button"          = "Play";
+"a11y.settings_button"      = "Open settings";
+"a11y.settings_hint"        = "Opens the settings screen";
+"a11y.locked_level"         = "Locked level";
+"a11y.menu_hint"            = "Leaves the world map and opens the title screen";
+"a11y.play_hint"            = "Opens the cloud curtain and starts the adventure";
+"a11y.main_menu"            = "Main menu";
+"a11y.world_map"            = "World map";
+"a11y.avatar"               = "Character";
+"a11y.celebration"          = "Congratulations! You did it!";
+"a11y.tap_to_play"          = "Tap to play";
+"a11y.level_locked_hint"    = "This level is locked. Complete previous levels to unlock it.";
+"a11y.tap_to_replay"        = "Tap to replay";
+"a11y.continue_sequencing"  = "Continue to the sequencing activity";
+"a11y.check_order"          = "Check your story order";
+"a11y.flip_all"             = "Flip all cards";
+"a11y.story_scene_card"     = "Story scene card";
+"a11y.story_scene_card_hint" = "Double tap to flip and read a hint.";
+"a11y.button_select_app_icon" = "Select app icon";
+"a11y.button_locked"          = "This item is locked";
+"a11y.button_open_social_link" = "Open social media link";
+"a11y.hint_adjust_slider"     = "Adjust the slider with up and down arrows";
+"a11y.source_tray"            = "Source cards";
+"a11y.source_tray_hint"       = "Drag cards from here to the slots";
+"a11y.continue_button"        = "Continue";
+"a11y.continue_hint"          = "Continues to the next event";
+"a11y.envelope_open_button"   = "Open pack";
+"a11y.envelope_open_hint"     = "Opens the envelope to reveal the unlocked cards";
+
+/* English Story Book Scenes */
+"story.redhood.scene1.title" = "Scene 1";
+"story.redhood.scene1.text1" = "Once upon a time, deep inside a thick forest, there was a small cottage where a lovely little girl lived. Everyone called her Little Red Riding Hood because her mother had made her a beautiful red cloak with a matching hood.";
+"story.redhood.scene1.text2" = "One morning, her mother said: \"Grandmother is sick in bed with a bad cold. Take her this basket of fresh cakes, but remember: stay on the main path and do not stop!\"\n\nThe little girl kissed her mother goodbye and promised: \"Don't worry, Mom! I will walk quickly and go straight to Grandmother's house.\"";
+
+"story.redhood.scene2.title" = "Scene 2";
+"story.redhood.scene2.text1" = "However, as soon as she entered the forest, she forgot her promise. She saw a patch of delicious wild strawberries and delicious flowers, so she put her basket down.";
+"story.redhood.scene2.text2" = "\"Grandmother will love these!\" she thought, running around to pick them.\n\nSuddenly, she realized how late it was, rushed back to grab her basket, and hurried along the trail.";
+
+"story.redhood.scene3.title" = "Scene 3";
+"story.redhood.scene3.text1" = "As the woods grew darker, a large, dark wolf stepped out from behind the trees. Little Red Riding Hood's heart began to race.\n\n\"Where are you going all alone, little girl?\" the wolf asked in a deep voice.";
+"story.redhood.scene3.text2" = "\"I'm going to my grandmother's cottage at the end of this path to bring her some cakes,\" she replied timidly.\n\nThe clever wolf hatched a quick plan. \"Have a safe trip!\" he said, and instantly vanished into the bushes.";
+
+"story.redhood.scene4.title" = "Scene 4";
+"story.redhood.scene4.text1" = "The wolf ran as fast as he could, thinking only of his next meal. He arrived at the cottage and knocked gently on the door. Knock! Knock!";
+"story.redhood.scene4.text2" = "\"Who is it?\" asked the grandmother.\n\n\"It's me, Little Red Riding Hood!\" the wolf replied, disguising his voice.\n\n\"Come in, dear, the door is unlocked,\" said the old woman.";
+
+"story.redhood.scene5.title" = "Scene 5";
+"story.redhood.scene5.text1" = "The wolf burst into the room, but the clever grandmother quickly hid inside the closet to avoid being found.";
+"story.redhood.scene5.text2" = "Finding the room empty, the wolf put on her nightcap, climbed into her bed, and pulled up the covers.";
+
+"story.redhood.scene6.title" = "Scene 6";
+"story.redhood.scene6.text1" = "Soon after, Little Red Riding Hood arrived and knocked.\n\n\"Come in, my sweet child,\" the wolf whispered, trying to sound sweet.";
+"story.redhood.scene6.text2" = "The girl stepped inside but noticed something was very strange.";
+
+"story.redhood.scene7.title" = "Scene 7";
+"story.redhood.scene7.text1" = "\"Oh, Grandmother, what a deep voice you have!\"\n\n\"The better to speak to you, my dear.\"\n\n\"And what big eyes you have!\"\n\n\"The better to see you, my dear.\"";
+"story.redhood.scene7.text2" = "\"And what big hands you have!\"\n\n\"The better to hug you, my dear.\"\n\n\"But Grandmother... what a giant mouth you have!\" she gasped.\n\n\"The better to EAT YOU!\" the wolf roared.\n\nHe jumped out of bed, but Little Red Riding Hood, terrified, started screaming as loud as she could!";
+
+"story.redhood.scene8.title" = "Scene 8";
+"story.redhood.scene8.text1" = "A woodcutter passing by heard Little Red Riding Hood's loud screams coming from the cottage. He ran as fast as he could and burst through the door with a large wooden stick.\n\nSeeing the brave woodcutter, the cowardly wolf panicked, jumped out of the window, and ran deep into the forest, never to be seen again.";
+"story.redhood.scene8.text2" = "Hearing that the danger was over, the grandmother finally came out of the closet.\n\nLittle Red Riding Hood and her grandmother hugged each other tightly, so happy to be completely safe and sound at last. They thanked the brave woodcutter with all their hearts for saving their lives.\n\nAt sunset, the mother arrived at the cottage, terrified because her daughter was late. When she saw everyone safe, she wept with joy.\n\nAs Little Red Riding Hood and her mother walked back home together under the trees, the little girl held her mother's hand tightly and said: \"From now on, we will always stick to the path, without any distractions!\"";
+
+/* Image placeholders */
+"Immagine di Introduzione" = "Introduction Image";
+"Immagine di Ricompensa" = "Reward Image";
+
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Play to unlock more scenes";
+
+/* Review Popup */
+"review.popup.title" = "Enjoying Lumi?";
+"review.popup.message" = "If you're having fun with our fables, please leave a review! It helps us create new stories.";
+"review.popup.rate" = "Rate App";
+"review.popup.later" = "Later";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "Room Scan...";
+"ar.scan.not_available" = "Move the device to scan...";
+"ar.scan.limited" = "Keep moving...";
+"ar.scan.extending" = "Mapping in progress...";
+"ar.scan.mapped" = "Almost ready!";
+"ar.scan.find_card" = "Find the card:";
+"ar.scan.congrats" = "Great job!";
+"ar.scan.found_all" = "You found all the cards.";
+"ar.scan.correct" = "Correct!";
+
+/* Additional accessibility labels and hints */
+"a11y.tutorial_skip_button" = "Skip tutorial";
+"a11y.tutorial_skip_hint" = "Skips the tutorial and closes the onboarding screen";
+"a11y.tutorial_next_hint" = "Advances to the next tutorial step";
+"a11y.tutorial_done_hint" = "Completes the tutorial and closes the screen";
+"a11y.onboarding_skip_button" = "Skip onboarding";
+"a11y.onboarding_skip_hint" = "Skips the onboarding and starts the adventure";
+"a11y.onboarding_next_button" = "Next page";
+"a11y.onboarding_next_hint" = "Advances to the next onboarding page";
+"a11y.onboarding_start_button" = "Start adventure";
+"a11y.onboarding_start_hint" = "Starts the adventure with Little Red Riding Hood";
+"a11y.redhood_final_button_hint" = "Celebrates the victory and returns to the map";
+"a11y.ar_back_hint" = "Closes the augmented reality view and returns to the map";
+"a11y.reward_pack_label" = "Reward pack";
+"a11y.reward_pack_hint" = "Tap or drag upward to open the reward pack";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Tap Play to start the story!";
+"tutorial.drag_first_scene" = "Drag the first scene into the first position";
+"tutorial.tap_to_flip" = "Tap the card to flip it and read the clue";
