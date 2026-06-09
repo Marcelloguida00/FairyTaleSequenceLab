@@ -9,14 +9,16 @@ enum NarratorFrameMetrics {
     static var frameAspectRatio: CGFloat { designFrameWidth / designFrameHeight }
 
     static let dialogueTextBoxWidth: CGFloat = 880
-    static let dialogueTextBoxHeight: CGFloat = 108
+    static let dialogueTextBoxHeight: CGFloat = 132
     static var dialogueTextBoxWidthRatio: CGFloat { dialogueTextBoxWidth / designFrameWidth }
     static var dialogueTextBoxHeightRatio: CGFloat { dialogueTextBoxHeight / designFrameHeight }
 
-    static let bodyPaddingVertical: CGFloat = 46
     static let bodyPaddingHorizontal: CGFloat = 72
-    static let dialogueLineLimit = 2
-    static let dialogueFontSize: CGFloat = 34
+    static var bodyPaddingVertical: CGFloat {
+        (designFrameHeight - dialogueTextBoxHeight) * 0.5
+    }
+    static let dialogueLineLimit = 3
+    static let dialogueFontSize: CGFloat = 28
 
     static func scaled(_ designValue: CGFloat, frameWidth: CGFloat) -> CGFloat {
         designValue * (frameWidth / designFrameWidth)
@@ -30,7 +32,7 @@ enum NarratorFrameMetrics {
         let width = size.width * dialogueTextBoxWidthRatio
         let height = size.height * dialogueTextBoxHeightRatio
         let originX = (size.width - width) * 0.5
-        let originY = size.height * (bodyPaddingVertical / designFrameHeight)
+        let originY = (size.height - height) * 0.5
         return CGRect(x: originX, y: originY, width: width, height: height)
     }
 }

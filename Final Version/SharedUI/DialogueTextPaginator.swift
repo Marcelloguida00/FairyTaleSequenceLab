@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Suddivide il dialogo in segmenti che stanno in `maxLines` righe alla larghezza data.
+/// Suddivide il dialogo in segmenti da `maxLines` righe con scorrimento riga per riga.
 enum DialogueTextPaginator {
     static func chunks(
         text: String,
@@ -14,90 +14,60 @@ enum DialogueTextPaginator {
         guard !trimmed.isEmpty, maxWidth > 0, maxLines > 0 else { return [trimmed] }
 
         let font = uiFont(size: fontSize, weight: weight)
+        let lines = wrappedLines(text: trimmed, font: font, maxWidth: maxWidth)
+
+        guard lines.count > maxLines else {
+            return [lines.joined(separator: "\n")]
+        }
+
         var result: [String] = []
-        var remaining = trimmed
-
-        while !remaining.isEmpty {
-            let (chunk, rest) = nextChunk(
-                from: remaining,
-                font: font,
-                maxWidth: maxWidth,
-                maxLines: maxLines
-            )
-            result.append(chunk)
-            remaining = rest
-            if chunk.isEmpty { break }
+        let lastStart = lines.count - maxLines
+        for start in 0...lastStart {
+            let window = lines[start..<(start + maxLines)]
+            result.append(window.joined(separator: "\n"))
         }
-
-        return result.isEmpty ? [trimmed] : result
+        return result
     }
 
-    private static func nextChunk(
-        from text: String,
-        font: UIFont,
+    /// Word-wrap a fixed width using the same font as dialogue rendering.
+    static func wrappedLines(
+        text: String,
+        fontSize: CGFloat,
         maxWidth: CGFloat,
-        maxLines: Int
-    ) -> (String, String) {
-        guard !text.isEmpty else { return ("", "") }
-
-        var low = 1
-        var high = text.count
-        var best = 0
-
-        while low <= high {
-            let mid = (low + high) / 2
-            let candidate = String(text.prefix(mid))
-            if lineCount(for: candidate, font: font, maxWidth: maxWidth) <= maxLines {
-                best = mid
-                low = mid + 1
-            } else {
-                high = mid - 1
-            }
-        }
-
-        if best == 0 {
-            return (String(text.prefix(1)), String(text.dropFirst(1)).trimmingCharacters(in: .whitespaces))
-        }
-
-        var splitIndex = best
-        if splitIndex < text.count {
-            let prefix = text.prefix(splitIndex)
-            if let lastSpace = prefix.lastIndex(where: { $0.isWhitespace }) {
-                let spaceOffset = text.distance(from: text.startIndex, to: lastSpace)
-                if spaceOffset > 0 {
-                    splitIndex = spaceOffset
-                }
-            }
-        }
-
-        let chunk = String(text.prefix(splitIndex)).trimmingCharacters(in: .whitespaces)
-        let restStart = text.index(text.startIndex, offsetBy: min(splitIndex, text.count))
-        let rest = String(text[restStart...]).trimmingCharacters(in: .whitespaces)
-        return (chunk, rest)
+        weight: Font.Weight = .medium
+    ) -> [String] {
+        wrappedLines(text: text, font: uiFont(size: fontSize, weight: weight), maxWidth: maxWidth)
     }
 
-    private static func lineCount(for text: String, font: UIFont, maxWidth: CGFloat) -> Int {
-        guard !text.isEmpty else { return 0 }
+    private static func wrappedLines(text: String, font: UIFont, maxWidth: CGFloat) -> [String] {
+        guard !text.isEmpty, maxWidth > 0 else { return [text] }
 
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .center
-        paragraph.lineBreakMode = .byWordWrapping
+        let words = text.split(whereSeparator: \.isWhitespace).map(String.init)
+        guard !words.isEmpty else { return [text] }
 
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: font,
-            .paragraphStyle: paragraph
-        ]
+        var lines: [String] = []
+        var current = ""
 
-        let rect = (text as NSString).boundingRect(
-            with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin, .usesFontLeading],
-            attributes: attributes,
-            context: nil
-        )
+        for word in words {
+            let candidate = current.isEmpty ? word : "\(current) \(word)"
+            if current.isEmpty || singleLineWidth(candidate, font: font) <= maxWidth {
+                current = candidate
+            } else {
+                lines.append(current)
+                current = word
+            }
+        }
 
-        let lineHeight = font.lineHeight
-        guard lineHeight > 0 else { return 1 }
-        return max(1, Int(ceil(rect.height / lineHeight)))
+        if !current.isEmpty {
+            lines.append(current)
+        }
+
+        return lines.isEmpty ? [text] : lines
+    }
+
+    private static func singleLineWidth(_ text: String, font: UIFont) -> CGFloat {
+        let size = (text as NSString).size(withAttributes: [.font: font])
+        return ceil(size.width)
     }
 
     private static func uiFont(size: CGFloat, weight: Font.Weight) -> UIFont {

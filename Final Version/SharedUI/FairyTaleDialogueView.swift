@@ -170,11 +170,7 @@ struct FairyTaleDialogueView: View {
         let chunks = dialogueChunks(for: fullText, frameWidth: frameWidth)
         guard !chunks.isEmpty else { return fullText }
         let index = min(dialogueChunkIndex, chunks.count - 1)
-        let chunk = chunks[index]
-        if index < chunks.count - 1 {
-            return chunk + "…"
-        }
-        return chunk
+        return chunks[index]
     }
 
     @ViewBuilder

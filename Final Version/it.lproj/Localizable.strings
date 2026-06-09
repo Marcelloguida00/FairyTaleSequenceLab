@@ -160,14 +160,14 @@
 "onboarding.skip"           = "Salta";
 "onboarding.next"           = "Avanti";
 "onboarding.start"          = "Salva le Fiabe!";
-"onboarding.page1.title"    = "Il Mondo delle Favole";
-"onboarding.page1.body"     = "Sono la tua guida in questo mondo magico! Un tempo tutte le fiabe vivevano qui in pace e armonia...";
-"onboarding.page2.title"    = "L'Attacco di Lord Tempus!";
-"onboarding.page2.body"     = "Ma il malvagio Lord Tempus, il Distruttore del Tempo, ha usato la sua magia oscura per mandare in frantumi TUTTE le fiabe! Ogni storia è distrutta!";
-"onboarding.page3.title"    = "Il Caos ovunque...";
-"onboarding.page3.body"     = "Il suo incantesimo era così potente che tutte le scene sono sparse per il mondo magico. Tutti sono persi e terribilmente tristi!";
-"onboarding.page4.title"    = "Tu sei il nostro Eroe!";
-"onboarding.page4.body"     = "Esplora il Mondo delle Favole, trova ogni scena dispersa e rimettila in ordine per spezzare l'incantesimo di Lord Tempus!";
+"onboarding.page1.title"    = "Ecco Lumi";
+"onboarding.page1.body"     = "Tanto tempo fa, in un mondo magico, viveva un bambino piccolo e adorabile di nome Lumi, grande amico di tutti i personaggi delle fiabe.";
+"onboarding.page2.title"    = "Un Cielo Nero";
+"onboarding.page2.body"     = "Un giorno, Lumi era a bordo della nave, pronto ad attraccare nella foresta di Cappuccetto Rosso per farle visita. Ma all'improvviso... il cielo divenne nero inchiostro.";
+"onboarding.page3.title"    = "Lord Tempus";
+"onboarding.page3.body"     = "Era il malvagio Lord Tempus, il mago del tempo! Geloso di non avere una storia tutta sua, il mago lanciò un incantesimo e mescolò i pezzi di tutte le fiabe, creando un caos totale! Ora Cappuccetto Rosso e tutti gli altri sono confusi, e le storie non hanno più senso.";
+"onboarding.page4.title"    = "Serve Aiuto!";
+"onboarding.page4.body"     = "Lumi ha bisogno di un aiutante coraggioso e super intelligente per rimettere tutto a posto... sì! Lumi ha proprio bisogno di te!";
 
 /* Tutorial */
 "tutorial.skip"             = "Salta il tutorial";

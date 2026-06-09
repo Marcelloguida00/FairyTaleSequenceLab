@@ -173,14 +173,14 @@
 "onboarding.skip"           = "Skip";
 "onboarding.next"           = "Next";
 "onboarding.start"          = "Save the Fables!";
-"onboarding.page1.title"    = "World of Fables";
-"onboarding.page1.body"     = "I am your guide in this magical world! Once, all the fairy tales lived here in peace and harmony...";
-"onboarding.page2.title"    = "Lord Tempus Attacks!";
-"onboarding.page2.body"     = "But the evil Lord Tempus, the Time Wrecker, used his dark clock magic to shatter ALL the fairy tales! Every story is broken and out of order!";
-"onboarding.page3.title"    = "Chaos Everywhere...";
-"onboarding.page3.body"     = "His spell was so powerful that all the scenes are now scattered across the magical world. Everyone is lost and terribly sad!";
-"onboarding.page4.title"    = "You Are Our Hero!";
-"onboarding.page4.body"     = "Travel the World of Fables, find every scattered scene, and put them back in order to break Lord Tempus's spell!";
+"onboarding.page1.title"    = "Meet Lumi";
+"onboarding.page1.body"     = "A long time ago, in a magical world, there lived a small and charming child named Lumi, who was a great friend to all the fairy tale characters.";
+"onboarding.page2.title"    = "A Dark Turn";
+"onboarding.page2.body"     = "One day, Lumi was aboard the ship, ready to dock in Red Riding Hood's forest to visit her. But suddenly... The sky turned inky black.";
+"onboarding.page3.title"    = "Lord Tempus";
+"onboarding.page3.body"     = "It was the evil Lord Tempus, the weather wizard! Jealous of not having a story of his own, the wizard cast a spell and mixed up the pieces of all the fairy tales, creating a complete mess! Now Red Riding Hood and everyone else is confused, and the stories no longer make sense.";
+"onboarding.page4.title"    = "We Need You!";
+"onboarding.page4.body"     = "Lumi needs a brave and super-smart helper to put everything back together... yes! Lumi definitely needs you!";
 
 /* Tutorial */
 "tutorial.skip"             = "Skip Tutorial";

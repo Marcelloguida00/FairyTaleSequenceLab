@@ -74,7 +74,7 @@ struct RootView: View {
             if AppFeatureFlags.showsOnboarding && !hasSeenOnboarding {
                 Group {
                     if AppFeatureFlags.usesVillainOnboardingCinematic {
-                        VillainOnboardingCinematicView {
+                        OnboardingIntroFlowView {
                             Task { await completeVillainOnboarding() }
                         }
                     } else {
@@ -98,7 +98,14 @@ struct RootView: View {
             if !AppFeatureFlags.showsOnboarding {
                 hasSeenOnboarding = true
             }
-            BackgroundMusicPlayer.shared.start()
+            if !(AppFeatureFlags.showsOnboarding && !hasSeenOnboarding) {
+                BackgroundMusicPlayer.shared.start()
+            }
+        }
+        .onChange(of: hasSeenOnboarding) { _, seen in
+            if seen {
+                BackgroundMusicPlayer.shared.start()
+            }
         }
     }
 
@@ -122,7 +129,14 @@ struct RootView: View {
             hasSeenOnboarding = true
         }
 
-        // Keep main-menu background clouds fixed (enter = 1, exit = 0).
+        menuCloudEnterProgress = 1
+        menuCloudExitProgress = 0
+
+        await CloudTransitionAnimator.runCurtainOpen(
+            exitProgress: $menuCloudExitProgress,
+            duration: CloudTransitionAnimator.playOpenDuration
+        ) {}
+
         menuCloudExitProgress = 0
     }
 

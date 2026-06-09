@@ -3,20 +3,36 @@ import SwiftUI
 /// Cinematic first-launch intro: villain crosses the world map, casts a spell, clouds darken and cover the screen, then reveal the main menu.
 struct VillainOnboardingCinematicView: View {
     let onFinish: () -> Void
+    let startsUnderCloudCover: Bool
+    let onHandoffCurtainOpened: (() -> Void)?
+    let onNarrationStart: (() -> Void)?
+    let onSceneComplete: (() -> Void)?
+
+    @Binding var narratorScriptIndex: Int
+    @Binding var showsNarratorBar: Bool
+
+    init(
+        onFinish: @escaping () -> Void,
+        startsUnderCloudCover: Bool = false,
+        narratorScriptIndex: Binding<Int> = .constant(2),
+        showsNarratorBar: Binding<Bool> = .constant(true),
+        onHandoffCurtainOpened: (() -> Void)? = nil,
+        onNarrationStart: (() -> Void)? = nil,
+        onSceneComplete: (() -> Void)? = nil
+    ) {
+        self.onFinish = onFinish
+        self.startsUnderCloudCover = startsUnderCloudCover
+        self.onHandoffCurtainOpened = onHandoffCurtainOpened
+        self.onNarrationStart = onNarrationStart
+        self.onSceneComplete = onSceneComplete
+        _narratorScriptIndex = narratorScriptIndex
+        _showsNarratorBar = showsNarratorBar
+        _coverCloudEnter = State(initialValue: startsUnderCloudCover ? 1 : 0)
+    }
 
     private static let cloudSkyColor = Color(red: 0.55, green: 0.78, blue: 0.95)
-    private static let narratorScriptKeys = [
-        "onboarding.page1.body",
-        "onboarding.page2.body",
-        "onboarding.page3.body",
-        "onboarding.page4.body"
-    ]
 
-    @EnvironmentObject private var lm: LanguageManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    @State private var narratorScriptIndex = 0
-    @State private var showsNarratorBar = true
 
     @State private var rightCloudEnter: CGFloat = 0
     @State private var rightCloudTrailEnter: CGFloat = 0
@@ -56,6 +72,7 @@ struct VillainOnboardingCinematicView: View {
     private let sideTrailEntrySpreadScale: CGFloat = 0.86
     private let sideMainOpacityScale: CGFloat = 1.04
     private let sideMainCloudSizeScale: CGFloat = 1.02
+    private var timingScale: TimeInterval { OnboardingScripts.villainTimingScale }
 
     var body: some View {
         GeometryReader { proxy in
@@ -145,21 +162,6 @@ struct VillainOnboardingCinematicView: View {
                     )
                     .opacity(villainOpacity)
             }
-            .overlay(alignment: .bottom) {
-                if showsNarratorBar {
-                    let narratorWidth = min(proxy.size.width - 32, 920)
-
-                    NarratorScriptBar(
-                        message: lm.t(Self.narratorScriptKeys[narratorScriptIndex]),
-                        maxWidth: narratorWidth
-                    )
-                    .padding(.horizontal, max(16, proxy.safeAreaInsets.leading + 12))
-                    .padding(.bottom, max(20, proxy.safeAreaInsets.bottom + 14))
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .animation(.easeInOut(duration: 0.35), value: showsNarratorBar)
-            .animation(.easeInOut(duration: 0.25), value: narratorScriptIndex)
         }
         .ignoresSafeArea()
         .background(cinematicBackdropColor)
@@ -206,27 +208,31 @@ struct VillainOnboardingCinematicView: View {
             return
         }
 
-        showsNarratorBar = true
-        setNarratorScript(0)
+        if startsUnderCloudCover {
+            await openCurtainFromShipHandoff()
+        } else {
+            onNarrationStart?()
+        }
 
         // 1. Villain flies in from the right with a dense cloud trail.
         villainPose = .flyIn
         villainX = 1.18
         rightCloudTrailEnter = 0.12
-        animate(duration: 2.1) {
+        let flyInDuration = scaled(2.1)
+        animate(duration: flyInDuration) {
             villainX = 0.52
             rightCloudTrailEnter = 0.78
             rightCloudEnter = 0.66
         }
-        try? await Task.sleep(nanoseconds: 2_100_000_000)
+        try? await Task.sleep(nanoseconds: UInt64(flyInDuration * 1_000_000_000))
 
         // 2. Faces the viewer at the map center.
         villainPose = .look
-        animate(duration: 0.45) {
+        let lookMoveDuration = scaled(0.45)
+        animate(duration: lookMoveDuration) {
             villainX = 0.50
         }
-        try? await Task.sleep(nanoseconds: 700_000_000)
-        setNarratorScript(1)
+        try? await Task.sleep(nanoseconds: UInt64((lookMoveDuration + scaled(0.70)) * 1_000_000_000))
 
         // 3. Casts the spell: frames 0 → 11.
         villainPose = .magicCast
@@ -238,9 +244,9 @@ struct VillainOnboardingCinematicView: View {
         await playLaughFrames()
 
         // 5. Clouds darken; left clouds join with the same density as the right.
-        setNarratorScript(2)
         leftCloudTrailEnter = 0.12
-        animate(duration: 1.1) {
+        let darkenDuration = scaled(1.1)
+        animate(duration: darkenDuration) {
             cloudTint = Color(white: 0.52)
             cloudBrightness = -0.38
             cloudSaturation = 0.22
@@ -250,7 +256,7 @@ struct VillainOnboardingCinematicView: View {
             leftCloudTrailEnter = 0.84
             leftCloudEnter = 0.78
         }
-        try? await Task.sleep(nanoseconds: 1_100_000_000)
+        try? await Task.sleep(nanoseconds: UInt64(darkenDuration * 1_000_000_000))
 
         // 6. Spell dissipates: frames 11 → 0.
         villainPose = .magicDecast
@@ -258,7 +264,8 @@ struct VillainOnboardingCinematicView: View {
 
         // 7. Villain flies away while the screen fills with clouds.
         villainPose = .flyOut
-        animate(duration: 1.35) {
+        let flyOutDuration = scaled(1.35)
+        animate(duration: flyOutDuration) {
             villainX = -0.28
             villainY = 0.36
             coverCloudEnter = 0.92
@@ -267,26 +274,34 @@ struct VillainOnboardingCinematicView: View {
             rightCloudTrailEnter = 0.90
             rightCloudEnter = 0.86
         }
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-        animate(duration: 0.35) {
+        try? await Task.sleep(nanoseconds: UInt64(scaled(1.0) * 1_000_000_000))
+        let fadeOutDuration = scaled(0.35)
+        animate(duration: fadeOutDuration) {
             villainOpacity = 0
         }
-        try? await Task.sleep(nanoseconds: 450_000_000)
+        try? await Task.sleep(nanoseconds: UInt64(scaled(0.45) * 1_000_000_000))
 
-        animate(duration: 0.55) {
+        let coverDuration = scaled(0.55)
+        animate(duration: coverDuration) {
             coverCloudEnter = 1
         }
-        try? await Task.sleep(nanoseconds: 550_000_000)
+        try? await Task.sleep(nanoseconds: UInt64(coverDuration * 1_000_000_000))
 
         // 8. Villain clouds turn white again and hold.
-        animate(duration: 0.75) {
+        let brightenDuration = scaled(0.75)
+        animate(duration: brightenDuration) {
             cloudTint = .white
             cloudBrightness = 0
             cloudSaturation = 1
             skyDimming = 0
         }
-        try? await Task.sleep(nanoseconds: 1_200_000_000)
-        setNarratorScript(3)
+        try? await Task.sleep(nanoseconds: UInt64(scaled(1.20) * 1_000_000_000))
+
+        if let onSceneComplete {
+            await OnboardingNarrationPlayer.shared.waitUntilFinished()
+            onSceneComplete()
+            return
+        }
 
         // 9. Main menu sits behind the menu clouds; hide only the onboarding map.
         showsOnboardingMap = false
@@ -304,9 +319,30 @@ struct VillainOnboardingCinematicView: View {
     }
 
     @MainActor
+    private func openCurtainFromShipHandoff() async {
+        try? await Task.sleep(nanoseconds: UInt64(CloudTransitionAnimator.holdAfterSceneChange * 1_000_000_000))
+
+        let openDuration = CloudTransitionAnimator.exitDuration
+        animate(duration: openDuration) {
+            villainCloudExit = 1
+        }
+        try? await Task.sleep(nanoseconds: UInt64(openDuration * 1_000_000_000))
+
+        villainCloudExit = 0
+        coverCloudEnter = 0
+        onHandoffCurtainOpened?()
+        onNarrationStart?()
+    }
+
+    @MainActor
     private func runReducedMotionSequence() async {
-        showsNarratorBar = true
-        setNarratorScript(0)
+        if startsUnderCloudCover {
+            coverCloudEnter = 1
+            villainCloudExit = 1
+            coverCloudEnter = 0
+            villainCloudExit = 0
+        }
+
         try? await Task.sleep(nanoseconds: 400_000_000)
 
         animate(duration: 0.2) {
@@ -314,38 +350,42 @@ struct VillainOnboardingCinematicView: View {
             cloudTint = .white
         }
         try? await Task.sleep(nanoseconds: 300_000_000)
-        showsNarratorBar = false
         showsOnboardingMap = false
-        villainCloudExit = 1
-        onFinish()
-    }
-
-    @MainActor
-    private func setNarratorScript(_ index: Int) {
-        let clamped = min(max(index, 0), Self.narratorScriptKeys.count - 1)
-        narratorScriptIndex = clamped
+        if let onSceneComplete {
+            onSceneComplete()
+        } else {
+            showsNarratorBar = false
+            villainCloudExit = 1
+            onFinish()
+        }
     }
 
     @MainActor
     private func playCastingFrames(forward: Bool) async {
         let indices = forward ? Array(0...11) : Array((0...11).reversed())
+        let frameDuration = scaled(magicFrameDuration)
         for index in indices {
             spriteFrame = index
-            try? await Task.sleep(nanoseconds: UInt64(magicFrameDuration * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: UInt64(frameDuration * 1_000_000_000))
         }
     }
 
     @MainActor
     private func playLaughFrames() async {
+        let frameDuration = scaled(laughFrameDuration)
         for index in laughFrameNames.indices {
             spriteFrame = index
-            try? await Task.sleep(nanoseconds: UInt64(laughFrameDuration * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: UInt64(frameDuration * 1_000_000_000))
         }
     }
 
     @MainActor
     private func animate(duration: TimeInterval, _ updates: () -> Void) {
         withAnimation(.easeInOut(duration: duration), updates)
+    }
+
+    private func scaled(_ duration: TimeInterval) -> TimeInterval {
+        duration * timingScale
     }
 }
 

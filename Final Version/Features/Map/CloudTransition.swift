@@ -181,6 +181,8 @@ struct CloudTransitionOverlay: View {
     var cloudBrightness: CGFloat = 0
     var cloudSaturation: CGFloat = 1
     var entrySideFilter: CloudEntrySideFilter = .all
+    /// When set, only particles anchored at or above this normalized Y (0 = top) are shown.
+    var anchorYMax: CGFloat? = nil
     var opacityScale: CGFloat = 1
     var cloudSizeScale: CGFloat = 1
     var entrySpreadScale: CGFloat = 1
@@ -199,7 +201,7 @@ struct CloudTransitionOverlay: View {
                     .ignoresSafeArea()
 
                 ForEach(CloudFieldFactory.particles) { particle in
-                    if matchesEntryFilter(particle) {
+                    if matchesEntryFilter(particle), matchesAnchorFilter(particle) {
                         cloudView(
                             particle: particle,
                             in: proxy.size,
@@ -285,6 +287,11 @@ struct CloudTransitionOverlay: View {
         case .fromLeftTrailing:
             return particle.entryVector.x < -0.04 || particle.anchor.x < 0.44
         }
+    }
+
+    private func matchesAnchorFilter(_ particle: CloudParticle) -> Bool {
+        guard let anchorYMax else { return true }
+        return particle.anchor.y <= anchorYMax
     }
 
     private func easeInOut(_ t: CGFloat) -> CGFloat {

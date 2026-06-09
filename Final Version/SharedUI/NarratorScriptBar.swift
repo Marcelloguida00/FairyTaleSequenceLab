@@ -48,11 +48,7 @@ struct NarratorScriptBar: View {
     private func narratorDisplayText(chunks: [String]) -> String {
         guard !chunks.isEmpty else { return message }
         let index = min(chunkIndex, chunks.count - 1)
-        let chunk = chunks[index]
-        if index < chunks.count - 1 {
-            return chunk + "…"
-        }
-        return chunk
+        return chunks[index]
     }
 
     private func handleTap(chunks: [String]) {
