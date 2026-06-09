@@ -610,13 +610,6 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
             material.diffuse.wrapS = .clamp
             material.diffuse.wrapT = .clamp
 
-            // FIX #3: Traslazione al centro -> Rotazione -> Traslazione all'origine
-            var transform = SCNMatrix4MakeTranslation(-0.5, -0.5, 0)
-            transform = SCNMatrix4Rotate(transform, Float.pi, 0, 0, 1)
-            transform = SCNMatrix4Translate(transform, 0.5, 0.5, 0)
-            
-            material.diffuse.contentsTransform = transform
-
             return material
         }
 
