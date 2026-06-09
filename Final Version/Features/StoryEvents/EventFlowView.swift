@@ -13,7 +13,7 @@ struct RedHoodRewardPhaseView: View {
     let onChapterUnlockReady: () -> Void
     let onComplete: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @State private var didNotifyRewardReached = false
     @State private var isFirstTimeCompletion = false
 
@@ -50,7 +50,7 @@ struct EventFlowView: View {
     let onComplete: () -> Void
 
     @Environment(\.openURL) private var openURL
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @AppStorage("hasAskedForReview") private var hasAskedForReview = false
     @State private var showReviewAlert = false
 
@@ -160,7 +160,7 @@ private struct EventFlowPreview: View {
                 ContentUnavailableView("Event not found", systemImage: "book.closed")
             }
         }
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
     }
 }
 

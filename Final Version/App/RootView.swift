@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RootView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-    @AppStorage("hasSeenTutorial")   private var hasSeenTutorial   = false
     @AppStorage("differentiate") private var differentiate = false
     @Environment(AppFontSettings.self) private var fontSettings
 
@@ -57,17 +56,6 @@ struct RootView: View {
                     }
                 )
                 .zIndex(60)
-            }
-
-            // Tutorial: primo accesso al gioco
-            if gameStarted && !hasSeenTutorial {
-                TutorialOverlayView {
-                    withAnimation(.easeInOut(duration: 0.35)) {
-                        hasSeenTutorial = true
-                    }
-                }
-                .zIndex(70)
-                .transition(.opacity)
             }
 
             // Onboarding: primo avvio assoluto

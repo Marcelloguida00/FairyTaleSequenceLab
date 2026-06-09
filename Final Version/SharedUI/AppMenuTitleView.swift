@@ -12,7 +12,7 @@ struct AppMenuTitleView: View {
     let panelWidth: CGFloat
     var style: AppMenuTitleStyle = .compact
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @AppStorage("reduceContrast") private var reduceContrast = false
 
     // ==========================================

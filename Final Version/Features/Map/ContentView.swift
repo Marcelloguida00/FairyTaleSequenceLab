@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 
 private enum ActiveMap {
     case main
@@ -61,7 +60,8 @@ private enum MapOverlayMetrics {
 struct ContentView: View {
     let isGlobalTransitioning: Bool
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
 
     @State private var activeMap = ActiveMap.main
     @State private var avatarPosition = MapGraph.initialWaypoint.point
@@ -98,7 +98,6 @@ struct ContentView: View {
 
     private static let settingsFadeDuration: TimeInterval = 0.30
 
-    private let spriteTimer = Timer.publish(every: 0.12, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
@@ -183,7 +182,7 @@ struct ContentView: View {
                         handleRedHoodChapterCompletion(level)
                     }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .zIndex(40)
                 .transition(.opacity)
             }
@@ -210,6 +209,21 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
+            if activeMap == .redHood,
+               !hasSeenTutorial,
+               activeRedHoodLevel == nil,
+               pendingRedHoodLevel == 0 || pendingRedHoodLevel == 1 {
+                GeometryReader { screenGeo in
+                    HandTutorialIndicator(
+                        point: CGPoint(x: screenGeo.size.width / 2, y: screenGeo.size.height - 110),
+                        customMessage: lm.t("tutorial.play_to_start")
+                    )
+                }
+                .ignoresSafeArea()
+                .zIndex(32)
+                .allowsHitTesting(false)
             }
             if showsStorybookButton {
                 Button(action: {
@@ -266,9 +280,38 @@ struct ContentView: View {
                             showAdvancedMathGate = true
                         }
                     },
-                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked,
+                    onShowTutorialAgain: {
+                        guard !UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") else { return }
+                        
+                        UserDefaults.standard.set(Array(completedRedHoodLevels).sorted(), forKey: "tutorialBackup_completedRedHoodLevels")
+                        UserDefaults.standard.set(Array(unlockedWorldBaseIDs).sorted(), forKey: "tutorialBackup_unlockedWorldBaseIDs")
+                        UserDefaults.standard.set(currentBaseID, forKey: "tutorialBackup_currentBaseID")
+                        UserDefaults.standard.set(activeMap == .redHood ? "redHood" : "main", forKey: "tutorialBackup_activeMap")
+                        UserDefaults.standard.set(hasSeenTutorial, forKey: "tutorialBackup_hasSeenTutorial")
+                        
+                        UserDefaults.standard.set(true, forKey: "isTemporaryTutorialMode")
+                        
+                        hasSeenTutorial = false
+                        
+                        let tempCompleted: Set<Int> = []
+                        completedRedHoodLevels = tempCompleted
+                        persistCompletedRedHoodLevels(tempCompleted)
+                        
+                        unlockedWorldBaseIDs = [MapGraph.redRidingHoodBaseID]
+                        persistUnlockedWorldBaseIDs()
+                        
+                        activeMap = .redHood
+                        currentBaseID = RedHoodMapGraph.initialWaypoint.id
+                        avatarPosition = RedHoodMapGraph.initialWaypoint.point
+                        
+                        pendingRedHoodLevel = nil
+                        activeRedHoodLevel = nil
+                        redHoodPostSequenceReward = nil
+                        pendingChapterUnlockLevel = nil
+                    }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .transition(.opacity)
                 .zIndex(120)
                 .allowsHitTesting(!showAdvancedMathGate)
@@ -287,14 +330,21 @@ struct ContentView: View {
                         }
                     }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .transition(.opacity)
                 .zIndex(130)
             }
         }
-        .onReceive(spriteTimer) { _ in
-            if isWalking {
-                currentFrame = (currentFrame + 1) % 4
+        .task {
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(nanoseconds: 120_000_000) // 0.12 seconds
+                    if isWalking {
+                        currentFrame = (currentFrame + 1) % 4
+                    }
+                } catch {
+                    break
+                }
             }
         }
         .onAppear {
@@ -422,6 +472,22 @@ struct ContentView: View {
                             handleRedHoodWaypointActivation(wp.id)
                         }
                 }
+
+                if !hasSeenTutorial {
+                    if pendingRedHoodLevel == nil {
+                        if completedRedHoodLevels.contains(0) {
+                            if let wp = RedHoodMapGraph.waypoint(id: 1) {
+                                HandTutorialIndicator(point: projection.screenPoint(fromPixel: wp.point))
+                                    .zIndex(30)
+                            }
+                        } else {
+                            if let wp = RedHoodMapGraph.waypoint(id: 0) {
+                                HandTutorialIndicator(point: projection.screenPoint(fromPixel: wp.point))
+                                    .zIndex(30)
+                            }
+                        }
+                    }
+                }
             }
 
             if activeMap == .main {
@@ -452,7 +518,8 @@ struct ContentView: View {
                 direction: avatarDirection,
                 frame: isWalking ? currentFrame : 0,
                 size: avatarSize(for: mapSize),
-                markerIsRaised: markerIsRaised
+                markerIsRaised: markerIsRaised,
+                showsMarker: !(activeMap == .redHood && !hasSeenTutorial)
             )
             .position(
                 projection.screenPoint(fromPixel: avatarPosition)
@@ -547,6 +614,7 @@ struct ContentView: View {
 
     private func handleBackButton() {
         if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil || pendingChapterUnlockLevel != nil {
+            let isTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
                 redHoodPostSequenceReward = nil
@@ -554,8 +622,16 @@ struct ContentView: View {
                 pendingRedHoodLevel = nil
                 suppressesMapChromeForDialogue = true
             }
+            if isTemp {
+                restoreStateAfterTutorial()
+            }
         } else if activeMap == .redHood {
-            Task { await closeRedHoodSubMap() }
+            let isTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
+            if isTemp {
+                restoreStateAfterTutorial()
+            } else {
+                Task { await closeRedHoodSubMap() }
+            }
         }
     }
 
@@ -692,6 +768,55 @@ struct ContentView: View {
         }
     }
 
+    private func restoreStateAfterTutorial() {
+        guard UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") else { return }
+        
+        let backupCompleted = UserDefaults.standard.array(forKey: "tutorialBackup_completedRedHoodLevels") as? [Int] ?? []
+        let backupUnlockedWorld = UserDefaults.standard.array(forKey: "tutorialBackup_unlockedWorldBaseIDs") as? [Int] ?? [MapGraph.redRidingHoodBaseID]
+        let backupCurrentBaseID = UserDefaults.standard.integer(forKey: "tutorialBackup_currentBaseID")
+        let backupActiveMapStr = UserDefaults.standard.string(forKey: "tutorialBackup_activeMap") ?? "main"
+        let backupHasSeenTutorial = UserDefaults.standard.bool(forKey: "tutorialBackup_hasSeenTutorial")
+        
+        UserDefaults.standard.removeObject(forKey: "isTemporaryTutorialMode")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_completedRedHoodLevels")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_unlockedWorldBaseIDs")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_currentBaseID")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_activeMap")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_hasSeenTutorial")
+        
+        hasSeenTutorial = backupHasSeenTutorial
+        
+        UserDefaults.standard.set(backupCompleted, forKey: "completedRedHoodLevels")
+        UserDefaults.standard.set(backupUnlockedWorld, forKey: "unlockedWorldBaseIDs")
+        UserDefaults.standard.set(backupCurrentBaseID, forKey: "currentBaseID")
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            completedRedHoodLevels = Set(backupCompleted)
+            unlockedWorldBaseIDs = Set(backupUnlockedWorld)
+            currentBaseID = backupCurrentBaseID
+            activeMap = (backupActiveMapStr == "redHood") ? .redHood : .main
+            
+            if activeMap == .redHood {
+                if let wp = RedHoodMapGraph.waypoint(id: currentBaseID) {
+                    avatarPosition = wp.point
+                } else {
+                    avatarPosition = RedHoodMapGraph.initialWaypoint.point
+                }
+            } else {
+                if let wp = MapGraph.waypoint(id: currentBaseID) {
+                    avatarPosition = wp.point
+                } else {
+                    avatarPosition = MapGraph.initialWaypoint.point
+                }
+            }
+            
+            activeRedHoodLevel = nil
+            pendingRedHoodLevel = nil
+            redHoodPostSequenceReward = nil
+            pendingChapterUnlockLevel = nil
+        }
+    }
+
     @MainActor
     private func returnToWorldMapAfterRedHoodCompletion() async {
         guard activeMap == .redHood else { return }
@@ -720,6 +845,11 @@ struct ContentView: View {
             markRedHoodLevelCompleted(level)
             activeRedHoodLevel = nil
             pendingRedHoodLevel = nil
+        }
+
+        if level == 1 && UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
+            restoreStateAfterTutorial()
+            return
         }
 
         Task { @MainActor in
@@ -1138,12 +1268,12 @@ struct ContentView: View {
             RedHoodLevel0View {
                 handleRedHoodChapterCompletion(0)
             }
-            .environmentObject(lm)
+            .environment(lm)
         } else if level == 9 {
             RedHoodLevelFinalView {
                 handleRedHoodChapterCompletion(9)
             }
-            .environmentObject(lm)
+            .environment(lm)
         } else if let eventData = EventLoader.event(id: level, from: lm.bundle) {
             EventFlowView(
                 eventData: eventData,
@@ -1168,7 +1298,7 @@ struct ContentView: View {
                     handleRedHoodChapterCompletion(level)
                 }
             )
-            .environmentObject(lm)
+            .environment(lm)
         }
     }
 
@@ -1284,16 +1414,19 @@ private struct AvatarWithMarker: View {
     let frame: Int
     let size: CGFloat
     let markerIsRaised: Bool
+    var showsMarker: Bool = true
 
     var body: some View {
         ZStack {
             AvatarSprite(direction: direction, frame: frame, size: size)
 
-            GameMapLocationMarker(
-                width: size * 0.34,
-                height: size * 0.28
-            )
-                .offset(y: markerIsRaised ? -size * 0.76 : -size * 0.62)
+            if showsMarker {
+                GameMapLocationMarker(
+                    width: size * 0.34,
+                    height: size * 0.28
+                )
+                    .offset(y: markerIsRaised ? -size * 0.76 : -size * 0.62)
+            }
         }
         .frame(width: size, height: size)
     }
@@ -1394,7 +1527,7 @@ private struct StoryRegionPlaque: View {
 private struct ComingSoonBadge: View {
     let mapScale: CGFloat
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     private var frameSize: CGSize {
         IslandTitleFrameAsset.frameSize(mapScale: mapScale)
@@ -1452,7 +1585,7 @@ private struct MapPlayButton: View {
     let accessibilityLabel: String
     let action: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         GamePrimaryPillButton(title: lm.t("button.play"), action: action)
@@ -1977,5 +2110,45 @@ private extension CGPoint {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(isGlobalTransitioning: false)
+    }
+}
+
+struct HandTutorialIndicator: View {
+    let point: CGPoint
+    var customMessage: String? = nil
+    @State private var bounce = false
+    @Environment(LanguageManager.self) private var lm
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Text(customMessage ?? lm.t("tutorial.step1.body"))
+                .font(.app(.title3, weight: .bold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.black)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.yellow, lineWidth: 1.5))
+                )
+                .shadow(color: .black.opacity(0.35), radius: 5)
+                .frame(maxWidth: 320)
+                .multilineTextAlignment(.center)
+                .offset(y: -65)
+            
+            Image(systemName: "hand.tap.fill")
+                .font(.system(size: 40, weight: .bold))
+                .foregroundColor(.white)
+                .shadow(color: .black.opacity(0.4), radius: 5, x: 2, y: 3)
+                .rotationEffect(.degrees(180))
+                .offset(y: bounce ? -5 : 5)
+        }
+        .position(x: point.x, y: point.y - 20)
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
+                bounce = true
+            }
+        }
+        .allowsHitTesting(false)
     }
 }

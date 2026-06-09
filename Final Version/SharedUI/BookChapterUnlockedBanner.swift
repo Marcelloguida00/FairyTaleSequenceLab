@@ -18,7 +18,7 @@ struct BookChapterUnlockedBanner: View {
     let onFinish: () -> Void
     let onOpenStorybook: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @State private var isVisible = false
     @State private var didDismiss = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

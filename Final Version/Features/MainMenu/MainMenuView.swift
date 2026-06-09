@@ -41,7 +41,7 @@ struct MainMenuPanelLayer: View {
     @State private var showAdvancedMathGate = false
     @State private var advancedMathProblem = MathAdditionProblem.randomSimple()
     @State private var advancedSettingsUnlocked = false
-    @EnvironmentObject var lm: LanguageManager
+    @Environment(LanguageManager.self) var lm
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let panelFadeDuration: TimeInterval = 0.30
@@ -98,7 +98,7 @@ struct MainMenuPanelLayer: View {
                     },
                     advancedSettingsUnlocked: $advancedSettingsUnlocked
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .transition(.opacity)
                 .zIndex(100)
                 .allowsHitTesting(!showAdvancedMathGate)
@@ -117,7 +117,7 @@ struct MainMenuPanelLayer: View {
                         }
                     }
                 )
-                .environmentObject(lm)
+                .environment(lm)
                 .transition(.opacity)
                 .zIndex(200)
             }
@@ -296,7 +296,7 @@ private enum InfoTheme {
 private struct InfoView: View {
     let onClose: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     private let supportEmail = "mguida2604@gmail.com"
     private let developers = [
@@ -364,6 +364,27 @@ private struct InfoView: View {
                     VStack(spacing: 0) {
                         contactRow
                     }
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(InfoTheme.panelFill)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
+                            )
+                    )
+
+                    sectionHeader(lm.t("settings.accessibility"))
+
+                    VStack(spacing: 0) {
+                        Text(lm.t("info.font_credits"))
+                            .font(.app(.body))
+                            .foregroundStyle(InfoTheme.primaryText)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .fill(InfoTheme.panelFill)
@@ -501,7 +522,7 @@ private struct MenuPanelView: View {
     let onPlay: () -> Void
     let onSettings: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         GeometryReader { proxy in
@@ -571,7 +592,7 @@ private struct MenuSettingsButton: View {
     let isDisabled: Bool
     let action: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         GamePillButton(
@@ -596,7 +617,7 @@ private struct MenuInfoButton: View {
     let isDisabled: Bool
     let action: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     private let gold = Color(red: 0.90, green: 0.72, blue: 0.22)
 
@@ -654,7 +675,7 @@ private struct MenuPlayButton: View {
     let isDisabled: Bool
     let action: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         GamePillButton(

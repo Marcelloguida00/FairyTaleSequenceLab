@@ -3,7 +3,7 @@ import SwiftUI
 struct SequenceCardView: View {
     let card: CardData
     let isFlipped: Bool
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         ZStack {

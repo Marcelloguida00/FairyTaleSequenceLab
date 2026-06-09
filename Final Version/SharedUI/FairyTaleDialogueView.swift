@@ -10,7 +10,7 @@ struct FairyTaleDialogueView: View {
     @State private var lineIndex = 0
     @State private var dialogueChunkIndex = 0
     @State private var isDialogueTextFullyShown = false
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     private static let frameAspectRatio: CGFloat = DialogueFrameMetrics.frameAspectRatio
     /// Frame altezza ≈ personaggi × questo fattore (leggermente più alto).
@@ -394,7 +394,7 @@ private struct DialogueCharacterPortrait: View {
         ],
         onComplete: {}
     )
-    .environmentObject(LanguageManager())
+    .environment(LanguageManager())
 }
 
 #Preview("Dialogo completo · landscape", traits: .landscapeLeft) {
@@ -411,7 +411,7 @@ private struct DialogueCharacterPortrait: View {
         ],
         onComplete: {}
     )
-    .environmentObject(LanguageManager())
+    .environment(LanguageManager())
 }
 
 // MARK: - Preview canvas (solo frame + testo)

@@ -21,7 +21,7 @@ struct AdvancedSettingsMathGate: View {
     let onSuccess: () -> Void
     let onCancel: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var userAnswer = ""
@@ -279,5 +279,5 @@ private enum SettingsGateTheme {
             onCancel: {}
         )
     }
-    .environmentObject(LanguageManager())
+    .environment(LanguageManager())
 }

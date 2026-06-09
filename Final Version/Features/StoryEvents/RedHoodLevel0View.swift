@@ -3,7 +3,7 @@ import SwiftUI
 struct RedHoodLevel0View: View {
     let onComplete: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         if let lines = RedHoodDialogueLoader.introLines(waypoint: 0, from: lm.bundle), !lines.isEmpty {

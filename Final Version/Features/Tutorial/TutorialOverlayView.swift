@@ -3,7 +3,7 @@ import SwiftUI
 struct TutorialOverlayView: View {
     let onFinish: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @State private var currentStep = 0
 
     private struct StepData {
@@ -17,37 +17,17 @@ struct TutorialOverlayView: View {
         StepData(
             mascotFrames: ["Mascot Neutral", "Mascot Talking", "Mascot Neutral"],
             titleKey: "tutorial.step1.title",
-            bodyKey:  "tutorial.step1.body",
-            villainImageName: "villain_lair"
-        ),
-        StepData(
-            mascotFrames: ["Mascot Talking", "Mascot Neutral", "Mascot Talking"],
-            titleKey: "tutorial.step2.title",
-            bodyKey:  "tutorial.step2.body"
-        ),
-        StepData(
-            mascotFrames: ["Mascot Neutral", "Mascot Talking"],
-            titleKey: "tutorial.step3.title",
-            bodyKey:  "tutorial.step3.body"
-        ),
-        StepData(
-            mascotFrames: ["Mascot Talking", "Mascot Neutral"],
-            titleKey: "tutorial.step4.title",
-            bodyKey:  "tutorial.step4.body"
-        ),
-        StepData(
-            mascotFrames: ["Mascot Cheer", "Mascot Waving", "Mascot Cheer"],
-            titleKey: "tutorial.step5.title",
-            bodyKey:  "tutorial.step5.body"
-        ),
+            bodyKey:  "tutorial.step1.body"
+        )
     ]
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                Color.black.opacity(0.55)
+                Color.black.opacity(0.25)
                     .ignoresSafeArea()
                     .accessibilityHidden(true)
+                    .allowsHitTesting(false)
 
                 Button(lm.t("tutorial.skip")) { onFinish() }
                     .font(.app(.title3))

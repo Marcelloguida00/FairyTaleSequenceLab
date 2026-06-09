@@ -22,7 +22,7 @@ private enum SettingsRoute: Equatable {
 }
 
 struct SettingsView: View {
-    @EnvironmentObject var lm: LanguageManager
+    @Environment(LanguageManager.self) var lm
     @Environment(AppFontSettings.self) private var fontSettings
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -31,8 +31,10 @@ struct SettingsView: View {
     var inFrameMode: Bool = false
     var onAdvancedSettingsRequested: (() -> Void)? = nil
     @Binding var advancedSettingsUnlocked: Bool
+    var onShowTutorialAgain: (() -> Void)? = nil
 
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
     @AppStorage(AppAudioSettings.masterKey) private var audioMasterEnabled = true
     @AppStorage("musicVolume") private var musicVolume: Double = 0.32
     @AppStorage("musicMuted")  private var musicMuted:  Bool   = false
@@ -57,12 +59,14 @@ struct SettingsView: View {
         onClose: (() -> Void)? = nil,
         inFrameMode: Bool = false,
         onAdvancedSettingsRequested: (() -> Void)? = nil,
-        advancedSettingsUnlocked: Binding<Bool> = .constant(false)
+        advancedSettingsUnlocked: Binding<Bool> = .constant(false),
+        onShowTutorialAgain: (() -> Void)? = nil
     ) {
         self.onClose = onClose
         self.inFrameMode = inFrameMode
         self.onAdvancedSettingsRequested = onAdvancedSettingsRequested
         self._advancedSettingsUnlocked = advancedSettingsUnlocked
+        self.onShowTutorialAgain = onShowTutorialAgain
     }
 
     private var usesFrameLayout: Bool {
@@ -673,6 +677,25 @@ struct SettingsView: View {
                 ) {
                     AppSettings.hapticImpact(.light)
                     hasSeenOnboarding = false
+                    closeSettings()
+                }
+
+                settingsDivider(largeStyle: usesFrameLayout)
+
+                settingsActionRow(
+                    icon: "book.fill",
+                    title: lm.t("settings.show_tutorial_again"),
+                    detail: nil,
+                    showsDisclosure: false,
+                    largeStyle: usesFrameLayout,
+                    fillHeight: usesExpandedMainRows
+                ) {
+                    AppSettings.hapticImpact(.light)
+                    if let onShowTutorialAgain {
+                        onShowTutorialAgain()
+                    } else {
+                        hasSeenTutorial = false
+                    }
                     closeSettings()
                 }
             }
@@ -1574,6 +1597,18 @@ struct SettingsView: View {
                     }
                 }
             }
+
+            sectionHeader(lm.t("settings.accessibility"))
+
+            settingsCard(largeStyle: usesFrameLayout) {
+                Text(lm.t("info.font_credits"))
+                    .font(.app(usesFrameLayout ? .body : .callout))
+                    .foregroundStyle(SettingsTheme.menuRowText)
+                    .padding(usesFrameLayout ? 20 : 16)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
         }
     }
 
@@ -1826,8 +1861,8 @@ struct SettingsView: View {
         [
             TeamProfile(name: "Calisto Ciro", imageName: "developer_ciro_callisto", linkedInURL: "", instagramURL: ""),
             TeamProfile(name: "Chiappetta Giulia", imageName: "developer_giulia_chiappetta", linkedInURL: "", instagramURL: ""),
-            TeamProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "", instagramURL: ""),
-            TeamProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "", instagramURL: ""),
+            TeamProfile(name: "De Marco Francesca", imageName: "developer_francesca_de_marco", linkedInURL: "https://www.linkedin.com/in/francesca-de-marco-141027411/", instagramURL: ""),
+            TeamProfile(name: "Guida Marcello", imageName: "developer_marcello_guida", linkedInURL: "https://www.linkedin.com/in/marcello-guida-76b64b279/", instagramURL: ""),
             TeamProfile(name: "Karameta Albi", imageName: "developer_albi_karameta", linkedInURL: "", instagramURL: ""),
             TeamProfile(name: "Toshpulatov Bobur", imageName: "developer_bobur", linkedInURL: "", instagramURL: ""),
             TeamProfile(name: "Torcicollo Adolfo", imageName: "developer_adolfo_torcicollo", linkedInURL: "", instagramURL: "")
@@ -1935,5 +1970,5 @@ private enum SettingsDetail: Identifiable, Equatable {
 
 #Preview {
     SettingsView()
-        .environmentObject(LanguageManager())
+        .environment(LanguageManager())
 }

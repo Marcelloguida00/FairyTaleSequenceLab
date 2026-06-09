@@ -4,7 +4,7 @@ struct EventIntroductionView: View {
     let event: EventData
     let onContinue: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         if let lines = RedHoodDialogueLoader.introLines(eventId: event.id, from: lm.bundle), !lines.isEmpty {

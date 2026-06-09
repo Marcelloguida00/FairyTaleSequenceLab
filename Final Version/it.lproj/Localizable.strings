@@ -23,6 +23,7 @@
 "info.collaborator.role.audio_composer" = "Compositore audio";
 "info.contacts"       = "Contatti";
 "info.support_email_subject" = "Assistenza applicazione WORLD OF FABLES";
+"info.font_credits" = "Il font OpenDyslexic è creato da Abelardo Gonzalez ed è rilasciato sotto la licenza SIL Open Font License (OFL).";
 
 /* Sequencing activity */
 "sequencing.instruction" = "Metti la storia in ordine";
@@ -56,8 +57,16 @@
 "book.chapter_unlocked.open_hint" = "Tocca due volte per aprire il libro delle fiabe.";
 "a11y.storybook_button"          = "Apri il libro delle fiabe";
 "book.ar.button"                = "AR";
-"book.ar.title"                 = "Carte sbloccate in AR";
-"book.ar.body"                  = "Guarda nello spazio le carte degli eventi della storia che hai sbloccato.";
+"book.ar.title"                 = "Libro in AR";
+"book.ar.body"                  = "Appoggia il libro su una superficie piana e sfoglia le pagine.";
+"book.ar.cover_title"           = "Cappuccetto\nRosso";
+"book.ar.the_end"               = "Fine";
+"book.ar.generating_pages"      = "Creazione delle pagine in corso…";
+"book.ar.searching_surface"     = "Muovi il dispositivo per trovare una superficie piana.";
+"book.ar.tap_to_place"          = "Tocca per posizionare il libro.";
+"book.ar.prev_page"             = "Pagina precedente";
+"book.ar.next_page"             = "Pagina successiva";
+"book.ar.reposition"            = "Sposta il libro";
 "book.ar.turn_page"             = "Prossima carta";
 "book.ar.next_card"             = "Prossima carta";
 "book.ar.placeholder.title"     = "Nessuna carta";
@@ -127,6 +136,7 @@
 "settings.change_language.description" = "Scegli la lingua dell'app.";
 "settings.change_language.message" = "Seleziona la lingua che vuoi usare nell'app.";
 "settings.show_onboarding_again" = "Mostra onboarding di nuovo";
+"settings.show_tutorial_again" = "Mostra tutorial di nuovo";
 "settings.advanced_settings" = "Impostazioni avanzate";
 "settings.advanced_gate.title" = "Per i grandi";
 "settings.advanced_gate.message" = "Risolvi questa addizione per aprire le Impostazioni avanzate.";
@@ -135,7 +145,7 @@
 "settings.advanced_gate.wrong" = "Non è corretto. Riprova!";
 "settings.support" = "Supporto";
 "settings.whats_new" = "Novità";
-"settings.whats_new.message" = "Novità della versione 1.0.1:\n\n• Modificato il design grafico del libro delle fiabe\n• Modificato il game design del gioco delle sequenze con le carte\n• Modificate le immagini per il gioco delle sequenze con le carte\n• Modificata la UX/UI dei bottoni\n• Modificato il titolo del gioco in \"Lumi: A Journey Through Fables\"\n• Modificata la UI/UX del gioco delle sequenze delle carte\n• Modificato l'intro dei capitoli del gioco introducendo i dialoghi\n• Modificata la reward dei capitoli introducendo lo sblocco del libro delle fiabe\n• Modificati i banner dei capitoli\n• Introdotto lo storytelling book in AR, disabilitato in questa versione\n• Introdotte nuove opzioni di accessibilità\n• Aggiunto feedback di conferma per il reset dei dati\n• Aggiunta anteprima visiva con lucchetto delle icone in impostazioni\n• Risolto il blocco di caricamento dell'evento 1 con il debugger di Xcode\n• Risolto il bug di posizionamento dell'avatar dopo il caricamento della mappa";
+"settings.whats_new.message" = "Novità della versione 1.0.2:\n\n• Disattivata la lettura automatica (sintesi vocale) delle pagine del libro delle fiabe\n• Migliorato il supporto all'accessibilità rinominando l'opzione in \"Aumenta contrasto\"\n• Ottimizzato il layout e l'impaginazione del libro delle fiabe\n• Migliorato il tutorial introduttivo sulla mappa di gioco\n• Accorciati i dialoghi di Cappuccetto Rosso per un ritmo di lettura migliore\n• Aggiunto il banner di sblocco del libro a due pulsanti con supporto multilingua e alto contrasto\n• Aggiornati i colori dell'interfaccia e migliorate le animazioni delle carte";
 "settings.contact_me" = "Contattami";
 "settings.rate_app" = "Valuta l'app";
 "settings.rate_app.message" = "Il collegamento alla valutazione sarà disponibile quando l'app sarà pubblicata.";
@@ -173,8 +183,8 @@
 "tutorial.skip"             = "Salta il tutorial";
 "tutorial.next"             = "Avanti";
 "tutorial.done"             = "Andiamo!";
-"tutorial.step1.title"      = "Lord Tempus Colpisce!";
-"tutorial.step1.body"       = "Lord Tempus ha messo sottosopra tutto il Mondo delle Favole! Ma insieme possiamo sistemarlo. Tocca la mappa per cominciare a camminare!";
+"tutorial.step1.title"      = "Tocca i waypoint";
+"tutorial.step1.body"       = "Per camminare nella mappa devi cliccare sui waypoint sbloccati.";
 "tutorial.step2.title"      = "Trova un'Isola delle Storie";
 "tutorial.step2.body"       = "Cammina verso un'isola luminosa. Quando arrivi, appare un pulsante play — toccalo per iniziare a ripristinare quella fiaba!";
 "tutorial.step3.title"      = "Ripristina l'Ordine";
@@ -210,16 +220,16 @@
 
 /* Italian Story Book Scenes */
 "story.redhood.scene1.title" = "Scena 1";
-"story.redhood.scene1.text1" = "Once upon a time, deep inside a thick forest, there was a small cottage where a lovely little girl lived. Everyone called her Little Red Riding Hood because her mother had made her a beautiful red cloak with a matching hood.";
-"story.redhood.scene1.text2" = "One morning, her mother said: \"Grandmother is sick in bed with a bad cold. Take her this basket of fresh cakes, but remember: stay on the main path and do not stop!\"\n\nThe little girl kissed her mother goodbye and promised: \"Don't worry, Mom! I will walk quickly and go straight to Grandmother's house.\"";
+"story.redhood.scene1.text1" = "C'era una volta, nel fitto di una grande foresta, una piccola casetta dove viveva una graziosa bambina. Tutti la chiamavano Cappuccetto Rosso perché la sua mamma le aveva cucito un bellissimo mantello rosso con un cappuccio abbinato.";
+"story.redhood.scene1.text2" = "Una mattina, la mamma le disse: \"La nonna è a letto con un brutto raffreddore. Portale questo cestino di dolci freschi, ma ricorda: resta sul sentiero principale e non fermarti per nessun motivo!\"\n\nLa bambina salutò la mamma con un bacio e promise: \"Non preoccuparti, mamma! Camminerò veloce e andrò dritta a casa della nonna.\"";
 
 "story.redhood.scene2.title" = "Scena 2";
-"story.redhood.scene2.text1" = "However, as soon as she entered the forest, she forgot her promise. She saw a patch of delicious wild strawberries and delicious flowers, so she put her basket down.";
-"story.redhood.scene2.text2" = "\"Grandmother will love these!\" she thought, running around to pick them.\n\nSuddenly, she realized how late it was, rushed back to grab her basket, and hurried along the trail.";
+"story.redhood.scene2.text1" = "Tuttavia, non appena entrò nel bosco, dimenticò la sua promessa. Vide una macchia di deliziose fragoline di bosco e dei fiori meravigliosi, così posò il cestino a terra.";
+"story.redhood.scene2.text2" = "\"Alla nonna piaceranno tantissimo!\" pensò, correndo qua e là per raccoglierli.\n\nImprovvisamente, si rese conto di quanto fosse tardi, tornò in fretta a prendere il cestino e riprese a camminare velocemente lungo il sentiero.";
 
 "story.redhood.scene3.title" = "Scena 3";
-"story.redhood.scene3.text1" = "As the woods grew darker, a large, dark wolf stepped out from behind the trees. Little Red Riding Hood's heart began to race.\n\n\"Where are you going all alone, little girl?\" the wolf asked in a deep voice.";
-"story.redhood.scene3.text2" = "\"I'm going to my grandmother's cottage at the end of this path to bring her some cakes,\" she replied timidly.\n\nThe clever wolf hatched a quick plan. \"Have a safe trip!\" he said, and instantly vanished into the bushes.";
+"story.redhood.scene3.text1" = "Mentre il bosco diventava più scuro, un grosso lupo nero sbucò da dietro gli alberi. Il cuore di Cappuccetto Rosso iniziò a battere forte.\n\n\"Dove stai andando tutta sola, bambina?\" le chiese il lupo con voce profonda.";
+"story.redhood.scene3.text2" = "\"Sto andando alla casetta di mia nonna, alla fine di questo sentiero, per portarle dei dolci,\" rispose lei timidamente.\n\nL'astuto lupo escogitò subito un piano. \"Buon viaggio!\" disse, e scomparve all'istante tra i cespugli.";
 "a11y.button_select_app_icon" = "Seleziona l'icona dell'app";
 "a11y.button_locked"          = "Questo elemento è bloccato";
 "a11y.button_open_social_link" = "Apri link dei social media";
@@ -232,24 +242,24 @@
 "a11y.envelope_open_hint"     = "Apri la busta per rivelare le carte sbloccare";
 
 "story.redhood.scene4.title" = "Scena 4";
-"story.redhood.scene4.text1" = "The wolf ran as fast as he could, thinking only of his next meal. He arrived at the cottage and knocked gently on the door. Knock! Knock!";
-"story.redhood.scene4.text2" = "\"Who is it?\" asked the grandmother.\n\n\"It's me, Little Red Riding Hood!\" the wolf replied, disguising his voice.\n\n\"Come in, dear, the door is unlocked,\" said the old woman.";
+"story.redhood.scene4.text1" = "Il lupo corse più veloce che poté, pensando solo al suo prossimo pasto. Arrivò alla casetta e bussò dolcemente alla porta. Toc! Toc!";
+"story.redhood.scene4.text2" = "\"Chi è?\" chiese la nonna.\n\n\"Sono io, Cappuccetto Rosso!\" rispose il lupo, camuffando la voce.\n\n\"Entra, cara, la porta è aperta,\" disse l'anziana signora.";
 
 "story.redhood.scene5.title" = "Scena 5";
-"story.redhood.scene5.text1" = "The wolf burst into the room, but the clever grandmother quickly hid inside the closet to avoid being found.";
-"story.redhood.scene5.text2" = "Finding the room empty, the wolf put on her nightcap, climbed into her bed, and pulled up the covers.";
+"story.redhood.scene5.text1" = "Il lupo irruppe nella stanza, ma l'astuta nonna si nascose rapidamente dentro l'armadio per non farsi trovare.";
+"story.redhood.scene5.text2" = "Trovando la stanza vuota, il lupo indossò la sua cuffia da notte, si infilò nel letto e tirò su le coperte.";
 
 "story.redhood.scene6.title" = "Scena 6";
-"story.redhood.scene6.text1" = "Soon after, Little Red Riding Hood arrived and knocked.\n\n\"Come in, my sweet child,\" the wolf whispered, trying to sound sweet.";
-"story.redhood.scene6.text2" = "The girl stepped inside but noticed something was very strange.";
+"story.redhood.scene6.text1" = "Poco dopo, Cappuccetto Rosso arrivò e bussò.\n\n\"Entra, mia dolce bambina,\" sussurrò il lupo, cercando di sembrare affettuoso.";
+"story.redhood.scene6.text2" = "La bambina entrò, ma notò che c'era qualcosa di molto strano.";
 
 "story.redhood.scene7.title" = "Scena 7";
-"story.redhood.scene7.text1" = "\"Oh, Grandmother, what a deep voice you have!\"\n\n\"The better to speak to you, my dear.\"\n\n\"And what big eyes you have!\"\n\n\"The better to see you, my dear.\"";
-"story.redhood.scene7.text2" = "\"And what big hands you have!\"\n\n\"The better to hug you, my dear.\"\n\n\"But Grandmother... what a giant mouth you have!\" she gasped.\n\n\"The better to EAT YOU!\" the wolf roared.\n\nHe jumped out of bed, but Little Red Riding Hood, terrified, started screaming as loud as she could!";
+"story.redhood.scene7.text1" = "\"Oh, nonna, che voce profonda che hai!\"\n\n\"Per parlarti meglio, bambina mia.\"\n\n\"E che occhi grandi che hai!\"\n\n\"Per guardarti meglio, bambina mia.\"";
+"story.redhood.scene7.text2" = "\"E che mani grandi che hai!\"\n\n\"Per abbracciarti meglio, bambina mia.\"\n\n\"Ma nonna... che bocca gigante che hai!\" sussultò lei.\n\n\"Per MANGIARTI meglio!\" ruggì il lupo.\n\nSaltò giù dal letto, ma Cappuccetto Rosso, terrorizzata, iniziò a urlare con tutto il fiato che aveva in gola!";
 
 "story.redhood.scene8.title" = "Scena 8";
-"story.redhood.scene8.text1" = "A woodcutter passing by heard Little Red Riding Hood's loud screams coming from the cottage. He ran as fast as he could and burst through the door with a large wooden stick.\n\nSeeing the brave woodcutter, the cowardly wolf panicked, jumped out of the window, and ran deep into the forest, never to be seen again.";
-"story.redhood.scene8.text2" = "Hearing that the danger was over, the grandmother finally came out of the closet.\n\nLittle Red Riding Hood and her grandmother hugged each other tightly, so happy to be completely safe and sound at last. They thanked the brave woodcutter with all their hearts for saving their lives.\n\nAt sunset, the mother arrived at the cottage, terrified because her daughter was late. When she saw everyone safe, she wept with joy.\n\nAs Little Red Riding Hood and her mother walked back home together under the trees, the little girl held her mother's hand tightly and said: \"From now on, we will always stick to the path, without any distractions!\"";
+"story.redhood.scene8.text1" = "Un taglialegna che passava di lì sentì le forti urla di Cappuccetto Rosso provenire dalla casetta. Corse più veloce che poté e sfondò la porta con un grosso bastone di legno.\n\nVedendo il coraggioso taglialegna, il lupo codardo andò nel panico, saltò fuori dalla finestra e fuggì nel fitto del bosco, per non farsi mai più vedere.";
+"story.redhood.scene8.text2" = "Sentendo che il pericolo era passato, la nonna finalmente uscì dall'armadio.\n\nCappuccetto Rosso e la sua nonna si abbracciarono forte, così felici di essere finalmente sane e salve. Ringraziarono il coraggioso taglialegna con tutto il cuore per aver salvato loro la vita.\n\nAl tramonto, la mamma arrivò alla casetta, terrorizzata perché sua figlia era in ritardo. Quando vide tutti sani e salvi, pianse di gioia.\n\nMentre Cappuccetto Rosso e la sua mamma tornavano a casa insieme sotto gli alberi, la bambina tenne forte la mano della mamma e disse: \"D'ora in poi, resteremo sempre sul sentiero, senza mai distrarci!\"";
 
 /* Image placeholders */
 "Immagine di Introduzione" = "Immagine di Introduzione";
@@ -305,3 +315,8 @@
 "a11y.ar_back_hint" = "Chiude la vista di realtà aumentata e ritorna alla mappa";
 "a11y.reward_pack_label" = "Pacco premio";
 "a11y.reward_pack_hint" = "Tocca o scorri verso l'alto per aprire il pacco premio";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Tocca Gioca per iniziare la storia!";
+"tutorial.drag_first_scene" = "Trascina la prima scena nella prima posizione";
+"tutorial.tap_to_flip" = "Tocca la carta per girarla e leggere l'indizio";

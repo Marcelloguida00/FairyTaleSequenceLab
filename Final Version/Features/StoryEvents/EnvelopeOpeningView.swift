@@ -1,11 +1,11 @@
 import SwiftUI
-import Combine
+import Observation
 
 struct EnvelopeOpeningView: View {
     let event: EventData
     let onDismiss: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
     @Environment(\.accessibilityReduceMotion) var reduceMotion
 
     // --- State variables for opening sequence ---
@@ -33,7 +33,6 @@ struct EnvelopeOpeningView: View {
     @State private var statusText: String = ""
     @State private var buttonText: String = ""
 
-    private let timer = Timer.publish(every: 0.03, on: .main, in: .common).autoconnect()
 
     // Particle Structs
     struct ExplosionParticle: Identifiable {
@@ -192,8 +191,15 @@ struct EnvelopeOpeningView: View {
                 statusText = lm.t("language.code") == "it" ? "Pacchetto Pronto!" : "Pack Ready!"
                 buttonText = lm.t("language.code") == "it" ? "Apri" : "Open"
             }
-            .onReceive(timer) { _ in
-                updateParticles(size: geo.size)
+            .task {
+                while !Task.isCancelled {
+                    do {
+                        try await Task.sleep(nanoseconds: 30_000_000) // 0.03 seconds
+                        updateParticles(size: geo.size)
+                    } catch {
+                        break
+                    }
+                }
             }
         }
     }

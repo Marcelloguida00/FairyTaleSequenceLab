@@ -8,7 +8,7 @@ struct RewardView: View {
     let onDismiss: () -> Void
     let onNext: () -> Void
 
-    @EnvironmentObject private var lm: LanguageManager
+    @Environment(LanguageManager.self) private var lm
 
     var body: some View {
         rewardContent
