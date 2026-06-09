@@ -15,6 +15,10 @@ final class LanguageManager {
         Language(code: "it", nativeName: "Italiano",  flag: "🇮🇹"),
         Language(code: "sq", nativeName: "Shqip",     flag: "🇦🇱"),
         Language(code: "ru", nativeName: "Русский",   flag: "🇷🇺"),
+        Language(code: "es", nativeName: "Español",   flag: "🇪🇸"),
+        Language(code: "pt", nativeName: "Português", flag: "🇵🇹"),
+        Language(code: "fa", nativeName: "فارسی",      flag: "🇮🇷"),
+        Language(code: "zh-Hans", nativeName: "简体中文", flag: "🇨🇳"),
     ]
 
     var currentLanguage: String {

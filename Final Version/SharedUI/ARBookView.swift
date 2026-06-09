@@ -81,37 +81,17 @@ struct ARBookView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(lm.t("book.ar.title"))
-                    .font(.app(.headline, weight: .black))
-                    .foregroundColor(.white)
-
-                Text(lm.t("book.ar.body"))
-                    .font(.app(.caption))
-                    .foregroundColor(.white.opacity(0.9))
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.72)
-            }
-
-            Spacer()
-
-            GameCircleBackButton(size: 72) {
+        HStack {
+            GameCircleBackButton(size: 64) {
                 AppSettings.hapticImpact(.light)
                 onClose()
             }
             .accessibilityLabel(lm.t("a11y.go_back"))
+            
+            Spacer()
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.black.opacity(0.78))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(.white.opacity(0.24), lineWidth: 1)
-                )
-        )
+        .padding(.horizontal, 18)
+        .padding(.top, 18)
     }
 
     private var loadingState: some View {
@@ -178,32 +158,67 @@ struct ARBookView: View {
     }
 
     private var placementHint: some View {
-        HStack(spacing: 12) {
-            Image(systemName: controller.surfaceFound ? "hand.tap.fill" : "viewfinder")
-                .font(.system(.title3, weight: .bold))
-                .foregroundColor(.white)
-                .accessibilityHidden(true)
+        ZStack {
+            Image("IslandTitleFrame")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 380, height: 110)
+                .shadow(color: .black.opacity(0.22), radius: 6, x: 0, y: 3)
+            
+            HStack(spacing: 10) {
+                Image(systemName: controller.surfaceFound ? "hand.tap.fill" : "viewfinder")
+                    .font(.system(.subheadline, weight: .bold))
+                    .foregroundColor(Color(red: 0.15, green: 0.15, blue: 0.13))
+                    .accessibilityHidden(true)
 
-            Text(controller.surfaceFound
-                 ? lm.t("book.ar.tap_to_place")
-                 : lm.t("book.ar.searching_surface"))
-                .font(.app(.subheadline, weight: .bold))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
+                Text(placementHintText)
+                    .font(.app(size: 15, weight: .semibold))
+                    .foregroundColor(Color(red: 0.15, green: 0.15, blue: 0.13))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.78)
+            }
+            .padding(.horizontal, 44)
+            .frame(width: 380, height: 110)
         }
-        .padding(.horizontal, 22)
-        .padding(.vertical, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(Color.orange.opacity(0.92))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(.white.opacity(0.3), lineWidth: 2)
-                )
-        )
-        .shadow(color: .black.opacity(0.3), radius: 10, y: 5)
         .padding(.horizontal, 24)
+    }
+
+    private var placementHintText: String {
+        switch lm.currentLanguage {
+        case "it":
+            return controller.surfaceFound 
+                ? "Superficie trovata! Tocca per posizionare il libro."
+                : "Muovi il dispositivo per trovare una superficie piana."
+        case "es":
+            return controller.surfaceFound
+                ? "¡Superficie encontrada! Toca para colocar el libro."
+                : "Mueve tu dispositivo para encontrar una superficie plana."
+        case "pt":
+            return controller.surfaceFound
+                ? "Superfície encontrada! Toque para posicionar o livro."
+                : "Mova o dispositivo para encontrar uma superfície plana."
+        case "fa":
+            return controller.surfaceFound
+                ? "سطح پیدا شد! برای قرار دادن کتاب ضربه بزنید."
+                : "دستگاه خود را حرکت دهید تا یک سطح صاف پیدا شود."
+        case "zh-Hans":
+            return controller.surfaceFound
+                ? "已找到平面！轻点屏幕以放置故事书。"
+                : "请移动设备以寻找水平面。"
+        case "sq":
+            return controller.surfaceFound
+                ? "U gjet sipërfaqja! Trokit për të vendosur librin."
+                : "Muovi pajisjen për të gjetur një sipërfaqe të sheshtë."
+        case "ru":
+            return controller.surfaceFound
+                ? "Поверхность найдена! Нажмите, чтобы разместить книгу."
+                : "Перемещайте устройство, чтобы найти ровную поверхность."
+        default: // "en"
+            return controller.surfaceFound
+                ? "Surface found! Tap to place the book."
+                : "Move your device to find a flat surface."
+        }
     }
 
     private var emptyState: some View {
@@ -581,7 +596,7 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
             // spesse 0.0008 m (invisibili), quindi non c'è alcun effetto collaterale, e
             // la faccia rivolta verso la camera mostra sempre il contenuto della pagina.
             let topMat = pageMaterial(top)
-            let backMat = bottom != nil ? pageMaterial(bottom) : topMat
+            let backMat = bottom != nil ? pageMaterial(bottom?.flippedBoth) : topMat
             // Tutte le facce mostrano il fronte, tranne la faccia inferiore (-Y) che mostra il retro.
             return [topMat, topMat, topMat, topMat, topMat, backMat]
         }
@@ -767,6 +782,18 @@ private extension UIImage {
     var scnSafe: UIImage {
         guard let data = self.pngData(), let safeImage = UIImage(data: data) else { return self }
         return safeImage
+    }
+
+    var flippedBoth: UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = self.scale
+        format.opaque = false
+        return UIGraphicsImageRenderer(size: self.size, format: format).image { ctx in
+            let cgCtx = ctx.cgContext
+            cgCtx.translateBy(x: self.size.width, y: self.size.height)
+            cgCtx.scaleBy(x: -1, y: -1)
+            self.draw(in: CGRect(origin: .zero, size: self.size))
+        }
     }
 }
 

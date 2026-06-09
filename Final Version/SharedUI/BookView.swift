@@ -489,15 +489,16 @@ struct BookView: View {
     /// blank/white textures in AR.
     @MainActor
     private func renderBookPagesToImages() -> [UIImage] {
-        // 0.75 aspect ratio matches a single on-screen page (the book is 1.5 wide for two pages).
-        let size = CGSize(width: 1080, height: 1440)
+        // Render at a logical size (matching typical tablet page width) so fonts are proportionate,
+        // but scale by 2.0 to produce high-resolution 1080x1440 textures for SceneKit.
+        let logicalSize = CGSize(width: 540, height: 720)
         return bookPages.map { page in
             let renderer = ImageRenderer(content:
                 page
                     .environment(lm)
-                    .frame(width: size.width, height: size.height)
+                    .frame(width: logicalSize.width, height: logicalSize.height)
             )
-            renderer.scale = 1
+            renderer.scale = 2
             renderer.isOpaque = true
             return renderer.uiImage ?? UIImage()
         }
@@ -737,6 +738,18 @@ struct BookView: View {
                                         .blur(radius: isCompact ? 30 : 60)
                                 )
                                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                        }
+                        
+                        // Book Title Overlay
+                        VStack(spacing: 8) {
+                            Text(redRidingHood.title)
+                                .font(isDyslexiaEnabled ? 
+                                    (isCompact ? Font.app(.title, weight: .black) : Font.app(.largeTitle, weight: .black)) :
+                                    (isCompact ? Font.custom("Alegreya", size: 36, relativeTo: .largeTitle).weight(.black) : Font.custom("Alegreya", size: 54, relativeTo: .largeTitle).weight(.black)))
+                                .foregroundColor(Color(red: 0.35, green: 0.1, blue: 0.1)) // Warm crimson red
+                                .multilineTextAlignment(.center)
+                                .shadow(color: .white.opacity(0.8), radius: 4, x: 0, y: 2)
+                                .padding(.horizontal, isCompact ? 30 : 60)
                         }
                     }
                     .padding(-pagePadding)
