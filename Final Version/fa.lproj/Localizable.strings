@@ -104,7 +104,7 @@
 "settings.reduce_contrast" = "افزایش کنتراست";
 "settings.reduce_contrast.description" = "برای خوانایی بهتر متن از رنگ‌های پرکنتراست استفاده می‌کند.";
 "settings.differentiate" = "تمایز بدون اتکا به رنگ";
-"settings.differentiate.description" = "این ویژگی مستقیماً در برنامه پیاده‌سازی شده است.";
+"settings.differentiate.description" = "علاوه بر رنگ، از شکل‌ها و الگوها برای نمایش پیشرفت و گزینه‌ها استفاده می‌شود.";
 "settings.dyslexia_font"  = "قلم مناسب نارساخوانی";
 "settings.dyslexia_font.description" = "استفاده از قلم OpenDyslexic برای همهٔ متن‌ها.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic روشن";

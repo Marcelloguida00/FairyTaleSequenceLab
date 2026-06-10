@@ -26,7 +26,9 @@ struct OnboardingStillSceneView: View {
     let shipOverlay: OnboardingShipOverlay?
     let onComplete: () -> Void
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     @State private var coverCloudEnter: CGFloat = 0
     @State private var curtainCloudExit: CGFloat = 0

@@ -297,7 +297,7 @@
 "settings.reduce_contrast" = "Увеличить контраст";
 "settings.reduce_contrast.description" = "Использовать более контрастные цвета для улучшения читаемости.";
 "settings.differentiate" = "Различать без только цвета";
-"settings.differentiate.description" = "Эта функция встроена непосредственно в приложение.";
+"settings.differentiate.description" = "Использовать формы и узоры в дополнение к цвету для отображения прогресса и выбора.";
 
 /* Additional accessibility labels and hints */
 "a11y.tutorial_skip_button" = "Пропустить обучение";

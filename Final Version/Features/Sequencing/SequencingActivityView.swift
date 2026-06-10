@@ -103,7 +103,9 @@ private struct EmptySequenceSlotView: View {
 
 private struct TapRippleEffect: View {
     @State private var pulse = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     var body: some View {
         ZStack {
@@ -133,7 +135,9 @@ private struct SourceCardHintBorder: View {
     let cardH: CGFloat
 
     @State private var pulse = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     var body: some View {
         RoundedRectangle(cornerRadius: 16)
@@ -162,7 +166,9 @@ private struct SourceCardHintWrapper<Content: View>: View {
     let cardH: CGFloat
 
     @State private var jumping = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     init(cardW: CGFloat, cardH: CGFloat, @ViewBuilder content: () -> Content) {
         self.cardW = cardW
@@ -273,7 +279,9 @@ struct SequencingActivityView<Reward: View>: View {
     let onSequencingComplete: ((Int) -> Void)?
     let onCelebrationZoomChange: ((Bool) -> Void)?
     let makeReward: (Int, @escaping () -> Void) -> Reward
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
     @Environment(LanguageManager.self) private var lm
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
     @State private var sourceCardFrames: [Int: CGRect] = [:]
@@ -475,6 +483,22 @@ struct SequencingActivityView<Reward: View>: View {
         }
         .onChange(of: event.id) { _, _ in
             resetBoardState()
+        }
+        .onChange(of: hasSeenTutorial) { _, hasSeen in
+            if hasSeen {
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 2_200_000_000)
+                    let indicesToFlip = flippedStates.indices.filter { flippedStates[$0] }
+                    if !indicesToFlip.isEmpty {
+                        playFlipToggleSound()
+                        withAnimation(flipAnimation) {
+                            for index in indicesToFlip {
+                                flippedStates[index] = false
+                            }
+                        }
+                    }
+                }
+            }
         }
         .onChange(of: isStorybookExpanded) { _, expanded in
             onCelebrationZoomChange?(expanded)
@@ -974,22 +998,6 @@ struct SequencingActivityView<Reward: View>: View {
         if !hasSeenTutorial && cardId == event.correctOrder.first && slotContents[0] == cardId {
             withAnimation(.easeInOut(duration: 0.35)) {
                 hasSeenTutorial = true
-            }
-            scheduleTutorialFlipBack(cardId: cardId)
-        }
-    }
-
-    /// Fine tutorial: lascia il tempo di leggere l'indizio, poi rigira la carta con l'immagine verso il bambino.
-    private func scheduleTutorialFlipBack(cardId: Int) {
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 4_000_000_000)
-            guard !Task.isCancelled,
-                  let index = cardStateIndex(for: cardId),
-                  flippedStates.indices.contains(index),
-                  flippedStates[index] else { return }
-            playFlipToggleSound()
-            withAnimation(flipAnimation) {
-                flippedStates[index] = false
             }
         }
     }

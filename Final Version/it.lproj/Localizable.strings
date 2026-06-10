@@ -298,7 +298,7 @@
 "settings.reduce_contrast" = "Aumenta contrasto";
 "settings.reduce_contrast.description" = "Usa colori ad alto contrasto per migliorare la leggibilità dei testi.";
 "settings.differentiate" = "Distingui senza usare solo il colore";
-"settings.differentiate.description" = "Questa funzionalità è implementata direttamente nell'app.";
+"settings.differentiate.description" = "Usa forme e motivi oltre al colore per mostrare progressi e scelte.";
 
 /* Additional accessibility labels and hints */
 "a11y.tutorial_skip_button" = "Salta il tutorial";

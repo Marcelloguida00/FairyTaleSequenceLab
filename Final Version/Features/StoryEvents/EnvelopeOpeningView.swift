@@ -6,7 +6,9 @@ struct EnvelopeOpeningView: View {
     let onDismiss: () -> Void
 
     @Environment(LanguageManager.self) private var lm
-    @Environment(\.accessibilityReduceMotion) var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     // --- State variables for opening sequence ---
     @State private var isOpened = false

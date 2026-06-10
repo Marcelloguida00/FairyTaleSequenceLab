@@ -188,7 +188,9 @@ struct CloudTransitionOverlay: View {
     private static let skyBackdropColor = Color(red: 0.55, green: 0.78, blue: 0.95)
     private static let stormBackdropColor = Color(red: 0.05, green: 0.07, blue: 0.11)
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     private var usesStormBackdrop: Bool {
         cloudImageName == "cloudBlack"

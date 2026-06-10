@@ -282,15 +282,16 @@ struct ContentView: View {
                     },
                     advancedSettingsUnlocked: $advancedSettingsUnlocked,
                     onShowTutorialAgain: {
-                        guard !UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") else { return }
-                        
-                        UserDefaults.standard.set(Array(completedRedHoodLevels).sorted(), forKey: "tutorialBackup_completedRedHoodLevels")
-                        UserDefaults.standard.set(Array(unlockedWorldBaseIDs).sorted(), forKey: "tutorialBackup_unlockedWorldBaseIDs")
-                        UserDefaults.standard.set(currentBaseID, forKey: "tutorialBackup_currentBaseID")
-                        UserDefaults.standard.set(activeMap == .redHood ? "redHood" : "main", forKey: "tutorialBackup_activeMap")
-                        UserDefaults.standard.set(hasSeenTutorial, forKey: "tutorialBackup_hasSeenTutorial")
-                        
-                        UserDefaults.standard.set(true, forKey: "isTemporaryTutorialMode")
+                        let isAlreadyTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
+                        if !isAlreadyTemp {
+                            UserDefaults.standard.set(Array(completedRedHoodLevels).sorted(), forKey: "tutorialBackup_completedRedHoodLevels")
+                            UserDefaults.standard.set(Array(unlockedWorldBaseIDs).sorted(), forKey: "tutorialBackup_unlockedWorldBaseIDs")
+                            UserDefaults.standard.set(currentBaseID, forKey: "tutorialBackup_currentBaseID")
+                            UserDefaults.standard.set(activeMap == .redHood ? "redHood" : "main", forKey: "tutorialBackup_activeMap")
+                            UserDefaults.standard.set(hasSeenTutorial, forKey: "tutorialBackup_hasSeenTutorial")
+                            
+                            UserDefaults.standard.set(true, forKey: "isTemporaryTutorialMode")
+                        }
                         
                         hasSeenTutorial = false
                         
@@ -301,6 +302,8 @@ struct ContentView: View {
                         unlockedWorldBaseIDs = [MapGraph.redRidingHoodBaseID]
                         persistUnlockedWorldBaseIDs()
                         
+                        UserDefaults.standard.set(RedHoodMapGraph.initialWaypoint.id, forKey: "currentBaseID")
+                        
                         activeMap = .redHood
                         currentBaseID = RedHoodMapGraph.initialWaypoint.id
                         avatarPosition = RedHoodMapGraph.initialWaypoint.point
@@ -309,6 +312,10 @@ struct ContentView: View {
                         activeRedHoodLevel = nil
                         redHoodPostSequenceReward = nil
                         pendingChapterUnlockLevel = nil
+                        
+                        Task {
+                            await closeSettings()
+                        }
                     }
                 )
                 .environment(lm)
@@ -738,6 +745,10 @@ struct ContentView: View {
     }
 
     private func reloadAllProgress() {
+        if UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
+            activeMap = .redHood
+        }
+        
         let savedCompletedRedHoodLevels = Set(
             UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
         )
@@ -1725,7 +1736,8 @@ private struct WaypointDot: View {
 
     private var fillColor: Color {
         switch state {
-        case .completed: return Color(red: 0.18, green: 0.72, blue: 0.28)
+        // Slightly darker green so the white checkmark keeps >= 3:1 (WCAG non-text contrast).
+        case .completed: return Color(red: 0.13, green: 0.58, blue: 0.22)
         case .next:      return nextColor
         case .locked:    return Color(red: 0.48, green: 0.48, blue: 0.50)
         }

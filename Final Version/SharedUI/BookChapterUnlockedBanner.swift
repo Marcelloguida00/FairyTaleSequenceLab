@@ -21,8 +21,12 @@ struct BookChapterUnlockedBanner: View {
     @Environment(LanguageManager.self) private var lm
     @State private var isVisible = false
     @State private var didDismiss = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @AppStorage("reduceContrast") private var increaseContrast = false
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
+    @Environment(\.colorSchemeContrast) private var sysContrast
+    @AppStorage("reduceContrast") private var increaseContrastSetting = false
+    private var increaseContrast: Bool { increaseContrastSetting || sysContrast == .increased }
 
     private var headline: String {
         lm.t("book.chapter_unlocked.title")

@@ -318,12 +318,12 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
         var pageImages: [UIImage]
 
         // Geometry constants (meters)
-        private let pageW: CGFloat = 0.15
-        private let pageD: CGFloat = 0.21
-        private let gap: CGFloat = 0.002
-        private let coverThk: CGFloat = 0.006
-        private let stackH: CGFloat = 0.014
-        private let overhang: CGFloat = 0.007
+        private let pageW: CGFloat = 0.30
+        private let pageD: CGFloat = 0.42
+        private let gap: CGFloat = 0.004
+        private let coverThk: CGFloat = 0.012
+        private let stackH: CGFloat = 0.028
+        private let overhang: CGFloat = 0.014
 
         /// How much the turning page bends (radians of arc, peaks at mid-flip).
         /// 0 = rigid board, ~1.1 = soft paper curl. Tweak on device for taste.

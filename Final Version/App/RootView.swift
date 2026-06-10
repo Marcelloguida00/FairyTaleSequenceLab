@@ -2,6 +2,8 @@ import SwiftUI
 
 struct RootView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("differentiateWithoutColor") private var differentiateWithoutColor = false
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var sysDifferentiateWithoutColor
     @Environment(AppFontSettings.self) private var fontSettings
 
     @State private var gameStarted = false
@@ -74,7 +76,7 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .differentiate(false)
+        .differentiate(differentiateWithoutColor || sysDifferentiateWithoutColor)
         .font(Font.custom(
             AppTypography.fontName(for: .regular, dyslexiaEnabled: usesDyslexiaFont),
             size: 17,

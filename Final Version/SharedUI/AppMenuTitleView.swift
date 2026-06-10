@@ -13,7 +13,9 @@ struct AppMenuTitleView: View {
     var style: AppMenuTitleStyle = .compact
 
     @Environment(LanguageManager.self) private var lm
-    @AppStorage("reduceContrast") private var reduceContrast = false
+    @Environment(\.colorSchemeContrast) private var sysContrast
+    @AppStorage("reduceContrast") private var increaseContrastSetting = false
+    private var reduceContrast: Bool { increaseContrastSetting || sysContrast == .increased }
 
     // ==========================================
     // STYLING PROPERTIES (Without Reduce Contrast - Original Outline style)

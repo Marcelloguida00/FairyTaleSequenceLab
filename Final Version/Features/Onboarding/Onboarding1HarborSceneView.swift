@@ -7,7 +7,9 @@ struct Onboarding1HarborSceneView: View {
     private static let cloudSkyColor = Color(red: 0.55, green: 0.78, blue: 0.95)
     private static let shipAspectRatio: CGFloat = 1086.0 / 1448.0
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     @State private var shipX: CGFloat = -0.10
     @State private var shipY: CGFloat = 0.50

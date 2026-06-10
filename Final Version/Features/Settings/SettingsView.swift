@@ -13,6 +13,10 @@ private enum SettingsTheme {
     static let menuPanelFill = Color(red: 0.98, green: 0.95, blue: 0.86)
     static let menuRowText = Color(red: 0.18, green: 0.10, blue: 0.08)
     static let toggleActiveFill = Color(red: 1.0, green: 233.0 / 255.0, blue: 88.0 / 255.0) // #FFE958
+    // Dark red that keeps >= 4.5:1 (WCAG AA) on the cream panel fill.
+    static let destructiveText = Color(red: 0.70, green: 0.10, blue: 0.08)
+    // Darker blue for the "Current" version badge, >= 4.5:1 with white text.
+    static let badgeFill = Color(red: 0.0, green: 0.39, blue: 0.75)
 }
 
 private enum SettingsRoute: Equatable {
@@ -46,6 +50,7 @@ struct SettingsView: View {
     @AppStorage("enableSounds") private var enableSounds = true
     @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
     @AppStorage("reduceContrast") private var reduceContrast = false
+    @AppStorage("differentiateWithoutColor") private var differentiateWithoutColor = false
     @State private var showResetProgressConfirmation = false
     @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
@@ -601,14 +606,14 @@ struct SettingsView: View {
                     HStack(spacing: 14) {
                         Image(systemName: "trash.fill")
                             .font(.app(size: 20, weight: .semibold))
-                            .foregroundStyle(Color.red)
+                            .foregroundStyle(SettingsTheme.destructiveText)
                             .frame(width: 28)
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(lm.t("settings.reset_progress"))
                                 .font(.app(.body))
-                                .foregroundStyle(Color.red)
+                                .foregroundStyle(SettingsTheme.destructiveText)
 
                             Text(lm.t("settings.reset_progress.description"))
                                 .font(.app(.caption))
@@ -620,7 +625,7 @@ struct SettingsView: View {
 
                         Image(systemName: "chevron.right")
                             .font(.app(size: 14, weight: .bold))
-                            .foregroundStyle(SettingsTheme.secondaryText.opacity(0.65))
+                            .foregroundStyle(SettingsTheme.secondaryText.opacity(0.8))
                     }
                     .padding(.horizontal, 18)
                     .padding(.vertical, 16)
@@ -702,7 +707,26 @@ struct SettingsView: View {
                     if let onShowTutorialAgain {
                         onShowTutorialAgain()
                     } else {
+                        let isAlreadyTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
+                        if !isAlreadyTemp {
+                            let completed = UserDefaults.standard.array(forKey: "completedRedHoodLevels") as? [Int] ?? []
+                            let unlocked = UserDefaults.standard.array(forKey: "unlockedWorldBaseIDs") as? [Int] ?? [0]
+                            let currentBase = UserDefaults.standard.integer(forKey: "currentBaseID")
+                            let hasSeenTut = UserDefaults.standard.bool(forKey: "hasSeenTutorial")
+                            
+                            UserDefaults.standard.set(completed, forKey: "tutorialBackup_completedRedHoodLevels")
+                            UserDefaults.standard.set(unlocked, forKey: "tutorialBackup_unlockedWorldBaseIDs")
+                            UserDefaults.standard.set(currentBase, forKey: "tutorialBackup_currentBaseID")
+                            UserDefaults.standard.set("main", forKey: "tutorialBackup_activeMap")
+                            UserDefaults.standard.set(hasSeenTut, forKey: "tutorialBackup_hasSeenTutorial")
+                            
+                            UserDefaults.standard.set(true, forKey: "isTemporaryTutorialMode")
+                        }
+                        
                         hasSeenTutorial = false
+                        UserDefaults.standard.set([Int](), forKey: "completedRedHoodLevels")
+                        UserDefaults.standard.set([0], forKey: "unlockedWorldBaseIDs")
+                        UserDefaults.standard.set(10, forKey: "currentBaseID")
                     }
                     closeSettings()
                 }
@@ -938,7 +962,8 @@ struct SettingsView: View {
                 .accessibilityHint(lm.t("settings.dyslexia_font.description"))
                 .accessibilityAddTraits(fontSettings.dyslexiaFontEnabled ? [.isSelected] : [])
 
-                
+                settingsDivider(largeStyle: usesFrameLayout)
+
                 // Enable Animations
                 Button {
                     AppSettings.hapticImpact(.light)
@@ -1049,29 +1074,44 @@ struct SettingsView: View {
                 settingsDivider(largeStyle: usesFrameLayout)
 
                 // Differentiate without colour alone
-                HStack(spacing: usesFrameLayout ? 18 : 14) {
-                    Image(systemName: "square.grid.2x2")
-                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                        .foregroundStyle(SettingsTheme.menuRowText)
-                        .frame(width: usesFrameLayout ? 36 : 28)
-                        .accessibilityHidden(true)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(lm.t("settings.differentiate"))
-                            .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
-                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-                        Text(lm.t("settings.differentiate.description"))
-                            .font(.app(usesFrameLayout ? .callout : .caption))
-                            .foregroundStyle(SettingsTheme.secondaryText)
-                            .fixedSize(horizontal: false, vertical: true)
+                Button {
+                    AppSettings.hapticImpact(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        differentiateWithoutColor.toggle()
                     }
+                } label: {
+                    HStack(spacing: usesFrameLayout ? 18 : 14) {
+                        Image(systemName: "square.grid.2x2")
+                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                            .frame(width: usesFrameLayout ? 36 : 28)
+                            .accessibilityHidden(true)
 
-                    Spacer()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(lm.t("settings.differentiate"))
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
+                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                            Text(lm.t("settings.differentiate.description"))
+                                .font(.app(usesFrameLayout ? .callout : .caption))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        settingsToggle(isOn: differentiateWithoutColor, expanded: usesFrameLayout)
+                    }
+                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                    .padding(.vertical, usesFrameLayout ? 20 : 16)
+                    .gameSettingsRowTouchTarget()
                 }
-                .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                .padding(.vertical, usesFrameLayout ? 20 : 16)
-                .accessibilityElement(children: .combine)
+                .buttonStyle(.plain)
+                .gameMinimumTouchTarget()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lm.t("settings.differentiate"))
+                .accessibilityHint(lm.t("settings.differentiate.description"))
+                .accessibilityAddTraits(differentiateWithoutColor ? [.isToggle, .isSelected] : [.isToggle])
             }
         }
     }
@@ -1412,14 +1452,14 @@ struct SettingsView: View {
                 HStack(spacing: usesFrameLayout ? 18 : 14) {
                     Image(systemName: "trash.fill")
                         .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                        .foregroundStyle(Color.red)
+                        .foregroundStyle(SettingsTheme.destructiveText)
                         .frame(width: usesFrameLayout ? 36 : 28)
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lm.t("settings.reset_progress"))
                             .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
-                            .foregroundStyle(Color.red)
+                            .foregroundStyle(SettingsTheme.destructiveText)
 
                         Text(lm.t("settings.reset_progress.description"))
                             .font(.app(usesFrameLayout ? .callout : .caption))
@@ -1573,7 +1613,7 @@ struct SettingsView: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
-                            .background(Color.blue)
+                            .background(SettingsTheme.badgeFill)
                             .cornerRadius(6)
                     }
                     
@@ -1826,7 +1866,7 @@ struct SettingsView: View {
                         .foregroundStyle(
                             largeStyle
                                 ? SettingsTheme.menuRowText.opacity(0.72)
-                                : SettingsTheme.secondaryText.opacity(0.65)
+                                : SettingsTheme.secondaryText.opacity(0.8)
                         )
                         .accessibilityHidden(true)
                 }

@@ -42,7 +42,9 @@ struct MainMenuPanelLayer: View {
     @State private var advancedMathProblem = MathAdditionProblem.randomSimple()
     @State private var advancedSettingsUnlocked = false
     @Environment(LanguageManager.self) var lm
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     private static let panelFadeDuration: TimeInterval = 0.30
     private static let settingsFadeDuration: TimeInterval = 0.30

@@ -4,7 +4,9 @@ import UIKit
 struct RewardPackOpeningView: View {
     let onComplete: () -> Void
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     @State private var isOpened = false
     @State private var dragOffset: CGFloat = 0

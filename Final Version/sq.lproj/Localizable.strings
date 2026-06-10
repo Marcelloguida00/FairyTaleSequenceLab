@@ -298,7 +298,7 @@
 "settings.reduce_contrast" = "Rrit kontrastin";
 "settings.reduce_contrast.description" = "Përdorni ngjyra me kontrast të lartë për të përmirësuar lexueshmërinë e tekstit.";
 "settings.differentiate" = "Diferencuhu pa përdorur vetëm ngjyrën";
-"settings.differentiate.description" = "Kjo veçori është e integruar drejtpërdrejt në aplikacion.";
+"settings.differentiate.description" = "Përdor forma dhe motive përveç ngjyrës për të treguar përparimin dhe zgjedhjet.";
 
 /* Additional accessibility labels and hints */
 "a11y.tutorial_skip_button" = "Kalizo tutorialin";

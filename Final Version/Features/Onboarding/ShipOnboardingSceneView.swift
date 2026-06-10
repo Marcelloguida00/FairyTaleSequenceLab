@@ -20,7 +20,9 @@ struct ShipOnboardingSceneView: View {
 
     private static let cloudSkyColor = Color(red: 0.55, green: 0.78, blue: 0.95)
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceMotion) private var sysReduceMotion
+    @AppStorage("reduceAnimations") private var reduceAnimations = false
+    private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
 
     @State private var sailProgress: CGFloat = 0
     @State private var shipBob: CGFloat = 0

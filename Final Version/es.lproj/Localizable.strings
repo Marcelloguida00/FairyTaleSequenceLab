@@ -104,7 +104,7 @@
 "settings.reduce_contrast" = "aumentar el contraste";
 "settings.reduce_contrast.description" = "Utilice colores de alto contraste para mejorar la legibilidad del texto.";
 "settings.differentiate" = "Diferenciarse sin color solo";
-"settings.differentiate.description" = "Esta función está implementada directamente en la aplicación.";
+"settings.differentiate.description" = "Usa formas y patrones además del color para mostrar el progreso y las opciones.";
 "settings.dyslexia_font"  = "Fuente de dislexia";
 "settings.dyslexia_font.description" = "Utilice OpenDyslexic para todo el texto.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic en";

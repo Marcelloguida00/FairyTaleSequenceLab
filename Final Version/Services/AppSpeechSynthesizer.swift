@@ -16,6 +16,11 @@ final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
 
     private let synthesizer = AVSpeechSynthesizer()
 
+    /// Mirrors the synthesizer state via delegate callbacks. Reading
+    /// `synthesizer.isSpeaking` from the main thread blocks on the speech
+    /// queue (lower QoS) and triggers priority-inversion warnings.
+    private var isCurrentlySpeaking = false
+
     private override init() {
         super.init()
         synthesizer.delegate = self
@@ -47,21 +52,25 @@ final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
         utterance.pitchMultiplier = 1.05
         utterance.volume = 1.0
 
+        isCurrentlySpeaking = true
         synthesizer.speak(utterance)
     }
 
     func stop() {
-        guard synthesizer.isSpeaking else { return }
+        guard isCurrentlySpeaking else { return }
+        isCurrentlySpeaking = false
         synthesizer.stopSpeaking(at: .immediate)
     }
 
     // MARK: - AVSpeechSynthesizerDelegate
 
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        Task { @MainActor in self.isCurrentlySpeaking = false }
         restoreAudioSession()
     }
 
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        Task { @MainActor in self.isCurrentlySpeaking = false }
         restoreAudioSession()
     }
 

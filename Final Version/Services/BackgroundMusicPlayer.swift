@@ -32,6 +32,8 @@ final class BackgroundMusicPlayer {
     private init() {}
 
     func start() {
+        // Respect the user's audio settings: never autoplay when music is disabled.
+        guard AppAudioSettings.isMusicAudible else { return }
         if player?.isPlaying == true { return }
 
         if player == nil {

@@ -104,7 +104,7 @@
 "settings.reduce_contrast" = "增强对比度";
 "settings.reduce_contrast.description" = "使用高对比度颜色，提升文字可读性。";
 "settings.differentiate" = "不仅以颜色区分";
-"settings.differentiate.description" = "此功能已直接在应用中实现。";
+"settings.differentiate.description" = "除颜色外，还使用形状和图案来显示进度和选项。";
 "settings.dyslexia_font"  = "读写障碍友好字体";
 "settings.dyslexia_font.description" = "所有文本使用 OpenDyslexic 字体。";
 "settings.dyslexia_font.enabled" = "OpenDyslexic 已开启";
