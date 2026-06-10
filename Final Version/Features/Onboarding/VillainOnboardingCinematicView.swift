@@ -282,6 +282,7 @@ struct VillainOnboardingCinematicView: View {
 
         if let onSceneComplete {
             await OnboardingNarrationPlayer.shared.waitUntilFinished()
+            // Hand off to onboarding 4 while the screen stays fully covered.
             onSceneComplete()
             return
         }

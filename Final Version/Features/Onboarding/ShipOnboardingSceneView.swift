@@ -40,7 +40,7 @@ struct ShipOnboardingSceneView: View {
     private static let sailKneeProgress: CGFloat = 0.50
 
     private let happyJumpCycle = ["ShipHappy", "ShipJump1", "ShipJump2", "ShipJump3"]
-    private let sadFrames = ["ShipSad1", "ShipSad2", "ShipSad3", "ShipSad4"]
+    private let sadFrames = ["ShipSad1", "ShipSad2"]
 
     private let cornerCloudOpacityScale: CGFloat = 0.70
     private let cornerCloudSizeScale: CGFloat = 0.66
@@ -167,8 +167,8 @@ struct ShipOnboardingSceneView: View {
         await runBobbing(duration: sailDuration, amplitude: 0.012)
         try? await Task.sleep(nanoseconds: UInt64(scaled(0.20) * 1_000_000_000))
 
-        // 2. Happy + jump loop twice.
-        await playHappyJumpLoop(times: 2)
+        // 2. Happy + jump loop once.
+        await playHappyJumpLoop(times: 1)
 
         // 3. A few clouds peek in from the top corners.
         let cornerCloudDuration = scaled(1.1)
@@ -178,8 +178,8 @@ struct ShipOnboardingSceneView: View {
         }
         try? await Task.sleep(nanoseconds: UInt64(cornerCloudDuration * 1_000_000_000))
 
-        // 4. Sad loop twice.
-        await playSadLoop(times: 2)
+        // 4. Brief sad beat (2 frames, once).
+        await playSadLoop(times: 1)
 
         // 5. Full cloud curtain closes the screen.
         animate(duration: CloudTransitionAnimator.enterDuration) {

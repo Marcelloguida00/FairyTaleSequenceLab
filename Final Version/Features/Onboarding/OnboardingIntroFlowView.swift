@@ -18,6 +18,25 @@ struct OnboardingIntroFlowView: View {
     @State private var narratorScriptIndex = 0
     @State private var showsNarratorBar = true
     @State private var narrationTask: Task<Void, Never>?
+    @State private var sceneSessionID = 0
+
+    private enum ActiveScene: Int {
+        case harbor = 0
+        case ship = 1
+        case villain = 2
+        case outro = 3
+    }
+
+    private var activeScene: ActiveScene {
+        switch phase {
+        case .intro1:
+            return .harbor
+        case .ship:
+            return showsVillainScene ? .villain : .ship
+        case .outro4:
+            return .outro
+        }
+    }
 
     var body: some View {
         GeometryReader { proxy in
@@ -29,6 +48,7 @@ struct OnboardingIntroFlowView: View {
                     Onboarding1HarborSceneView {
                         advance(to: .ship)
                     }
+                    .id("onboarding-harbor-\(sceneSessionID)")
 
                 case .ship:
                     if !hidesShipScene {
@@ -41,6 +61,7 @@ struct OnboardingIntroFlowView: View {
                                 playNarration(at: 1)
                             }
                         )
+                        .id("onboarding-ship-\(sceneSessionID)")
                         .opacity(showsVillainScene ? 0 : 1)
                         .allowsHitTesting(!showsVillainScene)
                     }
@@ -61,17 +82,26 @@ struct OnboardingIntroFlowView: View {
                                 advanceToOutro()
                             }
                         )
+                        .id("onboarding-villain-\(sceneSessionID)")
                     }
 
                 case .outro4:
                     OnboardingStillSceneView(
-                        backgroundImageName: "OnboardingWorldMap",
+                        backgroundImageName: "OnboardingSea",
                         narrationResource: "onboarding4",
-                        startsUnderCloudCover: true
+                        startsUnderCloudCover: true,
+                        shipOverlay: .outroCelebration
                     ) {
                         finishOnboarding()
                     }
+                    .id("onboarding-outro-\(sceneSessionID)")
                 }
+            }
+            .overlay(alignment: .topTrailing) {
+                onboardingSkipSceneButton
+                    .padding(.top, max(52, proxy.safeAreaInsets.top + 12))
+                    .padding(.trailing, max(20, proxy.safeAreaInsets.trailing + 12))
+                    .zIndex(120)
             }
             .overlay(alignment: .bottom) {
                 if showsNarratorBar {
@@ -98,12 +128,48 @@ struct OnboardingIntroFlowView: View {
         }
     }
 
+    private var onboardingSkipSceneButton: some View {
+        GamePillButton(
+            title: lm.t("onboarding.skip"),
+            fontSize: GameButtonMetrics.pillFontSize,
+            horizontalPadding: GameButtonMetrics.pillHorizontalPadding,
+            verticalPadding: GameButtonMetrics.pillVerticalPadding,
+            minWidth: GameButtonMetrics.isPad ? 148 : 112,
+            minHeight: GameButtonMetrics.pillMinHeight(atLeast: GameButtonMetrics.isPad ? 56 : 52),
+            trailingIcon: "forward.fill",
+            accessibilityHint: lm.t("a11y.onboarding_skip_scene_hint"),
+            action: skipToNextScene
+        )
+        .accessibilityLabel(lm.t("onboarding.skip"))
+    }
+
+    private func skipToNextScene() {
+        AppSettings.hapticImpact(.light)
+        narrationTask?.cancel()
+        OnboardingNarrationPlayer.shared.stop()
+        sceneSessionID += 1
+
+        switch activeScene {
+        case .harbor:
+            advance(to: .ship)
+        case .ship:
+            hidesShipScene = true
+            narratorScriptIndex = 2
+            showsVillainScene = true
+        case .villain:
+            showsVillainScene = false
+            hidesShipScene = true
+            advanceToOutro()
+        case .outro:
+            finishOnboarding()
+        }
+    }
+
     private func advance(to next: Phase) {
         narrationTask?.cancel()
         OnboardingNarrationPlayer.shared.stop()
         narratorScriptIndex = next.rawValue
         phase = next
-
     }
 
     private func advanceToVillain() {
@@ -114,6 +180,8 @@ struct OnboardingIntroFlowView: View {
     private func advanceToOutro() {
         narratorScriptIndex = 3
         showsNarratorBar = true
+        showsVillainScene = false
+        hidesShipScene = true
         phase = .outro4
     }
 
@@ -158,8 +226,14 @@ enum OnboardingScripts {
     /// Slows ship beats so the cinematic matches `onboarding2.wav`.
     static let shipTimingScale: TimeInterval = 1.24
 
+    /// Post-curtain villain beat length (seconds) before `villainTimingScale` is applied.
+    private static let villainBeatDuration: TimeInterval = 13.26
+
     /// Slows villain beats so the cinematic matches `onboarding3.wav`.
-    static let villainTimingScale: TimeInterval = 1.20
+    static let villainTimingScale: TimeInterval = {
+        let target = audioDurations[2]
+        return target / villainBeatDuration * 1.25
+    }()
 }
 
 #Preview("Onboarding Intro Flow") {

@@ -305,6 +305,7 @@
 "a11y.tutorial_done_hint" = "Completes the tutorial and closes the screen";
 "a11y.onboarding_skip_button" = "Skip onboarding";
 "a11y.onboarding_skip_hint" = "Skips the onboarding and starts the adventure";
+"a11y.onboarding_skip_scene_hint" = "Skips to the next onboarding scene";
 "a11y.onboarding_next_button" = "Next page";
 "a11y.onboarding_next_hint" = "Advances to the next onboarding page";
 "a11y.onboarding_start_button" = "Start adventure";
