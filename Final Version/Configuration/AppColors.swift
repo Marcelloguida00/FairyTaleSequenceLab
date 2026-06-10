@@ -12,13 +12,6 @@ extension Color {
             : UIColor(red: 0.949, green: 0.973, blue: 0.992, alpha: 1)
     })
 
-    // dark: #0C1E32  light: #E4F1FB
-    static let appPanelBackground = Color(UIColor {
-        $0.userInterfaceStyle == .dark
-            ? UIColor(red: 0.047, green: 0.118, blue: 0.196, alpha: 1)
-            : UIColor(red: 0.894, green: 0.945, blue: 0.984, alpha: 1)
-    })
-
     // dark: #C8E4F8  light: #0E263E
     static let appPrimaryText = Color(UIColor {
         $0.userInterfaceStyle == .dark
