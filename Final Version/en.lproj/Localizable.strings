@@ -158,6 +158,7 @@
 "settings.support" = "Support";
 "settings.whats_new" = "What's New";
 "settings.whats_new.message" = "What's New in Version 1.0.2:\n\n• Disabled automatic voice narration on storybook pages\n• Improved accessibility support by renaming the contrast option to \"Increase Contrast\"\n• Optimized storybook layout and pagination\n• Improved the introductory tutorial on the world map\n• Shortened Red Riding Hood dialogues for better pacing\n• Added a two-button book unlock banner with multi-language and high-contrast support\n• Updated UI colors and improved card sequencing animations";
+"settings.whats_new.v103.message" = "• Redesign and optimization of the interactive map tutorial\n• Restructuring of the initial onboarding flow\n• Extension of localization support to approximately 10 languages\n• Optimization of the storybook's visual layout and design\n• Augmented reality integration via the ARKit framework\n• Implementation of Right-to-Left (RTL) layout support for the Persian language\n• Inclusion of official attributions and credits for the OpenDyslexic font\n• Refinement of advanced accessibility features (VoiceOver and contrast options)";
 "settings.contact_me" = "Contact me";
 "settings.rate_app" = "Rate the app";
 "settings.rate_app.message" = "The rating link will be available when the app is published.";

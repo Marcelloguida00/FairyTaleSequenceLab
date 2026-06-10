@@ -148,6 +148,7 @@
 "settings.support" = "Mbështetje";
 "settings.whats_new" = "Çfarë ka të re";
 "settings.whats_new.message" = "Çfarë ka të re në versionin 1.0.2:\n\n• Çaktivizuar leximi automatik me zë i faqeve të librit të përrallave\n• Përmirësuar mbështetja e aksesueshmërisë duke riemëruar opsionin e kontrastit në \"Rrit kontrastin\"\n• Optimizuar paraqitja dhe numërimi i faqeve të librit të përrallave\n• Përmirësuar udhëzuesi hyrës në hartën e lojës\n• Shkurtuar dialogët e Kësulëkuqes për një ritëm më të mirë leximi\n• Shtuar baneri me dy butona për zhbllokimin e librit me mbështetje shumëguhëshe dhe kontrast të lartë\n• Përditësuar ngjyrat e ndërfaqes dhe përmirësuar animacionet e sekuencave të kartave";
+"settings.whats_new.v103.message" = "• Ridizajnimi dhe optimizimi i tutorialit ndërveprues në hartë\n• Ristrukturimi i fluksit fillestar të onboarding\n• Zgjerimi i mbështetjes së lokalizimit në rreth 10 gjuhë\n• Optimizimi i dizajnit dhe faqosjes vizuale të librit të përrallave\n• Integrimi i realitetit të shtuar nëpërmjet kornizës ARKit\n• Implementimi i mbështetjes së faqosjes nga e djathta në të majtë (RTL) për gjuhën persiane\n• Përfshirja e atributeve dhe krediteve zyrtare për fontin OpenDyslexic\n• Përmirësimi i veçorive të avancuara të aksesueshmërisë (VoiceOver dhe kontrast)";
 "settings.contact_me" = "Më kontakto";
 "settings.rate_app" = "Vlerëso aplikacionin";
 "settings.rate_app.message" = "Lidhja për vlerësim do të jetë e disponueshme kur aplikacioni të publikohet.";

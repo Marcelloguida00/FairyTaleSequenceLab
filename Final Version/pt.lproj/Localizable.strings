@@ -159,6 +159,7 @@
 "settings.support" = "Suporte";
 "settings.whats_new" = "Novidades";
 "settings.whats_new.message" = "Novidades da versão 1.0.2:\n\n• Narração por voz automática desativada nas páginas do livro de histórias\n• Melhor suporte de acessibilidade, com a opção de contraste renomeada para \"Aumentar contraste\"\n• Layout e paginação do livro de histórias otimizados\n• Tutorial introdutório do mapa do mundo aprimorado\n• Diálogos da Chapeuzinho Vermelho encurtados para um ritmo melhor\n• Adicionado um banner de desbloqueio do livro com dois botões, com suporte a vários idiomas e alto contraste\n• Cores da interface atualizadas e animações de ordenação de cartas aprimoradas";
+"settings.whats_new.v103.message" = "• Redesenho e otimização do tutorial interativo do mapa\n• Reestruturação do fluxo inicial de onboarding\n• Extensão do suporte de localização para aproximadamente 10 idiomas\n• Otimização do layout visual e design do livro de histórias\n• Integração de realidade aumentada através do framework ARKit\n• Implementação de suporte para layout da direita para a esquerda (RTL) para o idioma persa\n• Inclusão das atribuições e créditos oficiais para a fonte OpenDyslexic\n• Aperfeiçoamento de recursos avançados de acessibilidade (VoiceOver e contraste)";
 "settings.contact_me" = "Fale comigo";
 "settings.rate_app" = "Avaliar o aplicativo";
 "settings.rate_app.message" = "O link de avaliação estará disponível quando o aplicativo for publicado.";

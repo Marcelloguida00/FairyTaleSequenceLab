@@ -10,6 +10,7 @@ extension Notification.Name {
 
 // MARK: - AppSpeechSynthesizer
 
+@MainActor
 final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
     static let shared = AppSpeechSynthesizer()
 
@@ -56,11 +57,11 @@ final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
 
     // MARK: - AVSpeechSynthesizerDelegate
 
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         restoreAudioSession()
     }
 
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
         restoreAudioSession()
     }
 
@@ -80,7 +81,7 @@ final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
 
     /// Restores the .ambient category used by BackgroundMusicPlayer and deactivates the
     /// session with .notifyOthersOnDeactivation so music resumes at full volume automatically.
-    private func restoreAudioSession() {
+    nonisolated private func restoreAudioSession() {
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(.ambient, options: [.mixWithOthers])

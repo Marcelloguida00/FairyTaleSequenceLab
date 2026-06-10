@@ -145,6 +145,7 @@
 "settings.support" = "Supporto";
 "settings.whats_new" = "Novità";
 "settings.whats_new.message" = "Novità della versione 1.0.2:\n\n• Disattivata la lettura automatica (sintesi vocale) delle pagine del libro delle fiabe\n• Migliorato il supporto all'accessibilità rinominando l'opzione in \"Aumenta contrasto\"\n• Ottimizzato il layout e l'impaginazione del libro delle fiabe\n• Migliorato il tutorial introduttivo sulla mappa di gioco\n• Accorciati i dialoghi di Cappuccetto Rosso per un ritmo di lettura migliore\n• Aggiunto il banner di sblocco del libro a due pulsanti con supporto multilingua e alto contrasto\n• Aggiornati i colori dell'interfaccia e migliorate le animazioni delle carte";
+"settings.whats_new.v103.message" = "• Riprogettazione ed ottimizzazione del tutorial interattivo sulla mappa\n• Ristrutturazione del flusso di onboarding iniziale\n• Estensione della localizzazione a circa 10 lingue con supporto multilingue\n• Ottimizzazione del layout visivo e del design del libro delle fiabe\n• Integrazione della realtà aumentata tramite il framework ARKit\n• Implementazione del supporto al layout da destra a sinistra (RTL) per la lingua persiana\n• Inclusione delle attribuzioni e dei crediti ufficiali per il font OpenDyslexic\n• Perfezionamento delle funzionalità di accessibilità avanzata (VoiceOver e contrasto)";
 "settings.contact_me" = "Contattami";
 "settings.rate_app" = "Valuta l'app";
 "settings.rate_app.message" = "Il collegamento alla valutazione sarà disponibile quando l'app sarà pubblicata.";
