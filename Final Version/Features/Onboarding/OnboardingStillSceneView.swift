@@ -121,13 +121,18 @@ struct OnboardingStillSceneView: View {
             coverCloudEnter = 0
         }
 
+        // Se la scena è stata rimossa (skip), gli sleep cancellati ritornano subito:
+        // senza questa guardia la narrazione partirebbe sopra il menu.
+        guard !Task.isCancelled else { return }
+
         if reduceMotion {
             if let shipOverlay {
                 currentShipImage = shipOverlay.byeFrames.last ?? shipOverlay.jumpFrames.first ?? "ShipBye2"
             }
             try? await Task.sleep(nanoseconds: 500_000_000)
+            guard !Task.isCancelled else { return }
             await OnboardingNarrationPlayer.shared.playAndWait(named: narrationResource)
-            onComplete()
+            if !Task.isCancelled { onComplete() }
             return
         }
 
@@ -144,7 +149,7 @@ struct OnboardingStillSceneView: View {
             await OnboardingNarrationPlayer.shared.playAndWait(named: narrationResource)
         }
 
-        onComplete()
+        if !Task.isCancelled { onComplete() }
     }
 
     @MainActor

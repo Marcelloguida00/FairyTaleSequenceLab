@@ -975,6 +975,22 @@ struct SequencingActivityView<Reward: View>: View {
             withAnimation(.easeInOut(duration: 0.35)) {
                 hasSeenTutorial = true
             }
+            scheduleTutorialFlipBack(cardId: cardId)
+        }
+    }
+
+    /// Fine tutorial: lascia il tempo di leggere l'indizio, poi rigira la carta con l'immagine verso il bambino.
+    private func scheduleTutorialFlipBack(cardId: Int) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            guard !Task.isCancelled,
+                  let index = cardStateIndex(for: cardId),
+                  flippedStates.indices.contains(index),
+                  flippedStates[index] else { return }
+            playFlipToggleSound()
+            withAnimation(flipAnimation) {
+                flippedStates[index] = false
+            }
         }
     }
 

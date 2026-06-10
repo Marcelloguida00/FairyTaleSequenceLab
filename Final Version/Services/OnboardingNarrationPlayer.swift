@@ -73,6 +73,7 @@ final class OnboardingNarrationPlayer {
         guard let player else { return }
 
         while player.isPlaying {
+            if Task.isCancelled { return }
             try? await Task.sleep(nanoseconds: 50_000_000)
         }
 

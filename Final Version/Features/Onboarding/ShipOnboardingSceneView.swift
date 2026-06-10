@@ -155,6 +155,7 @@ struct ShipOnboardingSceneView: View {
         } else {
             startNarrationIfNeeded()
         }
+        guard !Task.isCancelled else { return }
 
         currentShipImage = "ShipSailing"
         sailProgress = 0
@@ -194,7 +195,7 @@ struct ShipOnboardingSceneView: View {
         await OnboardingNarrationPlayer.shared.waitUntilFinished()
 
         // Hand off to the villain scene while the screen stays fully covered.
-        onComplete()
+        if !Task.isCancelled { onComplete() }
     }
 
     @MainActor
@@ -210,6 +211,8 @@ struct ShipOnboardingSceneView: View {
         curtainCloudExit = 0
         coverCloudEnter = 0
         usesBrightHandoffClouds = false
+        // Senza guardia, uno skip durante il sipario farebbe partire la narrazione a scena rimossa.
+        guard !Task.isCancelled else { return }
         startNarrationIfNeeded()
     }
 
@@ -236,7 +239,7 @@ struct ShipOnboardingSceneView: View {
             coverCloudEnter = 1
         }
         try? await Task.sleep(nanoseconds: 300_000_000)
-        onComplete()
+        if !Task.isCancelled { onComplete() }
     }
 
     @MainActor

@@ -76,7 +76,7 @@ struct Onboarding1HarborSceneView: View {
             coverCloudEnter = 1
             try? await Task.sleep(nanoseconds: 400_000_000)
             await OnboardingNarrationPlayer.shared.waitUntilFinished()
-            onComplete()
+            if !Task.isCancelled { onComplete() }
             return
         }
 
@@ -116,7 +116,7 @@ struct Onboarding1HarborSceneView: View {
         try? await Task.sleep(nanoseconds: UInt64(CloudTransitionAnimator.holdAfterSceneChange * 1_000_000_000))
 
         await OnboardingNarrationPlayer.shared.waitUntilFinished()
-        onComplete()
+        if !Task.isCancelled { onComplete() }
     }
 
     @MainActor

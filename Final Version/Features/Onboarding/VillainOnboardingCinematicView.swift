@@ -202,6 +202,7 @@ struct VillainOnboardingCinematicView: View {
         } else {
             onNarrationStart?()
         }
+        guard !Task.isCancelled else { return }
 
         // 1. Villain flies in from the right with a dense cloud trail.
         villainPose = .flyIn
@@ -283,7 +284,7 @@ struct VillainOnboardingCinematicView: View {
         if let onSceneComplete {
             await OnboardingNarrationPlayer.shared.waitUntilFinished()
             // Hand off to onboarding 4 while the screen stays fully covered.
-            onSceneComplete()
+            if !Task.isCancelled { onSceneComplete() }
             return
         }
 
@@ -299,7 +300,7 @@ struct VillainOnboardingCinematicView: View {
         }
         try? await Task.sleep(nanoseconds: UInt64(curtainDuration * 1_000_000_000))
 
-        onFinish()
+        if !Task.isCancelled { onFinish() }
     }
 
     @MainActor
@@ -314,6 +315,8 @@ struct VillainOnboardingCinematicView: View {
 
         villainCloudExit = 0
         coverCloudEnter = 0
+        // Senza guardia, uno skip durante il sipario farebbe partire la narrazione a scena rimossa.
+        guard !Task.isCancelled else { return }
         onHandoffCurtainOpened?()
         onNarrationStart?()
     }
@@ -333,6 +336,7 @@ struct VillainOnboardingCinematicView: View {
             coverCloudEnter = 1
         }
         try? await Task.sleep(nanoseconds: 300_000_000)
+        guard !Task.isCancelled else { return }
         showsOnboardingMap = false
         if let onSceneComplete {
             onSceneComplete()
