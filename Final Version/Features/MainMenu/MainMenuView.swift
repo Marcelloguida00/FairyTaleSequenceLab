@@ -373,26 +373,7 @@ private struct InfoView: View {
                             )
                     )
 
-                    sectionHeader(lm.t("settings.accessibility"))
 
-                    VStack(spacing: 0) {
-                        Text(lm.t("info.font_credits"))
-                            .font(.app(.body))
-                            .foregroundStyle(InfoTheme.primaryText)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(InfoTheme.panelFill)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .stroke(InfoTheme.panelBorder, lineWidth: 1.5)
-                            )
-                    )
                 }
                 .padding(.horizontal, 8)
                 .padding(.bottom, 8)

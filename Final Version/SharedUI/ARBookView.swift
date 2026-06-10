@@ -121,41 +121,14 @@ struct ARBookView: View {
     }
 
     private var pageControls: some View {
-        HStack(spacing: 22) {
-            GameCircleButton(
-                systemImage: "chevron.left",
-                size: 64,
-                isDisabled: !controller.canBackward
-            ) {
-                controller.flipBackward()
-            }
-            .accessibilityLabel(lm.t("book.ar.prev_page"))
-
-            GameCircleButton(
-                systemImage: "arrow.triangle.2.circlepath",
-                size: 56
-            ) {
-                AppSettings.hapticImpact(.light)
-                controller.reposition()
-            }
-            .accessibilityLabel(lm.t("book.ar.reposition"))
-
-            GameCircleButton(
-                systemImage: "chevron.right",
-                size: 64,
-                isDisabled: !controller.canForward
-            ) {
-                controller.flipForward()
-            }
-            .accessibilityLabel(lm.t("book.ar.next_page"))
+        GameCircleButton(
+            systemImage: "arrow.triangle.2.circlepath",
+            size: 64
+        ) {
+            AppSettings.hapticImpact(.light)
+            controller.reposition()
         }
-        .padding(.horizontal, 22)
-        .padding(.vertical, 14)
-        .background(
-            Capsule()
-                .fill(.black.opacity(0.7))
-                .overlay(Capsule().stroke(.white.opacity(0.2), lineWidth: 1))
-        )
+        .accessibilityLabel(lm.t("book.ar.reposition"))
     }
 
     private var placementHint: some View {

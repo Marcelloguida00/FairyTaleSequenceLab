@@ -6,7 +6,7 @@ enum AppFeatureFlags {
     static let showsCollaboratorsInAbout = true
 
     /// Settings → Sound → Orchestral sequencing SFX mode.
-    static let showsOrchestralSequencingSFX = false
+    static let showsOrchestralSequencingSFX = true
 
     /// First-launch onboarding flow and Settings → «Show onboarding again».
     static let showsOnboarding = true

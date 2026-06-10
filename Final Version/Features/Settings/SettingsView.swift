@@ -46,7 +46,6 @@ struct SettingsView: View {
     @AppStorage("enableSounds") private var enableSounds = true
     @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
     @AppStorage("reduceContrast") private var reduceContrast = false
-    @AppStorage("differentiate") private var differentiate = false
     @State private var showResetProgressConfirmation = false
     @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
@@ -410,7 +409,7 @@ struct SettingsView: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.dyslexia_font"))
+                            Text(lm.t("settings.dyslexia_font") + "*")
                                 .font(.app(.body))
                                 .foregroundStyle(SettingsTheme.primaryText)
 
@@ -535,8 +534,6 @@ struct SettingsView: View {
                     SettingsTheme.divider
                         .frame(height: 1)
                         .padding(.leading, 56)
-
-                    sequencingSFXSectionHeader(expanded: false)
 
                     VStack(spacing: 0) {
                         ForEach(Array(SequencingSFXMode.settingsVisibleCases.enumerated()), id: \.element.id) { index, mode in
@@ -843,6 +840,16 @@ struct SettingsView: View {
                     switch detail {
                     case .accessibility:
                         accessibilityDetailCard
+                        
+                        settingsCard(largeStyle: usesFrameLayout) {
+                            Text(lm.t("info.font_credits"))
+                                .font(.app(usesFrameLayout ? .body : .callout))
+                                .foregroundStyle(SettingsTheme.menuRowText)
+                                .padding(usesFrameLayout ? 20 : 16)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
                     case .sound:
                         soundDetailContent
                     case .changeLanguage:
@@ -903,7 +910,7 @@ struct SettingsView: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.dyslexia_font"))
+                            Text(lm.t("settings.dyslexia_font") + "*")
                                 .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                                 .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
@@ -1147,7 +1154,6 @@ struct SettingsView: View {
 
                 if audioMasterEnabled && enableSounds && AppFeatureFlags.showsOrchestralSequencingSFX {
                     settingsDivider(largeStyle: usesFrameLayout)
-                    sequencingSFXSectionHeader(expanded: usesFrameLayout)
 
                     ForEach(Array(SequencingSFXMode.settingsVisibleCases.enumerated()), id: \.element.id) { index, mode in
                         sequencingSFXModeRow(
@@ -1591,18 +1597,6 @@ struct SettingsView: View {
                         teamProfileCard(collaborator)
                     }
                 }
-            }
-
-            sectionHeader(lm.t("settings.accessibility"))
-
-            settingsCard(largeStyle: usesFrameLayout) {
-                Text(lm.t("info.font_credits"))
-                    .font(.app(usesFrameLayout ? .body : .callout))
-                    .foregroundStyle(SettingsTheme.menuRowText)
-                    .padding(usesFrameLayout ? 20 : 16)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
         }
     }
