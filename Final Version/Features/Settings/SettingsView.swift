@@ -46,7 +46,6 @@ struct SettingsView: View {
     @AppStorage("enableSounds") private var enableSounds = true
     @AppStorage("voiceOverEnabled") private var voiceOverEnabled = false
     @AppStorage("reduceContrast") private var reduceContrast = false
-    @AppStorage("differentiate") private var differentiate = false
     @State private var showResetProgressConfirmation = false
     @State private var showResetSuccessAlert = false
     @State private var route: SettingsRoute = .main
@@ -336,9 +335,19 @@ struct SettingsView: View {
             AppSettings.hapticImpact(.light)
         } label: {
             HStack(spacing: expanded ? 18 : 14) {
-                Text(lang.flag)
-                    .font(.app(size: expanded ? 34 : 28))
-                    .accessibilityHidden(true)
+                if lang.code == "fa" {
+                    Image("fa_flag")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: expanded ? 42 : 34, height: expanded ? 28 : 22)
+                        .clipShape(RoundedRectangle(cornerRadius: 3))
+                        .overlay(RoundedRectangle(cornerRadius: 3).stroke(SettingsTheme.panelBorder.opacity(0.35), lineWidth: 1))
+                        .accessibilityHidden(true)
+                } else {
+                    Text(lang.flag)
+                        .font(.app(size: expanded ? 34 : 28))
+                        .accessibilityHidden(true)
+                }
 
                 Text(lang.nativeName)
                     .font(.app(size: expanded ? 22 : 17, weight: expanded ? .semibold : .regular))
@@ -400,7 +409,7 @@ struct SettingsView: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.dyslexia_font"))
+                            Text(lm.t("settings.dyslexia_font") + "*")
                                 .font(.app(.body))
                                 .foregroundStyle(SettingsTheme.primaryText)
 
@@ -831,6 +840,16 @@ struct SettingsView: View {
                     switch detail {
                     case .accessibility:
                         accessibilityDetailCard
+                        
+                        settingsCard(largeStyle: usesFrameLayout) {
+                            Text(lm.t("info.font_credits"))
+                                .font(.app(usesFrameLayout ? .body : .callout))
+                                .foregroundStyle(SettingsTheme.menuRowText)
+                                .padding(usesFrameLayout ? 20 : 16)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
                     case .sound:
                         soundDetailContent
                     case .changeLanguage:
@@ -891,7 +910,7 @@ struct SettingsView: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.dyslexia_font"))
+                            Text(lm.t("settings.dyslexia_font") + "*")
                                 .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
                                 .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
 
@@ -1027,44 +1046,29 @@ struct SettingsView: View {
                 settingsDivider(largeStyle: usesFrameLayout)
 
                 // Differentiate without colour alone
-                Button {
-                    AppSettings.hapticImpact(.light)
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        differentiate.toggle()
+                HStack(spacing: usesFrameLayout ? 18 : 14) {
+                    Image(systemName: "square.grid.2x2")
+                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .frame(width: usesFrameLayout ? 36 : 28)
+                        .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(lm.t("settings.differentiate"))
+                            .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
+                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                        Text(lm.t("settings.differentiate.description"))
+                            .font(.app(usesFrameLayout ? .callout : .caption))
+                            .foregroundStyle(SettingsTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                } label: {
-                    HStack(spacing: usesFrameLayout ? 18 : 14) {
-                        Image(systemName: "square.grid.2x2")
-                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                            .foregroundStyle(SettingsTheme.menuRowText)
-                            .frame(width: usesFrameLayout ? 36 : 28)
-                            .accessibilityHidden(true)
 
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.differentiate"))
-                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
-                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-                            Text(lm.t("settings.differentiate.description"))
-                                .font(.app(usesFrameLayout ? .callout : .caption))
-                                .foregroundStyle(SettingsTheme.secondaryText)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        Spacer()
-
-                        settingsToggle(isOn: differentiate, expanded: usesFrameLayout)
-                    }
-                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                    .padding(.vertical, usesFrameLayout ? 20 : 16)
-                    .gameSettingsRowTouchTarget()
+                    Spacer()
                 }
-                .buttonStyle(.plain)
-                .gameMinimumTouchTarget()
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(lm.t("settings.differentiate"))
-                .accessibilityHint(lm.t("settings.differentiate.description"))
-                .accessibilityAddTraits(differentiate ? [.isSelected] : [])
+                .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                .padding(.vertical, usesFrameLayout ? 20 : 16)
+                .accessibilityElement(children: .combine)
             }
         }
     }
@@ -1574,18 +1578,6 @@ struct SettingsView: View {
                         teamProfileCard(collaborator)
                     }
                 }
-            }
-
-            sectionHeader(lm.t("settings.accessibility"))
-
-            settingsCard(largeStyle: usesFrameLayout) {
-                Text(lm.t("info.font_credits"))
-                    .font(.app(usesFrameLayout ? .body : .callout))
-                    .foregroundStyle(SettingsTheme.menuRowText)
-                    .padding(usesFrameLayout ? 20 : 16)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
         }
     }

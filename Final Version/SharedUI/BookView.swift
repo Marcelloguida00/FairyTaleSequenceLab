@@ -350,8 +350,8 @@ struct BookView: View {
                 
                 ZStack(alignment: .topTrailing) {
                     OpenBookBackground()
-                    
-                    PageCurlBookView(pages: bookPages, currentPage: $currentPage)
+
+                    PageCurlBookView(pages: displayOrderedPages, currentPage: displayPageBinding)
                     
                     // Bookmarks UI
                     VStack(spacing: isCompact ? 6 : 8) {
@@ -477,6 +477,50 @@ struct BookView: View {
         }
     }
 
+    // MARK: - Right-to-left (Persian) support
+
+    /// Persian books read right-to-left: the first page sits on the right and
+    /// the story advances by turning pages from left to right.
+    private var isRTL: Bool { lm.currentLanguage == "fa" }
+
+    /// Pages rearranged for RTL display: spread order is reversed and the two
+    /// slots of each spread are swapped, so logical page 0 is the right page of
+    /// the last UIPageViewController pair and "next" means curling the left page.
+    private var displayOrderedPages: [AnyView] {
+        guard isRTL, bookPages.count >= 2 else { return bookPages }
+        var pages: [AnyView] = []
+        for start in stride(from: bookPages.count - 2, through: 0, by: -2) {
+            pages.append(bookPages[start + 1])
+            pages.append(bookPages[start])
+        }
+        return pages
+    }
+
+    /// Bridges the logical reading-order `currentPage` to the display order
+    /// used by PageCurlBookView (identity for LTR languages).
+    private var displayPageBinding: Binding<Int> {
+        Binding(
+            get: { logicalToDisplay(currentPage) },
+            set: { currentPage = displayToLogical($0) }
+        )
+    }
+
+    private func logicalToDisplay(_ page: Int) -> Int {
+        guard isRTL, bookPages.count >= 2 else { return page }
+        let spreads = bookPages.count / 2
+        let clamped = min(max(page, 0), bookPages.count - 1)
+        let spread = clamped / 2
+        return 2 * (spreads - 1 - spread) + (clamped % 2 == 0 ? 1 : 0)
+    }
+
+    private func displayToLogical(_ page: Int) -> Int {
+        guard isRTL, bookPages.count >= 2 else { return page }
+        let spreads = bookPages.count / 2
+        let clamped = min(max(page, 0), bookPages.count - 1)
+        let spread = spreads - 1 - clamped / 2
+        return 2 * spread + (clamped % 2 == 0 ? 1 : 0)
+    }
+
     /// Scenes whose story content the player has already unlocked.
     private var unlockedScenes: [StoryScene] {
         let maxCompletedId = completedEvents.map(\.id).max() ?? 0
@@ -489,15 +533,16 @@ struct BookView: View {
     /// blank/white textures in AR.
     @MainActor
     private func renderBookPagesToImages() -> [UIImage] {
-        // 0.75 aspect ratio matches a single on-screen page (the book is 1.5 wide for two pages).
-        let size = CGSize(width: 1080, height: 1440)
+        // Render at a logical size (matching typical tablet page width) so fonts are proportionate,
+        // but scale by 2.0 to produce high-resolution 1080x1440 textures for SceneKit.
+        let logicalSize = CGSize(width: 540, height: 720)
         return bookPages.map { page in
             let renderer = ImageRenderer(content:
                 page
                     .environment(lm)
-                    .frame(width: size.width, height: size.height)
+                    .frame(width: logicalSize.width, height: logicalSize.height)
             )
-            renderer.scale = 1
+            renderer.scale = 2
             renderer.isOpaque = true
             return renderer.uiImage ?? UIImage()
         }
@@ -589,20 +634,27 @@ struct BookView: View {
             
         let lineSpacing: CGFloat = isCompact ? 3 : 6
         
+        // Display side of the page at `index`: in RTL books even (first-read)
+        // pages sit on the right instead of the left.
+        func displaysOnLeft(_ index: Int) -> Bool {
+            isRTL ? index % 2 == 1 : index % 2 == 0
+        }
+
         func pageContainer<Content: View>(isLeft: Bool, pageNumber: Int? = nil, showVines: Bool = false, @ViewBuilder content: () -> Content) -> AnyView {
             AnyView(
                 ZStack {
                     // Color matching the page edges (stack)
                     Color(red: 0.85, green: 0.8, blue: 0.65)
-                    
+
                     PageBackgroundDecal(pageNumber: pageNumber ?? 1)
                         .allowsHitTesting(false)
-                    
+
                     FairyTaleFrame(isLeft: isLeft, pageNumber: pageNumber ?? 1, showVines: showVines)
                         .allowsHitTesting(false)
-                    
+
                     content()
                         .padding(pagePadding)
+                        .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
                     
                     HStack(spacing: 0) {
                         if isLeft {
@@ -636,7 +688,7 @@ struct BookView: View {
         }
         
         func addPlaceholder(title: String, subtitle: String) {
-            let emptyLeft = pageContainer(isLeft: true) {
+            let emptyLeft = pageContainer(isLeft: displaysOnLeft(newPages.count)) {
                 VStack(spacing: isCompact ? 10 : 20) {
                     Image(systemName: "lock.fill")
                         .font(.system(isCompact ? .title2 : .largeTitle))
@@ -648,7 +700,7 @@ struct BookView: View {
                         .multilineTextAlignment(.center)
                 }
             }
-            let emptyRight = pageContainer(isLeft: false) {
+            let emptyRight = pageContainer(isLeft: displaysOnLeft(newPages.count + 1)) {
                 VStack(alignment: .leading) {
                     Text(title)
                         .font(titleFont)
@@ -696,7 +748,7 @@ struct BookView: View {
                 let dropCapColor = Color(red: 0.6, green: 0.1, blue: 0.1) // Deep Red
                 
                 // --- Pagina Immagine (Sinistra) e Pagina Titolo (Destra) ---
-                let insideCover = pageContainer(isLeft: true, pageNumber: nil, showVines: true) {
+                let insideCover = pageContainer(isLeft: displaysOnLeft(newPages.count), pageNumber: nil, showVines: true) {
                     GeometryReader { geo in
                         Image("FairytaleTitleLandscape")
                             .resizable()
@@ -718,7 +770,7 @@ struct BookView: View {
                     .padding(-pagePadding) // Annulla il padding per occupare tutta la pagina e sovrapporsi alla cornice
                 }
                 
-                let titleCover = pageContainer(isLeft: false, pageNumber: nil, showVines: true) {
+                let titleCover = pageContainer(isLeft: displaysOnLeft(newPages.count + 1), pageNumber: nil, showVines: true) {
                     ZStack {
                         GeometryReader { geo in
                             Image("FairytaleTitleBackground")
@@ -737,6 +789,18 @@ struct BookView: View {
                                         .blur(radius: isCompact ? 30 : 60)
                                 )
                                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                        }
+                        
+                        // Book Title Overlay
+                        VStack(spacing: 8) {
+                            Text(redRidingHood.title)
+                                .font(isDyslexiaEnabled ? 
+                                    (isCompact ? Font.app(.title, weight: .black) : Font.app(.largeTitle, weight: .black)) :
+                                    (isCompact ? Font.custom("Alegreya", size: 36, relativeTo: .largeTitle).weight(.black) : Font.custom("Alegreya", size: 54, relativeTo: .largeTitle).weight(.black)))
+                                .foregroundColor(Color(red: 0.35, green: 0.1, blue: 0.1)) // Warm crimson red
+                                .multilineTextAlignment(.center)
+                                .shadow(color: .white.opacity(0.8), radius: 4, x: 0, y: 2)
+                                .padding(.horizontal, isCompact ? 30 : 60)
                         }
                     }
                     .padding(-pagePadding)
@@ -780,7 +844,7 @@ struct BookView: View {
                     let textChunk1 = lm.t(spec.text1Key)
                     let textChunk2 = spec.text2Key.map { lm.t($0) }
                     
-                    let page = pageContainer(isLeft: pageIndex % 2 == 0, pageNumber: pageIndex + 1) {
+                    let page = pageContainer(isLeft: displaysOnLeft(pageIndex), pageNumber: pageIndex + 1) {
                         VStack(alignment: .leading, spacing: isCompact ? 8 : 12) {
                             
                             switch spec.layout {
@@ -1076,9 +1140,8 @@ struct BookView: View {
         }
 
         let finalPageNumber = newPages.count + 1
-        let isLeft = newPages.count % 2 == 0
         let finalIsLocked = finalPageNumber > maxUnlockedPage
-        let finalImagePage = pageContainer(isLeft: isLeft, pageNumber: finalPageNumber, showVines: true) {
+        let finalImagePage = pageContainer(isLeft: displaysOnLeft(newPages.count), pageNumber: finalPageNumber, showVines: true) {
             GeometryReader { geo in
                 ZStack {
                     Image("FinalImage")
@@ -1120,7 +1183,7 @@ struct BookView: View {
         newPageTexts.append("")
         
         if newPages.count % 2 != 0 {
-            let emptyPage = pageContainer(isLeft: false, pageNumber: newPages.count + 1) {
+            let emptyPage = pageContainer(isLeft: displaysOnLeft(newPages.count), pageNumber: newPages.count + 1) {
                 Spacer()
             }
             newPages.append(emptyPage)

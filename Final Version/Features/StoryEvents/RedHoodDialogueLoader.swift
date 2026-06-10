@@ -85,6 +85,10 @@ enum DialogueSpeakerRole: Equatable {
             self = .lumi
         } else if normalized.contains("cappuccetto")
             || normalized.contains("red riding")
+            || normalized.contains("caperucita")
+            || normalized.contains("chapeuzinho")
+            || normalized.contains("capuchinho")
+            || normalized.contains("小红帽")
             || normalized.contains("kesul")
             || normalized.contains("kapele")
             || normalized.contains("красн")

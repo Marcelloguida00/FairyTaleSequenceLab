@@ -94,10 +94,14 @@ final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
 
     private func bcp47LanguageCode(from code: String) -> String {
         switch code.lowercased() {
-        case "it": return "it-IT"
-        case "sq": return "sq-AL"
-        case "ru": return "ru-RU"
-        default:   return "en-GB"
+        case "it":      return "it-IT"
+        case "sq":      return "sq-AL"
+        case "ru":      return "ru-RU"
+        case "es":      return "es-ES"
+        case "pt":      return "pt-PT"
+        case "fa":      return "fa-IR"
+        case "zh-hans": return "zh-CN"
+        default:        return "en-GB"
         }
     }
 }

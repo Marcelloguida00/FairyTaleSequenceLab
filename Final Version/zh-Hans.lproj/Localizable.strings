@@ -1,0 +1,321 @@
+/* Buttons */
+"button.play"        = "开始游戏";
+"button.back"        = "返回";
+"button.menu"        = "菜单";
+"button.continue"    = "继续";
+"button.check"       = "检查答案！";
+"button.flip_all"    = "翻转全部";
+"button.play_again"  = "再玩一次";
+"button.next_event"  = "下一个关卡";
+"button.back_to_map" = "返回地图";
+"button.done"        = "完成";
+"button.cancel"      = "取消";
+"button.settings"    = "设置";
+
+/* Main menu */
+"menu.title.line1"    = "Lumi";
+"menu.title.line2"    = "World Of Fables";
+
+/* Info */
+"info.title"          = "信息";
+"info.developers"     = "开发团队";
+"info.collaborators"  = "合作人员";
+"info.collaborator.role.audio_composer" = "音频作曲";
+"info.contacts"       = "联系我们";
+"info.support_email_subject" = "WORLD OF FABLES 应用支持";
+"info.font_credits" = "OpenDyslexic 字体由 Abelardo Gonzalez 创建，并基于 SIL Open Font License (OFL) 授权使用。";
+
+/* Sequencing activity */
+"sequencing.instruction" = "将故事排序";
+"celebration.title"      = "你做到了！";
+"feedback.good_try"      = "不错的研究！";
+
+/* Position labels (used in contextual hints) */
+"pos.1st" = "第 1 张";
+"pos.2nd" = "第 2 张";
+"pos.3rd" = "第 3 张";
+"pos.4th" = "第 4 张";
+
+/* Contextual hints */
+"hint.tap_check"    = "点击 检查答案！";
+"hint.wrong_1"      = "“%@” 真的是 %@ 场景吗？想一想它是什么时候发生的。";
+"hint.wrong_2"      = "%@ 场景不应该是 “%@”。找找别的卡片吧。";
+"hint.wrong_3"      = "%@ 场景应该是 “%@”。你能找到它吗？";
+"hint.empty_1"      = "位置 %d 仍然是空的。试着放一张卡片吧！";
+"hint.empty_2"      = "%@ 场景应该是 “%@”。";
+
+/* Level banners */
+"level.adventure_begins" = "冒险开始！";
+"level.new_scene"        = "新场景";
+
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "恭喜你！\n你解锁了故事书的新章节！";
+"book.chapter_unlocked.message" = "《%@》已收录进你的童话书。";
+"book.chapter_unlocked.open_button" = "打开故事书";
+"book.chapter_unlocked.continue_button" = "继续";
+"book.chapter_unlocked.tap_hint" = "轻点任意位置继续。";
+"book.chapter_unlocked.open_hint" = "轻点两下打开故事书。";
+"a11y.storybook_button"          = "打开故事书";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "AR 故事书";
+"book.ar.body"                  = "将故事书放在平面上，然后翻阅它的页面。";
+"book.ar.cover_title"           = "小红帽";
+"book.ar.the_end"               = "完";
+"book.ar.generating_pages"      = "正在生成页面…";
+"book.ar.searching_surface"     = "请移动设备以寻找水平面。";
+"book.ar.tap_to_place"          = "轻点屏幕以放置故事书。";
+"book.ar.prev_page"             = "上一页";
+"book.ar.next_page"             = "下一页";
+"book.ar.reposition"            = "移动故事书";
+"book.ar.turn_page"             = "下一张卡片";
+"book.ar.next_card"             = "下一张卡片";
+"book.ar.placeholder.title"     = "暂无卡片";
+"book.ar.empty"                 = "完成一个事件即可在 AR 中解锁它的卡片。";
+"book.ar.unsupported"           = "此设备不支持增强现实。";
+"a11y.book_ar_button"           = "在增强现实中查看已解锁的故事卡片";
+
+/* Map */
+"map.coming_soon"             = "敬请期待";
+"map.region.red_riding_hood"  = "小红帽";
+"map.region.princess_frog"    = "公主与青蛙";
+"map.region.aladdin"          = "阿拉丁";
+"map.region.beauty_beast"     = "美女与野兽";
+
+/* Reward screen */
+"reward.perfect"   = "完美！你一次就答对了！";
+"reward.well_done" = "真棒！你想出来了！";
+"reward.did_it"    = "你做到了！每一次尝试都让你变得更强！";
+
+/* Settings */
+"settings.title"          = "设置";
+"settings.language"       = "语言";
+"settings.accessibility"  = "辅助功能";
+"settings.accessibility.description" = "易读字体与阅读偏好设置。";
+"settings.accessibility.message" = "管理让文字更易阅读、应用更易使用的选项。";
+"settings.enable_haptics" = "触感反馈";
+"settings.enable_haptics.description" = "开启或关闭触觉反馈。";
+"settings.enable_animations" = "减弱动画效果";
+"settings.enable_animations.description" = "关闭视觉特效和过渡动画。";
+"settings.enable_sounds" = "音效";
+"settings.enable_sounds.description" = "开启或关闭交互和菜单音效。";
+"settings.voice_over" = "VoiceOver";
+"settings.voice_over.description" = "开启或关闭语音旁白。";
+"settings.voice_over.info" = "已完整集成 VoiceOver 支持。如需使用，请在 iOS 系统设置中开启该功能。";
+"settings.reduce_contrast" = "增强对比度";
+"settings.reduce_contrast.description" = "使用高对比度颜色，提升文字可读性。";
+"settings.differentiate" = "不仅以颜色区分";
+"settings.differentiate.description" = "此功能已直接在应用中实现。";
+"settings.dyslexia_font"  = "读写障碍友好字体";
+"settings.dyslexia_font.description" = "所有文本使用 OpenDyslexic 字体。";
+"settings.dyslexia_font.enabled" = "OpenDyslexic 已开启";
+"settings.dyslexia_font.disabled" = "OpenDyslexic 已关闭";
+"settings.sound"          = "声音";
+"settings.sound.description" = "应用音频、音乐和音效。";
+"settings.sound.message" = "分别控制应用音频、背景音乐和游戏音效。";
+"settings.audio.master" = "应用音频";
+"settings.audio.master.description" = "关闭应用内的所有音频：音乐和音效。";
+"settings.audio.music" = "音乐";
+"settings.audio.music.description" = "整个游戏中的背景音乐和环境音。不影响卡片游戏的音效。";
+"settings.audio.music_volume" = "音乐音量";
+"settings.audio.sfx" = "卡片游戏音效";
+"settings.audio.sfx.description" = "仅在卡片排序活动中的声音：音符、翻牌和胜利乐曲。";
+"settings.sequencing_sfx" = "排序卡片音效";
+"settings.sequencing_sfx.simplified" = "简化";
+"settings.sequencing_sfx.orchestral" = "管弦乐";
+"settings.music"          = "音乐";
+"settings.music.on"       = "音乐已开启";
+"settings.music.muted"    = "音乐已静音";
+"settings.music.mute"     = "静音音乐";
+"settings.music.unmute"   = "取消静音";
+"settings.music.theme.garden_gate" = "花园门外";
+"settings.music.theme.red_hood_1" = "小红帽主题曲 1";
+"settings.music.theme.red_hood_2" = "小红帽主题曲 2";
+"settings.music.theme.red_hood_3" = "小红帽主题曲 3";
+"settings.progress"       = "进度";
+"settings.saved_data"     = "已保存的数据";
+"settings.reset_progress" = "重置进度";
+"settings.reset_progress.description" = "从头开始冒险。";
+"settings.reset_progress.confirm.title" = "要重置进度吗？";
+"settings.reset_progress.confirm.message" = "这将删除已保存的进度，并让你回到冒险的起点。";
+"settings.reset_progress.confirm.action" = "重置";
+"settings.reset_progress.success" = "数据已成功清除";
+"settings.app" = "应用";
+"settings.app_icon" = "应用图标";
+"settings.app_icon.default" = "默认";
+"settings.app_icon.message" = "选择一个备选图标来个性化你的应用。";
+"settings.app_icon.error.title" = "图标错误";
+"settings.app_icon.error.not_configured" = "图标“%@”未在 Xcode 中正确配置。";
+"settings.change_language" = "更改语言";
+"settings.change_language.description" = "选择应用语言。";
+"settings.change_language.message" = "选择你想在应用中使用的语言。";
+"settings.show_onboarding_again" = "再次显示引导";
+"settings.show_tutorial_again" = "再次显示教程";
+"settings.advanced_settings" = "高级设置";
+"settings.advanced_gate.title" = "家长专区";
+"settings.advanced_gate.message" = "算出这道加法题即可打开高级设置。";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "继续";
+"settings.advanced_gate.wrong" = "不对哦。再试一次！";
+"settings.support" = "支持";
+"settings.whats_new" = "新功能";
+"settings.whats_new.message" = "1.0.2 版本新功能：\n\n• 关闭了故事书页面的自动语音旁白\n• 改进辅助功能支持，将对比度选项更名为“增强对比度”\n• 优化了故事书的版式和分页\n• 改进了世界地图上的新手教程\n• 缩短了小红帽的对话，让节奏更流畅\n• 新增带两个按钮的图书解锁横幅，支持多语言和高对比度\n• 更新了界面配色并改进了卡片排序动画";
+"settings.contact_me" = "联系我";
+"settings.rate_app" = "为应用评分";
+"settings.rate_app.message" = "应用发布后将提供评分链接。";
+"settings.about" = "关于";
+"settings.about.message" = "World of Fables 是一款儿童教育游戏。它通过重建图画童话，帮助孩子发展故事理解、事件逻辑排序、注意力和视觉记忆能力。";
+"settings.version" = "版本";
+"settings.privacy_policy" = "隐私政策";
+"settings.privacy_policy.message" = "隐私政策\n\n最近更新：2026年6月1日\n\n1. 简介\n本隐私政策说明 World of Fables（一款旨在培养儿童故事理解、逻辑排序、注意力和视觉记忆的教育应用）如何处理信息。本应用遵循数据最小化和隐私保护设计原则。\n\n2. 数据控制者\n数据控制者为 Marcello Guida。隐私相关事宜请联系：mguida2604@gmail.com。\n\n3. 个人数据及收集方式\n本应用无需注册或登录，不收集姓名、电子邮件地址、电话号码、邮政地址、位置数据、IP 地址、设备标识符、操作系统信息、使用日志或其他可识别信息，也不会创建用户画像。\n\n应用仅使用 Apple 的 UserDefaults 存储，在设备本地保存非个人偏好设置和游戏进度。这些内容可能包括已完成的关卡、已解锁的区域、当前游戏位置、所选语言、辅助功能偏好、音乐设置、动画设置和触感反馈设置。\n\n如果用户或家长、监护人自愿通过电子邮件联系支持，发件人的电子邮件地址及邮件中包含的信息将仅用于回复该请求。\n\n4. GDPR 下的处理目的和法律依据\n本地设置和进度仅用于提供应用所需的功能并保持用户体验，不会传输给数据控制者。\n\n任何支持邮件的处理目的是回复用户请求，并在适用时根据 GDPR 第 6(1)(b) 条和第 6(1)(f) 条，应用户要求采取合同前措施，或出于数据控制者提供帮助的正当利益。在必要时，数据也可能根据 GDPR 第 6(1)(c) 条和第 6(1)(f) 条进行处理，以履行法律义务或保护数据控制者的权利。\n\n5. 相机与增强现实\n本应用包含可选的增强现实功能。在用户授予设备权限的前提下，相机仅用于通过 ARKit 在用户周围环境中显示故事卡片。相机画面仅在设备本地处理。应用不会录制、保存、上传或共享照片、视频或相机数据。用户可随时在设备设置中拒绝或撤销相机权限。\n\n6. 安全与保留\n本地偏好设置和进度保留在设备上，可通过在应用中重置进度、卸载应用或使用设备提供的控制功能将其删除。支持邮件仅在回复请求、履行适用法律义务或保护数据控制者权利所需的时间内保留。针对所执行的有限处理，已采取适当的技术和组织措施。\n\n7. 第三方、远程存储与国际传输\n本应用不会将用户或设备数据发送给数据控制者、外部服务器、云数据库、托管服务、合作伙伴或第三方，也不会将应用数据传输到欧洲经济区之外。自愿发送给支持的电子邮件由发件人和数据控制者所使用的电子邮件服务处理；适用相关服务商的条款和隐私政策，并可能依照适用法律在欧洲经济区之外进行处理。\n\n8. Cookie、跟踪、分析与广告\n本应用不使用 Cookie、跟踪技术、第三方分析 SDK、广告网络、赞助内容或行为广告。\n\n9. 未包含的功能\n本应用不包含用户账户、外部身份验证服务、推送通知、购买、支付、订阅或外部支付机制。\n\n10. 儿童隐私\n本应用面向儿童，但不收集儿童的个人数据。支持联系方式供家长或监护人使用。儿童不应通过电子邮件发送个人信息。如无意中收到与儿童相关的个人数据，家长或监护人可联系数据控制者要求删除。\n\n11. 用户权利\n在数据控制者处理个人数据的情况下，用户可在适用时行使 GDPR 第 15 至 22 条规定的权利：访问、更正、删除、限制处理、反对、数据可携带，以及在不影响此前合法处理的情况下撤回同意。用户还可向有管辖权的监管机构投诉，包括意大利数据保护局（Garante per la protezione dei dati personali）。\n\n12. 行使隐私权利与联系方式\n如需行使隐私权利或咨询信息，请通过 mguida2604@gmail.com 联系 Marcello Guida。相关请求将依照适用法律处理。\n\n13. 本隐私政策的变更\n如应用或适用法律要求发生变化，本政策可能会更新。任何新的处理活动都会在引入之前进行说明。更新后的版本将在应用内提供。";
+
+/* Accessibility */
+"a11y.info_button"       = "信息";
+"a11y.info_hint"         = "显示开发者名单";
+"a11y.info_close_button" = "关闭信息";
+"a11y.info_email_button" = "撰写支持邮件";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "小红帽";
+"redhood.intro.mascot"  = "糟糕！一只怪物毁掉了所有的童话，把故事场景撒得到处都是！你能帮我把小红帽的故事重新拼好吗？";
+"redhood.intro.button"  = "开始冒险！";
+
+/* Onboarding */
+"onboarding.skip"           = "跳过";
+"onboarding.next"           = "下一步";
+"onboarding.start"          = "拯救童话！";
+"onboarding.page1.title"    = "认识露米";
+"onboarding.page1.body"     = "很久很久以前，在一个神奇的世界里，住着一个小巧可爱的孩子，名叫露米（Lumi）。她是所有童话人物的好朋友。";
+"onboarding.page2.title"    = "风云突变";
+"onboarding.page2.body"     = "有一天，露米乘着小船，正准备靠岸去小红帽的森林里看望她。可是突然间……天空变得像墨水一样漆黑。";
+"onboarding.page3.title"    = "坦普斯老爷";
+"onboarding.page3.body"     = "原来是邪恶的天气巫师坦普斯老爷！他嫉妒自己没有属于自己的故事，便施了一个魔咒，把所有童话的片段都搅乱了，弄得一团糟！现在小红帽和大家都晕头转向，故事也变得乱七八糟了。";
+"onboarding.page4.title"    = "我们需要你！";
+"onboarding.page4.body"     = "露米需要一位勇敢又超级聪明的小帮手，把一切恢复原样……没错！露米需要的正是你！";
+
+/* Tutorial */
+"tutorial.skip"             = "跳过教程";
+"tutorial.next"             = "下一步";
+"tutorial.done"             = "出发吧！";
+"tutorial.step1.title"      = "轻点路标点";
+"tutorial.step1.body"       = "要在地图上行走，请轻点已解锁的路标点。";
+"tutorial.step2.title"      = "寻找故事岛";
+"tutorial.step2.body"       = "走到一座发光的故事岛。到达后会出现一个开始按钮——轻点它，开始修复那个童话！";
+"tutorial.step3.title"      = "恢复顺序";
+"tutorial.step3.body"       = "把场景卡片拖到正确的顺序，重建童话。想一想最先发生的是什么！";
+"tutorial.step4.title"      = "翻卡看提示";
+"tutorial.step4.body"       = "不确定卡片该放哪里？把它翻过来，看看关于这个场景在故事中何时发生的提示！";
+"tutorial.step5.title"      = "解除魔咒！";
+"tutorial.step5.body"       = "当所有卡槽都填满后，按下“检查”！答对了，你就能解除坦普斯老爷施在这个故事上的魔咒。你是大英雄！";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "游玩小红帽";
+"a11y.start_event"          = "开始事件";
+"a11y.go_back"              = "返回";
+"a11y.return_to_menu"       = "返回主菜单";
+"a11y.play_button"          = "开始游戏";
+"a11y.settings_button"      = "打开设置";
+"a11y.settings_hint"        = "打开设置页面";
+"a11y.locked_level"         = "锁定的关卡";
+"a11y.menu_hint"            = "离开世界地图并打开标题画面";
+"a11y.play_hint"            = "拨开云幕，开始冒险";
+"a11y.main_menu"            = "主菜单";
+"a11y.world_map"            = "世界地图";
+"a11y.avatar"               = "角色";
+"a11y.celebration"          = "恭喜你！你做到了！";
+"a11y.tap_to_play"          = "轻点开始游戏";
+"a11y.level_locked_hint"    = "此关卡已锁定。完成之前的关卡即可解锁。";
+"a11y.tap_to_replay"        = "轻点重新游玩";
+"a11y.continue_sequencing"  = "继续进行排序活动";
+"a11y.check_order"          = "检查你的故事顺序";
+"a11y.flip_all"             = "翻开所有卡片";
+"a11y.story_scene_card"     = "故事场景卡片";
+"a11y.story_scene_card_hint" = "轻点两下翻开卡片并阅读提示。";
+"a11y.button_select_app_icon" = "选择应用图标";
+"a11y.button_locked"          = "此项目已锁定";
+"a11y.button_open_social_link" = "打开社交媒体链接";
+"a11y.hint_adjust_slider"     = "使用上下箭头调整滑块";
+"a11y.source_tray"            = "待选卡片";
+"a11y.source_tray_hint"       = "将卡片从这里拖到卡槽中";
+"a11y.continue_button"        = "继续";
+"a11y.continue_hint"          = "继续前往下一个事件";
+"a11y.envelope_open_button"   = "打开卡包";
+"a11y.envelope_open_hint"     = "打开信封，展示已解锁的卡片";
+
+/* English Story Book Scenes */
+"story.redhood.scene1.title" = "场景 1";
+"story.redhood.scene1.text1" = "从前，在一片茂密的森林深处，有一座小木屋，里面住着一个可爱的小女孩。大家都叫她小红帽，因为妈妈给她做了一件漂亮的红色斗篷，还配着一顶红色的兜帽。";
+"story.redhood.scene1.text2" = "一天早晨，妈妈对她说：“外婆得了重感冒，正躺在床上。把这篮新鲜的小点心送给她，但要记住：要沿着大路走，路上不许停下来！”\n\n小女孩亲了亲妈妈，向她保证：“放心吧，妈妈！我会走得快快的，直接去外婆家。”";
+
+"story.redhood.scene2.title" = "场景 2";
+"story.redhood.scene2.text1" = "可是，她一走进森林，就把自己的承诺忘了。她看见一片美味的野草莓和漂亮的花朵，就把篮子放在了地上。";
+"story.redhood.scene2.text2" = "“外婆一定会喜欢这些的！”她一边想，一边跑来跑去地采摘。\n\n突然，她发现时间已经很晚了，急忙跑回去拿起篮子，沿着小路匆匆赶路。";
+
+"story.redhood.scene3.title" = "场景 3";
+"story.redhood.scene3.text1" = "树林越来越暗，一只高大的黑狼从树后走了出来。小红帽的心怦怦直跳。\n\n“小姑娘，你一个人要去哪儿呀？”狼用低沉的声音问道。";
+"story.redhood.scene3.text2" = "“我要去这条路尽头的外婆家，给她送点心。”她怯生生地回答。\n\n狡猾的狼立刻想出了一个计策。“一路平安！”它说完，转眼就消失在灌木丛里。";
+
+"story.redhood.scene4.title" = "场景 4";
+"story.redhood.scene4.text1" = "狼拼命地跑，满脑子想的都是它的下一顿大餐。它来到小木屋前，轻轻地敲了敲门。咚！咚！";
+"story.redhood.scene4.text2" = "“是谁呀？”外婆问。\n\n“是我，小红帽！”狼捏着嗓子回答。\n\n“进来吧，亲爱的，门没锁。”老奶奶说。";
+
+"story.redhood.scene5.title" = "场景 5";
+"story.redhood.scene5.text1" = "狼冲进了房间，但机灵的外婆迅速躲进了衣柜，没有被发现。";
+"story.redhood.scene5.text2" = "狼发现房间里没有人，就戴上外婆的睡帽，爬上她的床，拉起了被子。";
+
+"story.redhood.scene6.title" = "场景 6";
+"story.redhood.scene6.text1" = "不一会儿，小红帽来了，敲了敲门。\n\n“进来吧，我的乖孩子。”狼压低声音，努力装得很温柔。";
+"story.redhood.scene6.text2" = "小女孩走了进来，但她觉得有些不对劲。";
+
+"story.redhood.scene7.title" = "场景 7";
+"story.redhood.scene7.text1" = "“哎呀，外婆，你的声音怎么这么粗！”\n\n“这样才能更好地跟你说话呀，亲爱的。”\n\n“你的眼睛怎么这么大！”\n\n“这样才能更好地看你呀，亲爱的。”";
+"story.redhood.scene7.text2" = "“你的手怎么这么大！”\n\n“这样才能更好地抱你呀，亲爱的。”\n\n“可是外婆……你的嘴巴怎么这么大！”她吓得倒吸一口气。\n\n“这样才能一口吃掉你！”狼吼道。\n\n它从床上跳了起来，吓坏了的小红帽拼命地大声尖叫！";
+
+"story.redhood.scene8.title" = "场景 8";
+"story.redhood.scene8.text1" = "一位路过的樵夫听到了小木屋里传来小红帽响亮的尖叫声。他飞快地跑过来，举着一根大木棍撞开了门。\n\n胆小的狼一看到勇敢的樵夫，吓得惊慌失措，从窗户跳了出去，逃进了森林深处，再也没有出现过。";
+"story.redhood.scene8.text2" = "听到危险解除了，外婆终于从衣柜里走了出来。\n\n小红帽和外婆紧紧地抱在一起，为终于平安无事而开心极了。她们衷心感谢勇敢的樵夫救了她们的命。\n\n夕阳西下时，妈妈赶到了小木屋，她因为女儿迟迟未归而担心害怕。看到大家都平安无事，她喜极而泣。\n\n小红帽和妈妈一起走在树下回家的路上，小女孩紧紧握着妈妈的手说：“从今以后，我们一定要一直沿着大路走，再也不分心了！”";
+
+/* Image placeholders */
+"Immagine di Introduzione" = "导入插图";
+"Immagine di Ricompensa" = "奖励插图";
+
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "继续游玩以解锁更多场景";
+
+/* Review Popup */
+"review.popup.title" = "喜欢露米吗？";
+"review.popup.message" = "如果你喜欢我们的童话，请留下评价！这能帮助我们创作新的故事。";
+"review.popup.rate" = "去评分";
+"review.popup.later" = "稍后再说";
+
+
+/* AR Scan Strings */
+"ar.scan.title" = "房间扫描...";
+"ar.scan.not_available" = "请移动设备进行扫描...";
+"ar.scan.limited" = "请继续移动...";
+"ar.scan.extending" = "正在建立空间地图...";
+"ar.scan.mapped" = "马上就好！";
+"ar.scan.find_card" = "找到这张卡片：";
+"ar.scan.congrats" = "太棒了！";
+"ar.scan.found_all" = "你找到了所有卡片。";
+"ar.scan.correct" = "正确！";
+
+/* Additional accessibility labels and hints */
+"a11y.tutorial_skip_button" = "跳过教程";
+"a11y.tutorial_skip_hint" = "跳过教程并关闭引导页面";
+"a11y.tutorial_next_hint" = "前往教程的下一步";
+"a11y.tutorial_done_hint" = "完成教程并关闭页面";
+"a11y.onboarding_skip_button" = "跳过引导";
+"a11y.onboarding_skip_hint" = "跳过引导并开始冒险";
+"a11y.onboarding_next_button" = "下一页";
+"a11y.onboarding_next_hint" = "前往下一页引导页面";
+"a11y.onboarding_start_button" = "开始冒险";
+"a11y.onboarding_start_hint" = "与小红帽一起开始冒险";
+"a11y.redhood_final_button_hint" = "庆祝胜利并返回地图";
+"a11y.ar_back_hint" = "关闭增强现实视图并返回地图";
+"a11y.reward_pack_label" = "奖励卡包";
+"a11y.reward_pack_hint" = "轻点或向上拖动以打开奖励卡包";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "轻点“开始游戏”，开启故事！";
+"tutorial.drag_first_scene" = "把第一个场景拖到第一个位置";
+"tutorial.tap_to_flip" = "轻点卡片翻面，阅读提示";

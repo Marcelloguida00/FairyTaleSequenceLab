@@ -1,0 +1,270 @@
+{
+  "waypoints": [
+    {
+      "waypoint": 0,
+      "introDialogue": [
+        {
+          "speaker": "Lumi",
+          "text": "¿Eres Caperucita Roja? ¿Por qué estás triste?"
+        },
+        {
+          "speaker": "Caperucita Roja",
+          "text": "¡El malvado Lord Tempus desordenó toda mi historia! Ayúdame a arreglarla, ¡comencemos!"
+        }
+      ]
+    },
+    {
+      "waypoint": 1,
+      "eventId": 1,
+      "introDialogue": [
+        {
+          "speaker": "Caperucita Roja",
+          "text": "Mamá está preparando una cesta para mi abuelita enferma. ¡Ayúdame a ordenar mis acciones antes de salir!"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "¡Listo! Mamá te da la cesta, te pones la capa y luego te pones en camino."
+        },
+        {
+          "speaker": "Caperucita Roja",
+          "text": "¡Hurra! Recuerda: siempre prepárate bien antes de salir de casa."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "¡Listo! Mamá te da la cesta, te pones la capa y luego te pones en camino."
+        },
+        {
+          "speaker": "Caperucita Roja",
+          "text": "¡Lo lograste intentándolo de nuevo! Prepárate siempre antes de salir de casa."
+        }
+      ]
+    },
+    {
+      "waypoint": 2,
+      "eventId": 2,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "I got distracted picking flowers in the woods! Help me put this walk in order."
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Here we go! You walked, spotted the flowers, stopped to pick them, and wandered off."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Perfect! Getting distracted can make you lose your way."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Here we go! You walked, spotted the flowers, stopped to pick them, and wandered off."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Good job trying again! Getting distracted can make you lose your way."
+        }
+      ]
+    },
+    {
+      "waypoint": 3,
+      "eventId": 3,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "A curious wolf stops me on the path! Shall we put our meeting in order?"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "All set! The wolf comes closer, talks to you, and finds out where Grandmother lives."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "What a team! Always be careful around strangers."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "All set! The wolf comes closer, talks to you, and finds out where Grandmother lives."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Together we did it! Always be careful around strangers."
+        }
+      ]
+    },
+    {
+      "waypoint": 4,
+      "eventId": 4,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "The wolf runs to Grandmother's house to get there first! Put his actions in order."
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "In order: the wolf runs through the trees, sees the cottage, and knocks on the door."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Perfect! The wolf was clever—shortcuts can hide nasty tricks."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "In order: the wolf runs through the trees, sees the cottage, and knocks on the door."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Great job trying again! Shortcuts can hide nasty tricks."
+        }
+      ]
+    },
+    {
+      "waypoint": 5,
+      "eventId": 5,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "The wolf dresses up as Grandmother and waits in bed! Put his actions in order."
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "All in order! He takes the clothes, puts on the nightcap, and slips under the covers."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Amazing, Lumi! Things aren't always what they seem."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "All in order! He takes the clothes, puts on the nightcap, and slips under the covers."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Never give up—we did it! Things aren't always what they seem."
+        }
+      ]
+    },
+    {
+      "waypoint": 6,
+      "eventId": 6,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "I reach Grandmother's house and hear a strange voice! Put my entrance in order."
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Done: you open the door, listen carefully, then go toward the bed."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Perfect first try! Always trust your instincts when something feels strange."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Done: you open the door, put the basket down, then go toward the bed."
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "We learn from mistakes! Trust your instincts when something feels strange."
+        }
+      ]
+    },
+    {
+      "waypoint": 7,
+      "eventId": 7,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Grandmother looks different than usual… Help me put the moments of my discovery in order!"
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Done! First the huge ears, then the big eyes, then the mouth full of teeth!"
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "What a detective! Asking questions is the best way to find the truth."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Look! First the huge ears, then the big eyes, then the mouth full of teeth!"
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Together we're so strong! Asking questions helps discover the truth."
+        }
+      ]
+    },
+    {
+      "waypoint": 8,
+      "eventId": 8,
+      "introDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Help arrives just in time! The wolf is stopped. Put the last events in order."
+        }
+      ],
+      "rewardDialogue_success": [
+        {
+          "speaker": "Lumi",
+          "text": "Done: the hunter drives off the wolf, Grandmother is saved, and you celebrate!"
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "We won, Lumi! Remember: together we can overcome any danger."
+        }
+      ],
+      "rewardDialogue_retry": [
+        {
+          "speaker": "Lumi",
+          "text": "Done: the hunter drives off the wolf, Grandmother is saved, and you celebrate!"
+        },
+        {
+          "speaker": "Red Riding Hood",
+          "text": "It took one more try, but we made it! Together we can overcome any danger."
+        }
+      ]
+    },
+    {
+      "waypoint": 9,
+      "rewardDialogue": [
+        {
+          "speaker": "Red Riding Hood",
+          "text": "Look at the sky, Lumi—it's shining again! All the memories are in place."
+        },
+        {
+          "speaker": "Lumi",
+          "text": "We did it! Now you can read your whole story, Red Riding Hood."
+        }
+      ]
+    }
+  ]
+}

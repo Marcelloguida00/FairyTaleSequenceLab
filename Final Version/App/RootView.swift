@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RootView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-    @AppStorage("differentiate") private var differentiate = false
     @Environment(AppFontSettings.self) private var fontSettings
 
     @State private var gameStarted = false
@@ -75,7 +74,7 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .differentiate(differentiate)
+        .differentiate(false)
         .font(Font.custom(
             AppTypography.fontName(for: .regular, dyslexiaEnabled: usesDyslexiaFont),
             size: 17,

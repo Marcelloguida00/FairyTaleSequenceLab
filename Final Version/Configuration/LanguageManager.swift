@@ -15,6 +15,10 @@ final class LanguageManager {
         Language(code: "it", nativeName: "Italiano",  flag: "🇮🇹"),
         Language(code: "sq", nativeName: "Shqip",     flag: "🇦🇱"),
         Language(code: "ru", nativeName: "Русский",   flag: "🇷🇺"),
+        Language(code: "es", nativeName: "Español",   flag: "🇪🇸"),
+        Language(code: "pt", nativeName: "Português", flag: "🇵🇹"),
+        Language(code: "fa", nativeName: "فارسی",      flag: "🇮🇷"),
+        Language(code: "zh-Hans", nativeName: "简体中文", flag: "🇨🇳"),
     ]
 
     var currentLanguage: String {
@@ -41,8 +45,17 @@ final class LanguageManager {
 
     init() {
         let device = Locale.current.language.languageCode?.identifier ?? "en"
-        let saved  = UserDefaults.standard.string(forKey: "appLanguage") ?? device
         let codes  = Self.supported.map(\.code)
-        currentLanguage = codes.contains(saved) ? saved : "en"
+        if let saved = UserDefaults.standard.string(forKey: "appLanguage"), codes.contains(saved) {
+            currentLanguage = saved
+        } else if codes.contains(device) {
+            currentLanguage = device
+        } else if device == "zh" {
+            // Chinese is shipped as the "zh-Hans" locale folder, so the bare
+            // device language code never matches the supported list directly.
+            currentLanguage = "zh-Hans"
+        } else {
+            currentLanguage = "en"
+        }
     }
 }
