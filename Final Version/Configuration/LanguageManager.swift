@@ -13,6 +13,7 @@ final class LanguageManager {
     static let supported: [Language] = [
         Language(code: "en", nativeName: "English",  flag: "🇬🇧"),
         Language(code: "it", nativeName: "Italiano",  flag: "🇮🇹"),
+        Language(code: "fr", nativeName: "Français",  flag: "🇫🇷"),
         Language(code: "sq", nativeName: "Shqip",     flag: "🇦🇱"),
         Language(code: "ru", nativeName: "Русский",   flag: "🇷🇺"),
         Language(code: "es", nativeName: "Español",   flag: "🇪🇸"),

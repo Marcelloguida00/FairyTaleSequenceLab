@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "bannerTitle": "Chapitre 1 : Le panier",
+    "introImageName": "Introduzione 1 evento",
+    "introText": "La maman dit au Petit Chaperon Rouge que la grand-mère est malade. Elles doivent lui préparer un panier. Aide à mettre les scènes de l'histoire dans l'ordre correct !",
+    "cards": [
+      { "id": 0, "imageName": "Immagine 1 sequenza", "description": "La maman et le Petit Chaperon Rouge préparent le panier ensemble", "correctPosition": 0 },
+      { "id": 1, "imageName": "Immagine 2 sequenza", "description": "La maman donne le panier au Petit Chaperon Rouge", "correctPosition": 1 },
+      { "id": 2, "imageName": "Immagine 3 sequenza", "description": "Le Petit Chaperon Rouge enfile son manteau rouge", "correctPosition": 2 },
+      { "id": 3, "imageName": "Immagine 4 sequenza", "description": "Le Petit Chaperon Rouge quitte la maison", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : les événements d'une histoire se déroulent dans l'ORDRE — chaque action rend possible la suivante !",
+    "rewardImageName": "Fine primo evento",
+    "rewardText": "Excellent ! Tu as mis toutes les scènes dans le bon ordre ! Maintenant, le Petit Chaperon Rouge peut prendre son panier, enfiler son manteau rouge et trotter dans la forêt pour apporter de bonnes choses à sa grand-mère. L'histoire peut continuer — tout cela grâce à TOI !",
+    "isLastEvent": false
+  },
+  {
+    "id": 2,
+    "bannerTitle": "Chapitre 2 : Une promenade dans les bois",
+    "introImageName": "Introduzione 2 evento",
+    "introText": "Le Petit Chaperon Rouge part seule au plus profond de la forêt. Elle marche tranquillement le long du sentier, entourée de grands arbres. Peux-tu mettre les scènes de l'histoire dans le bon ordre ?",
+    "cards": [
+      { "id": 0, "imageName": "Sequenza 2 evento 1", "description": "Le Petit Chaperon Rouge marche le long du sentier de la forêt, son panier à la main", "correctPosition": 0 },
+      { "id": 1, "imageName": "Sequenza 2 evento 2", "description": "Elle aperçoit de magnifiques fleurs colorées poussant près du sentier", "correctPosition": 1 },
+      { "id": 2, "imageName": "Sequenza 2 evento 3", "description": "Elle cueille des fleurs et s'éloigne du sentier, distraite", "correctPosition": 2 },
+      { "id": 3, "imageName": "Sequenza 2 evento 4", "description": "Elle s'aventure loin du sentier, perdue dans sa cueillette de fleurs", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : les distractions changent la direction d'une histoire — l'ORDRE des choix est important !",
+    "rewardImageName": "Reward evento 2",
+    "rewardText": "Incroyable ! Tu as mis chaque scène dans le bon ordre ! Tu as suivi parfaitement le voyage du Petit Chaperon Rouge dans la forêt — pas à pas, jusqu'au moment où elle s'est éloignée du sentier. Tu es un véritable héros de l'histoire et le gardien de la forêt ! Attention — un loup l'observe de derrière les arbres…",
+    "isLastEvent": false
+  },
+  {
+    "id": 3,
+    "bannerTitle": "Chapitre 3 : Une étrange rencontre",
+    "introImageName": "event3_intro",
+    "introText": "Le loup a aperçu le Petit Chaperon Rouge dans la forêt. Il l'observe attentivement, préparant un plan astucieux. Le Petit Chaperon Rouge n'a aucune idée que le loup la regarde... Aide à mettre les scènes de l'histoire dans l'ordre correct !",
+    "cards": [
+      { "id": 0, "imageName": "event3_card1", "description": "Le loup lui apparaît sur le sentier", "correctPosition": 0 },
+      { "id": 1, "imageName": "event3_card2", "description": "Le loup s'approche avec curiosité", "correctPosition": 1 },
+      { "id": 2, "imageName": "event3_card3", "description": "Elle indique le sentier au loin", "correctPosition": 2 },
+      { "id": 3, "imageName": "event3_card4", "description": "Le loup élabore un plan astucieux", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : CONSÉQUENCES = LES ACTIONS ONT DES RÉSULTATS",
+    "rewardImageName": "event3_reward",
+    "rewardText": "Maintenant, le loup sait où trouver la grand-mère. Que va-t-il se passer ensuite ?",
+    "isLastEvent": false
+  },
+  {
+    "id": 4,
+    "bannerTitle": "Chapitre 4 : Le loup prépare son plan",
+    "introImageName": "event4_intro",
+    "introText": "Le loup court à toute vitesse vers la maison de la grand-mère pour y arriver avant le Petit Chaperon Rouge. Mets les cartes dans le bon ordre de gauche à droite pour voir comment il arrive !",
+    "cards": [
+      { "id": 0, "imageName": "scene4_card1", "description": "Le loup salue le Petit Chaperon Rouge", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene4_card2", "description": "Le loup emprunte un raccourci secret pour arriver en premier", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene4_card3", "description": "Le loup arrive fatigué mais ravi devant la maisonnette de la grand-mère", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene4_card4", "description": "Le loup frappe à la porte en se faisant passer pour le Petit Chaperon Rouge", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : Agir rapidement et planifier ses étapes permet d'atteindre son objectif !",
+    "rewardImageName": "event4_reward",
+    "rewardText": "Très bon travail ! Tu as ordonné la course du loup à la perfection ! Maintenant, le loup est arrivé devant la maisonnette et frappe à la porte de la grand-mère. L'histoire continue !",
+    "isLastEvent": false
+  },
+  {
+    "id": 5,
+    "bannerTitle": "Chapitre 5 : Le loup et la grand-mère",
+    "introImageName": "event5_intro",
+    "introText": "Le loup est entré dans la maison de la grand-mère et se prépare à attendre le Petit Chaperon Rouge déguisé en grand-mère. Mets les cartes dans le bon ordre de gauche à droite pour compléter son déguisement !",
+    "cards": [
+      { "id": 0, "imageName": "event5_card1", "description": "Le loup entre dans la chambre avec un sourire sournois", "correctPosition": 0 },
+      { "id": 1, "imageName": "event5_card2", "description": "La grand-mère s'effraie et se cache dans l'armoire", "correctPosition": 1 },
+      { "id": 2, "imageName": "event5_card3", "description": "Le loup enfile le bonnet de nuit et les lunettes de la grand-mère", "correctPosition": 2 },
+      { "id": 3, "imageName": "event5_card4", "description": "Le loup attend sous les couvertures", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : Reconnaître les intentions des autres aide à comprendre l'histoire !",
+    "rewardImageName": "event5_reward",
+    "rewardText": "Excellent ! Tu as complété le déguisement du loup ! Maintenant, il est sous les couvertures, prêt à tromper le Petit Chaperon Rouge. Continuons pour voir ce qui se passe !",
+    "isLastEvent": false
+  },
+  {
+    "id": 6,
+    "bannerTitle": "Chapitre 6 : Le Petit Chaperon Rouge arrive à la maisonnette",
+    "introImageName": "event6_intro",
+    "introText": "Après avoir marché dans la forêt, le Petit Chaperon Rouge arrive à la maisonnette et frappe à la porte. Mets les cartes dans le bon ordre de gauche à droite pour la faire entrer !",
+    "cards": [
+      { "id": 0, "imageName": "scene6_card1", "description": "Le Petit Chaperon Rouge arrive à la maisonnette au milieu des fleurs", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene6_card2", "description": "Le Petit Chaperon Rouge frappe délicatement à la porte en bois", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene6_card3", "description": "Le loup répond d'une voix rauque en invitant la fillette à entrer", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene6_card4", "description": "Le Petit Chaperon Rouge ouvre doucement la porte et entre surprise", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : Prêter attention aux détails insolites (comme une voix rauque) est un indice important !",
+    "rewardImageName": "event6_reward",
+    "rewardText": "Incroyable ! Tu as ordonné son arrivée à la perfection ! Maintenant, le Petit Chaperon Rouge est entrée dans la chambre et s'est approchée du lit. Voyons ce qui se passe à présent !",
+    "isLastEvent": false
+  },
+  {
+    "id": 7,
+    "bannerTitle": "Chapitre 7 : Quelque chose ne va pas",
+    "introImageName": "event7_intro",
+    "introText": "Le Petit Chaperon Rouge parle avec sa grand-mère et remarque quelque chose de très étrange dans son apparence. Mets les cartes dans le bon ordre de gauche à droite pour démasquer le loup !",
+    "cards": [
+      { "id": 0, "imageName": "event7_card1", "description": "Elle s'approche du lit", "correctPosition": 0 },
+      { "id": 1, "imageName": "event7_card2", "description": "Elle remarque les grandes oreilles", "correctPosition": 1 },
+      { "id": 2, "imageName": "event7_card3", "description": "Elle remarque les grands yeux", "correctPosition": 2 },
+      { "id": 3, "imageName": "event7_card4", "description": "Elle remarque les grandes dents", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : Poser des questions et observer avec attention nous révèle la vérité !",
+    "rewardImageName": "event7_reward",
+    "rewardText": "Fabuleux ! Tu as ordonné les dialogues à la perfection ! Le Petit Chaperon Rouge a compris la ruse du loup et a besoin d'aide. Courons vers la dernière scène !",
+    "isLastEvent": false
+  },
+  {
+    "id": 8,
+    "bannerTitle": "Chapitre 8 : De l'aide arrive",
+    "introImageName": "event8_intro",
+    "introText": "Le loup est démasqué, le Petit Chaperon Rouge crie et les secours arrivent pour chasser le loup pour toujours. Mets les cartes dans le bon ordre de gauche à droite pour la fin heureuse !",
+    "cards": [
+      { "id": 0, "imageName": "scene8_card1", "description": "Le Petit Chaperon Rouge s'effraie et hurle", "correctPosition": 0 },
+      { "id": 1, "imageName": "scene8_card2", "description": "Un bûcheron arrive en courant vers la maison", "correctPosition": 1 },
+      { "id": 2, "imageName": "scene8_card3", "description": "Le loup s'enfuit devant le bûcheron", "correctPosition": 2 },
+      { "id": 3, "imageName": "scene8_card4", "description": "La grand-mère et le Petit Chaperon Rouge heureuses sur le canapé", "correctPosition": 3 }
+    ],
+    "correctOrder": [0, 1, 2, 3],
+    "learningOutcome": "Tu as appris : S'entraider dans les moments de difficulté mène toujours à une fin heureuse !",
+    "rewardImageName": "event8_reward",
+    "rewardText": "Félicitations ! Tu as déverrouillé l'histoire complète du Petit Chaperon Rouge !",
+    "isLastEvent": false
+  }
+]

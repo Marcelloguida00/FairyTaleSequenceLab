@@ -1,0 +1,160 @@
+{
+  "waypoints": [
+    {
+      "waypoint": 0,
+      "name": "Base du pont",
+      "type": "Intro île",
+      "view": "RedHoodLevel0View",
+      "introDialogue": [
+        { "speaker": "Lumi", "text": "Tu es le Petit Chaperon Rouge ? Pourquoi es-tu triste ?" },
+        { "speaker": "Petit Chaperon Rouge", "text": "Lord Tempus a mélangé mon histoire ! Aide-moi à la réparer, commençons !" }
+      ]
+    },
+    {
+      "waypoint": 1,
+      "name": "Forêt basse",
+      "type": "Événement 1 — le panier",
+      "eventId": 1,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "Maman prépare le panier pour ma grand-mère malade. Mets mes actions dans l'ordre avant que je parte !" }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "C'est fait ! Maman te donne le panier, tu enfiles ton manteau et tu sors de la maison." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Hourra ! Souviens-toi : il faut toujours bien se préparer avant de sortir de la maison." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "C'est fait ! Maman te donne le panier, tu enfiles ton manteau et tu sors de la maison." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Bravo, tu as réussi en réessayant ! C'est important de bien se préparer avant de sortir." }
+      ]
+    },
+    {
+      "waypoint": 2,
+      "name": "Bifurcation",
+      "type": "Événement 2 — fleurs et distraction",
+      "eventId": 2,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "Je me suis distraite à cueillir des fleurs dans les bois. Mets dans l'ordre les moments de ma promenade !" }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "Voilà ! D'abord tu marchais, tu as vu les fleurs, tu t'es arrêtée et tu t'es éloignée." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Parfait ! Se distraire fait risquer de perdre le bon chemin." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "Voilà ! D'abord tu marchais, tu as vu les fleurs, tu t'es arrêtée et tu t'es éloignée." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Bravo d'avoir réessayé ! Se distraire fait risquer de perdre le bon chemin." }
+      ]
+    },
+    {
+      "waypoint": 3,
+      "name": "Tanière du loup",
+      "type": "Événement 3 — rencontre avec le loup",
+      "eventId": 3,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "Un loup curieux m'arrête et me parle dans les bois. Mettons dans l'ordre notre rencontre !" }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "C'est réglé ! Le loup s'approche, te parle et découvre où vit ta grand-mère." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Quelle équipe ! Il faut toujours se méfier des inconnus." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "C'est réglé ! Le loup s'approche, te parle et découvre où vit ta grand-mère." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Ensemble nous avons réussi ! Il faut se méfier des inconnus." }
+      ]
+    },
+    {
+      "waypoint": 4,
+      "name": "Maisonnette (gauche)",
+      "type": "Événement 4 — le loup court chez la grand-mère",
+      "eventId": 4,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "Le loup court chez la grand-mère pour me devancer ! Ordonne ses actions." }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "Dans l'ordre : le loup court parmi les arbres, voit la maisonnette et frappe à la porte." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Parfait ! Le loup a été rusé. Les raccourcis cachent de mauvaises surprises." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "Dans l'ordre : le loup court parmi les arbres, voit la maisonnette et frappe à la porte." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Bien joué d'avoir réessayé ! Les raccourcis peuvent cacher de mauvaises surprises." }
+      ]
+    },
+    {
+      "waypoint": 5,
+      "name": "Maisonnette (sommet)",
+      "type": "Événement 5 — déguisement",
+      "eventId": 5,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "Le loup se déguise en grand-mère et attend dans le lit. Mets dans l'ordre ses actions !" }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "Dans l'ordre ! Le loup prend les vêtements, enfile le bonnet de nuit et se glisse sous les couvertures." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Tu es super, Lumi ! Les choses ne sont pas toujours ce qu'elles semblent être." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "Dans l'ordre ! Le loup prend les vêtements, enfile le bonnet de nuit et se glisse sous les couvertures." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Abandonner n'est pas la solution, nous avons réussi ! Les choses ne sont pas toujours ce qu'elles semblent être." }
+      ]
+    },
+    {
+      "waypoint": 6,
+      "name": "Moulin",
+      "type": "Événement 6 — arrivée du Chaperon Rouge",
+      "eventId": 6,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "J'arrive chez la grand-mère et j'entends une voix étrange. Ordonne mes actions à l'entrée !" }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "C'est fait : tu ouvres la porte, tu écoutes attentivement et tu vas vers le lit." },
+        { "speaker": "Petit Chaperon Rouge", "text": "Parfait du premier coup ! Fais confiance à tes sens quand quelque chose semble étrange." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "C'est fait : tu ouvres la porte, tu poses le panier et tu vas vers le lit." },
+        { "speaker": "Petit Chaperon Rouge", "text": "C'est en se trompant qu'on apprend ! Fais confiance à tes sens quand quelque chose semble étrange." }
+      ]
+    },
+    {
+      "waypoint": 7,
+      "name": "Maison de la grand-mère",
+      "type": "Événement 7 — oreilles, yeux, dents",
+      "eventId": 7,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "La grand-mère semble différente de d'habitude… Mets dans l'ordre les moments de ma découverte !" }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "C'est fait ! D'abord les oreilles énormes, puis les grands yeux et enfin la bouche pleine de dents !" },
+        { "speaker": "Petit Chaperon Rouge", "text": "Quel détective, Lumi ! Poser des questions est le meilleur moyen de découvrir la vérité." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "Regarde ! Les oreilles énormes, puis les grands yeux et enfin la bouche pleine de dents !" },
+        { "speaker": "Petit Chaperon Rouge", "text": "Ensemble nous sommes très forts ! Poser des questions aide à découvrir la vérité." }
+      ]
+    },
+    {
+      "waypoint": 8,
+      "name": "Village",
+      "type": "Événement 8 — fin heureuse",
+      "eventId": 8,
+      "introDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "De l'aide arrive à temps ! Le loup est arrêté. Ordonne les derniers événements." }
+      ],
+      "rewardDialogue_success": [
+        { "speaker": "Lumi", "text": "C'est réglé ! Le chasseur chasse le loup, la grand-mère est sauvée et vous fêtez ça !" },
+        { "speaker": "Petit Chaperon Rouge", "text": "Nous avons gagné, Lumi ! Rappelle-toi : l'union fait la force." }
+      ],
+      "rewardDialogue_retry": [
+        { "speaker": "Lumi", "text": "C'est réglé ! Le chasseur chasse le loup, la grand-mère est sauvée et vous fêtez ça !" },
+        { "speaker": "Petit Chaperon Rouge", "text": "Il a fallu un essai de plus, mais nous avons réussi ! L'union fait la force." }
+      ]
+    },
+    {
+      "waypoint": 9,
+      "name": "Belvédère du pont",
+      "type": "Île finale",
+      "view": "RedHoodLevelFinalView",
+      "rewardDialogue": [
+        { "speaker": "Petit Chaperon Rouge", "text": "Regarde le ciel, il brille de nouveau ! Tous les souvenirs sont à leur place." },
+        { "speaker": "Lumi", "text": "Nous avons réussi ! Maintenant tu peux lire toute ton histoire, Petit Chaperon Rouge." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+/* Buttons */
+"button.play"        = "JOUER";
+"button.back"        = "Retour";
+"button.menu"        = "Menu";
+"button.continue"    = "Continuer";
+"button.check"       = "Vérifier !";
+"button.flip_all"    = "Retourner tout";
+"button.play_again"  = "Rejouer";
+"button.next_event"  = "Scène suivante";
+"button.back_to_map" = "Retour à la carte";
+"button.done"        = "Terminé";
+"button.cancel"      = "Annuler";
+"button.settings"    = "PARAMÈTRES";
+
+/* Main menu */
+"menu.title.line1"    = "Lumi";
+"menu.title.line2"    = "World Of Fables";
+
+/* Info */
+"info.title"          = "Infos";
+"info.developers"     = "Développeurs";
+"info.collaborators"  = "Collaborateurs";
+"info.collaborator.role.audio_composer" = "Compositeur audio";
+"info.contacts"       = "Contacts";
+"info.support_email_subject" = "Assistance application WORLD OF FABLES";
+"info.font_credits" = "La police OpenDyslexic est créée par Abelardo Gonzalez et est sous licence SIL Open Font License (OFL).";
+
+/* Sequencing activity */
+"sequencing.instruction" = "Remets l'histoire dans l'ordre";
+"celebration.title"      = "Tu as réussi !";
+"feedback.good_try"      = "Bonne tentative !";
+
+/* Position labels */
+"pos.1st" = "1ère";
+"pos.2nd" = "2e";
+"pos.3rd" = "3e";
+"pos.4th" = "4e";
+
+/* Contextual hints */
+"hint.tap_check"    = "Appuie sur Vérifier !";
+"hint.wrong_1"      = "Est-ce que '%@' est vraiment la %@ scène ? Pense au moment où cela se produit.";
+"hint.wrong_2"      = "La %@ scène ne devrait pas être '%@'. Cherches-en une autre.";
+"hint.wrong_3"      = "La %@ scène devrait être '%@'. Peux-tu la trouver ?";
+"hint.empty_1"      = "La position %d est encore vide. Essaie de placer une carte ici !";
+"hint.empty_2"      = "La %@ scène devrait être '%@'.";
+
+/* Level banners */
+"level.adventure_begins" = "L'aventure commence !";
+"level.new_scene"        = "Nouvelle scène";
+
+/* Storybook chapter notice (after reward dialogue, first completion, waypoints 1–8) */
+"book.chapter_unlocked.title"   = "Félicitations !\nTu as déverrouillé un nouveau chapitre dans le livre !";
+"book.chapter_unlocked.message" = "« %@ » est maintenant dans le livre des contes.";
+"book.chapter_unlocked.open_button" = "Ouvrir le livre";
+"book.chapter_unlocked.continue_button" = "Continuer";
+"book.chapter_unlocked.tap_hint" = "Appuie sur l'écran pour continuer.";
+"book.chapter_unlocked.open_hint" = "Appuie deux fois pour ouvrir le livre des contes.";
+"a11y.storybook_button"          = "Ouvrir le livre des contes";
+"book.ar.button"                = "AR";
+"book.ar.title"                 = "Livre en RA";
+"book.ar.body"                  = "Pose le livre des contes sur une surface plane et feuillette ses pages.";
+"book.ar.cover_title"           = "Le Petit Chaperon\nRouge";
+"book.ar.the_end"               = "Fin";
+"book.ar.generating_pages"      = "Création des pages en cours…";
+"book.ar.searching_surface"     = "Déplace l'appareil pour trouver une surface plane.";
+"book.ar.tap_to_place"          = "Appuie pour placer le livre.";
+"book.ar.prev_page"             = "Page précédente";
+"book.ar.next_page"             = "Page suivante";
+"book.ar.reposition"            = "Déplacer le livre";
+"book.ar.turn_page"             = "Carte suivante";
+"book.ar.next_card"             = "Carte suivante";
+"book.ar.placeholder.title"     = "Aucune carte";
+"book.ar.empty"                 = "Complète un événement pour déverrouiller ses cartes en RA.";
+"book.ar.unsupported"           = "Cet appareil ne prend pas en charge la réalité augmentée.";
+"a11y.book_ar_button"           = "Afficher les cartes de l'histoire déverrouillées en réalité augmentée";
+
+/* Map */
+"map.coming_soon"             = "Bientôt disponible";
+"map.region.red_riding_hood"  = "Le Petit Chaperon Rouge";
+"map.region.princess_frog"    = "La Princesse et la Grenouille";
+"map.region.aladdin"          = "Aladin";
+"map.region.beauty_beast"     = "La Belle et la Bête";
+
+/* Reward screen */
+"reward.perfect"   = "Parfait ! Tu as réussi du premier coup !";
+"reward.well_done" = "Bravo ! Tu as compris !";
+"reward.did_it"    = "Tu as réussi ! Chaque essai te rend plus fort !";
+
+/* Settings */
+"settings.title"          = "Paramètres";
+"settings.language"       = "Langue";
+"settings.accessibility"  = "Accessibilité";
+"settings.accessibility.description" = "Police lisible et préférences de lecture.";
+"settings.accessibility.message" = "Gère les options qui rendent le texte plus facile à lire et l'application plus accessible.";
+"settings.enable_haptics" = "Vibrations";
+"settings.enable_haptics.description" = "Active ou désactive le retour tactile.";
+"settings.enable_animations" = "Réduire les animations";
+"settings.enable_animations.description" = "Désactive les effets visuels et les transitions.";
+"settings.enable_sounds" = "Effets sonores";
+"settings.enable_sounds.description" = "Active ou désactive les sons de l'interface et des menus.";
+"settings.voice_over" = "VoiceOver";
+"settings.voice_over.description" = "Active ou désactive la narration vocale.";
+"settings.voice_over.info" = "La compatibilité avec VoiceOver est entièrement intégrée. Pour l'utiliser, veuillez activez la fonctionnalité dans les Paramètres système de votre iOS.";
+"settings.reduce_contrast" = "Augmenter le contraste";
+"settings.reduce_contrast.description" = "Utilise des couleurs contrastées pour améliorer la lisibilité du texte.";
+"settings.differentiate" = "Distinguer sans utiliser uniquement la couleur";
+"settings.differentiate.description" = "Cette fonctionnalité est implémentée directement dans l'application.";
+"settings.dyslexia_font"  = "Police dyslexie";
+"settings.dyslexia_font.description" = "Utilise OpenDyslexic pour tout le texte.";
+"settings.dyslexia_font.enabled" = "OpenDyslexic activé";
+"settings.dyslexia_font.disabled" = "OpenDyslexic désactivé";
+"settings.sound"          = "Son";
+"settings.sound.description" = "Audio, musique de fond et effets sonores de l'application.";
+"settings.sound.message" = "Contrôle séparément l'audio général, la musique de fond et les effets sonores du jeu.";
+"settings.audio.master" = "Audio de l'application";
+"settings.audio.master.description" = "Désactive tout le son de l'application : musique de fond et effets sonores.";
+"settings.audio.music" = "Musique";
+"settings.audio.music.description" = "Musique de fond et ambiance dans tout le jeu. N'affecte pas les sons des cartes.";
+"settings.audio.music_volume" = "Volume de la musique";
+"settings.audio.sfx" = "Effets des cartes";
+"settings.audio.sfx.description" = "Uniquement les sons du jeu de cartes (séquence) : notes, retournements et jingle de victoire.";
+"settings.sequencing_sfx" = "Sons des cartes de séquence";
+"settings.sequencing_sfx.simplified" = "Simplifiée";
+"settings.sequencing_sfx.orchestral" = "Orchestrale";
+"settings.music"          = "Musique";
+"settings.music.on"       = "Musique activée";
+"settings.music.muted"    = "Musique coupée";
+"settings.music.mute"     = "Couper la musique";
+"settings.music.unmute"   = "Réactiver la musique";
+"settings.music.theme.garden_gate" = "Au-delà de la barrière du jardin";
+"settings.music.theme.red_hood_1" = "Thème du Petit Chaperon Rouge 1";
+"settings.music.theme.red_hood_2" = "Thème du Petit Chaperon Rouge 2";
+"settings.music.theme.red_hood_3" = "Thème du Petit Chaperon Rouge 3";
+"settings.progress"       = "Progression";
+"settings.saved_data"     = "Données sauvegardées";
+"settings.reset_progress" = "Réinitialiser la progression";
+"settings.reset_progress.description" = "Recommence l'aventure depuis le début.";
+"settings.reset_progress.confirm.title" = "Réinitialiser la progression ?";
+"settings.reset_progress.confirm.message" = "Cela effacera vos progrès sauvegardés et vous renverra au début de l'aventure.";
+"settings.reset_progress.confirm.action" = "Réinitialiser";
+"settings.reset_progress.success" = "Données effacées avec succès";
+"settings.app" = "App";
+"settings.app_icon" = "Icône de l'application";
+"settings.app_icon.default" = "Par défaut";
+"settings.app_icon.message" = "Choisissez une icône alternative pour personnaliser votre application.";
+"settings.app_icon.error.title" = "Erreur d'icône";
+"settings.app_icon.error.not_configured" = "L'icône \"%@\" n'est pas configurée correctement dans Xcode.";
+"settings.change_language" = "Changer de langue";
+"settings.change_language.description" = "Choisissez la langue de l'application.";
+"settings.change_language.message" = "Sélectionnez la langue que vous souhaitez utiliser dans l'application.";
+"settings.show_onboarding_again" = "Afficher à nouveau l'onboarding";
+"settings.show_tutorial_again" = "Afficher à nouveau le tutoriel";
+"settings.advanced_settings" = "Paramètres avancés";
+"settings.advanced_gate.title" = "Pour les grands";
+"settings.advanced_gate.message" = "Résous cette addition pour ouvrir les Paramètres avancés.";
+"settings.advanced_gate.placeholder" = "?";
+"settings.advanced_gate.submit" = "Continuer";
+"settings.advanced_gate.wrong" = "Ce n'est pas correct. Réessaie !";
+"settings.support" = "Assistance";
+"settings.whats_new" = "Nouveautés";
+"settings.whats_new.message" = "Nouveautés de la version 1.0.2 :\n\n• Désactivation de la narration vocale automatique sur les pages du livre des contes\n• Amélioration de l'accessibilité en renommant l'option en \"Augmenter le contraste\"\n• Optimisation de la mise en page et de la pagination du livre des contes\n• Amélioration du tutoriel d'introduction sur la carte du monde\n• Raccourcissement des dialogues du Petit Chaperon Rouge pour un meilleur rythme de lecture\n• Ajout d'une bannière de déverrouillage de livre à deux boutons avec prise en charge multilingue et contraste élevé\n• Mise à jour des couleurs de l'interface et amélioration des animations de cartes";
+"settings.contact_me" = "Me contacter";
+"settings.rate_app" = "Évaluer l'application";
+"settings.rate_app.message" = "Le lien d'évaluation sera disponible une fois l'application publiée.";
+"settings.about" = "À propos";
+"settings.about.message" = "World of Fables est un jeu éducatif conçu pour les enfants. Il aide à développer la compréhension narrative, l'ordre logique des événements, l'attention et la mémoire visuelle à travers la reconstruction de contes illustrés.";
+"settings.version" = "Version";
+"settings.privacy_policy" = "Politique de confidentialité";
+"settings.privacy_policy.message" = "POLITIQUE DE CONFIDENTIALITÉ\n\nDernière mise à jour : 1er juin 2026\n\n1. Introduction\nCette Politique de confidentialité décrit comment World of Fables, une application éducative pour enfants conçue pour développer la compréhension narrative, le séquençage logique, l'attention et la mémoire visuelle, gère les informations. L'application est conçue selon les principes de minimisation des données et de confidentialité dès la conception.\n\n2. Responsable du traitement\nLe Responsable du traitement est Marcello Guida. Pour toute question relative à la confidentialité, veuillez contacter : mguida2604@gmail.com.\n\n3. Données personnelles et méthodes de collecte\nL'application ne nécessite pas d'inscription ou de connexion et ne collecte pas les noms, prénoms, adresses e-mail, numéros de téléphone, adresses postales, données de localisation, adresses IP, identifiants de l'appareil, informations sur le système d'exploitation, journaux d'utilisation ou autres informations d'identification. Elle ne crée pas de profils d'utilisateurs.\n\nL'application enregistre uniquement les préférences non personnelles et la progression du jeu localement sur l'appareil en utilisant le stockage UserDefaults d'Apple. Celles-ci peuvent inclure les niveaux terminés, les zones déverrouillées, la position actuelle du jeu, la langue sélectionnée, les préférences d'accessibilité, les paramètres de la musique, les paramètres des animations et les paramètres du retour tactile.\n\nSi un utilisateur ou un parent ou tuteur contacte volontairement l'assistance par e-mail, l'adresse e-mail de l'expéditeur et toute information incluse dans le message seront traitées uniquement pour répondre à la demande.\n\n4. Finalités et bases juridiques au titre du RGPD\nLes paramètres locaux et la progression sont utilisés uniquement pour fournir les fonctionnalités demandées de l'application et préserver l'expérience utilisateur. Ils ne sont pas transmis au Responsable du traitement.\n\nTout e-mail d'assistance est traité pour répondre à la demande de l'utilisateur et, le cas échéant, pour prendre des mesures précontractuelles à la demande de l'utilisateur ou poursuivre l'intérêt légitime du Responsable du traitement à fournir une assistance, conformément à l'article 6, paragraphe 1, point b) et à l'article 6, paragraphe 1, point f) du RGPD. Les données peuvent également être traitées si nécessaire pour se conformer à une obligation légale ou protéger les droits du Responsable du traitement, conformément à l'article 6, paragraphe 1, point c) et à l'article 6, paragraphe 1, point f) du RGPD.\n\n5. Caméra et réalité augmentée\nL'application comprend une fonctionnalité facultative de réalité augmentée. Sous réserve de l'autorisation de l'appareil de l'utilisateur, la caméra est utilisée uniquement pour afficher les cartes de l'histoire dans l'environnement de l'utilisateur via ARKit. L'entrée de la caméra est traitée localement sur l'appareil. L'application n'enregistre pas, ne sauvegarde pas, ne télécharge pas et ne partage pas de photos, de vidéos ou de données de caméra. L'autorisation de la caméra peut être refusée ou révoquée à tout moment dans les paramètres de l'appareil.\n\n6. Sécurité et conservation\nLes préférences locales et la progression restent sur l'appareil et peuvent être supprimées en réinitialisant la progression dans l'application, en désinstallant l'application ou en utilisant les commandes disponibles de l'appareil. Les e-mails d'assistance ne sont conservés que pendant le temps nécessaire pour répondre à la demande, respecter les obligations légales applicables ou protéger les droits du Responsable du traitement. Des mesures techniques et organisationnelles appropriées sont adoptées par rapport au traitement limité effectué.\n\n7. Tiers, stockage à distance et transferts internationaux\nL'application n'envoie pas de données d'utilisateur ou d'appareil au Responsable du traitement, à des serveurs externes, à des bases de données cloud, à des services d'hébergement, à des partenaires ou à des tiers. Elle ne transfère pas de données de l'application en dehors de l'Espace économique européen. Les e-mails volontairement envoyés à l'assistance sont gérés par le biais des services de messagerie utilisés par l'expéditeur et le Responsable du traitement ; les conditions et politiques de confidentialité des fournisseurs concernés s'appliquent et peuvent prévoir un traitement en dehors de l'Espace économique européen conformément à la loi applicable.\n\n8. Cookies, suivi, analyses et publicité\nL'application n'utilise pas de cookies, de technologies de suivi, de SDK d'analyses de tiers, de réseaux publicitaires, de contenu sponsorisé ou de publicité comportementale.\n\n9. Fonctionnalités non présents\nL'application ne comprend pas de comptes d'utilisateurs, de services d'authentification externes, de notifications push, d'achats, de paiements, d'abonnements ou de mécanismes de paiement externes.\n\n10. Confidentialité des enfants\nL'application est destinée aux enfants mais ne collecte pas de données personnelles d'enfants. Le contact d'assistance est destiné aux parents ou tuteurs. Les enfants ne doivent pas envoyer d'informations personnelles par e-mail. Si des données personnelles relatives à un enfant sont reçues involontairement, un parent ou tuteur peut en demander la suppression en contactant le Responsable du traitement.\n\n11. Droits de l'utilisateur\nDans les cas où le Responsable du traitement traite des données personnelles, les utilisateurs peuvent exercer les droits prévus par les articles 15 à 22 du RGPD, le cas échéant : accès, rectification, effacement, limitation du traitement, opposition, portabilité des données et retrait du consentement sans affecter la lisibilité du traitement antérieur. Les utilisateurs peuvent également introduire une réclamation auprès de l'autorité de contrôle compétente, notamment l'Autorité italienne de protection des données (Garante per la protezione dei dati personali).\n\n12. Exercice des droits de confidentialité et contacts\nPour exercer les droits de confidentialité ou demander des informations, veuillez contacter Marcello Guida à mguida2604@gmail.com. Les demandes seront traitées conformément à la loi applicable.\n\n13. Modifications de cette Politique de confidentialité\nCette Politique peut être mise à jour si l'application ou les exigences légales applicables changent. Tout nouveau traitement sera décrit avant d'être introduit. La version mise à jour sera rendue disponible dans l'application.";
+
+/* Accessibility (additional strings) */
+"a11y.info_button"       = "Infos";
+"a11y.info_hint"         = "Affiche les noms des développeurs";
+"a11y.info_close_button" = "Fermer les infos";
+"a11y.info_email_button" = "Écrire un e-mail d'assistance";
+
+/* Red Hood intro */
+"redhood.intro.title"   = "Le Petit Chaperon Rouge";
+"redhood.intro.mascot"  = "Oh non ! Un monstre a détruit tous les contes de fées et a éparpillé leurs scènes partout ! Peux-tu m'aider à reconstituer l'histoire du Petit Chaperon Rouge ?";
+"redhood.intro.button"  = "Commencer l'aventure !";
+
+/* Onboarding */
+"onboarding.skip"           = "Passer";
+"onboarding.next"           = "Suivant";
+"onboarding.start"          = "Sauver les contes !";
+"onboarding.page1.title"    = "Rencontre Lumi";
+"onboarding.page1.body"     = "Il y a bien longtemps, dans un monde magique, vivait un enfant charmant et adorable nommé Lumi, qui était un grand ami de tous les personnages de contes de fées.";
+"onboarding.page2.title"    = "Un tournant sombre";
+"onboarding.page2.body"     = "Un jour, Lumi était à bord du navire, prêt à accoster dans la forêt du Petit Chaperon Rouge pour lui rendre visite. Mais soudain... le ciel devint noir comme de l'encre.";
+"onboarding.page3.title"    = "Lord Tempus";
+"onboarding.page3.body"     = "C'était le maléfique Lord Tempus, le magicien du temps ! Jaloux de ne pas avoir d'histoire à lui, le magicien lança un sort et mélangea les pièces de tous les contes de fées, créant un désordre total ! Maintenant, le Chaperon Rouge et tous les autres sont confus, et les histoires n'ont plus aucun sens.";
+"onboarding.page4.title"    = "Nous avons besoin de toi !";
+"onboarding.page4.body"     = "Lumi a besoin d'un assistant courageux et super intelligent pour tout remettre en ordre... oui ! Lumi a vraiment besoin de toi !";
+
+/* Tutorial */
+"tutorial.skip"             = "Passer le tutoriel";
+"tutorial.next"             = "Suivant";
+"tutorial.done"             = "C'est parti !";
+"tutorial.step1.title"      = "Appuie sur les points de passage";
+"tutorial.step1.body"       = "Pour te déplacer sur la carte, tu dois cliquer sur les points de passage déverrouillés.";
+"tutorial.step2.title"      = "Trouve une Île des Histoires";
+"tutorial.step2.body"       = "Marche vers une île des histoires lumineuse. Quand tu arrives, un bouton de lecture apparaît — appuie dessus pour commencer à restaurer ce conte de fées !";
+"tutorial.step3.title"      = "Restaure l'ordre";
+"tutorial.step3.body"       = "Fais glisser les cartes des scènes dans le bon ordre pour reconstituer le conte de fées. Pense à ce qui se produit en premier !";
+"tutorial.step4.title"      = "Retourne pour des indices";
+"tutorial.step4.body"       = "Tu ne sais pas où va une carte ? Retourne-la pour lire un indice sur le moment où cette scène se déroule dans l'histoire !";
+"tutorial.step5.title"      = "Brise le sort !";
+"tutorial.step5.body"       = "Lorsque tous les emplacements sont remplis, appuie sur Vérifier ! Si tu as raison, tu brises le sort de Lord Tempus sur cette histoire. Tu es un héros !";
+
+/* Accessibility */
+"a11y.play_red_hood"        = "Jouer au Petit Chaperon Rouge";
+"a11y.start_event"          = "Commencer l'événement";
+"a11y.go_back"              = "Retourner en arrière";
+"a11y.return_to_menu"       = "Retourner au menu principal";
+"a11y.play_button"          = "Jouer";
+"a11y.settings_button"      = "Ouvrir les paramètres";
+"a11y.settings_hint"        = "Ouvre l'écran des paramètres";
+"a11y.locked_level"         = "Niveau verrouillé";
+"a11y.menu_hint"            = "Quitte la carte du monde et ouvre l'écran titre";
+"a11y.play_hint"            = "Ouvre le rideau de nuages et commence l'aventure";
+"a11y.main_menu"            = "Menu principal";
+"a11y.world_map"            = "Carte du monde";
+"a11y.avatar"               = "Personnage";
+"a11y.celebration"          = "Félicitations ! Tu as réussi !";
+"a11y.tap_to_play"          = "Appuyer pour jouer";
+"a11y.level_locked_hint"    = "Ce niveau est verrouillé. Termine les niveaux précédents pour le déverrouiller.";
+"a11y.tap_to_replay"        = "Appuyer pour rejouer";
+"a11y.continue_sequencing"  = "Continuer vers l'activité de séquençage";
+"a11y.check_order"          = "Vérifier l'ordre de ton histoire";
+"a11y.flip_all"             = "Retourner toutes les cartes";
+"a11y.story_scene_card"     = "Carte de scène de l'histoire";
+"a11y.story_scene_card_hint" = "Double-clique pour retourner et lire un indice.";
+"a11y.button_select_app_icon" = "Sélectionner l'icône de l'application";
+"a11y.button_locked"          = "Cet élément est verrouillé";
+"a11y.button_open_social_link" = "Ouvrir le lien vers les réseaux sociaux";
+"a11y.hint_adjust_slider"     = "Ajuste le curseur avec les flèches haut et bas";
+"a11y.source_tray"            = "Cartes sources";
+"a11y.source_tray_hint"       = "Fais glisser les cartes d'ici vers les emplacements";
+"a11y.continue_button"        = "Continuer";
+"a11y.continue_hint"          = "Passe à l'événement suivant";
+"a11y.envelope_open_button"   = "Ouvrir le paquet";
+"a11y.envelope_open_hint"     = "Ouvre l'enveloppe pour révéler les cartes déverrouillées";
+
+/* French Story Book Scenes */
+"story.redhood.scene1.title" = "Scène 1";
+"story.redhood.scene1.text1" = "Il était une fois, au plus profond d'une forêt dense, une petite maisonnette où vivait une jolie petite fille. Tout le monde l'appelait le Petit Chaperon Rouge parce que sa maman lui avait confectionné un magnifique manteau rouge avec un capuchon assorti.";
+"story.redhood.scene1.text2" = "Un matin, sa maman lui dit : « Grand-mère est malade et alitée avec un gros rhume. Apporte-lui ce panier de gâteaux frais, mais souviens-toi : reste bien sur le sentier principal et ne t'arrête pas ! »\n\nLa fillette embrassa sa maman pour lui dire au revoir et promit : « Ne t'inquiète pas, Maman ! Je marcherai vite et j'irai directement chez Grand-mère. »";
+
+"story.redhood.scene2.title" = "Scène 2";
+"story.redhood.scene2.text1" = "Cependant, dès qu'elle entra dans la forêt, elle oublia sa promesse. Elle vit un parterre de délicieuses fraises des bois et de merveilleuses fleurs, et posa son panier par terre.";
+"story.redhood.scene2.text2" = "« Grand-mère va adorer ça ! » pensa-t-elle, courant çà et là pour les cueillir.\n\nSoudain, elle réalisa à quel point il était tard, se dépêcha de récupérer son panier et reprit rapidement le sentier.";
+
+"story.redhood.scene3.title" = "Scène 3";
+"story.redhood.scene3.text1" = "Alors que les bois s'assombrissaient, un grand loup noir surgit de derrière les arbres. Le cœur du Petit Chaperon Rouge se mit à battre la chamade.\n\n« Où vas-tu ainsi toute seule, fillette ? » demanda le loup d'une voix grave.";
+"story.redhood.scene3.text2" = "« Je vais à la maisonnette de ma grand-mère, au bout de ce sentier, pour lui apporter des gâteaux, » répondit-elle timidement.\n\nL'astucieux loup échafauda rapidement un plan. « Bon voyage ! » dit-il, et il disparut instantanément dans les buissons.";
+
+"story.redhood.scene4.title" = "Scène 4";
+"story.redhood.scene4.text1" = "Le loup courut aussi vite qu'il le put, ne pensant qu'à son prochain repas. Il arriva à la maisonnette et frappa doucement à la porte. Toc ! Toc !";
+"story.redhood.scene4.text2" = "« Qui est là ? » demanda la grand-mère.\n\n« C'est moi, le Petit Chaperon Rouge ! » répondit le loup en déguisant sa voix.\n\n« Entre, ma chérie, la porte n'est pas fermée à clé, » dit la vieille dame.";
+
+"story.redhood.scene5.title" = "Scène 5";
+"story.redhood.scene5.text1" = "Le loup fit irruption dans la pièce, mais l'astucieuse grand-mère se cacha rapidement dans l'armoire pour ne pas être découverte.";
+"story.redhood.scene5.text2" = "Trouvant la pièce vide, le loup enfila sa coiffe de nuit, se glissa dans le lit et remonta les couvertures.";
+
+"story.redhood.scene6.title" = "Scène 6";
+"story.redhood.scene6.text1" = "Peu après, le Petit Chaperon Rouge arriva et frappa.\n\n« Entre, ma douce enfant, » murmura le loup, essayant de paraître affectueux.";
+"story.redhood.scene6.text2" = "La fillette entra mais remarqua que quelque chose était très étrange.";
+
+"story.redhood.scene7.title" = "Scène 7";
+"story.redhood.scene7.text1" = "« Oh, Grand-mère, comme tu as une voix grave ! »\n\n« C'est pour mieux te parler, mon enfant. »\n\n« Et comme tu as de grands yeux ! »\n\n« C'est pour mieux te voir, mon enfant. »";
+"story.redhood.scene7.text2" = "« Et comme tu as de grandes mains ! »\n\n« C'est pour mieux t'embrasser, mon enfant. »\n\n« Mais Grand-mère... quelle bouche géante tu as ! » sursauta-t-elle.\n\n« C'est pour mieux te MANGER ! » rugit le loup.\n\nIl sauta hors du lit, mais le Petit Chaperon Rouge, terrifiée, se mit à hurler de toutes ses forces !";
+
+"story.redhood.scene8.title" = "Scène 8";
+"story.redhood.scene8.text1" = "Un bûcheron qui passait par là entendit les cris stridents du Petit Chaperon Rouge provenant de la maisonnette. Il courut aussi vite que possible et enfonça la porte avec un grand bâton de bois.\n\nEn voyant le courageux bûcheron, le loup poltron paniqua, sauta par la fenêtre et s'enfuit au plus profond de la forêt pour ne plus jamais réapparaître.";
+"story.redhood.scene8.text2" = "Entendant que le danger était écarté, la grand-mère sortit enfin de l'armoire.\n\nLe Petit Chaperon Rouge et sa grand-mère se serrèrent fort dans les bras, si heureuses d'être enfin saines et sauves. Elles remercièrent le courageux bûcheron de tout leur cœur pour leur avoir sauvé la vie.";
+
+/* Image placeholders */
+"Immagine di Introduzione" = "Image d'introduction";
+"Immagine di Ricompensa"   = "Image de récompense";
+
+/* Storybook placeholders */
+"book.placeholder.play_to_unlock" = "Joue pour déverrouiller plus de scènes !";
+
+/* Review Popup */
+"review.popup.title" = "Tu aimes Lumi ?";
+"review.popup.message" = "Si tu t'amuses avec nos contes, laisse-nous une évaluation ! Cela nous aide à créer de nouvelles histoires.";
+"review.popup.rate" = "Évaluer l'app";
+"review.popup.later" = "Plus tard";
+
+/* AR Scan Strings */
+"ar.scan.title" = "Scan de la pièce...";
+"ar.scan.not_available" = "Déplace l'appareil pour scanner...";
+"ar.scan.limited" = "Continue à bouger...";
+"ar.scan.extending" = "Cartographie en cours...";
+"ar.scan.mapped" = "Presque prêt !";
+"ar.scan.find_card" = "Trouve la carte :";
+"ar.scan.congrats" = "Excellent travail !";
+"ar.scan.found_all" = "Tu as trouvé toutes les cartes.";
+"ar.scan.correct" = "Correct !";
+
+/* Interactive Tutorial */
+"tutorial.play_to_start" = "Appuie sur Jouer pour commencer l'histoire !";
+"tutorial.drag_first_scene" = "Fais glisser la première scène dans le premier emplacement";
+"tutorial.tap_to_flip" = "Appuie sur la carte pour la retourner et lire l'indice";
