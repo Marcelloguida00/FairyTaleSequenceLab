@@ -10,6 +10,7 @@ extension Notification.Name {
 
 // MARK: - AppSpeechSynthesizer
 
+@MainActor
 final class AppSpeechSynthesizer: NSObject, AVSpeechSynthesizerDelegate {
     static let shared = AppSpeechSynthesizer()
 

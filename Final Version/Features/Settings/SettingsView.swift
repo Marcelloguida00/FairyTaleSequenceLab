@@ -53,6 +53,7 @@ struct SettingsView: View {
     @State private var showInternalAdvancedMathGate = false
     @State private var internalAdvancedMathProblem = MathAdditionProblem.randomSimple()
     @State private var currentAppIcon: String? = UIApplication.shared.alternateIconName
+    @State private var is102Expanded = false
 
     init(
         onClose: (() -> Void)? = nil,
@@ -834,6 +835,8 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: usesFrameLayout ? 24 : 18) {
                 if detail == .about {
                     aboutDetailContent
+                } else if detail == .whatsNew {
+                    whatsNewDetailContent
                 } else {
                     detailHeaderCard(detail)
 
@@ -1534,6 +1537,91 @@ struct SettingsView: View {
         .accessibilityLabel(title)
         .accessibilityHint(isUnlocked ? lm.t("a11y.button_select_app_icon") : lm.t("a11y.button_locked"))
         .accessibilityAddTraits(isSelected && isUnlocked ? [.isSelected] : [])
+    }
+
+    private var whatsNewDetailContent: some View {
+        VStack(alignment: .leading, spacing: usesFrameLayout ? 24 : 18) {
+            // Header Card
+            settingsCard(largeStyle: usesFrameLayout) {
+                VStack(alignment: .leading, spacing: usesFrameLayout ? 20 : 16) {
+                    Image(systemName: "sparkles")
+                        .font(.app(size: usesFrameLayout ? 38 : 30, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityHidden(true)
+
+                    Text(lm.t("settings.whats_new"))
+                        .font(.app(usesFrameLayout ? .title : .title3, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(usesFrameLayout ? 24 : 18)
+            }
+            
+            // Current Version Card (1.0.3) - Always Open
+            settingsCard(largeStyle: usesFrameLayout) {
+                VStack(alignment: .leading, spacing: usesFrameLayout ? 16 : 12) {
+                    HStack {
+                        Text("\(lm.t("settings.version")) 1.0.3")
+                            .font(.app(usesFrameLayout ? .title2 : .headline, weight: .bold))
+                            .foregroundStyle(SettingsTheme.menuRowText)
+                        
+                        Spacer()
+                        
+                        Text(lm.t("button.play").lowercased() == "gioca" ? "Attuale" : "Current")
+                            .font(.app(size: usesFrameLayout ? 14 : 11, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Color.blue)
+                            .cornerRadius(6)
+                    }
+                    
+                    Text(lm.t("settings.whats_new.v103.message"))
+                        .font(.app(usesFrameLayout ? .title3 : .body))
+                        .foregroundStyle(SettingsTheme.secondaryText)
+                        .lineSpacing(usesFrameLayout ? 6 : 5)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(usesFrameLayout ? 24 : 18)
+            }
+            
+            // Previous Version Card (1.0.2) - Collapsible
+            settingsCard(largeStyle: usesFrameLayout) {
+                VStack(alignment: .leading, spacing: usesFrameLayout ? 16 : 12) {
+                    Button {
+                        AppSettings.hapticImpact(.light)
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            is102Expanded.toggle()
+                        }
+                    } label: {
+                        HStack {
+                            Text("\(lm.t("settings.version")) 1.0.2")
+                                .font(.app(usesFrameLayout ? .title3 : .body, weight: .bold))
+                                .foregroundStyle(SettingsTheme.menuRowText)
+                            
+                            Spacer()
+                            
+                            Image(systemName: is102Expanded ? "chevron.up" : "chevron.down")
+                                .font(.app(size: usesFrameLayout ? 18 : 14, weight: .semibold))
+                                .foregroundStyle(SettingsTheme.secondaryText)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    
+                    if is102Expanded {
+                        Text(lm.t("settings.whats_new.message"))
+                            .font(.app(usesFrameLayout ? .body : .callout))
+                            .foregroundStyle(SettingsTheme.secondaryText)
+                            .lineSpacing(usesFrameLayout ? 5 : 4)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .transition(.opacity)
+                    }
+                }
+                .padding(usesFrameLayout ? 24 : 18)
+            }
+        }
     }
 
     private var aboutDetailContent: some View {

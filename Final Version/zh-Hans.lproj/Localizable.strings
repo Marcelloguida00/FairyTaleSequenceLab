@@ -159,6 +159,7 @@
 "settings.support" = "支持";
 "settings.whats_new" = "新功能";
 "settings.whats_new.message" = "1.0.2 版本新功能：\n\n• 关闭了故事书页面的自动语音旁白\n• 改进辅助功能支持，将对比度选项更名为“增强对比度”\n• 优化了故事书的版式和分页\n• 改进了世界地图上的新手教程\n• 缩短了小红帽的对话，让节奏更流畅\n• 新增带两个按钮的图书解锁横幅，支持多语言和高对比度\n• 更新了界面配色并改进了卡片排序动画";
+"settings.whats_new.v103.message" = "• 地图交互式教程的重新设计与优化\n• 初始新手引导流程的架构重构\n• 扩展多语言本地化支持（约10种语言）\n• 故事书视觉版式与美术设计的深度优化\n• 基于 ARKit 框架的增强现实（AR）功能集成\n• 针对波斯语的从右至左（RTL）排版布局适配\n• 补全 OpenDyslexic 字体的官方版权与致谢信息\n• 提升高级无障碍辅助功能（优化 VoiceOver 与高对比度支持）";
 "settings.contact_me" = "联系我";
 "settings.rate_app" = "为应用评分";
 "settings.rate_app.message" = "应用发布后将提供评分链接。";

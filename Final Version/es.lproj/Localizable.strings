@@ -159,6 +159,7 @@
 "settings.support" = "Apoyo";
 "settings.whats_new" = "Qué hay de nuevo";
 "settings.whats_new.message" = "Novedades de la versión 1.0.2:\n\n• Narración de voz automática deshabilitada en las páginas del libro de cuentos.\n• Soporte de accesibilidad mejorado al cambiar el nombre de la opción de contraste a \"Aumentar contraste\"\n• Diseño y paginación optimizados del libro de cuentos.\n• Se mejoró el tutorial introductorio sobre el mapa mundial.\n• Diálogos de Caperucita Roja acortados para un mejor ritmo\n• Se agregó un banner de desbloqueo de libros con dos botones compatible con varios idiomas y alto contraste.\n• Colores de interfaz de usuario actualizados y animaciones de secuenciación de tarjetas mejoradas";
+"settings.whats_new.v103.message" = "• Rediseño y optimización del tutorial interactivo del mapa\n• Reestructuración del flujo de onboarding inicial\n• Extensión del soporte de localización a aproximadamente 10 idiomas\n• Optimización del diseño y maquetación visual del libro de cuentos\n• Integración de realidad aumentada mediante el framework ARKit\n• Implementación de soporte para diseño de derecha a izquierda (RTL) en idioma persa\n• Inclusión de atribuciones y créditos oficiales para la fuente OpenDyslexic\n• Perfeccionamiento de funciones avanzadas de accesibilidad (VoiceOver y contraste)";
 "settings.contact_me" = "Contáctame";
 "settings.rate_app" = "Califica la aplicación";
 "settings.rate_app.message" = "El enlace de calificación estará disponible cuando se publique la aplicación.";

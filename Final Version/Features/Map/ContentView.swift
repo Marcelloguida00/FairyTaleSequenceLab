@@ -305,7 +305,7 @@ struct ContentView: View {
                         currentBaseID = RedHoodMapGraph.initialWaypoint.id
                         avatarPosition = RedHoodMapGraph.initialWaypoint.point
                         
-                        pendingRedHoodLevel = nil
+                        pendingRedHoodLevel = RedHoodMapGraph.initialWaypoint.id
                         activeRedHoodLevel = nil
                         redHoodPostSequenceReward = nil
                         pendingChapterUnlockLevel = nil
@@ -615,11 +615,19 @@ struct ContentView: View {
     private func handleBackButton() {
         if activeRedHoodLevel != nil || redHoodPostSequenceReward != nil || pendingChapterUnlockLevel != nil {
             let isTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
+            let targetWaypointId = activeRedHoodLevel ?? redHoodPostSequenceReward?.level ?? pendingChapterUnlockLevel
             withAnimation(.easeInOut(duration: 0.3)) {
                 activeRedHoodLevel = nil
                 redHoodPostSequenceReward = nil
                 pendingChapterUnlockLevel = nil
-                pendingRedHoodLevel = nil
+                if let wpId = targetWaypointId, shouldOfferRedHoodLevelStart(for: wpId) {
+                    pendingRedHoodLevel = wpId
+                } else if let currentWpId = nearestWaypoint(to: avatarPosition, among: RedHoodMapGraph.waypoints)?.id,
+                          shouldOfferRedHoodLevelStart(for: currentWpId) {
+                    pendingRedHoodLevel = currentWpId
+                } else {
+                    pendingRedHoodLevel = nil
+                }
                 suppressesMapChromeForDialogue = true
             }
             if isTemp {
@@ -741,12 +749,13 @@ struct ContentView: View {
 
         loadWorldMapProgress()
 
+        var hasLoadedSaved = false
         if let savedID = UserDefaults.standard.object(forKey: "currentBaseID") as? Int {
             if activeMap == .redHood {
                 if let wp = RedHoodMapGraph.waypoint(id: savedID) {
                     currentBaseID = savedID
                     avatarPosition = wp.point
-                    return
+                    hasLoadedSaved = true
                 }
             } else {
                 if MapGraph.baseIDs.contains(savedID),
@@ -754,17 +763,29 @@ struct ContentView: View {
                    let wp = MapGraph.waypoint(id: savedID) {
                     currentBaseID = savedID
                     avatarPosition = wp.point
-                    return
+                    hasLoadedSaved = true
                 }
             }
         }
 
+        if !hasLoadedSaved {
+            if activeMap == .redHood {
+                currentBaseID = RedHoodMapGraph.initialWaypoint.id
+                avatarPosition = RedHoodMapGraph.initialWaypoint.point
+            } else {
+                currentBaseID = MapGraph.initialWaypoint.id
+                avatarPosition = MapGraph.initialWaypoint.point
+            }
+        }
+
         if activeMap == .redHood {
-            currentBaseID = RedHoodMapGraph.initialWaypoint.id
-            avatarPosition = RedHoodMapGraph.initialWaypoint.point
+            if shouldOfferRedHoodLevelStart(for: currentBaseID) {
+                pendingRedHoodLevel = currentBaseID
+            } else {
+                pendingRedHoodLevel = nil
+            }
         } else {
-            currentBaseID = MapGraph.initialWaypoint.id
-            avatarPosition = MapGraph.initialWaypoint.point
+            pendingRedHoodLevel = nil
         }
     }
 
@@ -811,7 +832,11 @@ struct ContentView: View {
             }
             
             activeRedHoodLevel = nil
-            pendingRedHoodLevel = nil
+            if activeMap == .redHood && shouldOfferRedHoodLevelStart(for: currentBaseID) {
+                pendingRedHoodLevel = currentBaseID
+            } else {
+                pendingRedHoodLevel = nil
+            }
             redHoodPostSequenceReward = nil
             pendingChapterUnlockLevel = nil
         }
@@ -844,7 +869,14 @@ struct ContentView: View {
         withAnimation(.easeInOut(duration: 0.3)) {
             markRedHoodLevelCompleted(level)
             activeRedHoodLevel = nil
-            pendingRedHoodLevel = nil
+            let nextLvl = level + 1
+            if shouldOfferRedHoodLevelStart(for: nextLvl) {
+                pendingRedHoodLevel = nextLvl
+            } else if shouldOfferRedHoodLevelStart(for: level) {
+                pendingRedHoodLevel = level
+            } else {
+                pendingRedHoodLevel = nil
+            }
         }
 
         if level == 1 && UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
@@ -1068,7 +1100,8 @@ struct ContentView: View {
     private var showsRedHoodLevelPlayButton: Bool {
         activeMap == .redHood &&
             activeRedHoodLevel == nil &&
-            pendingRedHoodLevel != nil
+            pendingRedHoodLevel != nil &&
+            !isWalking
     }
 
     /// Chapter title between back and settings on the Red Hood map only (not world map).
@@ -1180,11 +1213,6 @@ struct ContentView: View {
             projection: projection,
             radius: dotHitRadius(for: projection.renderedSize)
         ) else {
-            if pendingRedHoodLevel != nil {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    pendingRedHoodLevel = nil
-                }
-            }
             return
         }
 
@@ -1198,10 +1226,6 @@ struct ContentView: View {
             if shouldOfferRedHoodLevelStart(for: target.id) {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
-                }
-            } else if pendingRedHoodLevel != nil {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    pendingRedHoodLevel = nil
                 }
             }
             return
@@ -1348,6 +1372,11 @@ struct ContentView: View {
             avatarPosition = RedHoodMapGraph.initialWaypoint.point
             currentBaseID = RedHoodMapGraph.initialWaypoint.id
             avatarDirection = .up
+            if shouldOfferRedHoodLevelStart(for: RedHoodMapGraph.initialWaypoint.id) {
+                pendingRedHoodLevel = RedHoodMapGraph.initialWaypoint.id
+            } else {
+                pendingRedHoodLevel = nil
+            }
         }
     }
 
