@@ -105,8 +105,7 @@
 "settings.audio.music.description" = "Musica di sottofondo e atmosfera in tutto il gioco. Non influisce sui suoni delle carte.";
 "settings.audio.music_volume" = "Volume musica";
 "settings.audio.sfx" = "Effetti carte";
-"settings.audio.sfx.description" = "Solo i suoni del gioco carte (sequenza): note, flip e jingle di vittoria.";
-"settings.sequencing_sfx" = "Suoni carte sequenza";
+"settings.audio.sfx.description" = "Suoni delle carte: note, flip e jingle di vittoria.";
 "settings.sequencing_sfx.simplified" = "Semplificata";
 "settings.sequencing_sfx.orchestral" = "Orchestrale";
 "settings.music"          = "Musica";

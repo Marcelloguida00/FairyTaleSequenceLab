@@ -105,11 +105,10 @@
 "settings.audio.master" = "Audio e aplikacionit";
 "settings.audio.master.description" = "Çaktivizon të gjithë audion në aplikacion: muzikë dhe efekte.";
 "settings.audio.music" = "Muzika";
-"settings.audio.music.description" = "Muzika e sfondit dhe atmosfera në gjithë lojën. Nuk ndikon te tingujt e kartave.";
+"settings.audio.music.description" = "Muzika e sfondit dhe atmosfera në gjithë lojën. Nuk ndikon te efektet e kartave.";
 "settings.audio.music_volume" = "Volumi i muzikës";
 "settings.audio.sfx" = "Efektet e kartave";
-"settings.audio.sfx.description" = "Vetëm tingujt e lojës me karta (sekuencë): nota, flip dhe jingle fitoreje.";
-"settings.sequencing_sfx" = "Tingujt e kartave të sekuencës";
+"settings.audio.sfx.description" = "Tingujt e kartave: nota, flip dhe jingle fitoreje.";
 "settings.sequencing_sfx.simplified" = "E thjeshtuar";
 "settings.sequencing_sfx.orchestral" = "Orkestrale";
 "settings.music"          = "Muzika";

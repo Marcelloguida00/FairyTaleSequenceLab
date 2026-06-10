@@ -26,18 +26,21 @@ struct OnboardingIntroFlowView: View {
             ZStack {
                 switch phase {
                 case .intro1:
-                    OnboardingStillSceneView(
-                        backgroundImageName: "OnboardingSea",
-                        narrationResource: "onboarding1"
-                    ) {
+                    Onboarding1HarborSceneView {
                         advance(to: .ship)
                     }
 
                 case .ship:
                     if !hidesShipScene {
-                        ShipOnboardingSceneView {
-                            advanceToVillain()
-                        }
+                        ShipOnboardingSceneView(
+                            onComplete: {
+                                advanceToVillain()
+                            },
+                            startsUnderCloudCover: true,
+                            onNarrationStart: {
+                                playNarration(at: 1)
+                            }
+                        )
                         .opacity(showsVillainScene ? 0 : 1)
                         .allowsHitTesting(!showsVillainScene)
                     }
@@ -101,9 +104,6 @@ struct OnboardingIntroFlowView: View {
         narratorScriptIndex = next.rawValue
         phase = next
 
-        if next == .ship {
-            playNarration(at: 1)
-        }
     }
 
     private func advanceToVillain() {
@@ -133,6 +133,11 @@ struct OnboardingIntroFlowView: View {
 }
 
 enum OnboardingScripts {
+    static let brightCloudImageName = "cloud"
+    static let stormCloudImageName = "cloudBlack"
+    /// Default storm clouds for onboarding scenes 2→4 and the villain.
+    static let cloudImageName = stormCloudImageName
+
     static let bodyKeys = [
         "onboarding.page1.body",
         "onboarding.page2.body",

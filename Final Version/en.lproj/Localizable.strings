@@ -115,11 +115,10 @@
 "settings.audio.master" = "App audio";
 "settings.audio.master.description" = "Turns off all audio in the app: music and sound effects.";
 "settings.audio.music" = "Music";
-"settings.audio.music.description" = "Background music and ambience throughout the game. Does not affect card-game sounds.";
+"settings.audio.music.description" = "Background music and ambience throughout the game. Does not affect card effects.";
 "settings.audio.music_volume" = "Music volume";
 "settings.audio.sfx" = "Card game effects";
-"settings.audio.sfx.description" = "Sounds in the card sequencing activity only: notes, flips, and victory jingle.";
-"settings.sequencing_sfx" = "Sequencing card sounds";
+"settings.audio.sfx.description" = "Card activity sounds: notes, flips, and victory jingle.";
 "settings.sequencing_sfx.simplified" = "Simplified";
 "settings.sequencing_sfx.orchestral" = "Orchestral";
 "settings.music"          = "Music";

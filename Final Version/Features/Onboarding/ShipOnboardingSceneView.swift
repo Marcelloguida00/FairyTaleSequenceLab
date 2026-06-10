@@ -3,6 +3,20 @@ import SwiftUI
 /// Sea voyage intro: ship sails to the pier, celebrates, clouds gather, then hands off to the villain cinematic.
 struct ShipOnboardingSceneView: View {
     let onComplete: () -> Void
+    let startsUnderCloudCover: Bool
+    let onNarrationStart: (() -> Void)?
+
+    init(
+        onComplete: @escaping () -> Void,
+        startsUnderCloudCover: Bool = false,
+        onNarrationStart: (() -> Void)? = nil
+    ) {
+        self.onComplete = onComplete
+        self.startsUnderCloudCover = startsUnderCloudCover
+        self.onNarrationStart = onNarrationStart
+        _coverCloudEnter = State(initialValue: startsUnderCloudCover ? 1 : 0)
+        _usesBrightHandoffClouds = State(initialValue: startsUnderCloudCover)
+    }
 
     private static let cloudSkyColor = Color(red: 0.55, green: 0.78, blue: 0.95)
 
@@ -16,6 +30,8 @@ struct ShipOnboardingSceneView: View {
     @State private var rightCornerCloudEnter: CGFloat = 0
     @State private var coverCloudEnter: CGFloat = 0
     @State private var curtainCloudExit: CGFloat = 0
+    @State private var didStartNarration = false
+    @State private var usesBrightHandoffClouds: Bool
 
     /// Top-left open sea → knee across the water → pier (bottom-right).
     private static let sailStart = CGPoint(x: 0.04, y: 0.14)
@@ -35,6 +51,12 @@ struct ShipOnboardingSceneView: View {
     private let shipWidthScale: CGFloat = 0.54
     private var timingScale: TimeInterval { OnboardingScripts.shipTimingScale }
 
+    private var cloudImageName: String {
+        usesBrightHandoffClouds
+            ? OnboardingScripts.brightCloudImageName
+            : OnboardingScripts.stormCloudImageName
+    }
+
     var body: some View {
         GeometryReader { proxy in
             let shipWidth = min(proxy.size.width, proxy.size.height) * shipWidthScale
@@ -53,6 +75,7 @@ struct ShipOnboardingSceneView: View {
                 CloudTransitionOverlay(
                     enterProgress: leftCornerCloudEnter,
                     exitProgress: curtainCloudExit,
+                    cloudImageName: cloudImageName,
                     entrySideFilter: .fromLeft,
                     anchorYMax: 0.36,
                     opacityScale: cornerCloudOpacityScale,
@@ -63,6 +86,7 @@ struct ShipOnboardingSceneView: View {
                 CloudTransitionOverlay(
                     enterProgress: rightCornerCloudEnter,
                     exitProgress: curtainCloudExit,
+                    cloudImageName: cloudImageName,
                     entrySideFilter: .fromRight,
                     anchorYMax: 0.36,
                     opacityScale: cornerCloudOpacityScale,
@@ -72,7 +96,8 @@ struct ShipOnboardingSceneView: View {
 
                 CloudTransitionOverlay(
                     enterProgress: coverCloudEnter,
-                    exitProgress: curtainCloudExit
+                    exitProgress: curtainCloudExit,
+                    cloudImageName: cloudImageName
                 )
             }
         }
@@ -125,6 +150,12 @@ struct ShipOnboardingSceneView: View {
             return
         }
 
+        if startsUnderCloudCover {
+            await openCurtainFromIntroHandoff()
+        } else {
+            startNarrationIfNeeded()
+        }
+
         currentShipImage = "ShipSailing"
         sailProgress = 0
 
@@ -167,7 +198,39 @@ struct ShipOnboardingSceneView: View {
     }
 
     @MainActor
+    private func openCurtainFromIntroHandoff() async {
+        try? await Task.sleep(nanoseconds: UInt64(CloudTransitionAnimator.holdAfterSceneChange * 1_000_000_000))
+
+        let openDuration = CloudTransitionAnimator.exitDuration
+        animate(duration: openDuration) {
+            curtainCloudExit = 1
+        }
+        try? await Task.sleep(nanoseconds: UInt64(openDuration * 1_000_000_000))
+
+        curtainCloudExit = 0
+        coverCloudEnter = 0
+        usesBrightHandoffClouds = false
+        startNarrationIfNeeded()
+    }
+
+    @MainActor
+    private func startNarrationIfNeeded() {
+        guard !didStartNarration else { return }
+        didStartNarration = true
+        onNarrationStart?()
+    }
+
+    @MainActor
     private func runReducedMotionSequence() async {
+        if startsUnderCloudCover {
+            coverCloudEnter = 1
+            curtainCloudExit = 1
+            coverCloudEnter = 0
+            curtainCloudExit = 0
+            usesBrightHandoffClouds = false
+            startNarrationIfNeeded()
+        }
+
         animate(duration: 0.2) {
             sailProgress = 1
             coverCloudEnter = 1
