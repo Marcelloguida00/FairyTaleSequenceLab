@@ -37,7 +37,8 @@ struct OnboardingStillSceneView: View {
 
                 CloudTransitionOverlay(
                     enterProgress: coverCloudEnter,
-                    exitProgress: curtainCloudExit
+                    exitProgress: curtainCloudExit,
+                    cloudImageName: OnboardingScripts.cloudImageName
                 )
             }
         }

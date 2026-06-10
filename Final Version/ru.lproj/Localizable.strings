@@ -102,11 +102,10 @@
 "settings.audio.master" = "Звук приложения";
 "settings.audio.master.description" = "Отключает весь звук в приложении: музыку и эффекты.";
 "settings.audio.music" = "Музыка";
-"settings.audio.music.description" = "Фоновая музыка и атмосфера во всей игре. Не влияет на звуки карточной игры.";
+"settings.audio.music.description" = "Фоновая музыка и атмосфера во всей игре. Не влияет на эффекты карт.";
 "settings.audio.music_volume" = "Громкость музыки";
 "settings.audio.sfx" = "Эффекты карт";
-"settings.audio.sfx.description" = "Только звуки игры с картами (последовательность): ноты, перевороты и финальный джингл.";
-"settings.sequencing_sfx" = "Звуки карт последовательности";
+"settings.audio.sfx.description" = "Звуки карт: ноты, перевороты и финальный джингл.";
 "settings.sequencing_sfx.simplified" = "Упрощённая";
 "settings.sequencing_sfx.orchestral" = "Оркестровая";
 "settings.voice_over" = "VoiceOver";

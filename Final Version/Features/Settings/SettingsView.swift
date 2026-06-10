@@ -1257,25 +1257,6 @@ struct SettingsView: View {
         .accessibilityHint(lm.t("a11y.hint_adjust_slider"))
     }
 
-    private func sequencingSFXSectionHeader(expanded: Bool) -> some View {
-        HStack(spacing: expanded ? 18 : 14) {
-            Image(systemName: "square.stack.3d.up.fill")
-                .font(.app(size: expanded ? 24 : 20, weight: .semibold))
-                .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.secondaryText)
-                .frame(width: expanded ? 36 : 28)
-                .accessibilityHidden(true)
-
-            Text(lm.t("settings.sequencing_sfx"))
-                .font(.app(expanded ? .title3 : .body, weight: .semibold))
-                .foregroundStyle(expanded ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, expanded ? 24 : 18)
-        .padding(.vertical, expanded ? 16 : 12)
-        .accessibilityAddTraits(.isHeader)
-    }
-
     @ViewBuilder
     private func sequencingSFXModeRow(
         _ mode: SequencingSFXMode,

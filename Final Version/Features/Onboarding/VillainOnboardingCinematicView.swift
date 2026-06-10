@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Cinematic first-launch intro: villain crosses the world map, casts a spell, clouds darken and cover the screen, then reveal the main menu.
+/// Cinematic first-launch intro: villain crosses the world map, casts a spell, storm clouds cover the screen, then reveal the main menu.
 struct VillainOnboardingCinematicView: View {
     let onFinish: () -> Void
     let startsUnderCloudCover: Bool
@@ -42,10 +42,9 @@ struct VillainOnboardingCinematicView: View {
     @State private var villainCloudExit: CGFloat = 0
     @State private var showsOnboardingMap = true
 
-    @State private var cloudTint: Color = .white
-    @State private var cloudBrightness: CGFloat = 0
-    @State private var cloudSaturation: CGFloat = 1
     @State private var skyDimming: CGFloat = 0
+
+    private let cloudImageName = OnboardingScripts.cloudImageName
 
     @State private var villainX: CGFloat = 1.18
     @State private var villainY: CGFloat = 0.44
@@ -100,9 +99,7 @@ struct VillainOnboardingCinematicView: View {
                     CloudTransitionOverlay(
                         enterProgress: rightCloudTrailEnter,
                         exitProgress: villainCloudExit,
-                        cloudTint: cloudTint,
-                        cloudBrightness: cloudBrightness,
-                        cloudSaturation: cloudSaturation,
+                        cloudImageName: cloudImageName,
                         entrySideFilter: .fromRightTrailing,
                         opacityScale: sideTrailOpacityScale,
                         cloudSizeScale: sideTrailCloudSizeScale,
@@ -112,9 +109,7 @@ struct VillainOnboardingCinematicView: View {
                     CloudTransitionOverlay(
                         enterProgress: rightCloudEnter,
                         exitProgress: villainCloudExit,
-                        cloudTint: cloudTint,
-                        cloudBrightness: cloudBrightness,
-                        cloudSaturation: cloudSaturation,
+                        cloudImageName: cloudImageName,
                         entrySideFilter: .fromRight,
                         opacityScale: sideMainOpacityScale,
                         cloudSizeScale: sideMainCloudSizeScale
@@ -123,9 +118,7 @@ struct VillainOnboardingCinematicView: View {
                     CloudTransitionOverlay(
                         enterProgress: leftCloudTrailEnter,
                         exitProgress: villainCloudExit,
-                        cloudTint: cloudTint,
-                        cloudBrightness: cloudBrightness,
-                        cloudSaturation: cloudSaturation,
+                        cloudImageName: cloudImageName,
                         entrySideFilter: .fromLeftTrailing,
                         opacityScale: sideTrailOpacityScale,
                         cloudSizeScale: sideTrailCloudSizeScale,
@@ -135,9 +128,7 @@ struct VillainOnboardingCinematicView: View {
                     CloudTransitionOverlay(
                         enterProgress: leftCloudEnter,
                         exitProgress: villainCloudExit,
-                        cloudTint: cloudTint,
-                        cloudBrightness: cloudBrightness,
-                        cloudSaturation: cloudSaturation,
+                        cloudImageName: cloudImageName,
                         entrySideFilter: .fromLeft,
                         opacityScale: sideMainOpacityScale,
                         cloudSizeScale: sideMainCloudSizeScale
@@ -146,9 +137,7 @@ struct VillainOnboardingCinematicView: View {
                     CloudTransitionOverlay(
                         enterProgress: coverCloudEnter,
                         exitProgress: villainCloudExit,
-                        cloudTint: cloudTint,
-                        cloudBrightness: cloudBrightness,
-                        cloudSaturation: cloudSaturation,
+                        cloudImageName: cloudImageName,
                         opacityScale: 1.08
                     )
                 }
@@ -243,13 +232,10 @@ struct VillainOnboardingCinematicView: View {
         spriteFrame = 0
         await playLaughFrames()
 
-        // 5. Clouds darken; left clouds join with the same density as the right.
+        // 5. Storm clouds roll in from both sides.
         leftCloudTrailEnter = 0.12
         let darkenDuration = scaled(1.1)
         animate(duration: darkenDuration) {
-            cloudTint = Color(white: 0.52)
-            cloudBrightness = -0.38
-            cloudSaturation = 0.22
             skyDimming = 0.55
             rightCloudTrailEnter = 0.84
             rightCloudEnter = 0.78
@@ -287,12 +273,9 @@ struct VillainOnboardingCinematicView: View {
         }
         try? await Task.sleep(nanoseconds: UInt64(coverDuration * 1_000_000_000))
 
-        // 8. Villain clouds turn white again and hold.
+        // 8. Sky brightens while storm clouds hold for the handoff.
         let brightenDuration = scaled(0.75)
         animate(duration: brightenDuration) {
-            cloudTint = .white
-            cloudBrightness = 0
-            cloudSaturation = 1
             skyDimming = 0
         }
         try? await Task.sleep(nanoseconds: UInt64(scaled(1.20) * 1_000_000_000))
@@ -347,7 +330,6 @@ struct VillainOnboardingCinematicView: View {
 
         animate(duration: 0.2) {
             coverCloudEnter = 1
-            cloudTint = .white
         }
         try? await Task.sleep(nanoseconds: 300_000_000)
         showsOnboardingMap = false

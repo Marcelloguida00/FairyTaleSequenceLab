@@ -176,10 +176,7 @@ enum CloudEntrySideFilter: Equatable {
 struct CloudTransitionOverlay: View {
     let enterProgress: CGFloat
     let exitProgress: CGFloat
-    /// Multiplies cloud color — use grey/white tints to darken or brighten particles.
-    var cloudTint: Color = .white
-    var cloudBrightness: CGFloat = 0
-    var cloudSaturation: CGFloat = 1
+    var cloudImageName: String = "cloud"
     var entrySideFilter: CloudEntrySideFilter = .all
     /// When set, only particles anchored at or above this normalized Y (0 = top) are shown.
     var anchorYMax: CGFloat? = nil
@@ -188,15 +185,21 @@ struct CloudTransitionOverlay: View {
     var entrySpreadScale: CGFloat = 1
 
     private static let cloudPeakOpacity: CGFloat = 0.78
+    private static let skyBackdropColor = Color(red: 0.55, green: 0.78, blue: 0.95)
+    private static let stormBackdropColor = Color(red: 0.05, green: 0.07, blue: 0.11)
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var usesStormBackdrop: Bool {
+        cloudImageName == "cloudBlack"
+    }
 
     var body: some View {
         GeometryReader { proxy in
             let baseSize = min(proxy.size.width, proxy.size.height) * 0.35
 
             ZStack {
-                Color(red: 0.55, green: 0.78, blue: 0.95)
+                (usesStormBackdrop ? Self.stormBackdropColor : Self.skyBackdropColor)
                     .opacity(backgroundOpacity)
                     .ignoresSafeArea()
 
@@ -217,6 +220,13 @@ struct CloudTransitionOverlay: View {
     }
 
     private var backgroundOpacity: CGFloat {
+        if usesStormBackdrop {
+            if exitProgress > 0.01 {
+                return max(0, 0.94 * (1 - exitProgress))
+            }
+            return min(0.94, enterProgress * 0.98)
+        }
+
         if exitProgress > 0.01 {
             return max(0, 0.35 * (1 - exitProgress))
         }
@@ -261,15 +271,12 @@ struct CloudTransitionOverlay: View {
 
         let dimension = baseSize * particle.scale * cloudSizeScale
 
-        Image("cloud")
+        Image(cloudImageName)
             .resizable()
             .interpolation(.high)
             .scaledToFit()
             .frame(width: dimension, height: dimension)
             .rotationEffect(.degrees(particle.rotation))
-            .colorMultiply(cloudTint)
-            .brightness(cloudBrightness)
-            .saturation(cloudSaturation)
             .opacity(opacity)
             .position(position)
     }
