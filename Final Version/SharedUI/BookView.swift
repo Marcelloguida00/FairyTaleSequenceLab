@@ -391,14 +391,14 @@ struct BookView: View {
                                 minWidth: max(isCompact ? 24 : 40, GameButtonMetrics.minimumTouchTarget),
                                 minHeight: max(isCompact ? 32 : 50, GameButtonMetrics.minimumTouchTarget)
                             )
-                            .offset(x: isBookmarkActive(bookmark) ? (isCompact ? -12 : -20) : 0)
+                            .offset(x: isBookmarkActive(bookmark) ? (isCompact ? -10 : -20) : 0)
                             .animation(.spring(), value: currentPage)
                         }
                     }
-                    .offset(x: isCompact ? 15 : 30, y: isCompact ? 10 : 20)
+                    .offset(x: isCompact ? 10 : 20, y: isCompact ? 10 : 20)
                 }
                 .aspectRatio(1.5, contentMode: .fit)
-                .padding(isCompact ? 12 : 50)
+                .padding(isCompact ? 8 : 28)
                 
                 // Top actions
                 VStack {

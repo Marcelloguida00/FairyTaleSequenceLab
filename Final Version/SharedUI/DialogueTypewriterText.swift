@@ -21,11 +21,7 @@ struct DialogueTypewriterText: View {
     }
 
     private var visibleText: String {
-        if isFullyShown {
-            return fullText
-        }
-        guard visibleWordCount > 0 else { return "" }
-        return partialText(wordCount: visibleWordCount)
+        return fullText
     }
 
     private func partialText(wordCount: Int) -> String {
@@ -80,32 +76,7 @@ struct DialogueTypewriterText: View {
 
     @MainActor
     private func runWordReveal() async {
-        isFullyShown = false
-        visibleWordCount = 0
-
-        guard !fullText.isEmpty else {
-            isFullyShown = true
-            return
-        }
-
-        let totalWords = wordCount
-        if reduceMotion {
-            visibleWordCount = totalWords
-            isFullyShown = true
-            return
-        }
-
-        for index in 1...totalWords {
-            if Task.isCancelled { return }
-            if isFullyShown {
-                visibleWordCount = totalWords
-                return
-            }
-
-            visibleWordCount = index
-            try? await Task.sleep(nanoseconds: Self.wordDelayNs)
-        }
-
         isFullyShown = true
+        visibleWordCount = wordCount
     }
 }
