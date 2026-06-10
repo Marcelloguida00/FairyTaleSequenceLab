@@ -31,6 +31,7 @@ final class OnboardingNarrationPlayer {
         player?.stop()
         player = nil
         currentResource = nil
+        resumeBackgroundMusicAfterNarration()
     }
 
     func duration(named resource: String) -> TimeInterval {
@@ -78,6 +79,18 @@ final class OnboardingNarrationPlayer {
         }
 
         try? await Task.sleep(nanoseconds: 120_000_000)
+        resumeBackgroundMusicAfterNarration()
+    }
+
+    private func resumeBackgroundMusicAfterNarration() {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.ambient, options: [.mixWithOthers])
+            try session.setActive(true)
+        } catch {
+            print("Warning: Unable to restore ambient audio session: \(error.localizedDescription)")
+        }
+        BackgroundMusicPlayer.shared.resumePlaybackIfNeeded()
     }
 
     private func audioURL(resource: String) -> URL? {

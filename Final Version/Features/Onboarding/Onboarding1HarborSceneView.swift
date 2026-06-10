@@ -16,7 +16,8 @@ struct Onboarding1HarborSceneView: View {
     @State private var shipBob: CGFloat = 0
     @State private var currentShipImage = "ShipSailing"
 
-    @State private var coverCloudEnter: CGFloat = 0
+    @State private var coverCloudEnter: CGFloat = 1
+    @State private var curtainCloudExit: CGFloat = 0
 
     private let dockCenterX: CGFloat = 0.50
     private let dockCenterY: CGFloat = 0.50
@@ -43,7 +44,7 @@ struct Onboarding1HarborSceneView: View {
 
                 CloudTransitionOverlay(
                     enterProgress: coverCloudEnter,
-                    exitProgress: 0,
+                    exitProgress: curtainCloudExit,
                     cloudImageName: OnboardingScripts.brightCloudImageName
                 )
             }
@@ -51,7 +52,6 @@ struct Onboarding1HarborSceneView: View {
         .ignoresSafeArea()
         .background(Self.cloudSkyColor)
         .task {
-            OnboardingNarrationPlayer.shared.play(named: OnboardingScripts.audioResources[0])
             await runSequence()
         }
     }
@@ -73,14 +73,21 @@ struct Onboarding1HarborSceneView: View {
     @MainActor
     private func runSequence() async {
         if reduceMotion {
+            coverCloudEnter = 0
+            curtainCloudExit = 0
             shipX = dockCenterX
             shipY = dockCenterY
-            coverCloudEnter = 1
+            OnboardingNarrationPlayer.shared.play(named: OnboardingScripts.audioResources[0])
             try? await Task.sleep(nanoseconds: 400_000_000)
             await OnboardingNarrationPlayer.shared.waitUntilFinished()
             if !Task.isCancelled { onComplete() }
             return
         }
+
+        await openCurtainAtStart()
+        guard !Task.isCancelled else { return }
+
+        OnboardingNarrationPlayer.shared.play(named: OnboardingScripts.audioResources[0])
 
         currentShipImage = "ShipSailing"
         shipX = -0.10
@@ -119,6 +126,20 @@ struct Onboarding1HarborSceneView: View {
 
         await OnboardingNarrationPlayer.shared.waitUntilFinished()
         if !Task.isCancelled { onComplete() }
+    }
+
+    @MainActor
+    private func openCurtainAtStart() async {
+        try? await Task.sleep(nanoseconds: UInt64(CloudTransitionAnimator.holdAfterSceneChange * 1_000_000_000))
+
+        let openDuration = CloudTransitionAnimator.exitDuration
+        withAnimation(.easeInOut(duration: openDuration)) {
+            curtainCloudExit = 1
+        }
+        try? await Task.sleep(nanoseconds: UInt64(openDuration * 1_000_000_000))
+
+        curtainCloudExit = 0
+        coverCloudEnter = 0
     }
 
     @MainActor

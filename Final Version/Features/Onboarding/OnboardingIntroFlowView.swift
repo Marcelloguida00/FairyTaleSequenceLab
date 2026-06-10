@@ -121,12 +121,13 @@ struct OnboardingIntroFlowView: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            BackgroundMusicPlayer.shared.pause()
+            BackgroundMusicPlayer.shared.startOnboardingMusic()
             narratorScriptIndex = Phase.intro1.rawValue
         }
         .onDisappear {
             narrationTask?.cancel()
             OnboardingNarrationPlayer.shared.stop()
+            BackgroundMusicPlayer.shared.endOnboardingMusic()
         }
     }
 

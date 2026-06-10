@@ -27,11 +27,16 @@ final class BackgroundMusicPlayer {
 
     private var player: AVAudioPlayer?
     private var fadeTask: Task<Void, Never>?
+    private var isOnboardingOverride = false
     private let resourceExtension = "mp3"
+
+    /// Low background level so onboarding narration stays clear on top.
+    static let onboardingMusicVolume: Float = 0.14
 
     private init() {}
 
     func start() {
+        guard !isOnboardingOverride else { return }
         // Respect the user's audio settings: never autoplay when music is disabled.
         guard AppAudioSettings.isMusicAudible else { return }
         if player?.isPlaying == true { return }
@@ -41,6 +46,52 @@ final class BackgroundMusicPlayer {
         }
 
         player?.play()
+    }
+
+    /// Plays Red Riding Hood Theme 1 quietly under the onboarding narrator.
+    func startOnboardingMusic() {
+        guard AppAudioSettings.isMusicAudible else { return }
+
+        isOnboardingOverride = true
+        fadeTask?.cancel()
+        player?.stop()
+        player = nil
+
+        preparePlayer(theme: .redRidingHood1, volume: Self.onboardingMusicVolume)
+        player?.volume = 0
+        player?.play()
+        fade(to: Self.onboardingMusicVolume, duration: 1.4)
+    }
+
+    func endOnboardingMusic() {
+        guard isOnboardingOverride else { return }
+
+        isOnboardingOverride = false
+        fadeTask?.cancel()
+        player?.stop()
+        player = nil
+        // onChange in RootView may call start() before this view disappears while the
+        // onboarding override is still active — restart the user's theme here.
+        start()
+    }
+
+    /// Restarts background music after narration or other playback sessions take over AVAudioSession.
+    func resumePlaybackIfNeeded() {
+        guard AppAudioSettings.isMusicAudible else { return }
+
+        if player == nil {
+            if isOnboardingOverride {
+                preparePlayer(theme: .redRidingHood1, volume: Self.onboardingMusicVolume)
+            } else {
+                preparePlayer()
+            }
+        }
+
+        player?.volume = isOnboardingOverride ? Self.onboardingMusicVolume : savedVolume
+
+        if player?.isPlaying != true {
+            player?.play()
+        }
     }
 
     func pause() {
@@ -83,6 +134,7 @@ final class BackgroundMusicPlayer {
     }
 
     func resumeIfNeeded() {
+        guard !isOnboardingOverride else { return }
         guard AppAudioSettings.isMusicAudible else { return }
         if player == nil {
             preparePlayer()
@@ -99,7 +151,7 @@ final class BackgroundMusicPlayer {
             return
         }
 
-        player?.volume = savedVolume
+        player?.volume = isOnboardingOverride ? Self.onboardingMusicVolume : savedVolume
     }
 
     func applyMasterState() {
@@ -112,6 +164,7 @@ final class BackgroundMusicPlayer {
     }
 
     func setTheme(_ theme: BackgroundMusicTheme) {
+        guard !isOnboardingOverride else { return }
         guard theme != selectedTheme else { return }
 
         let wasPlaying = player?.isPlaying == true
@@ -127,17 +180,20 @@ final class BackgroundMusicPlayer {
 
     // MARK: - Private
 
-    private func preparePlayer() {
-        let resourceName = selectedTheme.resourceName
+    private func preparePlayer(
+        theme: BackgroundMusicTheme? = nil,
+        volume: Float? = nil
+    ) {
+        let resourceName = (theme ?? selectedTheme).resourceName
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension)
                 ?? Bundle.main.url(forResource: resourceName, withExtension: resourceExtension, subdirectory: "Resources/Audio") else {
             print("Warning: Missing background music resource: \(resourceName).\(resourceExtension)")
             return
         }
-        installLoopPlayer(from: url)
+        installLoopPlayer(from: url, volume: volume)
     }
 
-    private func installLoopPlayer(from url: URL) {
+    private func installLoopPlayer(from url: URL, volume: Float? = nil) {
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.ambient, options: [.mixWithOthers])
@@ -145,7 +201,8 @@ final class BackgroundMusicPlayer {
 
             let newPlayer = try AVAudioPlayer(contentsOf: url)
             newPlayer.numberOfLoops = -1
-            newPlayer.volume = isMuted ? 0 : savedVolume
+            let targetVolume = volume ?? (isMuted ? 0 : savedVolume)
+            newPlayer.volume = targetVolume
             newPlayer.prepareToPlay()
             player = newPlayer
         } catch {
