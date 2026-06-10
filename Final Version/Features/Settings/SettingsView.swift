@@ -1039,44 +1039,29 @@ struct SettingsView: View {
                 settingsDivider(largeStyle: usesFrameLayout)
 
                 // Differentiate without colour alone
-                Button {
-                    AppSettings.hapticImpact(.light)
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        differentiate.toggle()
+                HStack(spacing: usesFrameLayout ? 18 : 14) {
+                    Image(systemName: "square.grid.2x2")
+                        .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
+                        .foregroundStyle(SettingsTheme.menuRowText)
+                        .frame(width: usesFrameLayout ? 36 : 28)
+                        .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(lm.t("settings.differentiate"))
+                            .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
+                            .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
+
+                        Text(lm.t("settings.differentiate.description"))
+                            .font(.app(usesFrameLayout ? .callout : .caption))
+                            .foregroundStyle(SettingsTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                } label: {
-                    HStack(spacing: usesFrameLayout ? 18 : 14) {
-                        Image(systemName: "square.grid.2x2")
-                            .font(.app(size: usesFrameLayout ? 28 : 20, weight: .bold))
-                            .foregroundStyle(SettingsTheme.menuRowText)
-                            .frame(width: usesFrameLayout ? 36 : 28)
-                            .accessibilityHidden(true)
 
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(lm.t("settings.differentiate"))
-                                .font(.app(usesFrameLayout ? .title3 : .body, weight: usesFrameLayout ? .semibold : .regular))
-                                .foregroundStyle(usesFrameLayout ? SettingsTheme.menuRowText : SettingsTheme.primaryText)
-
-                            Text(lm.t("settings.differentiate.description"))
-                                .font(.app(usesFrameLayout ? .callout : .caption))
-                                .foregroundStyle(SettingsTheme.secondaryText)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        Spacer()
-
-                        settingsToggle(isOn: differentiate, expanded: usesFrameLayout)
-                    }
-                    .padding(.horizontal, usesFrameLayout ? 24 : 18)
-                    .padding(.vertical, usesFrameLayout ? 20 : 16)
-                    .gameSettingsRowTouchTarget()
+                    Spacer()
                 }
-                .buttonStyle(.plain)
-                .gameMinimumTouchTarget()
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(lm.t("settings.differentiate"))
-                .accessibilityHint(lm.t("settings.differentiate.description"))
-                .accessibilityAddTraits(differentiate ? [.isSelected] : [])
+                .padding(.horizontal, usesFrameLayout ? 24 : 18)
+                .padding(.vertical, usesFrameLayout ? 20 : 16)
+                .accessibilityElement(children: .combine)
             }
         }
     }

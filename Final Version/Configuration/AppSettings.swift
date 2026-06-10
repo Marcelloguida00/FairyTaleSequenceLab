@@ -13,7 +13,7 @@ enum AppSettings {
         UserDefaults.standard.object(forKey: "enableSounds") as? Bool ?? true
     }
     static var differentiate: Bool {
-        UserDefaults.standard.object(forKey: "differentiate") as? Bool ?? false
+        true
     }
 
     static func hapticSuccess() {

@@ -347,7 +347,7 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
         // Geometry constants (meters)
         private let pageW: CGFloat = 0.15
         private let pageD: CGFloat = 0.21
-        private let gap: CGFloat = 0.006
+        private let gap: CGFloat = 0.002
         private let coverThk: CGFloat = 0.006
         private let stackH: CGFloat = 0.014
         private let overhang: CGFloat = 0.007
@@ -452,14 +452,9 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
 
             let point = gesture.location(in: sceneView)
 
-            if isPlaced {
-                if point.x < sceneView.bounds.midX {
-                    flipBackward()
-                } else {
-                    flipForward()
-                }
-                return
-            }
+            // Once the book is placed, pages turn only via a completed drag or the
+            // arrow buttons — a stray tap (e.g. an aborted drag) must not flip pages.
+            if isPlaced { return }
 
             guard let query = sceneView.raycastQuery(
                 from: point,
@@ -680,9 +675,10 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
 
         private func leatherMaterial(darker: Bool = false) -> SCNMaterial {
             let material = SCNMaterial()
+            // Blue leather, matching the on-screen book cover (OpenBookBackground).
             material.diffuse.contents = darker
-                ? UIColor(red: 0.32, green: 0.05, blue: 0.06, alpha: 1)
-                : UIColor(red: 0.46, green: 0.09, blue: 0.10, alpha: 1)
+                ? UIColor(red: 0.05, green: 0.15, blue: 0.35, alpha: 1)
+                : UIColor(red: 0.10, green: 0.25, blue: 0.50, alpha: 1)
             material.roughness.contents = 0.65
             material.metalness.contents = 0.0
             return material
@@ -698,7 +694,7 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
             let translation = gesture.translation(in: sceneView)
             let velocity = gesture.velocity(in: sceneView)
             let viewWidth = sceneView.bounds.width > 0 ? sceneView.bounds.width : 375.0
-            let threshold = viewWidth * 0.5
+            let threshold = viewWidth * 0.6
 
             switch gesture.state {
             case .began:
@@ -720,8 +716,11 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
 
                 let progress = panProgress(flip: flip, translation: translation, threshold: threshold)
                 let pageMovesLeft = flip.flipSign > 0
-                let fling = pageMovesLeft ? velocity.x < -350 : velocity.x > 350
-                let shouldComplete = progress > 0.4 || fling
+                // Turn only when the gesture is genuinely completed: either the drag
+                // crossed most of the page, or it ended with a decisive fling in the
+                // turn direction. A drag that stalls short of the threshold snaps back.
+                let fling = pageMovesLeft ? velocity.x < -600 : velocity.x > 600
+                let shouldComplete = progress > 0.6 || (fling && progress > 0.15)
                 // Faster snap when there is little distance left to cover.
                 let remaining = shouldComplete ? Double(1 - progress) : Double(progress)
                 let duration = max(0.18, remaining * 0.5)
@@ -943,7 +942,10 @@ private struct ARFlipBookSceneView: UIViewRepresentable {
             nx = (sin(phi + kappa * s) - sin(phi)) / kappa;
             nz = (cos(phi) - cos(phi + kappa * s)) / kappa;
         }
-        nx = flipSign * (nx + innerGap);
+        // The spine offset must rotate with the page: +innerGap at rest, -innerGap
+        // once fully turned, so the sheet lands exactly on the opposite page with
+        // no visible seam at the spine.
+        nx = flipSign * (nx + innerGap * cos(phi));
         _geometry.position.x = nx;
         _geometry.position.z = nz;                       // out-of-plane lift (becomes world up)
         """

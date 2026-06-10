@@ -230,6 +230,7 @@
 
 "story.redhood.scene3.title" = "Skena 3 — Takimi me Ujkun";
 "story.redhood.scene3.text1" = "Ndërsa Kësulëkuqja po ecte përgjatë shtegut, pas një peme u shfaq një ujk.\n\nUjku e shikoi dhe i foli me zë të butë.\n\n«Mirëdita, vogëlushe. Ku po shkon me atë shportë të bukur?»";
+"story.redhood.scene3.text2" = "«Po shkoj te kasollja e gjyshes në fund të këtij shtegu, për t'i çuar disa ëmbëlsira,» u përgjigj ajo me ndrojtje.\n\nUjku dinak thuri shpejt një plan. «Rrugë të mbarë!» tha ai dhe u zhduk në çast mes shkurreve.";
 "a11y.button_select_app_icon" = "Zgjidh ikonën e aplikacionit";
 "a11y.button_locked"          = "Ky element është i mbyllur";
 "a11y.button_open_social_link" = "Hap lidhjen e mediave shoqërore";
@@ -297,7 +298,7 @@
 "settings.reduce_contrast" = "Rrit kontrastin";
 "settings.reduce_contrast.description" = "Përdorni ngjyra me kontrast të lartë për të përmirësuar lexueshmërinë e tekstit.";
 "settings.differentiate" = "Diferencuhu pa përdorur vetëm ngjyrën";
-"settings.differentiate.description" = "Shtoni modele dhe ikona për të ndihmuar në dallimin e elementeve përtej ngjyrës.";
+"settings.differentiate.description" = "Kjo veçori është e integruar drejtpërdrejt në aplikacion.";
 
 /* Additional accessibility labels and hints */
 "a11y.tutorial_skip_button" = "Kalizo tutorialin";

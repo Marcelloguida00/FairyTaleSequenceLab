@@ -75,7 +75,7 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .differentiate(differentiate)
+        .differentiate(true)
         .font(Font.custom(
             AppTypography.fontName(for: .regular, dyslexiaEnabled: usesDyslexiaFont),
             size: 17,

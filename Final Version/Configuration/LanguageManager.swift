@@ -45,8 +45,17 @@ final class LanguageManager {
 
     init() {
         let device = Locale.current.language.languageCode?.identifier ?? "en"
-        let saved  = UserDefaults.standard.string(forKey: "appLanguage") ?? device
         let codes  = Self.supported.map(\.code)
-        currentLanguage = codes.contains(saved) ? saved : "en"
+        if let saved = UserDefaults.standard.string(forKey: "appLanguage"), codes.contains(saved) {
+            currentLanguage = saved
+        } else if codes.contains(device) {
+            currentLanguage = device
+        } else if device == "zh" {
+            // Chinese is shipped as the "zh-Hans" locale folder, so the bare
+            // device language code never matches the supported list directly.
+            currentLanguage = "zh-Hans"
+        } else {
+            currentLanguage = "en"
+        }
     }
 }

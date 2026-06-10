@@ -13,7 +13,7 @@
 "button.settings"    = "AJUSTES";
 
 /* Main menu */
-"menu.title.line1"    = "lumi";
+"menu.title.line1"    = "Lumi";
 "menu.title.line2"    = "Mundo de fábulas";
 
 /* Info */
@@ -56,10 +56,10 @@
 "book.chapter_unlocked.tap_hint" = "Toque en cualquier lugar para continuar.";
 "book.chapter_unlocked.open_hint" = "Toca dos veces para abrir el libro de cuentos.";
 "a11y.storybook_button"          = "libro de cuentos abierto";
-"book.ar.button"                = "Arkansas";
+"book.ar.button"                = "RA";
 "book.ar.title"                 = "Libro de cuentos en AR";
 "book.ar.body"                  = "Coloque el libro de cuentos sobre una superficie plana y hojee sus páginas.";
-"book.ar.cover_title"           = "Caperucita roja";
+"book.ar.cover_title"           = "Caperucita\nRoja";
 "book.ar.the_end"               = "El fin";
 "book.ar.generating_pages"      = "Creando las páginas…";
 "book.ar.searching_surface"     = "Mueva su dispositivo para encontrar una superficie plana.";
@@ -76,7 +76,7 @@
 
 /* Map */
 "map.coming_soon"             = "Muy pronto";
-"map.region.red_riding_hood"  = "rojo\nCaperucita";
+"map.region.red_riding_hood"  = "Caperucita\nRoja";
 "map.region.princess_frog"    = "La princesa y el sapo";
 "map.region.aladdin"          = "aladino";
 "map.region.beauty_beast"     = "La bella y la bestia";
@@ -98,13 +98,13 @@
 "settings.enable_animations.description" = "Desactiva los efectos visuales y las transiciones.";
 "settings.enable_sounds" = "Efectos sonoros";
 "settings.enable_sounds.description" = "Activa o desactiva los sonidos de interacción y menú.";
-"settings.voice_over" = "Voz en off";
+"settings.voice_over" = "VoiceOver";
 "settings.voice_over.description" = "Activa o desactiva la narración de voz.";
 "settings.voice_over.info" = "La compatibilidad con VoiceOver está totalmente integrada. Para usarlo, habilite la función en la configuración de su sistema iOS.";
 "settings.reduce_contrast" = "aumentar el contraste";
 "settings.reduce_contrast.description" = "Utilice colores de alto contraste para mejorar la legibilidad del texto.";
 "settings.differentiate" = "Diferenciarse sin color solo";
-"settings.differentiate.description" = "Agregue patrones e íconos para ayudar a distinguir elementos más allá del color.";
+"settings.differentiate.description" = "Esta función está implementada directamente en la aplicación.";
 "settings.dyslexia_font"  = "Fuente de dislexia";
 "settings.dyslexia_font.description" = "Utilice OpenDyslexic para todo el texto.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic en";

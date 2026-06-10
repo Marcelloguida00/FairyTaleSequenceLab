@@ -104,7 +104,7 @@
 "settings.reduce_contrast" = "Increase contrast";
 "settings.reduce_contrast.description" = "Use high-contrast colors to improve text readability.";
 "settings.differentiate" = "Differentiate without colour alone";
-"settings.differentiate.description" = "Add patterns and icons to help distinguish elements beyond color alone.";
+"settings.differentiate.description" = "This feature is implemented directly in the app.";
 "settings.dyslexia_font"  = "Dyslexia font";
 "settings.dyslexia_font.description" = "Use OpenDyslexic for all text.";
 "settings.dyslexia_font.enabled" = "OpenDyslexic on";
