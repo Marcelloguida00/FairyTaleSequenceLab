@@ -303,3 +303,20 @@
 "tutorial.play_to_start" = "Appuie sur Jouer pour commencer l'histoire !";
 "tutorial.drag_first_scene" = "Fais glisser la première scène dans le premier emplacement";
 "tutorial.tap_to_flip" = "Appuie sur la carte pour la retourner et lire l'indice";
+
+/* Accessibility — onboarding & tutorial */
+"a11y.tutorial_skip_button" = "Passer le tutoriel";
+"a11y.tutorial_skip_hint" = "Passe le tutoriel et ferme l'écran d'onboarding";
+"a11y.tutorial_next_hint" = "Passe à l'étape suivante du tutoriel";
+"a11y.tutorial_done_hint" = "Termine le tutoriel et ferme l'écran";
+"a11y.onboarding_skip_button" = "Passer l'onboarding";
+"a11y.onboarding_skip_hint" = "Passe l'onboarding et commence l'aventure";
+"a11y.onboarding_skip_scene_hint" = "Passe à la scène suivante de l'onboarding";
+"a11y.onboarding_next_button" = "Page suivante";
+"a11y.onboarding_next_hint" = "Passe à la page suivante de l'onboarding";
+"a11y.onboarding_start_button" = "Commencer l'aventure";
+"a11y.onboarding_start_hint" = "Commence l'aventure avec le Petit Chaperon Rouge";
+"a11y.redhood_final_button_hint" = "Célèbre la victoire et revient à la carte";
+"a11y.ar_back_hint" = "Ferme la vue en réalité augmentée et revient à la carte";
+"a11y.reward_pack_label" = "Paquet de récompense";
+"a11y.reward_pack_hint" = "Touche ou fais glisser vers le haut pour ouvrir le paquet de récompense";

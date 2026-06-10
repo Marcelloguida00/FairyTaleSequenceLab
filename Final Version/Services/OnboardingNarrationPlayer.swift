@@ -1,17 +1,36 @@
 import AVFoundation
 import Foundation
 
+/// Stato osservabile della narrazione, usato per sincronizzare i sottotitoli con l'audio.
+enum NarrationPlaybackState: Equatable {
+    case idle
+    case playing(resource: String, progress: Double)
+    case finished(resource: String)
+}
+
 @MainActor
 final class OnboardingNarrationPlayer {
     static let shared = OnboardingNarrationPlayer()
 
     private var player: AVAudioPlayer?
+    private(set) var currentResource: String?
 
     private init() {}
+
+    var playbackState: NarrationPlaybackState {
+        guard let player, let currentResource else { return .idle }
+        if player.isPlaying {
+            let duration = max(player.duration, 0.1)
+            let progress = min(max(player.currentTime / duration, 0), 1)
+            return .playing(resource: currentResource, progress: progress)
+        }
+        return .finished(resource: currentResource)
+    }
 
     func stop() {
         player?.stop()
         player = nil
+        currentResource = nil
     }
 
     func duration(named resource: String) -> TimeInterval {
@@ -38,6 +57,7 @@ final class OnboardingNarrationPlayer {
             let newPlayer = try AVAudioPlayer(contentsOf: url)
             newPlayer.prepareToPlay()
             player = newPlayer
+            currentResource = resource
             newPlayer.play()
         } catch {
             print("Warning: Unable to play onboarding narration \(resource): \(error.localizedDescription)")

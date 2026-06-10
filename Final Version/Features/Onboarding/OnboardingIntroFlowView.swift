@@ -107,7 +107,9 @@ struct OnboardingIntroFlowView: View {
                 if showsNarratorBar {
                     NarratorScriptBar(
                         message: lm.t(OnboardingScripts.bodyKeys[narratorScriptIndex]),
-                        maxWidth: narratorWidth
+                        maxWidth: narratorWidth,
+                        narrationResource: OnboardingScripts.audioResources[narratorScriptIndex],
+                        narrationDuration: OnboardingScripts.audioDurations[narratorScriptIndex]
                     )
                     .padding(.horizontal, max(16, proxy.safeAreaInsets.leading + 12))
                     .padding(.bottom, max(20, proxy.safeAreaInsets.bottom + 14))

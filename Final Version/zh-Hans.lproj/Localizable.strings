@@ -307,6 +307,7 @@
 "a11y.tutorial_done_hint" = "完成教程并关闭页面";
 "a11y.onboarding_skip_button" = "跳过引导";
 "a11y.onboarding_skip_hint" = "跳过引导并开始冒险";
+"a11y.onboarding_skip_scene_hint" = "跳到下一个引导场景";
 "a11y.onboarding_next_button" = "下一页";
 "a11y.onboarding_next_hint" = "前往下一页引导页面";
 "a11y.onboarding_start_button" = "开始冒险";

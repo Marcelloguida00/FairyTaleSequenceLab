@@ -307,6 +307,7 @@
 "a11y.tutorial_done_hint" = "Përfundon tutorialin dhe mbyll ekranin";
 "a11y.onboarding_skip_button" = "Kalizo onsit";
 "a11y.onboarding_skip_hint" = "Kalizo onsit dhe fillo aventurën";
+"a11y.onboarding_skip_scene_hint" = "Kalon në skenën tjetër të prezantimit";
 "a11y.onboarding_next_button" = "Faqja tjetër";
 "a11y.onboarding_next_hint" = "Shkon në faqen tjetër të onsit";
 "a11y.onboarding_start_button" = "Fillo aventurën";

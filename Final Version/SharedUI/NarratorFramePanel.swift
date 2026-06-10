@@ -37,9 +37,15 @@ enum NarratorFrameMetrics {
     }
 }
 
-struct NarratorFramePanel: View {
+/// Una riga di sottotitolo; l'id è l'indice assoluto della riga nel testo completo,
+/// così SwiftUI anima inserimenti/rimozioni quando la finestra scorre.
+struct NarratorSubtitleLine: Identifiable, Equatable {
+    let id: Int
     let text: String
-    @Binding var isTextFullyShown: Bool
+}
+
+struct NarratorFramePanel: View {
+    let visibleLines: [NarratorSubtitleLine]
 
     var body: some View {
         GeometryReader { geometry in
@@ -53,6 +59,7 @@ struct NarratorFramePanel: View {
                 NarratorFrameMetrics.bodyPaddingHorizontal,
                 frameWidth: size.width
             )
+            let rowHeight = dialogueRect.height / CGFloat(NarratorFrameMetrics.dialogueLineLimit)
 
             ZStack {
                 Image(NarratorFrameMetrics.frameImageName)
@@ -61,16 +68,24 @@ struct NarratorFramePanel: View {
                     .frame(width: size.width, height: size.height)
                     .accessibilityHidden(true)
 
-                DialogueTypewriterText(
-                    fullText: text,
-                    font: .app(size: dialogueFontSize, weight: .medium),
-                    color: Color(red: 0.20, green: 0.09, blue: 0.05),
-                    lineLimit: NarratorFrameMetrics.dialogueLineLimit,
-                    isFullyShown: $isTextFullyShown
-                )
+                VStack(spacing: 0) {
+                    ForEach(visibleLines) { line in
+                        Text(line.text)
+                            .font(.app(size: dialogueFontSize, weight: .medium))
+                            .foregroundColor(Color(red: 0.20, green: 0.09, blue: 0.05))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                            .frame(height: rowHeight)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .bottom).combined(with: .opacity),
+                                removal: .move(edge: .top).combined(with: .opacity)
+                            ))
+                    }
+                }
                 .accessibilityHidden(true)
                 .padding(.horizontal, dialogueHorizontalInset)
                 .frame(width: dialogueRect.width, height: dialogueRect.height, alignment: .center)
+                .clipped()
                 .position(x: dialogueRect.midX, y: dialogueRect.midY)
             }
         }
@@ -80,8 +95,11 @@ struct NarratorFramePanel: View {
 
 #Preview("Narrator frame") {
     NarratorFramePanel(
-        text: "I am your guide in this magical world! Once, all the fairy tales lived here in peace and harmony...",
-        isTextFullyShown: .constant(false)
+        visibleLines: [
+            NarratorSubtitleLine(id: 0, text: "I am your guide in this magical world!"),
+            NarratorSubtitleLine(id: 1, text: "Once, all the fairy tales lived here"),
+            NarratorSubtitleLine(id: 2, text: "in peace and harmony...")
+        ]
     )
     .frame(width: 720)
     .padding()

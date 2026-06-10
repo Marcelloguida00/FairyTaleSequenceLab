@@ -307,6 +307,7 @@
 "a11y.tutorial_done_hint" = "آموزش را کامل می‌کند و صفحه را می‌بندد";
 "a11y.onboarding_skip_button" = "رد کردن معرفی";
 "a11y.onboarding_skip_hint" = "معرفی را رد می‌کند و ماجراجویی را شروع می‌کند";
+"a11y.onboarding_skip_scene_hint" = "به صحنهٔ بعدی معرفی می‌رود";
 "a11y.onboarding_next_button" = "صفحهٔ بعد";
 "a11y.onboarding_next_hint" = "به صفحهٔ بعدی معرفی می‌رود";
 "a11y.onboarding_start_button" = "شروع ماجراجویی";

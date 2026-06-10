@@ -306,6 +306,7 @@
 "a11y.tutorial_done_hint" = "Завершает обучение и закрывает экран";
 "a11y.onboarding_skip_button" = "Пропустить адаптацию";
 "a11y.onboarding_skip_hint" = "Пропускает адаптацию и начинает приключение";
+"a11y.onboarding_skip_scene_hint" = "Переходит к следующей сцене адаптации";
 "a11y.onboarding_next_button" = "Следующая страница";
 "a11y.onboarding_next_hint" = "Переходит на следующую страницу адаптации";
 "a11y.onboarding_start_button" = "Начать приключение";
