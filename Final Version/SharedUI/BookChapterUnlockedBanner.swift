@@ -46,7 +46,7 @@ struct BookChapterUnlockedBanner: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.62)
+            Color.black.opacity(0.74)
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture {
@@ -64,7 +64,7 @@ struct BookChapterUnlockedBanner: View {
                     .padding(.horizontal, 16)
                     .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     Button {
                         dismiss(openingStorybook: false)
                     } label: {
@@ -73,9 +73,9 @@ struct BookChapterUnlockedBanner: View {
                             .foregroundColor(increaseContrast ? .black : .white)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
-                            .padding(.horizontal, GameButtonMetrics.pillHorizontalPadding)
+                            .padding(.horizontal, 18)
                             .padding(.vertical, GameButtonMetrics.pillVerticalPadding)
-                            .frame(maxWidth: .infinity, minHeight: GameButtonMetrics.pillMinHeight)
+                            .frame(minHeight: GameButtonMetrics.pillMinHeight)
                             .background(
                                 Capsule()
                                     .fill(increaseContrast ? Color.white : Color.white.opacity(0.22))
@@ -104,15 +104,16 @@ struct BookChapterUnlockedBanner: View {
                         }
                         .foregroundStyle(GameButtonAppearance.label)
                         .shadow(color: .black.opacity(0.16), radius: 0, x: 0, y: 1)
-                        .padding(.horizontal, GameButtonMetrics.pillHorizontalPadding)
+                        .padding(.horizontal, 18)
                         .padding(.vertical, GameButtonMetrics.pillVerticalPadding)
-                        .frame(maxWidth: .infinity, minHeight: GameButtonMetrics.pillMinHeight)
+                        .frame(minHeight: GameButtonMetrics.pillMinHeight)
                         .background(GamePillButtonBackground())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(openButtonTitle)
                     .accessibilityAddTraits(.isButton)
                 }
+                .fixedSize(horizontal: true, vertical: false)
             }
             .padding(.horizontal, 24)
             .scaleEffect(isVisible ? 1.0 : (reduceMotion ? 1.0 : 0.88))

@@ -77,8 +77,7 @@ struct EventFlowView: View {
             }
         }
         .onAppear {
-            phase = .intro
-            notifyPhaseChange(.intro)
+            notifyPhaseChange(phase)
 
             BackgroundMusicPlayer.shared.fadeOut()
             ForestAmbiencePlayer.shared.enterSequencingSection()

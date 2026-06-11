@@ -2,6 +2,8 @@ import SwiftUI
 
 struct RootView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasPressedMainMenuPlay") private var hasPressedMainMenuPlay = false
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
     @AppStorage("differentiateWithoutColor") private var differentiateWithoutColor = false
     @Environment(\.accessibilityDifferentiateWithoutColor) private var sysDifferentiateWithoutColor
     @Environment(AppFontSettings.self) private var fontSettings
@@ -54,6 +56,9 @@ struct RootView: View {
                     deferPanelReveal: shouldDeferMainMenuPanelReveal,
                     onPlay: {
                         Task { await beginGame() }
+                    },
+                    onShowTutorialAgain: {
+                        Task { await beginTutorialReplayFromMenu() }
                     }
                 )
                 .zIndex(60)
@@ -100,42 +105,45 @@ struct RootView: View {
 
     @MainActor
     private func completeOnboarding() async {
+        menuCloudEnterProgress = 1
+        menuCloudExitProgress = 0
+
         withAnimation(.easeInOut(duration: 0.35)) {
             hasSeenOnboarding = true
         }
-
-        await CloudTransitionAnimator.runCurtainOpen(
-            exitProgress: $menuCloudExitProgress,
-            duration: CloudTransitionAnimator.playOpenDuration
-        ) {}
-
-        menuCloudExitProgress = 0
     }
 
     @MainActor
     private func completeVillainOnboarding() async {
-        withAnimation(.easeInOut(duration: 0.35)) {
-            hasSeenOnboarding = true
-        }
-
         menuCloudEnterProgress = 1
         menuCloudExitProgress = 0
 
-        await CloudTransitionAnimator.runCurtainOpen(
-            exitProgress: $menuCloudExitProgress,
-            duration: CloudTransitionAnimator.playOpenDuration
-        ) {}
-
-        menuCloudExitProgress = 0
+        withAnimation(.easeInOut(duration: 0.35)) {
+            hasSeenOnboarding = true
+        }
     }
 
     /// Play: sipario già presente → si apre (0.8s) → gioco.
     @MainActor
     private func beginGame() async {
+        await launchGame(isTutorialReplay: false)
+    }
+
+    @MainActor
+    private func beginTutorialReplayFromMenu() async {
+        TutorialWorldMapReplay.backupPersistedProgressIfNeeded()
+        TutorialWorldMapReplay.applyPhase1State()
+        await launchGame(isTutorialReplay: true)
+    }
+
+    @MainActor
+    private func launchGame(isTutorialReplay: Bool) async {
         guard !isTransitioning else { return }
         isTransitioning = true
         menuCloudEnterProgress = 1
         menuCloudExitProgress = 0
+
+        configureTutorialStepForGameLaunch(isTutorialReplay: isTutorialReplay)
 
         await CloudTransitionAnimator.runCurtainOpen(
             exitProgress: $menuCloudExitProgress,
@@ -146,6 +154,26 @@ struct RootView: View {
 
         menuCloudExitProgress = 0
         isTransitioning = false
+    }
+
+    private func configureTutorialStepForGameLaunch(isTutorialReplay: Bool) {
+        if isTutorialReplay || TutorialWorldMapReplay.isWorldMapReplayActive {
+            return
+        }
+
+        if hasPressedMainMenuPlay {
+            UserDefaults.standard.set(InteractiveTutorialStep.inactive.rawValue, forKey: "interactiveTutorialStep")
+            return
+        }
+
+        if !hasSeenTutorial {
+            UserDefaults.standard.set(
+                InteractiveTutorialStep.worldMapSettings.rawValue,
+                forKey: "interactiveTutorialStep"
+            )
+        }
+
+        hasPressedMainMenuPlay = true
     }
 }
 

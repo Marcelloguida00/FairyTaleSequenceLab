@@ -62,6 +62,8 @@ struct ContentView: View {
 
     @Environment(LanguageManager.self) private var lm
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
+    @AppStorage("hasPressedMainMenuPlay") private var hasPressedMainMenuPlay = false
+    @AppStorage("interactiveTutorialStep") private var interactiveTutorialStep = InteractiveTutorialStep.inactive.rawValue
 
     @State private var activeMap = ActiveMap.main
     @State private var avatarPosition = MapGraph.initialWaypoint.point
@@ -98,6 +100,128 @@ struct ContentView: View {
 
     private static let settingsFadeDuration: TimeInterval = 0.30
 
+    private var activeTutorialStep: InteractiveTutorialStep {
+        InteractiveTutorialStep(rawValue: interactiveTutorialStep) ?? .inactive
+    }
+
+    @State private var tutorialTargetFrames: [TutorialAnchorID: CGRect] = [:]
+    @State private var tutorialMapSize: CGSize = .zero
+
+    /// Section 1: world map — settings → book → play explain → let's play.
+    private var isWorldMapTutorialPhase: Bool {
+        !hasSeenTutorial
+            && activeMap == .main
+            && activeRedHoodLevel == nil
+            && activeTutorialStep.isWorldMapPhase
+    }
+
+    private var isWorldMapTutorialOverlayStep: Bool {
+        isWorldMapTutorialPhase && activeTutorialStep.isWorldMapOverlayStep
+    }
+
+    /// Phase 2 — Red Riding Hood map tutorial (overlay → waypoint 0 dialogue → waypoint 1 play).
+    private var isRedHoodTutorialPhase2Active: Bool {
+        !hasSeenTutorial
+            && activeMap == .redHood
+            && activeTutorialStep.isRedHoodPhase
+    }
+
+    private var isRedHoodTutorialPhase: Bool {
+        isRedHoodTutorialPhase2Active && activeRedHoodLevel == nil
+    }
+
+    private var isRedHoodTutorialOverlayStep: Bool {
+        activeTutorialStep.isRedHoodOverlayStep
+    }
+
+    private var isCloudTransitionObscuringMap: Bool {
+        isMapTransitioning
+            || isGlobalTransitioning
+            || cloudEnterProgress > 0.01
+            || cloudExitProgress > 0.01
+    }
+
+    /// Overlay + waypoints appear together after the cloud transition finishes.
+    private var showsRedHoodTutorialOverlayChrome: Bool {
+        isRedHoodTutorialOverlayStep && !isCloudTransitionObscuringMap
+    }
+
+    /// Map chrome stays visible during phase 2 but is not interactive (waypoints + play only).
+    private var isRedHoodTutorialChromeInteractionBlocked: Bool {
+        guard isRedHoodTutorialPhase2Active else { return false }
+        return activeRedHoodLevel == nil || activeRedHoodLevel == 0
+    }
+
+    /// Waypoints stay tappable while exploring the map during phase 2 (after the overlay).
+    private var allowsRedHoodTutorialWaypointInteraction: Bool {
+        !isRedHoodTutorialPhase
+            || activeTutorialStep == .redHoodWaypointReady
+            || activeTutorialStep == .redHoodPlay
+    }
+
+    private var isSequencingTutorialCoachOverlayActive: Bool {
+        !hasSeenTutorial
+            && activeRedHoodLevel == 1
+            && activeTutorialStep == .sequencingCoach
+    }
+
+    private var isSequencingTutorialFlipHintActive: Bool {
+        !hasSeenTutorial
+            && activeRedHoodLevel == 1
+            && activeTutorialStep == .sequencingFlipHint
+    }
+
+    private var isSequencingTutorialCongratsActive: Bool {
+        !hasSeenTutorial
+            && activeRedHoodLevel == 1
+            && activeTutorialStep == .sequencingCongrats
+    }
+
+    private var isSequencingTutorialOverlayStep: Bool {
+        isSequencingTutorialCoachOverlayActive
+            || isSequencingTutorialFlipHintActive
+            || isSequencingTutorialCongratsActive
+    }
+
+    private var isMapTutorialActive: Bool {
+        !hasSeenTutorial
+            && activeRedHoodLevel == nil
+            && activeTutorialStep.rawValue > InteractiveTutorialStep.worldMapPlayReady.rawValue
+            && !activeTutorialStep.isSequencingPhase
+    }
+
+    private func advanceTutorialStep() {
+        guard isMapTutorialActive else { return }
+        interactiveTutorialStep = activeTutorialStep.next().rawValue
+    }
+
+    private func advanceWorldMapTutorialOnTap() {
+        guard activeTutorialStep.isWorldMapOverlayStep else { return }
+        withAnimation(.easeInOut(duration: 0.35)) {
+            interactiveTutorialStep = activeTutorialStep.next().rawValue
+        }
+    }
+
+    private func advanceRedHoodTutorialOnTap() {
+        guard activeTutorialStep.isRedHoodOverlayStep else { return }
+        withAnimation(.easeInOut(duration: 0.35)) {
+            interactiveTutorialStep = activeTutorialStep.next().rawValue
+        }
+    }
+
+    @MainActor
+    private func performTutorialHighlightAction() {
+        guard isMapTutorialActive else { return }
+
+        switch activeTutorialStep {
+        case .redHoodPlay:
+            if let level = pendingRedHoodLevel {
+                startRedHoodLevel(level)
+            }
+        default:
+            advanceTutorialStep()
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -106,8 +230,13 @@ struct ContentView: View {
                 contentMode: activeMap.contentMode
             ) { mapSize in
                 mapContent(mapSize: mapSize)
+                    .preference(key: MapTutorialMapSizeKey.self, value: mapSize)
             }
-
+            .overlay {
+                if showsRedHoodTutorialOverlayChrome, activeMap == .redHood {
+                    redHoodTutorialScreenOverlay
+                }
+            }
             if isMapTransitioning || cloudEnterProgress > 0.01 || cloudExitProgress > 0.01 {
                 CloudTransitionOverlay(
                     enterProgress: cloudEnterProgress,
@@ -155,7 +284,7 @@ struct ContentView: View {
                 levelView(for: level)
                     .ignoresSafeArea()
                     .background(Color.clear)
-                    .zIndex(20)
+                    .zIndex(isSequencingTutorialOverlayStep ? 40 : 20)
                     .transition(.asymmetric(
                         insertion: .scale(scale: 0.94).combined(with: .opacity),
                         removal: .scale(scale: 0.92).combined(with: .opacity)
@@ -165,6 +294,12 @@ struct ContentView: View {
             if !hidesMapChromeForActiveLevel {
                 topChromeButtons
                     .zIndex(31)
+                    .opacity(isWorldMapTutorialOverlayStep || isSequencingTutorialOverlayStep ? 0 : 1)
+                    .allowsHitTesting(
+                        !isWorldMapTutorialOverlayStep
+                            && !isSequencingTutorialOverlayStep
+                            && !isRedHoodTutorialChromeInteractionBlocked
+                    )
                     .transition(.opacity)
             }
 
@@ -187,46 +322,26 @@ struct ContentView: View {
                 .transition(.opacity)
             }
 
-            if shouldShowRedHoodPlayButton {
-                MapPlayButton(accessibilityLabel: lm.t("a11y.play_red_hood")) {
-                    Task {
-                        await openRedHoodSubMap()
-                    }
-                }
-                .padding(.bottom, 28)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .zIndex(28)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
+            worldMapTutorialOverlayLayer
+            redHoodTutorialPlayButtonLayer
 
             if activeMap == .redHood,
                activeRedHoodLevel == nil,
-               let level = pendingRedHoodLevel {
+               let level = pendingRedHoodLevel,
+               !isRedHoodTutorialPhase {
                 MapPlayButton(accessibilityLabel: lm.t("a11y.start_event")) {
                     startRedHoodLevel(level)
                 }
+                .tutorialAnchor(.redHoodPlay, in: .named("mapTutorial"))
                 .padding(.bottom, 28)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .zIndex(28)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
-            if activeMap == .redHood,
-               !hasSeenTutorial,
-               activeRedHoodLevel == nil,
-               pendingRedHoodLevel == 0 || pendingRedHoodLevel == 1 {
-                GeometryReader { screenGeo in
-                    HandTutorialIndicator(
-                        point: CGPoint(x: screenGeo.size.width / 2, y: screenGeo.size.height - 110),
-                        customMessage: lm.t("tutorial.play_to_start")
-                    )
-                }
-                .ignoresSafeArea()
-                .zIndex(32)
-                .allowsHitTesting(false)
-            }
-            if showsStorybookButton {
+            if showsStorybookButtonForDisplay {
                 Button(action: {
+                    guard !isMapTutorialActive else { return }
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         isBookOpen = true
                     }
@@ -234,6 +349,7 @@ struct ContentView: View {
                     BookIcon3D()
                 }
                 .buttonStyle(.plain)
+                .tutorialAnchor(.book, in: .named("mapTutorial"))
                 .gameMinimumTouchTarget(
                     minWidth: GameButtonMetrics.bookButtonSize,
                     minHeight: GameButtonMetrics.bookButtonSize
@@ -242,13 +358,29 @@ struct ContentView: View {
                 .padding(.trailing, 24)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .zIndex(35)
-                .opacity(isBookInteractionBlocked ? 0 : 1)
-                .animation(.easeInOut, value: isWalking)
-                .disabled(isBookInteractionBlocked)
+                .opacity(storybookButtonOpacity)
+                .disabled(
+                    isBookInteractionBlocked
+                        || isMapTutorialActive
+                        || isWorldMapTutorialPhase
+                        || isRedHoodTutorialChromeInteractionBlocked
+                )
+                .allowsHitTesting(
+                    !isWorldMapTutorialPhase && !isRedHoodTutorialChromeInteractionBlocked
+                )
                 .accessibilityLabel(lm.t("a11y.storybook_button"))
                 .accessibilityHint(lm.t("book.chapter_unlocked.open_hint"))
             }
 
+        }
+        .coordinateSpace(name: "mapTutorial")
+        .onPreferenceChange(MapTutorialMapSizeKey.self) { tutorialMapSize = $0 }
+        .onPreferenceChange(TutorialFramePreferenceKey.self) { frames in
+            guard let merged = TutorialFrameStabilizer.merge(
+                stored: tutorialTargetFrames,
+                incoming: frames
+            ) else { return }
+            tutorialTargetFrames = merged
         }
         .overlay {
             if isBookOpen {
@@ -282,37 +414,42 @@ struct ContentView: View {
                     },
                     advancedSettingsUnlocked: $advancedSettingsUnlocked,
                     onShowTutorialAgain: {
-                        let isAlreadyTemp = UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode")
-                        if !isAlreadyTemp {
-                            UserDefaults.standard.set(Array(completedRedHoodLevels).sorted(), forKey: "tutorialBackup_completedRedHoodLevels")
-                            UserDefaults.standard.set(Array(unlockedWorldBaseIDs).sorted(), forKey: "tutorialBackup_unlockedWorldBaseIDs")
-                            UserDefaults.standard.set(currentBaseID, forKey: "tutorialBackup_currentBaseID")
-                            UserDefaults.standard.set(activeMap == .redHood ? "redHood" : "main", forKey: "tutorialBackup_activeMap")
-                            UserDefaults.standard.set(hasSeenTutorial, forKey: "tutorialBackup_hasSeenTutorial")
-                            
-                            UserDefaults.standard.set(true, forKey: "isTemporaryTutorialMode")
-                        }
-                        
+                        TutorialWorldMapReplay.backupProgressIfNeeded(
+                            completedLevels: Array(completedRedHoodLevels).sorted(),
+                            unlockedWorldIDs: Array(unlockedWorldBaseIDs).sorted(),
+                            currentBaseID: currentBaseID,
+                            activeMapLabel: activeMap == .redHood ? "redHood" : "main",
+                            hasSeenTutorial: hasSeenTutorial
+                        )
+                        TutorialWorldMapReplay.applyPhase1State()
+
                         hasSeenTutorial = false
-                        
+                        interactiveTutorialStep = InteractiveTutorialStep.worldMapSettings.rawValue
+
                         let tempCompleted: Set<Int> = []
                         completedRedHoodLevels = tempCompleted
                         persistCompletedRedHoodLevels(tempCompleted)
-                        
+
                         unlockedWorldBaseIDs = [MapGraph.redRidingHoodBaseID]
                         persistUnlockedWorldBaseIDs()
-                        
-                        UserDefaults.standard.set(RedHoodMapGraph.initialWaypoint.id, forKey: "currentBaseID")
-                        
-                        activeMap = .redHood
-                        currentBaseID = RedHoodMapGraph.initialWaypoint.id
-                        avatarPosition = RedHoodMapGraph.initialWaypoint.point
-                        
-                        pendingRedHoodLevel = RedHoodMapGraph.initialWaypoint.id
+
+                        walkTask?.cancel()
+                        walkTask = nil
+                        isWalking = false
+                        isBookOpen = false
+                        markerIsRaised = false
+
+                        activeMap = .main
+                        currentBaseID = MapGraph.redRidingHoodBaseID
+                        avatarPosition = MapGraph.waypoint(id: MapGraph.redRidingHoodBaseID)?.point
+                            ?? MapGraph.initialWaypoint.point
+                        avatarDirection = .down
+
+                        pendingRedHoodLevel = nil
                         activeRedHoodLevel = nil
                         redHoodPostSequenceReward = nil
                         pendingChapterUnlockLevel = nil
-                        
+
                         Task {
                             await closeSettings()
                         }
@@ -355,12 +492,27 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) {
-                markerIsRaised = true
+            if hasSeenTutorial || interactiveTutorialStep > InteractiveTutorialStep.worldMapPlayReady.rawValue {
+                withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) {
+                    markerIsRaised = true
+                }
             }
 
             reloadAllProgress()
 
+            if !hasSeenTutorial,
+               interactiveTutorialStep < 0,
+               activeMap == .main,
+               activeRedHoodLevel == nil,
+               !hasPressedMainMenuPlay || TutorialWorldMapReplay.isWorldMapReplayActive {
+                interactiveTutorialStep = InteractiveTutorialStep.worldMapSettings.rawValue
+            }
+        }
+        .onChange(of: interactiveTutorialStep) { _, step in
+            guard step > InteractiveTutorialStep.worldMapPlayReady.rawValue, !markerIsRaised else { return }
+            withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) {
+                markerIsRaised = true
+            }
         }
         .onChange(of: completedRedHoodLevels) {
             let canonicalLevels = canonicalCompletedRedHoodLevels(from: completedRedHoodLevels)
@@ -376,6 +528,189 @@ struct ContentView: View {
             if MapGraph.baseIDs.contains(currentBaseID) {
                 UserDefaults.standard.set(currentBaseID, forKey: "currentBaseID")
             }
+        }
+    }
+
+    @ViewBuilder
+    private var worldMapTutorialOverlayLayer: some View {
+        if isWorldMapTutorialOverlayStep {
+            Group {
+                TutorialFullScreenDim(onTap: { advanceWorldMapTutorialOnTap() })
+                    .zIndex(90)
+
+                worldMapTutorialHighlightedChrome
+                    .zIndex(108)
+
+                worldMapTutorialPlaqueOverlay
+                    .zIndex(110)
+
+                TutorialTouchScreenPrompt(text: lm.t("tutorial.touch_screen"))
+                    .zIndex(115)
+            }
+            .transition(.opacity)
+        }
+
+        if shouldShowWorldMapTutorialPlayButton {
+            MapPlayButton(accessibilityLabel: lm.t("a11y.play_red_hood")) {
+                Task {
+                    if activeTutorialStep == .worldMapPlayReady {
+                        interactiveTutorialStep = InteractiveTutorialStep.redHoodWaypoints.rawValue
+                    }
+                    await openRedHoodSubMap()
+                }
+            }
+            .tutorialAnchor(.worldMapPlay, in: .named("mapTutorial"))
+            .padding(.bottom, 28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .zIndex(isWorldMapTutorialPhase ? 110 : 28)
+            .allowsHitTesting(!isWorldMapTutorialPhase || activeTutorialStep == .worldMapPlayReady)
+            .transition(
+                isWorldMapTutorialPhase
+                    ? .identity
+                    : .move(edge: .bottom).combined(with: .opacity)
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var worldMapTutorialHighlightedChrome: some View {
+        GeometryReader { geometry in
+            let step = activeTutorialStep
+            let horizontalInset = topChromeHorizontalInset(for: geometry.size)
+
+            switch step {
+            case .worldMapSettings:
+                GameCircleSettingsButton(size: MapOverlayMetrics.chromeButtonSize, action: {})
+                    .allowsHitTesting(false)
+                    .tutorialAnchor(.settings, in: .named("mapTutorial"))
+                    .padding(.top, max(topChromeTopPadding(for: geometry.size), geometry.safeAreaInsets.top + 12))
+                    .padding(.trailing, max(horizontalInset, geometry.safeAreaInsets.trailing + 12))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+
+            case .worldMapBook:
+                BookIcon3D()
+                    .allowsHitTesting(false)
+                    .tutorialAnchor(.book, in: .named("mapTutorial"))
+                    .gameMinimumTouchTarget(
+                        minWidth: GameButtonMetrics.bookButtonSize,
+                        minHeight: GameButtonMetrics.bookButtonSize
+                    )
+                    .padding(.bottom, 24)
+                    .padding(.trailing, 24)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+
+            case .worldMapPlayExplain:
+                MapPlayButton(accessibilityLabel: lm.t("a11y.play_red_hood"), action: {})
+                    .allowsHitTesting(false)
+                    .tutorialAnchor(.worldMapPlay, in: .named("mapTutorial"))
+                    .padding(.bottom, 28)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+
+            default:
+                EmptyView()
+            }
+        }
+        .ignoresSafeArea()
+        .tutorialOverlayFadeIn(identity: activeTutorialStep.rawValue)
+    }
+
+    @ViewBuilder
+    private var worldMapTutorialPlaqueOverlay: some View {
+        GeometryReader { proxy in
+            worldMapTutorialPlaque(in: proxy.size)
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+
+    @ViewBuilder
+    private func worldMapTutorialPlaque(in containerSize: CGSize) -> some View {
+        let step = activeTutorialStep
+        let scale = tutorialPlaqueScale(for: containerSize)
+
+        if step == .worldMapLetsPlay {
+            TutorialLockedPlaqueHost(
+                proposedFrame: nil,
+                message: lm.t(step.messageKey),
+                plaqueScale: scale,
+                centersOnScreen: true
+            )
+        } else if let anchor = step.highlightedWorldMapAnchor {
+            TutorialLockedPlaqueHost(
+                proposedFrame: resolvedTutorialFrame(for: anchor, in: containerSize),
+                message: lm.t(step.messageKey),
+                plaqueScale: scale,
+                placement: anchor == .worldMapPlay ? .aboveTarget : .leftOfTarget
+            )
+        }
+    }
+
+    private func resolvedTutorialFrame(for anchor: TutorialAnchorID, in size: CGSize) -> CGRect {
+        if let frame = tutorialTargetFrames[anchor], TutorialFrameStabilizer.isMeaningful(frame) {
+            return frame
+        }
+        return TutorialPlaqueFallbackLayout.frame(for: anchor, in: size)
+    }
+
+    private func tutorialDemoWaypointDotSize(for containerSize: CGSize) -> CGFloat {
+        min(containerSize.width, containerSize.height) * 0.064
+    }
+
+    @ViewBuilder
+    private var redHoodTutorialScreenOverlay: some View {
+        GeometryReader { proxy in
+            let containerSize = proxy.size
+            let scale = tutorialPlaqueScale(for: containerSize)
+            let dotSize = tutorialDemoWaypointDotSize(for: containerSize)
+
+            ZStack {
+                TutorialFullScreenDim(onTap: { advanceRedHoodTutorialOnTap() })
+
+                if activeTutorialStep == .redHoodWaypoints {
+                    TutorialWaypointCoachRow(
+                        message: lm.t(activeTutorialStep.messageKey),
+                        plaqueScale: scale,
+                        bottomPadding: max(96, containerSize.height * 0.14)
+                    ) {
+                        WaypointDot(state: .next, size: dotSize)
+                    }
+                    .zIndex(110)
+                }
+
+                if activeTutorialStep == .redHoodLetsPlay {
+                    TutorialLockedPlaqueHost(
+                        proposedFrame: nil,
+                        message: lm.t(activeTutorialStep.messageKey),
+                        plaqueScale: scale,
+                        centersOnScreen: true
+                    )
+                    .allowsHitTesting(false)
+                    .zIndex(110)
+                }
+
+                TutorialTouchScreenPrompt(text: lm.t("tutorial.touch_screen"))
+                    .zIndex(115)
+            }
+        }
+        .ignoresSafeArea()
+        .transition(.opacity)
+    }
+
+    @ViewBuilder
+    private var redHoodTutorialPlayButtonLayer: some View {
+        if isRedHoodTutorialPhase,
+           activeTutorialStep == .redHoodWaypointReady || activeTutorialStep == .redHoodPlay,
+           pendingRedHoodLevel != nil {
+            MapPlayButton(accessibilityLabel: lm.t("a11y.start_event")) {
+                if let level = pendingRedHoodLevel {
+                    startRedHoodLevel(level)
+                }
+            }
+            .tutorialAnchor(.redHoodPlay, in: .named("mapTutorial"))
+            .padding(.bottom, 28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .zIndex(110)
+            .transition(.identity)
         }
     }
 
@@ -418,13 +753,17 @@ struct ContentView: View {
                     GameCircleSettingsButton(size: MapOverlayMetrics.chromeButtonSize) {
                         Task { await openSettings() }
                     }
-                    .disabled(isMapToolbarBlocked)
+                    .tutorialAnchor(.settings, in: .named("mapTutorial"))
+                    .disabled(isMapToolbarBlocked || isMapTutorialActive || isWorldMapTutorialPhase)
+                    .allowsHitTesting(
+                        !isWorldMapTutorialPhase && !isRedHoodTutorialChromeInteractionBlocked
+                    )
                     .opacity(isMapToolbarBlocked ? 0.45 : 1)
                     .accessibilityLabel(lm.t("a11y.settings_button"))
                     .accessibilityHint(lm.t("a11y.settings_hint"))
-                        .padding(.top, max(topChromeTopPadding(for: geometry.size), geometry.safeAreaInsets.top + 12))
-                        .padding(.trailing, max(horizontalInset, geometry.safeAreaInsets.trailing + 12))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(.top, max(topChromeTopPadding(for: geometry.size), geometry.safeAreaInsets.top + 12))
+                    .padding(.trailing, max(horizontalInset, geometry.safeAreaInsets.trailing + 12))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .zIndex(31)
                     .transition(.opacity)
                 }
@@ -468,9 +807,14 @@ struct ContentView: View {
             if activeMap == .redHood {
                 ForEach(RedHoodMapGraph.storyWaypoints, id: \.id) { wp in
                     let wpState = dotState(for: wp.id)
+
                     WaypointDot(state: wpState, size: redHoodDotSize(for: mapSize))
                         .position(projection.screenPoint(fromPixel: wp.point))
                         .frame(width: 50, height: 50)
+                        .opacity(showsRedHoodTutorialOverlayChrome ? 0 : 1)
+                        .allowsHitTesting(
+                            !showsRedHoodTutorialOverlayChrome && allowsRedHoodTutorialWaypointInteraction
+                        )
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(redHoodWaypointAccessibilityLabel(for: wp.id, state: wpState))
                         .accessibilityHint(redHoodWaypointAccessibilityHint(for: wpState))
@@ -478,22 +822,6 @@ struct ContentView: View {
                         .onTapGesture {
                             handleRedHoodWaypointActivation(wp.id)
                         }
-                }
-
-                if !hasSeenTutorial {
-                    if pendingRedHoodLevel == nil {
-                        if completedRedHoodLevels.contains(0) {
-                            if let wp = RedHoodMapGraph.waypoint(id: 1) {
-                                HandTutorialIndicator(point: projection.screenPoint(fromPixel: wp.point))
-                                    .zIndex(30)
-                            }
-                        } else {
-                            if let wp = RedHoodMapGraph.waypoint(id: 0) {
-                                HandTutorialIndicator(point: projection.screenPoint(fromPixel: wp.point))
-                                    .zIndex(30)
-                            }
-                        }
-                    }
                 }
             }
 
@@ -503,7 +831,7 @@ struct ContentView: View {
                         if isWorldBaseUnlocked(wp.id) {
                             MainMapIslandDot(
                                 size: dotSize(for: mapSize),
-                                isPulsing: wp.id == pulsingWorldBaseID
+                                isPulsing: wp.id == pulsingWorldBaseID && !isWorldMapTutorialPhase
                             )
                         } else {
                             WaypointDot(state: .locked, size: dotSize(for: mapSize))
@@ -676,12 +1004,39 @@ struct ContentView: View {
 
     @MainActor
     private func startRedHoodLevel(_ level: Int) {
+        if !hasSeenTutorial, level == 1, !activeTutorialStep.isSequencingPhase {
+            interactiveTutorialStep = InteractiveTutorialStep.sequencingCoach.rawValue
+        }
+
         withAnimation(.easeInOut(duration: 0.2)) {
             pendingRedHoodLevel = nil
             activeRedHoodLevel = level
             suppressesMapChromeForDialogue = true
             redHoodPostSequenceReward = nil
         }
+    }
+
+    private var shouldShowWorldMapTutorialPlayButton: Bool {
+        shouldShowRedHoodPlayButton
+            && (!isWorldMapTutorialPhase || activeTutorialStep == .worldMapPlayReady)
+    }
+
+    private var showsStorybookButtonForDisplay: Bool {
+        guard showsStorybookButton else { return false }
+        guard isWorldMapTutorialPhase else { return true }
+        return activeTutorialStep == .worldMapBook
+    }
+
+    private var storybookButtonOpacity: Double {
+        if isWorldMapTutorialOverlayStep || isSequencingTutorialOverlayStep { return 0 }
+        if isRedHoodTutorialChromeInteractionBlocked || showsRedHoodTutorialOverlayChrome {
+            return 0.45
+        }
+        return isBookInteractionBlocked ? 0 : 1
+    }
+
+    private func tutorialPlaqueScale(for screenSize: CGSize) -> CGFloat {
+        min(0.48, max(0.34, screenSize.width / 1900))
     }
 
     private func dotSize(for mapSize: CGSize) -> CGFloat {
@@ -745,7 +1100,11 @@ struct ContentView: View {
     }
 
     private func reloadAllProgress() {
-        if UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
+        if TutorialWorldMapReplay.isWorldMapReplayActive {
+            activeMap = .main
+        } else if TutorialWorldMapReplay.isRedHoodReplayActive {
+            activeMap = .redHood
+        } else if UserDefaults.standard.bool(forKey: TutorialWorldMapReplay.temporaryModeKey) {
             activeMap = .redHood
         }
         
@@ -877,6 +1236,10 @@ struct ContentView: View {
             return
         }
 
+        if level == 1, hasSeenTutorial, !completedRedHoodLevels.contains(0) {
+            markRedHoodLevelCompleted(0)
+        }
+
         withAnimation(.easeInOut(duration: 0.3)) {
             markRedHoodLevelCompleted(level)
             activeRedHoodLevel = nil
@@ -888,15 +1251,93 @@ struct ContentView: View {
             } else {
                 pendingRedHoodLevel = nil
             }
+
+            if !hasSeenTutorial, level == 0 {
+                interactiveTutorialStep = InteractiveTutorialStep.redHoodWaypointReady.rawValue
+            }
         }
 
         if level == 1 && UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
-            restoreStateAfterTutorial()
+            mergeTutorialReplayProgressAfterLevel1()
             return
         }
 
         Task { @MainActor in
             await advanceToNextRedHoodChapter(afterCompletedLevel: level)
+        }
+    }
+
+    /// After the tutorial, the first level-1 sequencing win should stay on the Red Hood map
+    /// (no reward overlay, chapter-unlock banner, or return to the world map).
+    @MainActor
+    private func completeTutorialLevel1Sequencing(attemptCount: Int) {
+        _ = attemptCount
+
+        withAnimation(.easeInOut(duration: 0.35)) {
+            activeRedHoodLevel = nil
+            suppressesMapChromeForDialogue = false
+            redHoodPostSequenceReward = nil
+            pendingChapterUnlockLevel = nil
+        }
+
+        if UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") {
+            mergeTutorialReplayProgressAfterLevel1()
+        } else {
+            handleRedHoodChapterCompletion(1)
+        }
+    }
+
+    /// Restores backed-up progress after a settings tutorial replay while keeping the player on Red Hood island.
+    @MainActor
+    private func mergeTutorialReplayProgressAfterLevel1() {
+        guard UserDefaults.standard.bool(forKey: "isTemporaryTutorialMode") else { return }
+
+        let backupCompleted = Set(
+            UserDefaults.standard.array(forKey: "tutorialBackup_completedRedHoodLevels") as? [Int] ?? []
+        )
+        let backupUnlocked = Set(
+            UserDefaults.standard.array(forKey: "tutorialBackup_unlockedWorldBaseIDs") as? [Int] ?? [MapGraph.redRidingHoodBaseID]
+        )
+        let backupCurrentBaseID = UserDefaults.standard.integer(forKey: "tutorialBackup_currentBaseID")
+
+        UserDefaults.standard.removeObject(forKey: "isTemporaryTutorialMode")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_completedRedHoodLevels")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_unlockedWorldBaseIDs")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_currentBaseID")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_activeMap")
+        UserDefaults.standard.removeObject(forKey: "tutorialBackup_hasSeenTutorial")
+
+        var merged = backupCompleted
+        if hasSeenTutorial, !merged.contains(0) {
+            merged.insert(0)
+        }
+        merged.insert(1)
+        completedRedHoodLevels = canonicalCompletedRedHoodLevels(from: merged)
+        persistCompletedRedHoodLevels(completedRedHoodLevels)
+
+        unlockedWorldBaseIDs = backupUnlocked
+        persistUnlockedWorldBaseIDs()
+
+        withAnimation(.easeInOut(duration: 0.3)) {
+            activeMap = .redHood
+            activeRedHoodLevel = nil
+            redHoodPostSequenceReward = nil
+            pendingChapterUnlockLevel = nil
+
+            let anchorWaypointID = (1...8).contains(backupCurrentBaseID) ? backupCurrentBaseID : 1
+            if let waypoint = RedHoodMapGraph.waypoint(id: anchorWaypointID) {
+                avatarPosition = waypoint.point
+                currentBaseID = waypoint.id
+            } else {
+                avatarPosition = RedHoodMapGraph.waypoint(id: 1)?.point ?? RedHoodMapGraph.initialWaypoint.point
+                currentBaseID = 1
+            }
+            avatarDirection = .down
+            pendingRedHoodLevel = nil
+        }
+
+        Task { @MainActor in
+            await advanceToNextRedHoodChapter(afterCompletedLevel: 1)
         }
     }
 
@@ -917,6 +1358,7 @@ struct ContentView: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 pendingRedHoodLevel = nextLevel
             }
+            promoteRedHoodTutorialToPlayIfNeeded(for: nextLevel)
             return
         }
 
@@ -926,6 +1368,7 @@ struct ContentView: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 pendingRedHoodLevel = nextLevel
             }
+            promoteRedHoodTutorialToPlayIfNeeded(for: nextLevel)
         }
     }
 
@@ -1020,6 +1463,12 @@ struct ContentView: View {
             || (activeRedHoodLevel != nil && suppressesMapChromeForDialogue)
             || redHoodPostSequenceReward != nil
             || pendingChapterUnlockLevel != nil
+            || isWorldMapTutorialPhase
+            || showsRedHoodTutorialOverlayChrome
+            || isRedHoodTutorialChromeInteractionBlocked
+            || isSequencingTutorialCoachOverlayActive
+            || isSequencingTutorialFlipHintActive
+            || isSequencingTutorialCongratsActive
     }
 
     private var isMapToolbarBlocked: Bool {
@@ -1187,6 +1636,9 @@ struct ContentView: View {
 
     private func handleRedHoodWaypointActivation(_ waypointId: Int) {
         guard activeRedHoodLevel == nil else { return }
+        if isRedHoodTutorialPhase && !allowsRedHoodTutorialWaypointInteraction {
+            return
+        }
         guard isRedHoodWaypointPlayable(waypointId) else { return }
         guard let target = RedHoodMapGraph.waypoint(id: waypointId) else { return }
         guard let start = nearestWaypoint(to: avatarPosition, among: RedHoodMapGraph.waypoints) else { return }
@@ -1197,6 +1649,7 @@ struct ContentView: View {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
                 }
+                promoteRedHoodTutorialToPlayIfNeeded(for: target.id)
             }
             return
         }
@@ -1212,12 +1665,21 @@ struct ContentView: View {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     pendingRedHoodLevel = target.id
                 }
+                promoteRedHoodTutorialToPlayIfNeeded(for: target.id)
             }
         }
     }
 
+    /// Phase 2 ends when Play is tapped at waypoint 1 — until then stay on map exploration steps.
+    private func promoteRedHoodTutorialToPlayIfNeeded(for waypointId: Int) {
+        guard isRedHoodTutorialPhase2Active, activeTutorialStep == .redHoodWaypointReady else { return }
+        guard waypointId == 1 else { return }
+        interactiveTutorialStep = InteractiveTutorialStep.redHoodPlay.rawValue
+    }
+
     private func handleRedHoodMapTap(_ screenTap: CGPoint, projection: MapProjection) {
         guard activeRedHoodLevel == nil else { return }
+        if isRedHoodTutorialPhase && !allowsRedHoodTutorialWaypointInteraction { return }
         guard let target = closestWaypoint(
             to: screenTap,
             among: RedHoodMapGraph.storyWaypoints,
@@ -1324,7 +1786,11 @@ struct ContentView: View {
                     }
                 },
                 onSequencingFinished: { attemptCount in
-                    presentRewardAfterMapPause(level: level, attemptCount: attemptCount)
+                    if level == 1 && hasSeenTutorial {
+                        completeTutorialLevel1Sequencing(attemptCount: attemptCount)
+                    } else {
+                        presentRewardAfterMapPause(level: level, attemptCount: attemptCount)
+                    }
                 },
                 onRewardReached: {
                     markRedHoodLevelCompleted(level)

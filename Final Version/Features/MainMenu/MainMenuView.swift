@@ -28,6 +28,7 @@ struct MainMenuPanelLayer: View {
     let resetID: Int
     var deferPanelReveal: Bool = false
     let onPlay: () -> Void
+    var onShowTutorialAgain: (() -> Void)? = nil
 
     @State private var panelOpacity: Double = 0
     @State private var panelScale: CGFloat = 1.04
@@ -98,7 +99,13 @@ struct MainMenuPanelLayer: View {
                             showAdvancedMathGate = true
                         }
                     },
-                    advancedSettingsUnlocked: $advancedSettingsUnlocked
+                    advancedSettingsUnlocked: $advancedSettingsUnlocked,
+                    onShowTutorialAgain: {
+                        Task {
+                            await closeSettings()
+                            onShowTutorialAgain?()
+                        }
+                    }
                 )
                 .environment(lm)
                 .transition(.opacity)

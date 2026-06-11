@@ -284,9 +284,48 @@ struct SequencingActivityView<Reward: View>: View {
     private var reduceMotion: Bool { sysReduceMotion || reduceAnimations }
     @Environment(LanguageManager.self) private var lm
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial = false
+    @AppStorage("interactiveTutorialStep") private var interactiveTutorialStep = InteractiveTutorialStep.inactive.rawValue
     @State private var sourceCardFrames: [Int: CGRect] = [:]
-    @State private var tutorialHandProgress: CGFloat = 0.0
-    @State private var tutorialTapBounce = false
+
+    private var activeTutorialStep: InteractiveTutorialStep {
+        InteractiveTutorialStep(rawValue: interactiveTutorialStep) ?? .inactive
+    }
+
+    private var showsSequencingCoachTutorial: Bool {
+        event.id == 1 && !hasSeenTutorial && activeTutorialStep == .sequencingCoach
+    }
+
+    private var showsSequencingFlipHintTutorial: Bool {
+        event.id == 1 && !hasSeenTutorial && activeTutorialStep == .sequencingFlipHint
+    }
+
+    private var showsSequencingTutorialDimOverlay: Bool {
+        (showsSequencingCoachTutorial || showsSequencingFlipHintTutorial) && !showsTutorialCongrats
+    }
+
+    private var sequencingCoachTargetCardID: Int? {
+        event.correctOrder.first
+    }
+
+    private func shouldHideCoachSourceCard(_ cardId: Int) -> Bool {
+        guard showsSequencingCoachTutorial,
+              cardId == sequencingCoachTargetCardID,
+              slotContents[0] != cardId,
+              draggingCardId != cardId else { return false }
+        return true
+    }
+
+    private func shouldHideCoachSlot(_ slot: Int) -> Bool {
+        showsSequencingCoachTutorial && slot == 0 && slotContents[0] == nil
+    }
+
+    private func shouldHideTutorialElevatedPlacedCard(slot: Int, cardId: Int) -> Bool {
+        guard slot == 0,
+              cardId == sequencingCoachTargetCardID,
+              draggingCardId != cardId else { return false }
+        return showsSequencingCoachTutorial || showsSequencingFlipHintTutorial
+    }
+    @State private var showsTutorialCongrats = false
 
     // card ids in source row order (randomized at activity start)
     @State private var shuffledStart: [Int]
@@ -464,21 +503,58 @@ struct SequencingActivityView<Reward: View>: View {
             let cardW = computeCardWidth(in: stageSize)
             let cardH = cardW * 16 / 9
 
+            let stageOrigin = sequencingStageOrigin(
+                screenSize: screenGeo.size,
+                stageSize: stageSize
+            )
+
             ZStack {
                 sequencingBackground(screenSize: screenGeo.size)
 
                 sequencingStage(cardW: cardW, cardH: cardH)
                     .frame(width: stageSize.width, height: stageSize.height)
                     .position(x: screenGeo.size.width / 2, y: screenGeo.size.height / 2)
+                    .allowsHitTesting(!showsSequencingTutorialDimOverlay)
+
+                if showsSequencingTutorialDimOverlay {
+                    TutorialFullScreenDim(blocksHitTesting: false)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .zIndex(150)
+                }
+
+                if showsSequencingCoachTutorial {
+                    sequencingCoachScreenOverlay(
+                        screenSize: screenGeo.size,
+                        stageOrigin: stageOrigin,
+                        cardW: cardW,
+                        cardH: cardH
+                    )
+                    .zIndex(200)
+                }
+
+                if showsSequencingFlipHintTutorial {
+                    sequencingFlipHintScreenOverlay(
+                        screenSize: screenGeo.size,
+                        stageOrigin: stageOrigin,
+                        cardW: cardW,
+                        cardH: cardH
+                    )
+                    .zIndex(200)
+                }
+
+                if showsTutorialCongrats {
+                    sequencingTutorialCongratsOverlay
+                        .zIndex(500)
+                }
             }
         }
         .ignoresSafeArea()
         .onAppear {
             repairBoardStateIfNeeded()
-            if event.id == 1 && !hasSeenTutorial {
-                withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                    tutorialTapBounce = true
-                }
+            ensureSequencingTutorialStepIfNeeded()
+            if activeTutorialStep == .sequencingCongrats {
+                showsTutorialCongrats = true
             }
         }
         .onChange(of: event.id) { _, _ in
@@ -552,7 +628,8 @@ struct SequencingActivityView<Reward: View>: View {
             }
 
             if let cardId = draggingCardId,
-               let card = cardData(for: cardId) {
+               let card = cardData(for: cardId),
+               !showsSequencingTutorialDimOverlay {
                 SequenceCardView(
                     card: card,
                     isFlipped: flippedState(for: cardId)
@@ -592,65 +669,228 @@ struct SequencingActivityView<Reward: View>: View {
                 .zIndex(10)
             }
 
-            if event.id == 1 && !hasSeenTutorial {
-                if let targetCardID = event.correctOrder.first,
-                   let cardFrame = sourceCardFrames[targetCardID],
-                   let slotFrame = slotFrames[0] {
-                    
-                    let isCardPlaced = (slotContents[0] == targetCardID)
-                    
-                    let startPoint = CGPoint(x: cardFrame.midX, y: cardFrame.midY)
-                    let endPoint = CGPoint(x: slotFrame.midX, y: slotFrame.midY)
-                    
-                    let currentX = isCardPlaced ? endPoint.x : startPoint.x + (endPoint.x - startPoint.x) * tutorialHandProgress
-                    let currentY = isCardPlaced ? endPoint.y : startPoint.y + (endPoint.y - startPoint.y) * tutorialHandProgress
-                    
-                    ZStack {
-                        VStack(spacing: 4) {
-                            let msg = isCardPlaced ? lm.t("tutorial.tap_to_flip") : lm.t("tutorial.drag_first_scene")
-                            Text(msg)
-                                .font(.app(.title3, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 12)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.black)
-                                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.yellow, lineWidth: 1.5))
-                                )
-                                .shadow(color: .black.opacity(0.35), radius: 5)
-                                .multilineTextAlignment(.center)
-                                .frame(maxWidth: 320)
-                            
-                            ZStack {
-                                if isCardPlaced {
-                                    TapRippleEffect()
-                                        .offset(y: -18)
-                                }
-                                
-                                Image(systemName: isCardPlaced ? "hand.tap.fill" : "hand.draw.fill")
-                                     .font(.system(size: 40, weight: .bold))
-                                     .foregroundColor(.white)
-                                     .shadow(color: .black.opacity(0.4), radius: 5, x: 2, y: 3)
-                                     .scaleEffect(isCardPlaced ? (tutorialTapBounce ? 0.85 : 1.05) : 1.0)
-                                     .offset(y: isCardPlaced ? (tutorialTapBounce ? 10 : -8) : 0)
-                            }
-                        }
-                        .position(x: currentX, y: currentY - 60)
-                    }
-                    .zIndex(200)
-                    .allowsHitTesting(false)
-                    .onAppear {
-                        tutorialHandProgress = 0.0
-                        withAnimation(Animation.linear(duration: 2.2).repeatForever(autoreverses: false)) {
-                            tutorialHandProgress = 1.0
-                        }
-                    }
-                }
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .coordinateSpace(name: "gameBoard")
+    }
+
+    private var sequencingTutorialCongratsOverlay: some View {
+        ZStack {
+            TutorialFullScreenDim(opacity: 0.78, onTap: { dismissSequencingTutorialCongrats() })
+
+            TutorialCoachPlaque(
+                title: lm.t("tutorial.coach.sequencing_your_turn"),
+                scale: 0.42
+            )
+            .tutorialOverlayFadeIn(identity: "sequencing-congrats")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
+        .transition(.opacity)
+    }
+
+    private func sequencingStageOrigin(screenSize: CGSize, stageSize: CGSize) -> CGPoint {
+        CGPoint(
+            x: (screenSize.width - stageSize.width) * 0.5,
+            y: (screenSize.height - stageSize.height) * 0.5
+        )
+    }
+
+    private func mapGameBoardToScreen(_ point: CGPoint, stageOrigin: CGPoint) -> CGPoint {
+        CGPoint(x: stageOrigin.x + point.x, y: stageOrigin.y + point.y)
+    }
+
+    @ViewBuilder
+    private func sequencingCoachScreenOverlay(
+        screenSize: CGSize,
+        stageOrigin: CGPoint,
+        cardW: CGFloat,
+        cardH: CGFloat
+    ) -> some View {
+        ZStack {
+            sequencingCoachElevatedLayer(
+                stageOrigin: stageOrigin,
+                cardW: cardW,
+                cardH: cardH
+            )
+
+            sequencingCoachHandLayer(
+                stageOrigin: stageOrigin,
+                cardW: cardW,
+                cardH: cardH
+            )
+
+            if let cardId = draggingCardId,
+               let card = cardData(for: cardId) {
+                SequenceCardView(
+                    card: card,
+                    isFlipped: flippedState(for: cardId)
+                )
+                .frame(width: cardW, height: cardH)
+                .scaleEffect(draggedCardScale)
+                .shadow(color: .black.opacity(0.45), radius: 20, y: 10)
+                .position(mapGameBoardToScreen(dragPosition, stageOrigin: stageOrigin))
+                .allowsHitTesting(false)
+            }
+        }
+        .frame(width: screenSize.width, height: screenSize.height)
+        .ignoresSafeArea()
+    }
+
+    @ViewBuilder
+    private func sequencingCoachElevatedLayer(
+        stageOrigin: CGPoint,
+        cardW: CGFloat,
+        cardH: CGFloat
+    ) -> some View {
+        if let targetCardID = sequencingCoachTargetCardID,
+           let cardFrame = sourceCardFrames[targetCardID],
+           let slotFrame = slotFrames[0],
+           slotContents[0] != targetCardID,
+           let card = cardData(for: targetCardID) {
+            emptySlot(slot: 0, cardW: cardW, cardH: cardH, hovered: hoveredSlot == 0)
+                .frame(width: cardW, height: cardH)
+                .position(mapGameBoardToScreen(
+                    CGPoint(x: slotFrame.midX, y: slotFrame.midY),
+                    stageOrigin: stageOrigin
+                ))
+                .allowsHitTesting(false)
+
+            cardInteractionGestures(
+                SequenceCardView(card: card, isFlipped: flippedState(for: targetCardID))
+                    .frame(width: cardW, height: cardH)
+                    .scaleEffect(cardTouchScale(for: targetCardID))
+                    .shadow(color: .black.opacity(0.30), radius: 8, y: 5)
+                    .contentShape(RoundedRectangle(cornerRadius: 16)),
+                cardId: targetCardID,
+                originSlot: nil,
+                dragCoordinateStageOrigin: stageOrigin
+            )
+            .frame(width: cardW, height: cardH)
+            .position(mapGameBoardToScreen(
+                CGPoint(x: cardFrame.midX, y: cardFrame.midY),
+                stageOrigin: stageOrigin
+            ))
+        }
+    }
+
+    @ViewBuilder
+    private func sequencingCoachHandLayer(
+        stageOrigin: CGPoint,
+        cardW: CGFloat,
+        cardH: CGFloat
+    ) -> some View {
+        if let targetCardID = sequencingCoachTargetCardID,
+           let cardFrame = sourceCardFrames[targetCardID],
+           slotContents[0] != targetCardID {
+            let plaqueCenter = mapGameBoardToScreen(
+                CGPoint(x: cardFrame.midX, y: cardFrame.minY),
+                stageOrigin: stageOrigin
+            )
+
+            TutorialCoachPlaque(title: lm.t("tutorial.coach.drag"), scale: 0.36)
+            .position(x: plaqueCenter.x, y: plaqueCenter.y - max(36, cardH * 0.14))
+            .tutorialOverlayFadeIn(identity: "sequencing-drag")
+            .allowsHitTesting(false)
+        }
+    }
+
+    private func ensureSequencingTutorialStepIfNeeded() {
+        guard event.id == 1, !hasSeenTutorial, !activeTutorialStep.isSequencingPhase else { return }
+        interactiveTutorialStep = InteractiveTutorialStep.sequencingCoach.rawValue
+    }
+
+    private func advanceSequencingCoachAfterPlacementIfNeeded(cardId: Int, slot: Int) {
+        guard showsSequencingCoachTutorial,
+              slot == 0,
+              cardId == sequencingCoachTargetCardID else { return }
+
+        withAnimation(.easeInOut(duration: 0.35)) {
+            interactiveTutorialStep = InteractiveTutorialStep.sequencingFlipHint.rawValue
+        }
+    }
+
+    @ViewBuilder
+    private func sequencingFlipHintScreenOverlay(
+        screenSize: CGSize,
+        stageOrigin: CGPoint,
+        cardW: CGFloat,
+        cardH: CGFloat
+    ) -> some View {
+        if let targetCardID = sequencingCoachTargetCardID,
+           let slotFrame = slotFrames[0],
+           slotContents[0] == targetCardID,
+           let card = cardData(for: targetCardID) {
+            let cardCenter = mapGameBoardToScreen(
+                CGPoint(x: slotFrame.midX, y: slotFrame.midY),
+                stageOrigin: stageOrigin
+            )
+            let cardScreenFrame = CGRect(
+                x: cardCenter.x - cardW * 0.5,
+                y: cardCenter.y - cardH * 0.5,
+                width: cardW,
+                height: cardH
+            )
+            let plaqueScale: CGFloat = 0.36
+            let plaquePosition = TutorialPlaqueLayout.position(
+                near: cardScreenFrame,
+                in: screenSize,
+                scale: plaqueScale,
+                placement: .rightOfTarget
+            )
+
+            ZStack {
+                cardInteractionGestures(
+                    SequenceCardView(card: card, isFlipped: flippedState(for: targetCardID))
+                        .frame(width: cardW, height: cardH)
+                        .scaleEffect(slotVisualScale(for: 0) * cardTouchScale(for: targetCardID))
+                        .rotationEffect(.degrees(slotVisualTilt(for: 0)))
+                        .contentShape(RoundedRectangle(cornerRadius: 16)),
+                    cardId: targetCardID,
+                    originSlot: 0,
+                    dragCoordinateStageOrigin: stageOrigin
+                )
+                .frame(width: cardW, height: cardH)
+                .position(cardCenter)
+
+                TutorialCoachPlaque(title: lm.t("tutorial.coach.flip"), scale: plaqueScale)
+                    .position(plaquePosition)
+                    .allowsHitTesting(false)
+            }
+            .frame(width: screenSize.width, height: screenSize.height)
+            .ignoresSafeArea()
+            .tutorialOverlayFadeIn(identity: "sequencing-flip-hint")
+        }
+    }
+
+    private func completeSequencingTutorial() {
+        persistTutorialCompletion()
+        withAnimation(.easeInOut(duration: 0.35)) {
+            showsTutorialCongrats = true
+        }
+    }
+
+    private func dismissSequencingTutorialCongrats() {
+        hasSeenTutorial = true
+        UserDefaults.standard.set(true, forKey: "hasSeenTutorial")
+        withAnimation(.easeInOut(duration: 0.25)) {
+            showsTutorialCongrats = false
+            interactiveTutorialStep = InteractiveTutorialStep.inactive.rawValue
+            UserDefaults.standard.set(
+                InteractiveTutorialStep.inactive.rawValue,
+                forKey: "interactiveTutorialStep"
+            )
+        }
+    }
+
+    private func persistTutorialCompletion() {
+        hasSeenTutorial = true
+        interactiveTutorialStep = InteractiveTutorialStep.sequencingCongrats.rawValue
+        UserDefaults.standard.set(true, forKey: "hasSeenTutorial")
+        UserDefaults.standard.set(
+            InteractiveTutorialStep.sequencingCongrats.rawValue,
+            forKey: "interactiveTutorialStep"
+        )
     }
 
     // MARK: - Card sizing
@@ -828,9 +1068,12 @@ struct SequencingActivityView<Reward: View>: View {
 
             if let id = placedId {
                 placedCard(cardId: id, slot: slot, cardW: cardW, cardH: cardH)
-                .opacity(isDraggingThis ? 0.001 : 1)
+                    .opacity(isDraggingThis || shouldHideTutorialElevatedPlacedCard(slot: slot, cardId: id) ? 0.001 : 1)
+                    .allowsHitTesting(!shouldHideTutorialElevatedPlacedCard(slot: slot, cardId: id))
             } else {
                 emptySlot(slot: slot, cardW: cardW, cardH: cardH, hovered: isHovered)
+                    .opacity(shouldHideCoachSlot(slot) ? 0.001 : 1)
+                    .allowsHitTesting(!shouldHideCoachSlot(slot))
             }
         }
         .frame(width: cardW, height: cardH)
@@ -933,7 +1176,8 @@ struct SequencingActivityView<Reward: View>: View {
                         }
 
                         sourceCard(cardId: cardId, cardW: cardW, cardH: cardH)
-                            .opacity(isDragged ? 0.001 : 1)
+                            .opacity(isDragged || shouldHideCoachSourceCard(cardId) ? 0.001 : 1)
+                            .allowsHitTesting(!shouldHideCoachSourceCard(cardId))
                     }
                 }
             }
@@ -995,10 +1239,11 @@ struct SequencingActivityView<Reward: View>: View {
             flippedStates[index].toggle()
         }
 
-        if !hasSeenTutorial && cardId == event.correctOrder.first && slotContents[0] == cardId {
-            withAnimation(.easeInOut(duration: 0.35)) {
-                hasSeenTutorial = true
-            }
+        if showsSequencingFlipHintTutorial,
+           cardId == sequencingCoachTargetCardID,
+           slotContents[0] == cardId,
+           flippedStates[index] {
+            completeSequencingTutorial()
         }
     }
 
@@ -1026,9 +1271,11 @@ struct SequencingActivityView<Reward: View>: View {
     private func cardInteractionGestures<Content: View>(
         _ content: Content,
         cardId: Int,
-        originSlot: Int?
+        originSlot: Int?,
+        dragCoordinateStageOrigin: CGPoint? = nil
     ) -> some View {
-        let isLockedByTutorial = (event.id == 1 && !hasSeenTutorial && cardId != event.correctOrder.first)
+        let isLockedByTutorial = (showsSequencingCoachTutorial && cardId != event.correctOrder.first)
+            || (showsSequencingFlipHintTutorial && cardId != event.correctOrder.first)
 
         if allSlotsCorrect || isRunningCompletionSequence || isStorybookExpanded || isLockedByTutorial {
             content
@@ -1045,31 +1292,52 @@ struct SequencingActivityView<Reward: View>: View {
                     },
                     perform: { beginCardHold(cardId: cardId) }
                 )
-                .highPriorityGesture(cardDragGesture(cardId: cardId, originSlot: originSlot))
+                .highPriorityGesture(
+                    cardDragGesture(
+                        cardId: cardId,
+                        originSlot: originSlot,
+                        stageOrigin: dragCoordinateStageOrigin
+                    )
+                )
                 .animation(cardTouchAnimation, value: pressedCardId)
                 .animation(cardTouchAnimation, value: draggingCardId)
         }
     }
 
-    private func cardDragGesture(cardId: Int, originSlot: Int?) -> some Gesture {
-        DragGesture(minimumDistance: 0, coordinateSpace: .named("gameBoard"))
+    private func cardDragGesture(
+        cardId: Int,
+        originSlot: Int?,
+        stageOrigin: CGPoint? = nil
+    ) -> some Gesture {
+        DragGesture(
+            minimumDistance: 0,
+            coordinateSpace: stageOrigin == nil ? .named("gameBoard") : .global
+        )
             .onChanged { value in
+                guard !showsSequencingFlipHintTutorial else { return }
                 let distance = hypot(value.translation.width, value.translation.height)
                 guard distance > cardDragPickupDistance else { return }
                 if pressedCardId != cardId {
                     beginCardHold(cardId: cardId)
                 }
-                updateDrag(cardId: cardId, originSlot: originSlot, location: value.location)
+                let location = gameBoardLocation(from: value.location, stageOrigin: stageOrigin)
+                updateDrag(cardId: cardId, originSlot: originSlot, location: location)
             }
             .onEnded { value in
+                let location = gameBoardLocation(from: value.location, stageOrigin: stageOrigin)
                 if draggingCardId == cardId {
-                    finalizeDrop(at: value.location, originSlot: originSlot)
-                } else if isTapToFlip(value), pressedCardId == nil {
+                    finalizeDrop(at: location, originSlot: originSlot)
+                } else if isTapToFlip(value), pressedCardId == nil, !showsSequencingCoachTutorial {
                     toggleCard(cardId)
                 } else {
                     endCardTouch()
                 }
             }
+    }
+
+    private func gameBoardLocation(from location: CGPoint, stageOrigin: CGPoint?) -> CGPoint {
+        guard let stageOrigin else { return location }
+        return CGPoint(x: location.x - stageOrigin.x, y: location.y - stageOrigin.y)
     }
 
     private func isTapToFlip(_ value: DragGesture.Value) -> Bool {
@@ -1153,6 +1421,7 @@ struct SequencingActivityView<Reward: View>: View {
             }
 
             handlePlacement(forSlot: targetSlot)
+            advanceSequencingCoachAfterPlacementIfNeeded(cardId: cardId, slot: targetSlot)
             evaluateCompletedBoardIfReady()
             return
         }
